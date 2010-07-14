@@ -1,0 +1,18 @@
+package a.util;
+
+
+public static class Math{
+	public const static fixed PI = 3.14159;
+	public const static fixed E = 2.71828;
+
+	public static int floor(fixed f){
+		return (int)f;
+	}
+	
+	public static int ceil(fixed f){
+		int i = (int)f;
+		if(i == f)
+			return i;
+		return i+1;
+	}
+}

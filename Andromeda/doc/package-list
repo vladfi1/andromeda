@@ -1,0 +1,16 @@
+com.sc2mod.andromeda
+com.sc2mod.andromeda.codegen
+com.sc2mod.andromeda.codegen.buffers
+com.sc2mod.andromeda.codestructure
+com.sc2mod.andromeda.codetransform
+com.sc2mod.andromeda.environment
+com.sc2mod.andromeda.environment.types
+com.sc2mod.andromeda.environment.variables
+com.sc2mod.andromeda.optimization
+com.sc2mod.andromeda.parser
+com.sc2mod.andromeda.program
+com.sc2mod.andromeda.semAnalysis
+com.sc2mod.andromeda.syntaxNodes
+com.sc2mod.andromeda.test
+com.sc2mod.andromeda.vm.data
+com.sc2mod.compilerGen

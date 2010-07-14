@@ -1,0 +1,35 @@
+package a.lang;
+
+public static class System{
+
+	private static playergroup ALL_PLAYERS = PlayerGroupAll();
+	
+	/**
+	*	Error method used by Andromeda to display error messages (like double free, instance limit reached,...)
+	*/
+	public static void error(string message){
+		TriggerDebugOutput(1, StringToText("ERROR: " + message), false);
+		UIDisplayMessage(ALL_PLAYERS,c_messageAreaError,StringToText("ERROR: " + message));
+	}
+	
+	/**
+	*	Debug method. Displays the message ingame and in the trigger debug window.
+	*/
+	public static void debug(string message){
+		TriggerDebugOutput(1, StringToText(message), true);
+	}
+	
+	/**
+	*	Debug method. Can be used to display text ingame and in the trigger debug window.
+	*/
+	public static void debug(string message, bool showIngame){
+		TriggerDebugOutput(1, StringToText(message), showIngame);
+	}
+	
+	/**
+	*	Prints message ingame.
+	*/
+	public static void print(string message){
+		UIDisplayMessage(ALL_PLAYERS,c_messageAreaDebug,StringToText(message));
+	}
+}

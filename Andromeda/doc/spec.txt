@@ -1,0 +1,1323 @@
+This is the specification for the Andromeda language. Andromeda is an extension language for Blizzard's Galaxy language. It is compiled to Galaxy using the semantics described in this document. If you find a piece of valid Andromeda code that does not compile to valid Galaxy code or does not show the behavior described in this document, please report this immediately in correspondent thread. The main goal of Andromeda is to extend Galaxy's syntax where it shows missing things and to add object oriented paradigms to Galaxy.
+
+[hl=1]Compatibility with Galaxy[/hl]
+
+Basically, Andromeda's syntax is a superset of the Galaxy syntax. So basically every Galaxy file should also be compiling without errors using the Andromeda compiler. Hence, Andromeda allows you to join Andromeda code with legacy Galaxy code. The only exception is, if the Galaxy code uses one of Andromeda's additional keywords as identifiers.
+
+Andromeda uses the following keywords. Not all of them are used at the moment but reserved for later use. Some may even follow:
+[galaxy]//Keywords, in alphabetical order
+abstract break case catch class const continue default delete do else enrich 
+extends final finally for get if implements import include inline internal instanceof
+interface is native new override package private protected public return set static
+struct super switch this throws throw transient try typedef uses void volatile while
+//Literals
+true false null[/galaxy]
+
+Since Andromeda is compatible to Galaxy's syntax, no part of the constructs of Galaxy will be explained here. The semantics of these constructs is not changed by Andromeda, but it might optimize them, still keeping the same semantics. Please refer to a Galaxy specification for more information about Galaxy constructs.
+
+[lhead]Changelog:[/lhead]
+2010-04-10: Added classes (new in release 0.0.9)
+2010-04-16: Added packages, library includes, strcall and inline (new in release 0.0.10)
+2010-05-10: Added initializers (new in release 0.0.11)
+2010-05-14: Added destructors (new in release 0.0.11)
+2010-06-09: Added changes to util, strcall and inline.
+		Added annotations and generic classes (new in release 0.1.2). 
+		Added for-each loop, type extensions and aliases (new in release 0.1.3)
+2010-06-09: Clarified type inference for hierarchic extensions
+
+[hl=1]Miscellaneous Enhancements[/hl]
+[hl=2]Block comments[/hl]
+Andromeda allows you to specify block comments with the common syntax. These comments do not nest.
+
+[lhead]Example:[/lhead]
+[galaxy]
+/* 
+block comment
+*/
+
+/*
+/*
+This is still a comment.
+*/
+As you see from the highlighting. Nesting is not possible, this is no comment anymore.
+*/[/galaxy]
+[hl=2]Replacing 'static' by 'private'[/hl]
+Galaxy allows you to define private functions that are only visible within the file where they were defined. Since 'static' is used by classes for other purposes and is counter intuitive for visibility purposes, Galaxy allows you to just replace the static keyword with the private keyword, keeping the same semantics. For compatibility reasons, static is of course still possible.
+
+[lhead]Example:[/lhead]
+[galaxy]
+//Private function, Galaxy style
+static int a(){}
+//Private function, Andromeda style
+private int a(){}
+[/galaxy]
+[hl=2]Obsoleteness of Forward-Declarations[/hl]
+Andromeda does not require you to forward declare functions, even if they are called from above their definition. The code will run regardless of the order of functions. For compatibility, forward declarations are still possible, of course.
+
+[hl=2]Implicit casting[/hl]
+Galaxy allows to cast implicitly from int to fixed, but no other implicit cast is supported there.
+Andromeda adds implicit casting between string and text. So if you have a function that needs text but you hand a string to it, the string will be cast to text. The same is true vice versa, of course.
+
+In addition, Andromeda supports "concatenate casting" for many data types. I.e.: If any supported type is concatenated to a string or text, it is implicitly converted to string or text, respectively. Text is dominant here, so if a string
+is concatenated to a text, the result is of type text. Supported types for concatenation are at the moment: bool, int, fixed, char, byte. It is planned to add all types, so every type can be cast to string / text.
+
+[lhead]Examples:[/lhead]
+[galaxy]
+string s = "An int is:" + 34; 
+//Works, just appends 34 as string
+
+text t = "a" + "b" + 45 + "c"; 
+//Works, 45 is cast to string, all strings are concatenated. Then, the result is implicitly cast to text
+[/galaxy]
+
+[hl=2]Explicit C-Style casting[/hl]
+Andromeda supports C-Style explicit casts. The syntax and semantics are as known from C/JAVA. If a cast is not possible, a compile error is raised.
+
+[lhead]Example:[/lhead]
+[galaxy]
+int i = (int)"43"; //Casts string to int
+int j = (int)45.34; //Casts fixed to int
+
+fixed f =  (int)(fixed)(text)"34.43";
+//Casts string to text, text to fixed, fixed to int (result is rounded). The int is implicitly cast to fixed then
+[/galaxy]
+
+[hl=2]Function Overloading[/hl]
+Andromeda allows different functions with the same name as long as they have different parameter types. However, if you write a function call that could be cast implicitly to two different functions, the call is considered ambiguous and you
+will receive an error.
+
+[lhead]Working Example:[/lhead]
+[galaxy]
+string ToString(int i){...}
+string ToString(string s){...}
+string ToString(text t){...}
+string ToString(fixed f){...}
+
+string s = ToString("abc");
+//No compile error, s could be cast implicitly to text, but string s is a 'direct signature hit' so the string version of the function is chosen
+[/galaxy]
+[lhead]Example:[/lhead] Ambiguous call, error!
+[galaxy]
+string xy(string s, text t){...}
+string xy(text t, string s){...}
+...
+string s = xy("abc","def"); //Ambiguous call, parameters could be cast implicitly to both function signatures
+[/galaxy]
+
+[hl=2]Overriding native (and non native) functions[/hl]
+Andromeda allows you to override native functions to inject test code, track native usage or even forbid the call of native functions. Of course, Andromeda cannot override native calls that were called in the native libraries of starcraft, since it cannot change these.
+Not only native functions can be overridden, also normal user-defined functions. This can be useful to debug usage of those function without altering their code.
+A function can be overridden by defining a function with the exact same name and signature and prefixing that function with the modifier keyword 'override'. If two functions with the same name and signature exist and one of them is prefixed override, this function will be called. If more than one function overriding one function exists, an error is raised.
+To still be able to call native methods after they have been overridden (especially if you want to call them inside the overriding function, to just create a wrapper), you can prefix function calls with 'native.'. If a function call is prefixed this way, it will always call a native function, even if it is overridden. If no native function with this name exists, an error is raised.
+
+[lhead]Example:[/lhead]
+[galaxy]
+//We override IntToString by doubling the string before the conversion
+override string IntToString(int i){
+   return native.IntToString(i*2);
+}
+[/galaxy] 
+As you see, the native is called inside the wrapper function by prefixing it with native. If that prefix wasn't there, the function would just call itself resulting in an endless loop.
+
+Note that the override keyword has another meaning when being used in methods (class functions).
+
+[hl=2]Declaring More Variables at Once[/hl]
+
+Whenever you declare a variable (local declaration, global declaration, field declaration in a class or enrichment, member declaration in a struct), Andromeda allows you to define additional variables of the same type by separating them with commas.
+
+[lhead]Examples:[/lhead]
+[galaxy]
+int i,j,k; //Basic declaration
+
+int l = 5, m = 6, r, q, t = 7 //Define some of them
+
+int a = 1, b = a; 
+//You can even refer to another variable in the definition, if its definition is before the referring one
+[/galaxy]
+[hl=2]Local Declarations and Blocks[/hl]
+
+Andromeda allows you to define local variables anywhere, not only at the top of a function.
+The visibility rules of C/JAVA are applied here. I.e., if a local variable is declared inside a { } block, it is only visible inside of this block and can be redeclared afterwards. Note that Andromeda allows you to create blocks inside a function wherever you want, not only in ifs and loops.
+
+
+[lhead]Example:[/lhead]
+[galaxy]
+void foo(){
+   int i;
+   doSomething();
+   {
+      string s;
+      ...
+   }
+   {
+      fixed s; //s can be reused since it is not visible anymore.
+      ...
+   }
+}
+[/galaxy]
+
+Note that Andromeda tries to optimize such functions by using one variable for two variables if they share type and have different non-overlapping visibility scopes.
+
+[lhead]Examples:[/lhead]
+[galaxy]
+void foo(){
+   {
+      string s;
+      ...
+   }
+   {
+      string t; //will compile to only one local variable, since the s and t have no overlaps in visibility
+      ...
+   }
+}
+[/galaxy]
+Even if this is beneficial by speeding up your code, you must be careful, if you still have a pointer to the first variable, since it may have been overwritten by another one. You can avoid unwanted behavior by following a simple rule: Use a local variable only as long as it is visible. Keeping and using a pointer of a variable that is no longer visible is considered harmful.
+
+[hl=1]Expression and Statement Additions[/hl]
+
+Andromeda adds various new statements and expressions to the Galaxy language.
+
+[hl=2]Short if and while statments[/hl]
+
+In Galaxy, you must add a { } block around the then and else parts of ifs and the bodies of loops. Andromeda allows you to leave out these braces if only one statement is in the block.
+
+[lhead]Example:[/lhead]
+[galaxy]
+//Short if
+if(i==10) return;
+else i+=1;
+
+//Short while
+while(i>10) doSomething();
+[/galaxy]
+
+[hl=2]For Loop Statement[/hl]
+
+Andromeda allows you to create for loops with the semantics of C/JAVA. 
+
+[lhead]Syntax:[/lhead]
+[galaxy]for(INIT;CONDITION;UPDATE) BODY[/galaxy]
+INIT may be an expression, a variable definition, or a list of expressions, separated by commas. Condition must be an expression of type bool. Update can be an expression or a list of expressions separated by commas.
+All three parts may also be empty. BODY is normal loop body, just like for a while statement.
+[lhead]
+Semantics:[/lhead]
+Before the loop is entered first, INIT is executed. Then, as long as CONDITION is true, the BODY is executed, followed by UPDATE. If break is used inside the body, the loop is exited. If continue is used, the rest of the loop body is skipped, so UPDATE is executed, followed by the next CONDITION check.
+
+[lhead]Examples:[/lhead]
+[galaxy]
+for(int i=0 ; i<10 ; i+=1){ //Classic for loop counting from 0 to 9
+   doSomething();
+}
+
+for( ; x!=y ; ) doSomething();
+//Basically, a while loop since only a condition is present
+
+for(;;) doSomething();
+//Infinite loop
+
+for(int i=0, j=5 ; i<j ; i+=1, j-=1);
+//Using the comma operator to do more stuff in the INIT and UPDATE
+//(Empty loop body)
+[/galaxy]
+[hl=2]Using assignments as expressions[/hl]
+In C, an assignment is a normal expression that can be embedded into other expressions. Galaxy did not pick up this behavior, but Andromeda does. You can use assignments wherever you could place an expression.
+Assignments are evaluated from right to left and the value of an assignment is the value of its left side after the assignment
+[lhead]Examples:[/lhead]
+[galaxy]
+int i,j,k;
+i = j = k = 5; //Sets i, j and k to 5
+
+int a = 5 + (b += 5); //Adds 5 to b and assigns 5 + value of b after assignment to a
+
+while((i+=1)<100){ //Adds 1 to i and tests if it is less than 100
+   ...
+}
+[/galaxy]
+[hl=2]Pre- and Postincrement and -decrement[/hl]
+Another feature Galaxy did not adapt from C is the pre- and postincrement and -decrement operators. Andromeda supports them.
+
+They can be used on variables, fields or accessors. The pre versions first increment/decrement the variable and then returns the value after the operation. The post version increments/decrements the variable but returns the value before the operation.
+The syntax is just like in C: [emph]++x[/emph] (preincrement of x), [emph]--x[/emph] (predecrement of x), [emph]x++[/emph] (postincrement of x), [emph]x--[/emph] (postdecrement of x).
+
+[lhead]Examples:[/lhead]
+[galaxy]
+int i = 0;
+int j = i++; //j is now 0, i is 1
+j = ++i; //j and i are now 2
+j--; //j is 1 now
+--j; //j is 0 now
+int k = ++i + ++j //i and j are now 1, k is 2
+[/galaxy]
+
+
+[hl=2]The for-each loop[/hl]
+
+A for-each loop is a construct known from many programming languages that allows you to iterate over all members of a collection conveniently.
+
+[hl=3]Syntax and Semantics[/hl]
+
+Andromeda borrows the syntax of the for-each loop from java:
+[galaxy]
+for(TYPE VARIABLE : COLLECTION){
+
+}
+[/galaxy]
+
+[emph]COLLECTION[/emph] is the collection over which you want to iterate. [emph]TYPE[/emph] is the type of the elements in the collection and [emph]VARIABLE[/emph] is the local name of the variable that will hold the current element in each loop cycle.
+
+For example, if we want to iterate over a List which holds elements of type string we could do it this way:
+(Note that ourList is here a list variable which holds strings)
+[galaxy]
+for(string s: ourList){
+	System.debug(s);
+}
+[/galaxy]
+This example would print all strings in the list onto the screen.
+
+[hl=3]Making own collections that support for-each[/hl]
+
+The example from the last chapter stated a "list of strings" as an example for a collection type. However, a for-each loop is no magic and it cannot smell how to iterate over your collections, so you must "tell" Andromeda how to do it.
+
+The concept for iterating with the for each loop is an [emph]iterator[/emph]. Your collection type needs a [emph]getIterator()[/emph] method. This method must initialize and return an iterator. An iterator can be any type that provides the following two methods:
+[galaxy]
+bool hasNext(); //Returns true if there are still more elements to iterate over
+<COLLECTION_TYPE> next(); //Returns the next element to iterate over.
+[/galaxy]
+The [emph]hasNext[/emph] method should return true as long as there are more elements to iterate. A call to the [emph]next[/emph] method then returns the next element. If hasNext() is false, the behavior of subsequent calls of the next method are undefined. The <COLLECTION_TYPE> the next() method of the iterator returns must match the type of the variable in the for-each loop.
+
+Since the collection and the iterator need those certain methods (collection: getIterator(), iterator: hasNext(), next()) they must either be classes or enriched types.
+
+[hl=3]Using classes as iterator[/hl]
+
+The easiest method for iterating is having an iterator class for the collection. The getIterator() method then creates and initializes a new instance of this iterator and returns it.
+
+Since such an iterator has no more use after the for-each loop is finished, Andromeda has the following feature:
+[emph]If the iterator used in a for-each loop is a class, Andromeda will automatically delete it (call its destructor) after the loop is finished.[/emph] So you do not have to care about destroying class iterators after the loop, Andromeda will take care of that.
+
+However, there are sometimes scenarios where you have a class as iterator but do not want to destroy it after a for each loop. If you want an iterator that is not destroyed after being used in a for-each loop, add the [emph]@KeepAfterForeach[/emph] annotation to the iterator class.
+
+For examples about defining own collections with iterator, see the standard libraries in the a/collections/ folder. They all specify an iterator.
+
+[hl=1]Initializers[/hl]
+
+Andromeda supports initializers. These are parameterless and nameless functions that are automatically executed upon map init. 
+The syntax is lended from JAVA (also called static block):
+
+[lhead]initializer syntax[/lhead]
+[galaxy]
+static{
+	//do init tasks here
+}
+[/galaxy]
+
+Since such blocks are called implicitly and cannot be called explicitly, they cannot have any visiblity (or other) modifiers. Initializers can be placed wherever you could place a function (globally and inside of classes and enrichments). They behave like a void function, i.e. you can use statements and local variables and you can use "return;".
+
+The order in which static blocks are executed is undefined (this may be subject to changes in later versions) in most cases. The only ensured orderings are the following:
+[list]
+[*]Initializers in one type (class or enrichment) are called in the order of their appearance in the type
+[*]Global initializers (the ones that are not defined inside a type) are called in the order in which they appear in the source code
+[*]For class hierarchies: The initializers of a class are called before any initializer of subclasses.
+[*]Initializers are called after global variables have been initialized but before any triggers (including "on map init" triggers).
+[/list]
+
+
+
+[hl=1]Annotations[/hl]
+
+Andromeda allows you to add annotations to types, methods and functions, global variables and fields, and accessors. These will be just called annotatable elements or just elements in this chapter. Annotations are hints to the compiler to do something with the annotated element. Maybe there will be user defined annotations later, but not in this release.
+An annotation is written in front of the element that should be annotated and is started with an [emph]@[/emph] (java syntax). They are case sensitive and, in contrast to keywords, use camel case. If there is more than one annotation for an element, they are separated by whitespaces. There are different annotations that can be used for different elements.
+
+An example might make things clearer: The Inline annotation in front of a method or function tells the compiler to inline that method wherever it is called. The syntax will look like this:
+
+[galaxy]
+@Inline
+void functionToBeInlined(int i, string s){
+	//...
+}
+[/galaxy] 
+
+By convention, multiple annotations are separated by a new line. So the above example with another annotation added would look like this:
+
+[galaxy]
+@Inline
+@StringCall
+void functionToBeInlined(int i, string s){
+	//...
+}
+[/galaxy] 
+
+[hl=1]Enrichments[/hl]
+
+Besides the useful syntax additions, Andromeda also introduces Object Oriented Programming (OOP) to Galaxy. Enrichments are pseudo OOP constructs that emulate OOP syntax for Galaxy basic types. The reason for this is simple: For altering the hitpoints of a unit, one must write the following in Galaxy (assuming that u is the unit to be altered) (this is not real code since it is unknown how exactly the functions will look like, but it will be something like that):
+[galaxy]
+//Add 100 hitpoints to a unit
+SetUnitPropertyInt(u,UNIT_PROPERTY_HITPOINTS,GetUnitPropertyInt(u,UNIT_PROPERTY_HITPOINTS) + 100) [/galaxy]
+It is much more natural for object oriented programmers to just write (and much more convenient and faster):
+[galaxy]
+u.Hp+=100;[/galaxy]
+Enrichments allow you to do so.
+
+Basically an enrichment is a construct that adds methods, accessors and static methods / fields to a basic type. These methods/accessors/fields can then be accessed with OOP syntax, just like if the basic type was a class. Since it "enriches" the type with those methods it is called enrichment. Enrichments do NOT allow normal non-static fields, since there is no structure where those could be saved.
+
+[lhead]Basic Enrichment Syntax:[/lhead]
+[galaxy]
+enrich TYPE_TO_ENRICH{
+   //Methods, accessors and static field declarations
+}[/galaxy]
+
+There may be more than one enrichment for a type. For example there might be one standard enrichment for type unit from an Andromeda standard library which adds common methods like getting and setting a units hitpoints and another user-defined enrichments which contains unit enrichments that are only useful for the map where they are defined.
+
+[hl=2]Enrichment Methods[/hl]
+Enrichment methods are defined just like normal functions, but inside an enrich block. In those functions, you can use [emph]this[/emph] to refer to the object for which the method is called.
+
+[lhead]Example:[/lhead] getting a unit's name.
+[galaxy]
+enrich unit{
+   string getName(){
+      return GetUnitName(this); //this refers to the unit for which this method is called
+   }
+}
+}
+
+...
+//Now we can access a unit's name like this (u is a unit)
+string name = u.getName()
+[/galaxy]
+[hl=2]Enrichment Accessors[/hl]
+Accessor methods are a concept for example known from C#. They allow to mimic fields but are actually backed up by get and set methods.
+An accessor can be defined in an enrich block.
+
+[lhead]Syntax:[/lhead] accessors
+[galaxy]
+   TYPE ACCESSOR_NAME{
+      get {
+         //Get code
+         return TYPE;
+      }
+      set {
+         //Set code
+      }
+   }
+
+//--- usage: (assume u is a variable of the enriched type) ---
+//set:
+u.ACCESSOR_NAME = ...;
+//get:
+... = u.ACCESSOR_NAME;
+[/galaxy]
+When used, accessors have the same syntax as normal fields. Whenever they are used on the left side of an assignment (lValue), the set method is actually called. If they are used somewhere else, the get method is called.
+Accessors may also specify only a get or a set method. If they do so, a compile error is raised if the missing method is trying to be accessed.
+To separate accessors from real fields their name starts with a capital letter by convention.
+[lhead]
+Note about the get and set functions:[/lhead]
+[list][*]Both functions may use the [emph]this[/emph] keyword to refer to the object for which the method is called.
+[*]The get method must return a value of the type that was declared for the accessor (TYPE)
+[*]The set method is of type void
+[*]The set method contains an implicit parameter called '[emph]value[/emph]'. This parameter holds the value of the right side of the assignment (i.e. the value that should be assigned to the accessed pseudofield).
+[/list]
+
+[lhead]Example:[/lhead] accessor for a unit's hitpoints (Hp) (note that this example does not work since the final galaxy functions for getting/setting hitpoints are unknown at the moment)
+[galaxy]
+enrich unit{
+   int Hp{
+      get{
+         //'this' refers to the unit for which the accessor was called.
+         return GetUnitPropertyInt(this,UNIT_PROPERTY_HITPOINTS);
+      }
+      set{
+         //Here, 'value' holds the value to which the hitpoints should be set.
+         SetUnitPropertyInt(this,UNIT_PROPERTY_HITPOINTS,value);
+      }
+   }
+}
+...
+//--- usage (assume u is a unit variable) ---
+u.Hp = 100; //set
+int hp = u.Hp; //get
+u.Hp += 100; //get and set
+u.Hp++; //Of course, also increment and decrement are possible
+[/galaxy]
+
+[hl=2]Static fields, accessors and methods[/hl]
+
+Static fields and methods work exactly like they work for classes: They represent a class variable not bound to a specific object. Methods and accessors are defined to be static by prefixing their definition with the [emph]static[/emph] modifier. The same is true for fields. Fields have the same syntax than global variable declarations, but they are defined inside enrich blocks and prefixed with the static modifier.
+
+These static properties are accessed by prefixing the name of the property with the type that was enriched.
+
+[lhead]Example:[/lhead] enriching integer with static fields
+[galaxy]
+enrich int{
+   //Static field
+   static const int MAX = 2147483647;
+
+  //Static method
+   static int getZero(){
+      return 0;
+   } 
+
+   //Static accessor (only gettable)
+   static int MeaningOfLife{
+      get{ return 42; }
+   }
+}
+...
+//--- usage ---
+int i = int.MAX //Field usage
+int j = int.getZero(); //Method usage
+int k = int.MeaningOfLife; //Accessor usage
+[/galaxy]
+
+So static properties are just global variables that belong to the enriched type. For example, the MAX attribute fits good to the type int. It could also be defined for fixed.
+
+[hl=2]Visibility in Enrichments[/hl]
+Enrichments behave similar to classes when it comes to visibility:
+All their members can be declared [emph]public[/emph], [emph]private[/emph] or [emph]protected[/emph] by prefixing them with the respective keyword.
+
+[lhead]Visibility semantics:[/lhead]
+[list][*][lhead]public:[/lhead] The property is visible everywhere.
+[*][lhead]protected:[/lhead] The property is only visible in all enrich declarations of the enriched type
+[*][lhead]private:[/lhead] The property is only visible in the enrich block in which it was defined. Even other enrich blocks of the same type cannot access it.
+[*][lhead](no prefix):[/lhead] If the enrich block was defined in a specific package, the field can only be accessed by code in the same package. If it was not declared in a specific package, it is considered [emph]public[/emph].
+[/list]
+Note that [emph]packages[/emph] is a not yet fully implemented concept, so at the moment, all non-prefixed properties are considered to be public. But it is better coding style to access all really public properties with the public keyword.
+
+[hl=1]Classes[/hl]
+
+While enrichments just added OOP syntax, classes add real OOP behavior. To cut things short, the syntax and semantics were 90% lended from JAVA. Andromeda supports all common features of classes, especially dynamic allocation, inheritance and data encapsulation (visibility).
+
+At the moment, since no dynamic allocation exists, classes are backed up by arrays of structs and thus have a maximum instance limit. However, we are working on an own allocation method that manages an emulated heap. While the array instanciation has many drawbacks, it has the advantage that allocation and deallocation is extremely fast ( O(1) with low constant time). The instance limit is shared among a hierarchy of classes. I.e. if you have class B and C which extend class A, and A has a 100 instance limit, then there may be no more than 100 instances of A, B or C concurrently. 
+
+[lhead]Syntax:[/lhead] class definition
+[galaxy]
+//Simple classdef (128 instance limit).
+class Classname1{
+	//member definitions
+}
+
+//Classdef with specified instance limit (also constant variables are allowed here)
+class Classname2 [200]{
+	//member definitions
+}
+
+//Extended class, no instancelimit is allowed here since it inherits the limit from the superclass
+class Classname3 extends SuperClassName {
+	//member definitions
+}
+
+//Classes support visibility modifiers
+public class Classname4{
+	//member definitions
+}
+
+[/galaxy]
+As you see, you can specify an instance limit behind the name of a top class (a class which does not extend another class). Classes that extend another class cannot specify their own instance limit, they share the instance space with their top class. If you do not specify an instance limit on a top class, 128 is as default at the moment (this value might become changeable in the config file).
+
+Note that currently Galaxy allows only about 2 megabytes of memory to be used by Galaxy variables, so don't set your instance limit too high. We hope that blizzard will increase this value drastically.
+
+Classes are implicit pointers (or so-called references). That means, in contrast to structs, that you can pass them and return them to/from a function and assign one class variable to another. You don't need pointers for this. To be said again: [emph]Andromeda discourages the use of pointers unless they are really necessary. Classes offer a syntax which makes pointers obsolete[/emph].
+
+Since classes are implicit pointers, a class variable can be [emph]null[/emph]. In fact, they are initialized with this value. If a class is null, it is harmful to access one of its members (the thread will probably crash with a null pointer error).
+
+By convention, class names always start with a capital letter.
+
+[hl=2]Static members[/hl]
+
+Static class members (fields, accessors, methods) work exactly as they work for enrichments. They are prefixed with the static keyword and are accessed by prefixing their name with the classname. If you want to create a purely static class that contains only static fields (known as utility class), you can prefix the class with the [emph]static[/emph] keyword. A static class cannot contain non-static members or constructors. It cannot extend any class and cannot be extended by any class and cannot implement any interface. No instances can be created for it (and Andromeda produces no de/allocation code for it). A candidate for such a static class would be [emph]Math[/emph] containing mathematical functions.
+
+[lhead]Example:[/lhead] static members
+[galaxy]
+public static class Math{
+
+	//Static constant field
+	public static const fixed PI = 3.14159 
+
+	//Calculate square root
+	public static fixed sqrt(fixed f){...}
+	
+	//error! static classes may not contain non static members
+	public void a(){}
+
+}
+
+...
+
+//Usage
+fixed pi = Math.PI;
+fixed s = Math.sqrt(34);
+[/galaxy]
+
+Andromeda encourages you to arrange all your functions as static methods of classes (many OOP languages require you to do so, as they support no standalone functions). This allows for encapsulation and arranges methods that belong together.
+
+[hl=2]Inheritance[/hl]
+
+As already shown a class can extend ONE other class by adding 'extends CLASS_TO_EXTEND' behind the class name in its definition. This is called inheritance. For those who are unfamiliar with inheritance: The class extending class (subclass) inherits all non-private fields / methods and accessors from the class it extends (the so-called superclass). So it can use all members and add new ones.
+
+If class may be declared final by prefixing its name with the [emph]final[/emph] keyword. A final class cannot be subclassed.
+
+A class can be implicitly cast to its superclass or any superclass of the superclass (so-called implicit upcasting). A class can be explicitly cast to any class that is below it in the inheritance hierarchy with the normal C-syntax cast (as mentioned above in the explicit casting chapter) (so-called explicit downcasting). Note that Andromeda does not check at the moment if such an explicit downcast is correct, it just does it. So be careful when downcasting. Downcasting to the wrong type might lead to unpredictable results. Andromeda will soon check during runtime if the cast is possible.
+
+[lhead]Example:[/lhead] messing with downcasts and the final keyword
+[galaxy]
+public class A{}
+public class B extends A{}
+public final class C extends A{} //C may not be subclasses
+public class D extends C{} //Error, C is final!
+
+public void castExample(){
+	B b = new B(); 	//Constructor syntax, more about that in the chapter about constructors
+	A a; 
+	C c; 
+	a = b; 			//Possible and safe, implicit upcast
+	c = b; 			//Not possible, type error! (C is no superclass of B)
+	c = (C)b; 		//Not possible, type error! (B is also no superclass of C, so even explicit casting is forbidden here)
+	b = (B)a; 		//Possible, explicit downcast
+	b = (B)new A(); //Possible but will maybe mess up during runtime since A is no B.
+}
+[/galaxy]
+
+[hl=2]Visibility[/hl]
+
+All properties (accessors, fields and methods) of a class, no matter if they are static or not can be prefixed with a visibility modifiers. These have the following semantics for class members:
+
+[lhead]Visibility semantics:[/lhead]
+[list][*][lhead]public:[/lhead] The property is visible everywhere.
+[*][lhead]protected:[/lhead] The property is only visible in this class and all classes that extend it.
+[*][lhead]private:[/lhead] The property is only visible in this class. Even extending classes cannot access it.
+[*][lhead](no prefix):[/lhead] If the class was defined in a specific package, the field can only be accessed by code in the same package. If it was not declared in a specific package, it is considered [emph]public[/emph].
+[/list]
+
+[hl=2]Non static members[/hl]
+
+The "real" instance methods, fields and accessors of a class are the instance ones (the ones not prefixed with static). Just like for enrichments, these are called by prefixing them with an instance of the respective class and contain an implicit this variable which points to the instance for which the method/field/accessor was called.
+
+[hl=3]Fields[/hl]
+
+Classes may have fields, which are declared just like global variables but inside a class definition. If a class extending another class defines a field with the same name as a field in the superclass, the field in the superclass is no longer visible. It is "shadowed" by the field in the subclass. 
+
+Just like global variables, fields can be initialized in their declaration. If they are, every new instance will be initialized with these values. However, if they are [emph]NOT[/emph] initialized, they have, in constrast to other variables in Galaxy, an undefined value. This means you must make sure that a field was written somewhere before you read from it the first time. The easiest way is do initialize it in its declaration.
+
+Just like global variables, fields may be constant. If they are, they must be initialized in their definition and may not be changed afterwards.
+
+[lhead]Example:[/lhead] Fields
+[galaxy]
+public class A{
+	int x; //Undefined value for new instances!
+	int y = 5;
+	A a; //Also classes are possible.
+	int[4]; //And arrays too, of course
+}
+public class B extends A{
+	string x; //x from class A is shadowed
+	
+	public void e(){
+		string s = x;
+	}
+}
+[/galaxy]
+
+
+[hl=3]Methods and Accessors[/hl]
+
+Instance methods behave different to fields when considering inheritance: If a non-static method is visible for a subclass and the subclass defines a method of the same name and signature (called overriding), then the method must have the same return types and the method of the subclass may not be 'less visible' than the super method (i.e. if the super method was protected for example, the submethod may not be private). In addition, the method becomes polymorph (or virtual). This means that whenever the method is called, the actual class of the object for which it is called decides which version is called.
+[emph]WARNING: This is not true at the moment! We found no efficient way to do virtual calls yet (we still hope that function pointers will work one day), so at the moment, calls are not virtual and it is decided at compile time which method is called[/emph]
+
+Note that overriding is not possible when one of both methods is static. If you have a static with the same signature name as a non-static in a superclass, an error will be raised.
+Also note that for static methods, polymorphism isn't possible. They rather behave like fields: If there are two static methods with the same name and signature, the one in the superclass is 'shadowed' and thus not accessible in the subclass.
+
+[lhead]Example:[/lhead] Polymorphism
+[galaxy]
+public class A{
+	int x;
+
+	int fooBar(){ return this.x; } //We can refer to this here, we could also just write x
+	public void barFoo(){}
+	public void foo(){}
+	public static void bar(){}
+}
+public class B extends A{
+	int fooBar(){ return 1; } //Override, okay
+	protected void barFoo(){} //Error, visibility reduced!
+	public int foo(){ return 1;} //Error, return type changed
+	public void bar(){} //Error, one of both methods is static
+}
+
+//Usage
+public void example(){
+	A a = new B(); //Implicit downcast
+	//WARNING: THIS EXAMPLE DOES NOT WORK YET SINCE POLYMORPHISM AIN'T POSSIBLE YET. 
+	//I WOULD BE 0, NOT 1, IN THE CURRENT VERSION.
+	int i = a.fooBar(); 
+	//Even if a is of type A, the method for type B is called since it is an instance of this type.
+	//So i is now 1, not 0
+}
+[/galaxy]
+
+
+A method can be declared final. If it is, no subclass may override this method. A method may also be declared override. If it is, the compiler ensures that it actually overrides a method in the superclass. If there is no method with this name and signature in a superclass, a compile error is raised. This is useful to prevent you from typing mistakes.
+
+[lhead]Example:[/lhead] Final and override
+[galaxy]
+public class A{
+	int fooBar(){ return 0; }
+	final void barFoo(){}
+}
+public class B extends A{
+	int override fooBar(){ return 1; } //Override, works
+}
+public class C extends A{
+	int override foobar(){ return 1; } //Error, no method to override (spelling mistake, bar with lower case b)
+	void barFoo(){} //Error, barFoo of class A was declared final
+}
+[/galaxy]
+
+Accessors behave just like methods, so they are not explicitly explained here. Just check the chapter for accessor in enrichments to see their syntax.
+
+[hl=2]Constructors and Allocation[/hl]
+
+Constructors are methods called whenever a new instance of a class is created. In them, initialization tasks can be executed. The syntax and semantics are very exactly the ones of java. Constructos are declared just like methods but they have the same name than the class and have no return type specified. Inside the constructor you can already refer to the
+ [emph]this[/emph] parameter. A new instance is then created by calling one of a class's constructors by using the [emph]new[/emph] keyword, followed by the class name and maybe parameters. 
+ 
+ 
+[lhead]Example:[/lhead] Constructorsyntax and deallocation
+[galaxy]
+public class A{
+	int x = 10;
+	
+	//(1) parameterless constructor
+	public A(){
+		//Do init
+		this.x = 6;
+	}
+	
+	//(2) parameter constructor.
+	public A(int x){
+		//Works, the parameter x shadows the field x, so this assignment makes sense
+		this.x = x; 
+	}
+}
+
+//usage:
+A a1 = new A();  //Invokes (1)
+A a2 = new A(5); //Invokes (2)
+delete a1; //Destroys the instance to which a1 points.
+//Do not use a1 afterwards anymore unless you assign another instance to it.
+[/galaxy]
+
+If a class does not specify a constructor, it always has the implicit default constructor [emph]public CLASSNAME(){}[/emph] which takes no parameters an does nothing (despite creating a new class object, of course). Note that if fields have initilizations in their definitions, these are executed [emph]before[/emph] the constructor body. So in the above example, the x = 10 initialization would be overriden by the inits in the respective constructor.
+
+[hl=3]Explicit constructor invocation[/hl]
+
+In a constructor, you can invoke another constructor of the same class with the [emph]this[/emph] keyword used as method name or of the super class by using the [emph]super[/emph] keyword as method name. However, this explicit constructor invocation must be the first statement in your constructor. No other statement, even no variable declaration, may be above it!
+
+If you extend a class that has no parameterless constructor, you [emph]have to[/emph] invoke one of the super constructors explicitly, since the superclass cannot be created without parameters.
+
+[lhead]Examples:[/lhead] Explicit constructor invocation errors
+[galaxy]
+//This class has no parameterless constructor.
+public class A{
+	public A(int i){...}
+
+}
+
+public class Error1 extends A{
+	//Error! This class must specify a constructor, 
+	//since the superclass has no parameterless default constructor
+}
+
+public class Error2 extends A{
+	
+	public Error2(){
+		//Error! The constructor must explicitly invoke a constructor,
+		//since the superclass has no parameterless default constructor
+	}
+	
+	public Error2(int i){
+		i = i * 3;
+		super(i);
+		//Error, a constructor invocation must be the first statement of a constructor
+	}
+
+}
+[/galaxy]
+
+[lhead]Examples:[/lhead] Correct Explicit constructor invocation
+[galaxy]
+//This class has a parameterless constructor.
+public class A{
+	public A(){...}			//(1)
+	public A(int i){...}	//(2)
+}
+
+public class Correct1 extends A{
+	//has an implicit parameterless constructor
+	//which implicitly calls the parameterless constructor of A
+}
+
+public class Correct2 extends A{
+	
+	public Correct2(){
+		//Implicitly calls the parameterless constructor of A
+	}
+	
+	public Correct2(int i){
+		this(2,i); //Explicitly call of other constructor (3)
+	}
+	
+	public Correct2(int i, int k){ //(3)
+		super(i);	//Explicit call of superconstructor (2)
+	}
+
+}
+[/galaxy]
+
+[hl=3]Initialization Order[/hl]
+Calling a constructor of a superclass implicitly first initializes the fields of the superclass. Initialization is done from top to bottom, so before the fields of a class extending another class are initialized the fields of the superclass are initialized and the constructor of the superclass is executed.
+
+[lhead]Example:[/lhead] Initialization order
+[galaxy]
+//This class has a parameterless constructor.
+public class A{
+	int x = 5;	//(1)
+	public A(){
+		x = 6;	//(2)
+	}			
+}
+
+public class B extends A
+	int y = 6;	//(3)
+	public B(){
+		y = 7;	//(4)
+	}
+}
+
+new B(); //This executes the statments from 1-4 in this order.
+//First the superclass is inited, then constructed
+//Then the subclass is inited, then constructed
+[/galaxy]
+
+[hl=2]Destructors and Deallocation[/hl]
+
+Andromeda has no garbage collection and the removal of pointers in Galaxy took us the last chance to implement one, so you have to delete each class instance you created with the [emph]new[/emph] keyword, once you don't need it anymore. This will free its memory. If you do not delete your instance, you might run out of memory once a class hierarchy reaches the instance limit defined in its topmost class.
+
+A class instance is destroyed with the [emph]delete[/emph] keyword, followed by the instance to destroy.[b][color=red]Do not use an instance anymore after it was destroyed, you will make mess in the memory and produce unpredictable behavior![/color][/b]
+
+Make sure that you do not use delete twice on an instance (so called "double free"). Andromeda will detect double frees and raise an error.
+
+Andromeda allows you to specify destructors with the C++ syntax. I.e. a destructor is defined in the same way as a constructor with a tilde in front of the function name. A destructor is called whenever the class is deleted, it cannot be called explicitly. A class may only have one destructor which takes no arguments (since you cannot hand arguments to the delete statement).
+
+[lhead]Example:[/lhead] Destructor and delete syntax
+[galaxy]
+public class A{
+
+	public ~A(){
+		//destructor, do cleanup stuff here
+	}
+}
+
+//Deallocation usage:
+A a = new A();
+delete a; //Implicitly calls the destructor and deallocates the class
+[/galaxy]
+
+[hl=3]Destructor visibility[/hl]
+A class is not required to specify a destructor. You can restrict deallocation by assigning a visibility to the destructor of the class: The destruct keyword can only be called from where the destructor of the class to be destroyed would be visible. 
+
+However, note the following exception for destructors: For derived classes, destructors [emph]may not change visibility[/emph]. So the topmost constructor defines the delete visibility of the class hierarchy. If the topmost class does not define a destructor, it is assumed to be public.
+
+Even this might seem a strange restriction on first sight, it is necessary because destructors are called virtually and everything else would be a safety leak.
+
+[hl=3]Destructor execution semantics[/hl]
+
+For class hierarchies, the destructors of the classes are called from bottom to top, once an object is deleted. You do not (and cannot) call another destructor explicitly. I.e. first the subclass destructor then the topclass destructor. Once all destructors of the hierarchy are executed, the object is deallocated, i.e. its memory is freed and can be reused by newly created objects.
+
+Destructors are called virtually, so you can always be sure that the correct destructors for a subclass are called, even if it is stored in a variable of the top class.
+
+
+[lhead]Example:[/lhead] Destructor and delete syntax
+[galaxy]
+public class Top{
+
+	public ~Top(){
+		System.print("Top");
+	}
+}
+
+public class Bottom extends Top{
+	
+	public ~Bottom(){
+		System.print("Bottom");
+	}
+}
+
+//Usage:
+Top a = new Top(); 
+Top b = new Bottom(); //Note that we store a Bottom in a Top variable
+
+delete a; //(1) Will display "Top"
+delete b; //(2) Will delete "Bottom" and afterwards "Top"
+
+delete b; //ERROR! Double free
+[/galaxy]
+
+So as you see in case (2), the Bottom destructor is called before the Top destructor and destructor calls are virtual, so even if b is of type [emph]Top[/emph], the correct destructor of [emph]Bottom[/emph] is called, since the runtime object type is Bottom.
+
+[hl=2]Accessing shadowed field and overridden methods[/hl]
+
+As stated in the respective chapters, Andromeda allows to shadow class fields and override methods and accessors. Sometimes, you do want to access the shadowed properties in the subclass. An example would be a toString function that calls the (overridden) toString function of the top class and appends something to it.
+Shadowed or overridden properties can be accessed inside of classes by prefixing the access with the [emph]super[/emph] keyword.
+
+Note that prefixing a method call with super makes it non-virtual even if the method itself was virtual. I.e. the called method is than chosen at compile time (exactly the one of the super class).
+
+[lhead]Example:[/lhead] Using super to access shadowed properties
+[galaxy]
+public class A{
+
+	public string toString(){
+		return "abc";
+	}
+	
+	string x = "123";
+}
+public class B extends A{
+	string x = "xyz"; //x from class A is shadowed
+	
+	public override string toString(){
+		return super.toString() + super.x + x; //Returns abc123xyz
+	}
+}
+[/galaxy]
+
+[hl=1]Generic classes[/hl]
+
+Generic classes are known from many programming languages. Their most common usage are container and collection types. They allow to create parameterized version of class. The parameters are types (in this case classes) themselves. A short example will make everything clearer: A list class. A list is an ordered set of elements where an element can be inserted and removed at specific positions. But what do we want to store in such a list? For some applications we might want make a list of units, for some others we want list of strings and so on… I think you all agree with me that it would be cumbersome to write a new list class for every type we want to store in it.
+The next idea is making a list that can store everything. However, this idea is even worse. First, it will remove all type checking. You never know what types are actually in the list. Next, it is just not possible in galaxy to store any data type in a field, you have to decide for a type.
+So here is the third and best idea: We write a class and replace the actual type that should be contained in the list by a so called type parameter. When we then need a list, we tell the compiler of which type the parameter should be for this instance. The cumbersome work is now done by the compiler. The type parameters are written in < > brackets.
+
+Here is the code for our generic list:
+[galaxy]
+class List<T>{ //Here we tell the parameter that list can be parameterized with a type parameter T
+
+	
+	void add(T toAdd){ // adds an element to the list
+		//...
+	}
+
+	T getFirst(){ //gets the first element of the list
+		//...
+	}
+}
+[/galaxy] 
+
+So as you see, the methods add and getFirst take and return a value of type T, respectively. T can be any class type.
+
+Here is how such a list can now be used:
+[galaxy]
+static{
+	//we create a list of type Unit (unit is a class)
+	List<Unit> unitList = new List<Unit>();
+
+	unitList.add(new Unit()); //works fine
+	unitList.add("abc"); //Type error! A string is no Unit
+
+}
+[/galaxy]
+
+So basically writing and using generic classes is very easy:
+
+[lhead]Writing generic classes:[/lhead]
+
+Write a normal class but add type parameters you want for your class in < > brackets, separated by commas, behind the class name.
+Inside your class, you can use the type parameters wherever you could use a normal type.
+
+
+[lhead]Using generic classes:[/lhead]
+
+Just like in the example above, just suffix the type with the types you want as parameters. If there is more than one parameter, it is separated by commas.
+
+[emph]Note that you can only use classes as type parameters right now. If you want a list of a primitive type, create a wrapping class.[/emph] 
+
+[hl=1]Type aliases and extensions[/hl]
+
+Type aliases and extensions use the typedef keyword already known from galaxy to create new types from existing ones.
+
+[hl=2]Type aliases[/hl]
+Type aliases are already known from galaxy. There they are done with the typedef statement and just define an alias for a type, i.e. another name.
+
+[lhead]Galaxy typdef syntax[/lhead]
+[galaxy]
+typedef TYPE ALIAS;
+
+//example:
+typedef int InTeGeR;
+[/galaxy]
+
+For compatibility, these aliases are also possible in Andromeda. However, Andromeda also offers another syntax for doing such an alias.
+
+[lhead]Andromeda typdef syntax[/lhead]
+[galaxy]
+typedef ALIAS is TYPE;
+
+//example:
+typedef InTeGeR is int;
+[/galaxy]
+
+Now you might ask. "Why two syntaxes for the same thing. That is just bad style and ugly"
+
+But the answer is very simple: The first syntax just doesn't fit with the class syntax from java: Here it is also first the name of the type to be defined and then any extensions. In addition java uses keywords in type declarations (extends, implements) to specify how the new type is related to the others. Since an alias [emph]IS[/emph] exactly the aliased type, the keyword is describes the relation between the alias and the type very precisely. It also fits better to the syntax of the type extensions, which will be explained in the following section.
+
+Type aliases are discouraged in most situations as they just generate names for types that nobody has heard yet. Creating an alias for int is a very bad idea in Andromeda. If you now say, that things like "size_t" in C are useful aliases for int, then read on to the type extension section. Type extensions offer stronger typed aliases for a basic type. The situations where type aliases are encouraged are when you have very long types. An example are function pointers.
+
+[lhead]Example: Encouraged use of typedefs[/lhead]
+[galaxy]
+//If you have many event handling functions like that in your program with
+//the same signature, aliasing them will make your code better readable
+typedef EventHandler is function<bool(int,int,int,int)>
+[/galaxy]
+
+Note that an alias behaves exactly like the aliased type. For example, all enrichments for the alias are also valid for the aliased type and vice versa.
+
+[hl=2]Hierarchic Type Extensions[/hl]
+
+Type extension allow are somehow the typesafe equivalent of type aliases but they can be even more. Let's start with the syntax.
+
+[lhead]Type extension syntax[/lhead]
+[galaxy]
+typedef T1 extends T2;
+[/galaxy]
+
+So as you see, the syntax is similar to type aliases but the keyword "[emph]is[/emph]" is replaced by the keyword "[emph]extends[/emph]". The extended type (T2) is also called the [emph]supertype[/emph]. The exending type is called the [emph]subtype[/emph]. And again, these keywords are chosen to express the relationship the newly defined type (T1) will have with the old type (T2):
+
+The extends typedef is similar to the extends relation of classes: Whereever a function or variable takes a value of the supertype, you can also specify a value of the subtype. In addition, the subtype "inherits" all enrichment methods and accessors of the supertype. For casting from a supertype to a subtype, you need explicit casting.
+
+Example:
+[galaxy]
+typedef player extends int;
+
+player p = (player)3; //We cast from super to subtype, so we need explicit casting
+int i = p; //Here we can use implicit casting
+
+enrich int{
+
+	int getMe(){ //(Useless method)
+		return this;
+	}
+}
+
+enrich player{
+
+	player getPlayer(){ //(Also Useless)
+		return this;
+	}
+}
+
+void foo(){
+	p.getMe(); //Works! extensions inherit enrichments from their supertype
+	p.getPlayer(); //Works, p is of type player and player was enriched with that method
+	i.getPlayer(); //ERROR! int does not have the getPlayer method	
+}
+
+
+[/galaxy]
+
+
+Extensions may use the operators of their base type with the same semantics. For example, if a type extends int, it can use + * / % … . The result of a binary operation with extensions is the "lowest" common supertype of the types of the two operands: The type hierarchy is walked up until a common supertype is found for the operands. Note that a type is considered its own supertype for this purpose. For example, adding a player (from the example above) and an int will result in a value of type int because, int is the common supertype of int and player. Adding two players will result in a value of type player.
+
+[lhead]Example: Type inference for extensions[/lhead]
+
+[galaxy]
+typedef A extends int;
+typedef B extends A;
+typedef C extends int;
+
+static{
+	A a = (A)1;
+	B b = (B)2;
+	C c = ( C ) 3;
+	int i = 4;
+
+	a + a; //Result is of type A, since A is a supertype of itself
+	a + b; //Result is of type A, since A is the lowest sypertype of itself and B
+	a + c; //Result is of type int, since int is the common supertype of A and C
+	i + b; //Result is of type int, since int is its own supertype and the supertype of B
+
+}
+[/galaxy]
+
+Note that [emph]only basic types and type extensions[/emph] can be extended. Use real inheritance for classes.
+
+Also note that, just like with classes, you may overwrite a method in an enrichment of a subtype. In the upper example, you could overwrite getMe() in the enrichment of type player. However, no dynamic dispatching (virtual methods) is done for type extensions, since no real type information is available for type extensions at runtime. That means, in the generated code, player and int are totally the same. Only at compile time the typechecks are done and methods to invoke are chosen.
+
+[lhead]Example for overwriting extension methods:[/lhead]
+[galaxy]
+typedef player extends int;
+
+enrich int{
+	int getMe(){ //(1)
+		return this;
+	}
+}
+
+enrich player{
+	player getMe(){ //(2)
+		return this;
+	}
+}
+
+void foo(){
+	player p = (player)3;
+	p.getMe(); //(2) is called here since p is of type player
+	int i = p;
+	i.getMe(); //(1) is called here
+}
+[/galaxy]
+
+Even if a variable of type player was assigned to the variable i, this type information is immediately lost, since i is of type int. So (1) is called at the bottom, not (2). This is in contrast to classes, where the upper example would have called (2) if i contains an instance of type player (called dynamic dispatching).
+
+[hl=3]Disjoint type extension[/hl]
+
+A type extension is declared distinct (in contrast to hierarchic type extensions, which were explained above), by replacing the extends keyword with the [emph]uses[/emph] keyword. This keyword expresses that the new type [emph]uses[/emph] on the old one (it will be compiled to it) but has basically nothing to do with it. It is rather a disjoint data type, separated from the type which it uses.
+
+[lhead]Disjoint extension syntax[/lhead]
+[galaxy]
+typedef player uses int;
+[/galaxy]
+
+While the hierarchical typedef with extends allows to cast implicitly from player to int, the disjoint typedef does not. Player and int are different types and can only be cast explicitly from one to another. In addition, they [emph]do not[/emph] share enrichments. Enriching int will not enrich player and vice versa. Even operators defined for int are no longer defined for player, so adding to variables of type player will raise an error.
+
+So actually player has become a totally new type. Internally, it is still an int, but is only linked via explicit casting to it.
+
+[lhead]Why to use extensions and when to use which?[/lhead]
+
+Some of you might now honestly say: "Gex, you wanted to create a more or less easy language like java but you through in thousands of extra constructs and made it more like C++ (concerning complexity)."
+I get your point, but believe me, I am a guy that loves simple languages, but extensions where just necessary! Blizzard made them necessary because they introduced data types that are just ints but are semantically totally different from it. Namely: player and floating texts (also known as texttags) and some others.
+This makes galaxy very unsafe at some points. What has a player to do with an int, despite from being one, internally. The answer is of course nothing! It makes neither sense to add two players, nor to call another mathematical function with a player as argument. But it is totally possible in galaxy. You are even not warned when you do it. Tricking the typechecker is just bug prone, so there needed to be an option to create own subtypes of int and other basic types. Now, we can define an API for players which internally uses still the old ints but uses only the new type player as interface.
+
+[lhead]But when to use hierarchic and when distinct type extensions?[/lhead]
+The answer is very simple: If the new type has still something in common with the old one, use "extends"(hierarchic) otherwise "uses"(disjoint).
+
+[lhead]Examples for useful disjoint extensions:[/lhead]
+[list]
+[*]player: a player is no int!
+[*]texttag: also a texttag is far away from being an int
+[/list]
+
+[lhead]Examples for useful hierarchic extensions:[/lhead]
+[list]
+[*]size_t (as known from C): A size is still a number and it is for example reasonable to add two sizes
+[*]date: If a date is just encoded as an int (Unix time for example), making an own type that still has int operations is a good idea
+[/list]
+
+[hl=1]Packages[/hl]
+
+[hl=2]Declaring Packages[/hl]
+
+Packages are a concept for packaging code together and granting another visibility layer. By default, an Andromeda code file belongs to no package. However, you can add it to a package by writing a package declaration onto its top.
+
+[lhead]Example:[/lhead] Package declaration
+[galaxy]
+package a.b.c;
+
+...//file content
+[/galaxy]
+
+The package declaration must be the first code of the file (only comments and preprocessore directives may be above it). In this example, the file belongs to the package [lhead]a.b.c[/lhead]. Packages behave hierarchically. The hierarchy is denoted by the dots, so this file actually belongs to the package c, which is a subpackge of package b, which is a subpackage of package a. c is considered a subpackage of b and a, b is considered a subpackage of a. For package names, only characters are allowed and packages should always start with a lower case letter. In addition, if you build your own package hierarchy, the top package of it should have a unique name (for example your nick, if it is rather unique), that it doesn't collide with packages you import from libraries. Note that the top package name [emph]a[/emph] (for Andromeda) is reserved. All packages of the standard library that is shipped with Andromeda are subpackages of the [emph]a[/emph] package.
+
+So a good name for the top of your package hierarchy would be for example (Assume your nick is gex and your map you make the packages for is called "Castle Fight" (abbreviated by "cf")):
+[galaxy]
+package gex.cf. ...
+[/galaxy]
+
+[hl=2]Influence of Packages[/hl]
+The last section stated how to declare your files to belong to a specific package. But what is that for? There are two things:
+[list=1]
+[*]Conventions for placing library files in the appropriate folder
+[*]Package visibility[/list]
+The first point will be mentioned in the chapter about libraries, the second point is mentioned here:
+
+As soon as you declare a file to belong to a package, all definitions (global variables, functions, classes, methods, accessors, fields, enrichments and interfaces) that are not explicitly prefixed with a visibility modifier (public, private or internal), become "hierarchy internal". 
+In contrast, as long as your file does not belong to a package, all definitions without a visibility modifier are implicitly public, so you can use them everywhere (to be compatible with Galaxy, where no prefix also means public).
+If you want to change the visibility of a definition, prefix it with a visibility modifier. Here is the semantics for the different modifiers:
+[list]
+[*][lhead]public[/lhead] Visible everywhere.
+[*][lhead]private[/lhead] Only visible in the file where it is defined (other semantics if inside a class or enrichment!).
+[*][lhead]internal[/lhead] Only visible in all files of the same package (Compile error if used in a file that has no package declaration).
+[*][lhead]-no prefix-[/lhead](hierarchy internal) Visible in all files of the same package and subpackages.
+[/list]
+With these modifiers, you have the perfect control over your visibility. Here are hints for arranging your files into packages and choosing visibility for your definitions:
+
+[list]
+[*]Put all classes/files that belong together into the same package.
+[*]If a set of files has a special job inside of your package, you can make a subpackage out of it.
+[*]Prefix only the definitions that should be visible for other packages as public. By doing this, you ensure that the users of your package only access the interface you want your package to have and do not missuse internal things of your package.
+[/list]
+
+[hl=1]Libraries[/hl]
+
+Libraries are reusable Andromeda files. They are stored in a special folder (normally the /lib folder inside Andromeda's installation folder) and can be used by any map by just including them. So where is the difference to normal Andromeda files which you can also include? The biggest difference is the following one: [emph]Unused functions and fields from library files are not copied into the map.[/emph] That means even if you include a 20,000 lines library and then only use function from it, then only the one function is copied into your map, not the whole 20,000 lines. This allows your map to stay small and only contain the library code you really need.
+
+Andromeda comes with a large standard number of standard libraries (all found in the ./lib/a folder) that contains classes / enrichments for all tasks common to many maps, like:
+[list]
+[*][lhead]Data structures:[/lhead] Lists, trees, priority queues...
+[*][lhead]Utility classes:[/lhead] Math, text formating, string handling
+[*][lhead]Enrichments:[/lhead] Enrichments for all basic types that allow object oriented access to native functions (unit.hp for example)
+[*][lhead]Wrapper classes for all native types:[/lhead] If you made maps for Warcraft 3, you surely often wrapped the basic type unit by a struct to add fields to it. Those classes do the core work for you, just extend them with your own subclasses, then you can attach fields to all native types.
+[/list]
+
+[emph]If you can write clean code and feel some standard library file is missing, you are always welcome to propose your library to be added to the set of standard libraries shipped with Andromeda. If you want to do so, check out the chapter about writing libraries.[/emph]
+
+
+[hl=2]Using libraries[/hl]
+
+Andromeda notices a library include by a slightly different syntax. Instead of surrounding the file you want to include with " ", surround it with < >.
+
+[lhead]Example:[/lhead] Library includes.
+[galaxy]
+include "FILE_NAME" //Normal include, searched in the map file itself and in the folder of the map.
+include <a/utility/Math> //Library include, searched in the lib folder
+[/galaxy]
+
+You can also use the [emph]import[/emph] syntax for library includes, it looks slightly different: The path seperators ( / or \ ) are replaced by dots. In addition, imports must be the first statements in a file (after the package declaration), unlike includes, they cannot stand anywhere in the file.
+
+[lhead]Example:[/lhead] Library imports
+[galaxy]
+import a.utility.Math; //Includes the file ./lib/a/utility/Math.a
+
+void a(){}
+
+import ...; //Error, imports must be at the top of a file
+[/galaxy]
+
+Now you might ask: why the hell two syntaxes for including libraries? Well, the first one is c style and to be compatible with Galaxy, the second one is JAVA style and you are encouraged to use this whenever possible. In rare cases, the restriction that imports must be the first statement of a file is obstructive, then you can use the include version.
+
+While the restrictions on imports seem obstructive at first sight, they ensure that your files are cleaned up. In addition, the syntax with the dots reflects the package structure more than the one with the slashes (since for libraries, the package usually matches the path, check next chapter for more information).
+
+[emph]So use imports whenever possible, do not use includes for library inclusions.[/emph]
+
+After you have imported the library, you can use all of its content.
+
+[hl=2]Writing own libraries[/hl]
+
+You can write libraries for you own projects or propose them to be added to the set of standard libraries. However, you should keep some standards described in this section.
+
+[hl=3]Library package structure[/hl]
+
+These are conventions about libraries and their package structure:
+[list]
+[*]A library file should always have a package declaration. 
+[*]Its position in the lib folder should match the package declaration (packages get replaced by folders, subpackages by subfolders).
+[*]Libraries should be object oriented, i.e. classes, enrichments and interfaces. No library should contain global variables or global functions.
+[*]Only one class or enrichment per file. Of course, the file may contain smaller classes related and only used by the class (for example, the file for a LinkedList class could also contain the LinkedListElement class)
+[*]Name the file like the class / interface it contains (with the .a suffix for Andromeda files of course).
+[*]If it contains an enrichment, name it like the enriched type, prefixed with an uppercase E for enrichment and make the first letter of the enriched type uppercase (EInt for example). You can also add some information what this enrichment actually does. For example, if you do an enrichment of class unit that adds tower defense functions for towers to it, you can name it EUnitTower for example.
+[*]Set visibility correctly! Make only thoses definitions public that should be accessed by the user of the library, everything else should stay hidden in the package.
+[/list]
+
+Here is a naming examples, following the conventions:
+The class [emph]Math[/emph] in the package [emph]a.utility[/emph] (the math standard utility class) is placed in a file "Math.a". This file is placed in the lib folder with this path: [emph]./lib/a/utility/Math.a[/emph]. The file can then be imported by calling import [emph]a.utility.Math;[/emph] .
+
+
+[hl=1]Code Generation And Functions[/hl]
+
+[hl=2]Function inlining[/hl]
+
+[color=red]Function inlining is not working correctly at the moment, so it is disabled in this release. However, the way it will work is already decided, so I have already added it to the specification, so you can already write code that contains inlining. It will work normally (but without being inlined actually) until inlining is finally enabled.[/color]
+Function inlining is the process of replacing a function call with a copy of a function's body. This might speed up your code, especially for wrapper accessor in enrichments that just call native functions (so an accessor call will be replaced by the native, saving one function call).
+
+If a function is inlined on all calls of it, it will also be removed from the code (since it is no longer called).
+
+Note that inlining is not possible for polymorph methods, since it is decided at runtime which of them is called, so none of them can be inserted at compile time.
+
+[hl=3]Automatic Function Inlining[/hl]
+If the corresponding parameter in Andromeda's config is set to true, then Andromeda will inline small "easy" functions automatically. Functions matching ALL of the following conditions will be inlined automatically by Andromeda:
+[list]
+[*]The function contains no local variables
+[*]The function contains only one statement (which must be a return statement, if the function returns a value)
+[*]The function does not write onto its parameters, it only reads them
+[*]Each parameter is read exactly once, except if:
+[list]
+[*]The parameter may be read more than once if it is "easy" (i.e. a local/global variable or constant)
+[*]The parameter may not be read at all, if it contains no possible side effects (assignments, function calls, inc-/decrement)
+[/list]
+[/list]
+Native wrapping functions that just call a native normally match those criteria, so you can savely use them without having to worry about performance.
+
+[lhead]Example:[/lhead] Automatic inlining
+[galaxy]
+enrich string{
+	string getWord(int num){
+		return StringWord(this,num);
+	}
+}
+
+void caller(string manyWords){
+	string secondWord = manyWords.getWord(2); //This call will be inlined automatically
+	//...so the compiled Galaxy code will look like this:
+	string secondWord = StringWord(manyWords,2);
+}
+[/galaxy]
+
+[hl=3]Declaring Functions inline[/hl]
+
+If you have a more complex function/method and you want it to be inlined where ever it is called, you can add the [emph]@Inline[/emph] annotation to it. Then it will be inlined, no matter how complex it is. [emph]However, note that inlining functions with many parameters and local variables may add a huge amount of local variables to the function calling it (since these have to be stored somewhere in the calling function if the function is inlined).[/emph] So for those functions, inlining the call might be a bad idea.
+
+[lhead]Example:[/lhead] Declaring functions inline
+[galaxy]
+@Inline
+void abc(){
+	... //doSomething
+}
+void caller(string s){
+	abc();	//Will be inlined, no matter how complex abc is
+}
+[/galaxy]
+
+[hl=3]Declaring Calls inline[/hl]
+
+Pretend you have a written a fast engine with a main loop that is called 1000 times per second. In this loop, there is a function call of a more complex function. Since the function is called 1000 times per second, it would be beneficial to inline it. However, this function is also used in many other functions in your map and is huge, so you don't want to inline it on each call, since this would make your map size grow too much. So you cannot prefix the function itself with the inline keyword.
+
+For those cases, Andromeda provides the possibility to inline single function/method calls by suffixing the function name with [emph].inline[/emph]. Note that accessor calls cannot be inlined at the moment, only real functions and methods.
+
+[lhead]Example:[/lhead] Inlining function calls
+[galaxy]
+void complexFunction(){
+	... //huge Function body here
+}
+void caller(string s){
+	complexFunction(); //Will not be inlined
+	complexFunction.inline(); //Will be inlined
+}
+[/galaxy]
+
+[hl=2]The @StringCall annotation[/hl]
+Andromeda is a highly optimizing compiler. If configured to do so, it tries to strip away every piece of superfluous code. This includes deleting:
+[list]
+[*]Unused global variables
+[*]Unused static fields
+[*]Uncalled functions and methods
+[/list]
+The last point is tricky, however. Sad but true: Galaxy allows calling functions by passing the methods name as string to specific functions (for example to triggers). If the string is passed as a plain string, like "abc" if your function is abc, then Andromeda has a chance to see that abc is called via this trigger creation. However, if the string is assembled from variables, Andromeda has no chance to decide at compile time which function will be called here.
+
+[lhead]Example:[/lhead] String calling
+[galaxy]
+void abc(){} //This is the example function we want to call
+
+void caller(string s){
+	abc(); //(1) Simple call, Andromeda detects it
+	TriggerCreate("abc"); //(2) A trigger is created for abc - Andromeda can still detect this
+	TriggerCreate(s); //(3) Now Andromeda cannot see which value the string s has; 
+	//if it is "abc" it will call the abc function, but otherwise Andromeda cannot detect it
+}
+[/galaxy]
+So as you see, the only problem Andromeda has is if you create a function call using modifiable strings like the point (3) in the example. If you have a function that is only called using such wicked calls (You are encouraged to almost never write such calls btw) and you want to use Andromeda's uncalled function removal to work correctly, then you have to tell Andromeda that abc will be called. If you don't do this, Andromeda might delete the function and your trigger will crash since there is no more function with that name. For these (really rare, hopefully) cases, Andromeda provides the [emph]@StringCall[/emph] annotation for functions and methods. If you add this modifier to a function or method, it will never be discarded by the uncalled-function-removal-engine of Andromeda. So, if you have function only called by modifiable string calls, add the annotation. You are also encouraged to use strcall if a function is called using a non modifiable string call (like (2) in the example). This way, you are on the save side and everybody sees instantly that this function will be called by a trigger or other function taking a string.
+
+[lhead]Example:[/lhead] Correct string calling
+[galaxy]
+@StringCall //Fine with stringcall annotation
+void abc(){}
+
+void caller(string s){
+	TriggerCreate(s); //(3) works if s contains "abc"
+}
+[/galaxy]
+
+If you don't want to use @StringCall for such methods, you have to turn off Andromeda's uncalled function deletion in the configuration. However, if you are writing a library which other people should use, you must rely on strcall for such cases, since you don't know if the people using your library will compile with or without uncalled function deletion.

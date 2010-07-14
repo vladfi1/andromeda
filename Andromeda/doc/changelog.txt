@@ -1,0 +1,151 @@
+v0.1.4
+-Added key extensions (see spec)
+-Added setinstancelimit clause (see spec)
+-The size of the generated script code is now calculated (at the moment without code size since this must be estimated)
+-The refresh button in the gui no longer compiles a script
+-null is now correctly compiled to 0 for type parameters
+-The type byte is now handled correctly
+-A function is considered called when its .name field is accessed now (you no longer get unused warnings for trigger called functions)
+-Fixed that it was not possible to access static methods with the .name field
+-Fixed that type parameters could not be cast from and to int
+-Fixed that constructors and destructors were checked for variable accesses (which could result in field never initialized exceptions)
+-Fixed that XOR (^) was not possible on bytes and ints
+-Fixed an error where the infered type of a binary operation was wrong
+-Fixed that array dimensions were not allowed to have operations in them (or in variables they used)
+-Fixed that the MPQ lib was not able to handle maps with the "optimize for smaller files" options on
+-The produced code bytes are now output correctly (instead of 0)
+
+v0.1.3
+-Added type extensions and type aliases (see specification)
+-Renamed the base class folder for utility classes from utility to util (since util is no longer a keyword)
+-Added double include/import protection. You can now include/import a file more than once. Only the first appearance will be actually included
+-Changed the lookup policy for includes and imports: They now first check the normal lookup path and then the library path.
+-Added function pointers partly (see specification). At the moment, only the .name field can be used for methods and functions to pass them to triggers.
+ (Note that this deprecates the usage of @StringCall)
+-Andromeda will no longer start the GUI if you hand a triggers file to it in the command line
+-The structure XML output now contains the offset and length of constructs
+-The structure XML output now contains the path of sources
+-The structure XML output now contains parameters and local variables of methods
+-Fixed a bug where Andromeda.galaxy was not included into MapScript.galaxy resulting in syntax errors in the compiled map
+-Fixed a "could not determine array dimensions" bug in certain situations where arrays were used.
+-Fixed that multi dimensional arrays compiled to wrong types (e.g. int[3][3] compiled to int[3]int[3][3]) 
+-Fixed that some enrichment methods generated null-names in the output code
+-Fixed that overloading in enrichments produced methods of the same name (i.e. a compile error in the galaxy code)
+-Fixed that the content of enrichment was not included into the structure XML output
+-Fixed a null-pointer exception when using generic classes
+-Fixed an "Abstract Function" error when using overridden methods
+-Fixed that accessor calls (and other constructs) were not resolved inside of accessor methods
+
+v0.1.2
+-Added generic classes (see specification)
+-Fixed a bug with the automatic directory creation
+-Fixed the bug where MapScript.galaxy got the content of Andromeda.galaxy
+-Added annotations. The syntax is the same as in java
+-Added the @KeepAfterForeach annotation for classes (see specification)
+-Removed the strcall modifier. The @StringCall annotation was added to replace it
+-Removed the inline modifier. The @Inline annotation was added to replace it. Note that .inline can still be used in calls to inline it
+-Removed the util modifier for classes. Instead classes can now be declared static. This will have the same consequences
+-Fixed that side effects in return clauses (like return i++) were not working correctly
+-Fixed that no xml result output was produced in case of a syntax error
+-Fixed a bug with the constant resolving. When float was cast to int or vice versa in a constant expression, a compile error occured
+-Unnecessary white space and indentation is no longer added at the beginning of an XML file
+-The xml structure output now also contains class members.
+-If an int literal is cast to fixed, this is now done by appending .0 behind it instead of using IntToFixed
+-Fixed some more issues with fixed and int literals
+-Fixed that some implicit conversions were done with the wrong / too many conversion functions
+-Fixed the crash when explicit casting constant expressions
+-Fixed a bug in the conf file that prevented from using the run-map-after-build feature
+-Fixed that no implicit casts were inserted in the code generated for return statements
+-Fixed that using null in a class context was not changed to 0 in the generated code, resulting in a type error
+-Classes can now be cast (explicitly) to int and vice versa
+
+v0.1.1
+== MISC ==
+-The program now works also when it is stored in a directory containing spaces or other special characters
+-The program will now create folders for its output files if those do not exist 
+ (i.e. if you specify ./abc as out folder, this folder will be create if it doesn't exist) 
+-The run-map-after-build feature now works correctly if you have set the path to your starcraft.exe file in the config file
+-Added a test file in the examples directory (fulltest.a) which tests various features of Andromeda
+== PROGRAM INTEROPERABILITY ==
+-Addes support for tools that do the MPQ handling:
+	=> 	Added the -d<OUT> parameter which can be used to change the output folder to <OUT>. This can be used for PhynGal for example to add
+ 		the generated scripts to the temporary directory
+ 	=>	Added the -m<MAPSCRIPT> and -t<TRIGGERS> parameters. These can be used
+ 		to directly specify a MapScript.galaxy and/or a triggers file as input, respectively.
+ 		Of course, you cannot use an input map (-i) if you specify those files directly
+ 		This is useful when being used with tools like PhynGal since it already extracts MapScript.galaxy to a temporary folder.
+ 		This will save time, since Andromeda has to do no MPQ handling then
+-Changed some command line parameter names. Check out the corresponding thread or start with --help to see the new parameter names
+-The program now also outputs the altered MapScript.galaxy into the output folder
+-The output folder were the generated MapScript.galaxy and Andromeda.galaxy are stored is now by default the ./out folder
+== LANGUAGE ADDITIONS AND BUGFIXES ==
+-Some complex expressions with side effects still used pointers. -> Fixed
+-Using ++ and -- in a for loop header should work now
+-The program now reports the line number if it finds an unterminated string
+-The scanner now outputs the exact position of lexical errors (Unknown escape sequence, unterminated string, unknown character)
+-Fixed that a for loop with an empty condition produced a null pointer exception
+-Fixed some more bugs concerning for loops
+-Fixed that freely placed blocks in andromeda created blocks in galaxy which resulted in a syntax error
+-You can use the run-map-after-build feature from command line by adding --run
+-Negative constants (like -1) were changed to their positive counterparts by accident. This is fixed
+-Fixed an issue with local variables messing up and exchanging their names
+-Fixed that andromeda raised an error if an empty statement (;) was used as loop body
+-Continue now has the correct semantics in a do-while loop and for loop (previously, the side effects of the condition were skipped)
+-Fixed that side effects in local variables, global variables and fields caused syntax errors in the resulting galaxy code
+-You now receive a compilation error when trying to use an array initializer (which are not implemented yet) instead of just producing erroneous code
+-Fixed that the initialization order of global variables and static fields were mixed up
+-Fixed that some necessary code transformations were not done inside of classes, which resulted in errors if side effects were used in certain situations
+-Fixed some minor bugs concerning class fields
+-Fixed bugs concerning array usage and complex expressions with side effects
+-You now get a proper error message when trying to access a static member variable in a non static way (and vice versa)
+-Fixed two bugs concerning virtual calls (one produced compilation errors, the other one made the virtual call table unnecessary big)
+-Fixed a bug with destructors generating syntax errors
+
+
+v0.1.0
+-The program now runs correctly even if the current working directory is not its main directory
+-If run in command line mode, the program now returns with return code -1 if there was an error during compilation (otherwise return code 0)
+-The GUI now allows to specify options for compilation
+-Andromeda is now able to output xml for the code structure (functions, classes, ...) 
+-Andromeda is now able to output xml for the parse result (successful?, warnings, errors,... )
+-Andromeda can suppress code production (in case you only want the xml structure)
+-Temporarily removed the menu bar from the GUI since it had no working functions anyway
+
+
+v0.0.11
+-Classes no longer compile to pointers but instead use an array indexing system for dynamic allocation
+-Fixed many small errors
+-Fixed mixed up line breaks
+-Added static initializers (check specification)
+-Added destructors (check specification)
+-Andromeda is now able to read code from maps and write it to maps / combine it with the script that is present in a map
+-Added a simple GUI to execute scripts. This GUI starts up if Andromeda isn't started with parameters
+-Added new language class System (a/lang/System.a)
+
+v0.0.10
+-Nested assignments and inc/dec operations are generate now correct code (buggy before) and get optimized
+-Unused local variables, global variable and fields are detected now
+-Uncalled functions are detected now (however, we still have some problems with calling functions via string, like triggers do)
+-Added the inline and strcall modifiers for functions (check specification)
+-Added packages (check specification)
+-Added library includes (check specification)
+-Const local variables are possible now (compile error before) and also get inlined
+
+v0.0.9
+-Set accessors now work correctly
+-Added the utility keyword to classes
+-Constant variables are now inlined and constant expressions are resolved if set so in the options
+-An error is thrown if a global variable is used in another global declaration above its own declaration
+-Fixed a bug with loading files causing an Invocation Target Exception
+-improved short name generation
+	=> All short names are used now, including 0-9 at second+ position
+	=> internal variable names generated by Andromeda are shortened
+	=> basic types are shortened by 'typedef'ing them to one letter and then using this letter
+-arrays are working (hopefully) correctly now
+-Classes are working now (check the specification, a huge set of new features), except for:
+	=> virtual methods are not working (all calls are resolved at compile time atm), since there is no efficient way for virtual calls at the moment
+	=> instanceof is not working yet, but will work soon
+	=> Explicit downcasts are not checked during runtime yet (you can do really ugly casts at the moment)
+
+v0.0.8
+First documented release

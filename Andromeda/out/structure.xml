@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<andromedaStructure>
+	<source name="Class.a" type="file" inclusionType="4" path="file://F:\Programming\Projects\JAVA\galaxy\.\.\dist\program\lib\a\lang\Class.a">
+		<class name="Class" offset="32" length="296" visibility="public" final="true">
+			<field name="id" offset="59" length="2" type="int" visibility="private"/>
+			<field name="name" offset="80" length="4" type="string" visibility="private"/>
+			<method name="Class" offset="161" length="69" visibility="private" signature="int,string" returnType="void">
+				<param name="id" type="int"/>
+				<param name="name" type="string"/>
+			</method>
+			<method name="getName" offset="236" length="44" visibility="public" signature="" returnType="string">
+			</method>
+			<method name="getId" offset="286" length="37" visibility="public" signature="" returnType="int">
+			</method>
+		</class>
+	</source>
+	<source name="FuncName.a" type="file" inclusionType="4" path="file://F:\Programming\Projects\JAVA\galaxy\.\.\dist\program\lib\a\lang\FuncName.a">
+	</source>
+	<source name="Object.a" type="file" inclusionType="4" path="file://F:\Programming\Projects\JAVA\galaxy\.\.\dist\program\lib\a\lang\Object.a">
+		<class name="Object" offset="64" length="19" visibility="public">
+		</class>
+	</source>
+	<source name="System.a" type="file" inclusionType="4" path="file://F:\Programming\Projects\JAVA\galaxy\.\.\dist\program\lib\a\lang\System.a">
+		<class name="System" offset="33" length="990" visibility="public" static="true">
+			<field name="ALL_PLAYERS" offset="78" length="30" type="playergroup" visibility="private" static="true"/>
+			<method name="error" offset="234" length="200" visibility="public" static="true" signature="string" returnType="void">
+				<param name="message" type="string"/>
+			</method>
+			<method name="debug" offset="530" length="100" visibility="public" static="true" signature="string" returnType="void">
+				<param name="message" type="string"/>
+			</method>
+			<method name="debug" offset="733" length="123" visibility="public" static="true" signature="string,bool" returnType="void">
+				<param name="message" type="string"/>
+				<param name="showIngame" type="bool"/>
+			</method>
+			<method name="print" offset="900" length="120" visibility="public" static="true" signature="string" returnType="void">
+				<param name="message" type="string"/>
+			</method>
+		</class>
+	</source>
+	<source name="mytest2.a" type="file" inclusionType="0" path="file://F:\Programming\Projects\JAVA\galaxy\test\mytest2.a">
+	</source>
+</andromedaStructure>

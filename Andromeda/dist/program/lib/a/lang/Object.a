@@ -1,0 +1,6 @@
+
+
+/**
+*	The (implicit) top class of all classes.
+*/
+public class Object [1] {}
