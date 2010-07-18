@@ -148,8 +148,8 @@ public class VirtualCallTable {
 		if(table.size()<=tableIndex) return -1;
 		AbstractFunction m = table.get(tableIndex);
 		
-		//If the method is indentic with the method in the top table, we do not increment the index
-		//(since we ve done it already in the top table in the recursive call)
+		//If the method is identic with the method in the top table, we do not increment the index
+		//(since we have done it already in the top table in the recursive call)
 		if(superTable != null && superTable.table.get(tableIndex)==m) return m.getCurVirtualCallChildIndex();
 		return table.get(tableIndex).getNextVirtualCallChildIndex();
 	}

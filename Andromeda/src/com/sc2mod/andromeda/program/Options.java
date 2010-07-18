@@ -133,6 +133,9 @@ public class Options {
 		nativeLibFolder = new File(Program.appDirectory,configHandler.getPropertyString("GENERAL", "nativeLibFolder", "./nativeLib"));
 		Util.checkForDir(nativeLibFolder,true);
 		libFolder = new File(Program.appDirectory,configHandler.getPropertyString("GENERAL", "libFolder", "./lib"));
+		if(!libFolder.exists()) {
+			libFolder = new File(configHandler.getPropertyString("GENERAL", "libFolder", "./lib"));
+		}
 		Util.checkForDir(libFolder,true);
 		nativeList = configHandler.getPropertyString("GENERAL", "nativeLibs", "missing_natives.a,NativeLib_beta.galaxy");
 		

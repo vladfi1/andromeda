@@ -81,7 +81,7 @@ public class MethodSet implements Cloneable {
 		if (old == null){
 			//Unless override was specified
 			if(addToList&&m.isOverride())
-				throw new CompilationError(m.getDefinition(),"Method was declared 'overrride' but no overridden method exists in the superclass.");
+				throw new CompilationError(m.getDefinition(),"Method was declared 'override' but no overridden method exists in the superclass.");
 			return;
 		}
 		
@@ -123,7 +123,7 @@ public class MethodSet implements Cloneable {
 		if(!old.isStatic()&&Visibility.isLessVisibleThan(m.getVisibility(), old.getVisibility()))
 			throw new CompilationError(m.getDefinition(),
 					old.getDefinition(),
-					"annot reduce visibility of overridden method.",
+					"Cannot reduce visibility of overridden method.",
 					"Overridden Definition");
 		
 		//Override permitted, add it!

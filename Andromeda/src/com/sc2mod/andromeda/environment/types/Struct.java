@@ -42,7 +42,7 @@ public class Struct extends RecordType {
 	void resolveMembers(TypeProvider t) {
 		super.resolveMembers(t);
 		for(String name: fields.getFieldNames()){
-			//Since the parser forbids accessors in structs, we can savely cast to fieldDecl here
+			//Since the parser forbids accessors in structs, we can safely cast to fieldDecl here
 			FieldDecl field = (FieldDecl)fields.getFieldByName(name);
 			if(!field.getFieldDeclaration().getFieldModifiers().isEmpty()){
 				throw new CompilationError(field.getFieldDeclaration().getFieldModifiers(), "Struct fields cannot have modifiers!");
