@@ -9,10 +9,16 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-import javax.management.relation.RoleUnresolved;
+//XPilot: what is this? :)
+//import javax.management.relation.RoleUnresolved;
 
 import com.sc2mod.andromeda.syntaxNodes.TypeParam;
 
+/**
+ * A generic type parameter.
+ * @author J. 'gex' Finis
+ *
+ */
 public class TypeParameter extends Type {
 
 	private TypeParam decl;

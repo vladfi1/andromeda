@@ -9,10 +9,14 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-import java.util.Map.Entry;
+//import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.Signature;
 
+/**
+ * Type parameter mapping.
+ * @author J. 'gex' Finis
+ */
 public class TypeParamMapping {
 
 	private final ParamMapEntry[] entries;

@@ -15,9 +15,14 @@ import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.Scope;
 import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.notifications.CompilationError;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.TypeParamList;
 
+/**
+ * A generic class.
+ * @author J. 'gex' Finis
+ */
 public class GenericClass extends Class{
 
 	protected HashMap<Signature,GenericClassInstance> genericInstances;
@@ -78,7 +83,6 @@ public class GenericClass extends Class{
 	public Type getWrappedType() {
 		return this;
 	}
-	
 
 	@Override
 	void resolveMembers(TypeProvider t) {
@@ -88,7 +92,7 @@ public class GenericClass extends Class{
 		//Resolve members
 		super.resolveMembers(t);
 		
-		//Pop generic type paramers from the stakc
+		//Pop generic type parameters from the stack
 		t.popTypeParams(typeParams);
 		
 		//Generate generic members (i.e. copy members from this class and change type params

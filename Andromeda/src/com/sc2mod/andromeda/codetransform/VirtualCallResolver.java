@@ -35,7 +35,7 @@ public class VirtualCallResolver {
 			if(!inv.isUsed()) continue;
 			
 			Method meth = (Method) inv.getWhichFunction();			
-			//If none of the classes containing any overrider is ever instanciated, we can make it non-virtual
+			//If none of the classes containing any overrider is ever instantiated, we can make it non-virtual
 			ArrayList<AbstractFunction> overriders = meth.getOverridingMethods();
 			for(AbstractFunction m: overriders){
 				Class cl = (Class)m.getContainingType();

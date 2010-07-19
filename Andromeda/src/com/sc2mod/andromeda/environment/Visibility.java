@@ -9,6 +9,10 @@
  */
 package com.sc2mod.andromeda.environment;
 
+/**
+ * Visibility modifier for a class, field, or function.
+ * @author J. 'gex' Finis
+ */
 public final class Visibility {
 	private Visibility(){}
 	
@@ -17,6 +21,12 @@ public final class Visibility {
 	public static final int PROTECTED = 2;
 	public static final int PRIVATE = 3;
 	
+	/**
+	 * Determines the relationship between two visibilities.
+	 * @param visibility1 The first visibility.
+	 * @param visibility2 The second visibility.
+	 * @return 
+	 */
 	public static boolean isLessVisibleThan(int visibility1, int visibility2){
 		if(visibility1==DEFAULT){
 			return visibility2 != DEFAULT;

@@ -42,7 +42,7 @@ public class SemanticAnalysis {
 		//Determine signatures and non-local non-constant variable types
 		env.resolveTypes();
 		
-		//Infere expression types, resolve function calls and field accesses
+		//Infer expression types, resolve function calls and field accesses
 		ExpressionAnalysisVisitor expressionAnalysisVisitor = new ExpressionAnalysisVisitor(exprAnalyzer,r,constResolve,env,o);
 		a.accept(expressionAnalysisVisitor);	
 		

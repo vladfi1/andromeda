@@ -160,7 +160,7 @@ public class FunctionSet {
 				boolean danglingDeclaration = true;
 				
 				//If we have only one function, we need no function indices.
-				//However, we still mus go through the loop to check for dangling forward-declarations.
+				//However, we still must go through the loop to check for dangling forward-declarations.
 				if(sameFuncs.size()==1&&funcs.size()==1){
 					index = 0;
 				}

@@ -125,7 +125,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 		//Register class instanciation
 		ConstructorInvocation ci = (ConstructorInvocation) c.getSemantics();
 		Class cl = (Class)c.getInferedType();
-		cl.registerInstanciation();
+		cl.registerInstantiation();
 		
 		//Register the constructor invocation
 		registerInvocation(ci);

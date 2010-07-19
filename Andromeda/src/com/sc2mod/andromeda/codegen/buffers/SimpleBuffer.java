@@ -52,6 +52,7 @@ public class SimpleBuffer extends CodeBuffer {
 	 * Do not use new line symbols in this string.
 	 * Call newLine() to append a new line symbol.
 	 * @param s a string to append without newline symbols.
+	 * @param csnl the number of characters since the last new line.
 	 */
 	private void append(String s, int csnl, boolean containsNewLine) {
 		if(containsNewLine){

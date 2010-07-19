@@ -44,6 +44,10 @@ import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.TypeList;
 import com.sc2mod.andromeda.syntaxNodes.TypeParam;
 
+/**
+ * A class or interface.
+ * @author J. 'gex' Finis
+ */
 public abstract class RecordType extends SimpleType implements IModifiable, IGlobal, IAnnotatable {
 
 	private String name;

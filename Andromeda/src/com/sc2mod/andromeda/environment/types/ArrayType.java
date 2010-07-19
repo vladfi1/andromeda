@@ -9,6 +9,10 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
+/**
+ * An array type.
+ * @author J. 'gex' Finis
+ */
 public class ArrayType extends Type {
 
 	

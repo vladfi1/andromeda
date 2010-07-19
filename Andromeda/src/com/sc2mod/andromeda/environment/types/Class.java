@@ -45,10 +45,11 @@ public class Class extends RecordType implements IIdentifiable {
 	
 	public static final int DEFAULT_CLASS_INSTANCE_LIMIT = 128;
 
-	private ClassNameProvider nameProvider;
-	private ClassDeclaration declaration;
-	private Class superClass;
-	private Class topClass;
+	//XPilot: GenericClass should have access to these?
+	protected ClassNameProvider nameProvider;
+	protected ClassDeclaration declaration;
+	protected Class superClass;
+	protected Class topClass;
 	private HashMap<String,Interface> interfaces;
 	private HashMap<String,Interface> interfacesTransClosure;
 	private int classIndex;
@@ -56,8 +57,8 @@ public class Class extends RecordType implements IIdentifiable {
 	private int minInstanceofIndex;
 	private ArrayList<FieldDecl> hierarchyFields;
 	private int instanceLimit = DEFAULT_CLASS_INSTANCE_LIMIT;
-	private int instanciationCount;
-	private int indirectInstanciationCount;
+	private int instantiationCount;
+	private int indirectInstantiationCount;
 	private VirtualCallTable virtualCallTable;
 
 	private boolean isStatic;
@@ -157,14 +158,15 @@ public class Class extends RecordType implements IIdentifiable {
 		return "Class, defined at:\n" + SourceEnvironment.getLastEnvironment().getSourceInformation(this.getDeclaration());
 	}
 
-
+	/*
+	 * XPilot: enabled extending of generic classes.
+	 */
 	protected void resolveExtends(TypeProvider t) {
 		Type type = t.resolveType(declaration.getSuperClass());
-		if(type.getCategory()!=CLASS){
+		if(type.getCategory()!=CLASS && type.getCategory()!=GENERIC_CLASS){
 			throw new CompilationError(declaration.getSuperClass(), "Classes may only extend other classes!");
 		}
 		superClass = (Class)type;
-		
 	}
 
 
@@ -441,31 +443,31 @@ public class Class extends RecordType implements IIdentifiable {
 	@Override
 	public boolean canExplicitCastTo(Type toType) {
 		if(toType==this) return true;
-		if(toType.isTypeOrExtension(BasicType.INT)) return true; 
+		if(toType.isTypeOrExtension(BasicType.INT)) return true;
 		if(toType.getCategory()!=CLASS) return false;
 		return ((Class)toType).isInstanceof(this)||(this.isInstanceof((Class)toType));
 	}
 
-	public void registerInstanciation() {
-		instanciationCount++;
-		if(superClass != null) superClass.registerIndirectInstanciation();
+	public void registerInstantiation() {
+		instantiationCount++;
+		if(superClass != null) superClass.registerIndirectInstantiation();
 	}
 
-	private void registerIndirectInstanciation() {
-		indirectInstanciationCount++;
-		if(superClass != null) superClass.registerIndirectInstanciation();
+	private void registerIndirectInstantiation() {
+		indirectInstantiationCount++;
+		if(superClass != null) superClass.registerIndirectInstantiation();
 	}
 	
 	/**
 	 * After call hierarchy analysis, this method can state if a class
 	 * is EVER used (including use by subclassing). If this method returns false then,
-	 * the class and all of its subclasses are never instanciated. 
+	 * the class and all of its subclasses are never instantiated. 
 	 * 
 	 * Any code for them can be omitted and virtual calls might be resolvable at compile time
 	 * @return whether this class is ever used (including subclassing)
 	 */
 	public boolean isUsed(){
-		return (instanciationCount + indirectInstanciationCount) > 0;
+		return (instantiationCount + indirectInstantiationCount) > 0;
 	}
 
 	public void setMetaClassName(String name) {
