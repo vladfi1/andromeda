@@ -1,4 +1,4 @@
-//Andromeda generated code @ Thu Jun 24 13:24:20 CEST 2010
+//Andromeda generated code @ Mon Jul 19 13:08:52 EDT 2010
 
 struct Class{
 	int Class____id;
@@ -12,6 +12,17 @@ struct Object{
 	int Object____type;
 };
 
+struct Generic{
+	int Generic____id;
+	int Generic____type;
+	int Generic__t;
+};
+
+struct Param{
+	int Param____id;
+	int Param____type;
+};
+
 
 //Allocator for class Class
 int alloc___Class(int A__class);
@@ -21,6 +32,14 @@ void dealloc___Class(int this);
 int alloc___Object(int A__class);
 //Deallocator for class Object
 void dealloc___Object(int this);
+//Allocator for class Generic
+int alloc___Generic(int A__class);
+//Deallocator for class Generic
+void dealloc___Generic(int this);
+//Allocator for class Param
+int alloc___Param(int A__class);
+//Deallocator for class Param
+void dealloc___Param(int this);
 //Constructor for class Class
 int new__Class(int A__class,int id,string name);
 string Class__getName(int this);
@@ -31,11 +50,15 @@ void s_System__debug__1(string message,bool showIngame);
 void s_System__print(string message);
 //Static init
 bool init___global1(bool A__1,bool A__2);
+//Constructor for class Generic
+int new__Generic(int A__class,int t);
+//Constructor for class Param
+int new__Param(int A__class);
 
 int Class___allocPtr=1;
 int Class___freePtr;
-Class[4] Class___memory;
-int[4] Class___freeStack;
+Class[6] Class___memory;
+int[6] Class___freeStack;
 int MC___Class;
 int Object___allocPtr=1;
 int Object___freePtr;
@@ -43,6 +66,16 @@ Object[2] Object___memory;
 int[2] Object___freeStack;
 int MC___Object;
 int MC___System;
+int Generic___allocPtr=1;
+int Generic___freePtr;
+Generic[129] Generic___memory;
+int[129] Generic___freeStack;
+int MC___Generic;
+int Param___allocPtr=1;
+int Param___freePtr;
+Param[129] Param___memory;
+int[129] Param___freeStack;
+int MC___Param;
 
 playergroup s_System__ALL_PLAYERS = PlayerGroupAll();
 
@@ -54,6 +87,10 @@ void A__classInit(){
 	MC___Object=A__class;
 	A__class=new__Class(3,3,"System");
 	MC___System=A__class;
+	A__class=new__Class(0,0,"Generic");
+	MC___Generic=A__class;
+	A__class=new__Class(4,4,"Param");
+	MC___Param=A__class;
 }
 
 
@@ -63,7 +100,7 @@ int alloc___Class(int A__class){
 	if(Class___freePtr>0){
 		Class___freePtr-=1;
 		this=Class___freeStack[Class___freePtr];
-	}else if(Class___allocPtr<4){
+	}else if(Class___allocPtr<6){
 		this=Class___allocPtr;
 		Class___allocPtr+=1;
 	}else{
@@ -117,6 +154,66 @@ void dealloc___Object(int this){
 	Object___freePtr+=1;
 }
 
+//Allocator for class Generic
+int alloc___Generic(int A__class){
+	int this;
+	if(Generic___freePtr>0){
+		Generic___freePtr-=1;
+		this=Generic___freeStack[Generic___freePtr];
+	}else if(Generic___allocPtr<129){
+		this=Generic___allocPtr;
+		Generic___allocPtr+=1;
+	}else{
+		s_System__error("Instance limit reached for class Generic. Allocation failed!");
+		return 0;
+	}
+	Generic___memory[this].Generic____type=A__class;
+	Generic___memory[this].Generic____id=(A__class<<24)|this;
+	return this;
+}
+
+//Deallocator for class Generic
+void dealloc___Generic(int this){
+	if(Generic___memory[this].Generic____id==0){
+		s_System__error("Double free of class Generic");
+		return;
+	}
+	Generic___memory[this].Generic____id=0;
+	Generic___memory[this].Generic____type=0;
+	Generic___freeStack[Generic___freePtr]=this;
+	Generic___freePtr+=1;
+}
+
+//Allocator for class Param
+int alloc___Param(int A__class){
+	int this;
+	if(Param___freePtr>0){
+		Param___freePtr-=1;
+		this=Param___freeStack[Param___freePtr];
+	}else if(Param___allocPtr<129){
+		this=Param___allocPtr;
+		Param___allocPtr+=1;
+	}else{
+		s_System__error("Instance limit reached for class Param. Allocation failed!");
+		return 0;
+	}
+	Param___memory[this].Param____type=A__class;
+	Param___memory[this].Param____id=(A__class<<24)|this;
+	return this;
+}
+
+//Deallocator for class Param
+void dealloc___Param(int this){
+	if(Param___memory[this].Param____id==0){
+		s_System__error("Double free of class Param");
+		return;
+	}
+	Param___memory[this].Param____id=0;
+	Param___memory[this].Param____type=0;
+	Param___freeStack[Param___freePtr]=this;
+	Param___freePtr+=1;
+}
+
 //Constructor for class Class
 int new__Class(int A__class,int id,string name){
 	int this=alloc___Class(A__class);
@@ -152,8 +249,22 @@ void s_System__print(string message){
 
 //Static init
 bool init___global1(bool A__1,bool A__2){
-	s_System__debug("BAL");
+	int generic = new__Generic(MC___Generic,new__Param(MC___Param));
+	
 	return true;
+}
+
+//Constructor for class Generic
+int new__Generic(int A__class,int t){
+	int this=alloc___Generic(A__class);
+	Generic___memory[this].Generic__t = t;
+	return this;
+}
+
+//Constructor for class Param
+int new__Param(int A__class){
+	int this=alloc___Param(A__class);
+	return this;
 }
 
 void initAndromeda(){

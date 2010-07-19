@@ -9,6 +9,8 @@
  */
 package com.sc2mod.andromeda.environment;
 
+import com.sc2mod.andromeda.notifications.CompilationError;
+
 public class Invocation extends SemanticsElement{
 
 	public static final int TYPE_STATIC = 1;
@@ -37,6 +39,7 @@ public class Invocation extends SemanticsElement{
 	}
 	
 	public Invocation( AbstractFunction meth, int accessType){
+		//if(whichFunction == null) throw new CompilationError("Invocation method is null!");
 		this.whichFunction = meth;
 		this.accessType = accessType;
 	}

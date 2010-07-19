@@ -402,7 +402,7 @@ public class TypeProvider {
 			types.remove(t.getUid());
 		}
 		
-		//Restore old if they overrid other types
+		//Restore old if they overrode other types
 		ArrayList<Type> overridden = overriddenTypes.remove(overriddenTypes.size()-1);
 		if(overridden != null){
 			for(Type t: overridden){
@@ -430,7 +430,7 @@ public class TypeProvider {
 	}
 
 	/**
-	 * Registeres when a function is used as a func pointer
+	 * Registers when a function is used as a func pointer
 	 * @param funcPointerDecl
 	 * @return
 	 */

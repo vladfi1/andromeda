@@ -57,6 +57,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 		
 		
 		AbstractFunction invocationTarget = inv.getWhichFunction();
+		//System.out.println(invocationTarget);
 		if(!alreadyChecked&&invocationTarget.getScope().getInclusionType() != AndromedaFileInfo.TYPE_NATIVE){
 			//Only check it if it is no function defined in blizzard's libs
 			inv.getWhichFunction().getDefinition().accept(parent);

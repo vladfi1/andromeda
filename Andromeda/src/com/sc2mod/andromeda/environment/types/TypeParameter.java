@@ -92,6 +92,8 @@ public class TypeParameter extends Type {
 	
 	@Override
 	public int getByteSize() {
-		throw new Error("Getting byte size of params not supported!");
+		//throw new Error("Getting byte size of params not supported!");
+		//type parameters are always ints (pointers)
+		return 4;
 	}
 }
