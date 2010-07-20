@@ -284,7 +284,7 @@ public class TypeProvider {
 		typesToResolve.addAll(rootTypes);
 		while(!typesToResolve.isEmpty()){
 			RecordType r = typesToResolve.poll();
-			typesToResolve.addAll(r.decendants);
+			typesToResolve.addAll(r.descendants);
 			r.resolveMembers(this);
 		}
 
@@ -347,6 +347,7 @@ public class TypeProvider {
 			int category = r.getCategory();
 			switch(category){
 			case Type.CLASS:
+			case Type.GENERIC_CLASS://XPilot: added
 				Class c = (Class)r;
 				c.generateClassIndex(this);
 				c.generateImplementsTransClosure();

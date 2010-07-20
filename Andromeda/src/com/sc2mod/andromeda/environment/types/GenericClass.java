@@ -27,13 +27,8 @@ public class GenericClass extends Class{
 
 	protected HashMap<Signature,GenericClassInstance> genericInstances;
 
-	protected TypeParameter[] typeParams;
 	private Signature sig;
-	
-	public TypeParameter[] getTypeParams(){
-		return typeParams;
-	}
-	
+
 	/**
 	 * Standard constructor for creating the class itself
 	 * @param declaration
@@ -41,20 +36,14 @@ public class GenericClass extends Class{
 	 */
 	public GenericClass(ClassDeclaration declaration, Scope scope) {
 		super(declaration, scope);
-		TypeParamList tl = declaration.getTypeParams();
-		int size = tl.size();
-		typeParams = new TypeParameter[size];
 		genericInstances = new HashMap<Signature, GenericClassInstance>();
-		for(int i=0;i<size;i++){
-			typeParams[i] = new TypeParameter(this, tl.elementAt(i));
-		}
 		sig = new Signature(typeParams);
 	}
 	
 	protected GenericClass(GenericClass genericParent){
 		super(genericParent);
 	}
-	
+
 	@Override
 	public boolean isGeneric() {
 		return true;
@@ -85,7 +74,7 @@ public class GenericClass extends Class{
 	}
 
 	@Override
-	void resolveMembers(TypeProvider t) {
+	void resolveMembers(TypeProvider t) {		
 		//Push generic types onto the stack
 		t.pushTypeParams(typeParams);
 		
@@ -96,7 +85,7 @@ public class GenericClass extends Class{
 		t.popTypeParams(typeParams);
 		
 		//Generate generic members (i.e. copy members from this class and change type params
-		// to the instanced onces) for all instances that are already present
+		// to the instanced ones) for all instances that are already present
 		for(Entry<Signature, GenericClassInstance> e : genericInstances.entrySet()){
 			e.getValue().generateGenericMembers();
 		}
@@ -115,5 +104,12 @@ public class GenericClass extends Class{
 	public Type replaceTypeParameters(TypeParamMapping paramMap) {
 		if(!containsTypeParams()) return this;
 		return getGenericInstance(sig.replaceTypeParameters(paramMap));
+	}
+	
+	/**
+	 * XPilot: Added for debugging.
+	 */
+	public boolean isGenericInstance() {
+		return false;
 	}
 }

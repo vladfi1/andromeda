@@ -49,10 +49,9 @@ public class Signature {
 
 	@Override
 	public boolean equals(Object obj) {
+		//Same instance?
+		if(obj==this) return true;
 		if(obj instanceof Signature){
-			//Same instance?
-			if(obj==this) return true;
-			
 			//Same length?
 			Signature s = (Signature)obj;
 			Type[] otherSig = s.sig;
@@ -145,5 +144,13 @@ public class Signature {
 		}
 		Signature sig = new Signature(result);
 		return sig;
+	}
+	
+	/**
+	 * XPilot: Added for type bounds (future)
+	 */
+	public boolean fits(Signature bounds) {
+		//TODO: implement TypeParameter bounds!
+		return equals(bounds);
 	}
 }

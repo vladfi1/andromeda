@@ -34,7 +34,8 @@ public class VirtualCallTable {
 	public static void generateVCTs(Environment env){
 		for(Class clazz : env.typeProvider.getClasses()){
 			//Create a class table for all top classes, these will
-			//then recursivly create VCTs for child classes.
+			//then recursively create VCTs for child classes.
+			//System.out.println(clazz.getFullName());
 			if(clazz.isTopClass()) new VirtualCallTable(clazz, env);
 		}
 	}
@@ -54,7 +55,7 @@ public class VirtualCallTable {
 	public Class clazz;
 	
 	/**
-	 * VCTs of direct decendant classes.
+	 * VCTs of direct descendant classes.
 	 */
 	public ArrayList<VirtualCallTable> subTables = new ArrayList<VirtualCallTable>(4);
 	
@@ -74,7 +75,7 @@ public class VirtualCallTable {
 		if(superClass != null){
 			superTable = superClass.getVirtualCallTable();
 			superTable.subTables.add(this);
-			table.addAll(superTable.table);		
+			table.addAll(superTable.table);
 		}
 		
 		ArrayList<AbstractFunction> methods = clazz.getMethods().getMyMethods();

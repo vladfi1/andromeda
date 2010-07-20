@@ -34,6 +34,9 @@ public class ConstructorInvocation extends Invocation{
 	}
 	
 	public ConstructorInvocation(Class classToAlloc, boolean implicit, ArrayList<Class> wrappedFieldInits){
+		//HERE invocationTarget WILL BE NULL IF THE CLASS HAS NO DEFAULT CONSTRUCTOR
+		//THIS RESULTS IN A NULL POINTER EXCEPTION IN CallHierarchyExpressionVisitor
+		//TODO geX: FIX DEFAULT CONSTRUCTORS
 		super(null,Invocation.TYPE_METHOD);
 		this.implicit = implicit;
 		this.classToAlloc = classToAlloc;

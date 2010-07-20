@@ -97,7 +97,7 @@ public class Interface extends RecordType {
 			if(!interfaces.isEmpty()){
 				for(Entry<String, Interface> e: interfaces.entrySet()){
 					Interface i = e.getValue();
-					i.decendants.add(this);
+					i.descendants.add(this);
 				}
 			} else {
 				typeProvider.addRootRecord(this);
@@ -119,7 +119,7 @@ public class Interface extends RecordType {
 	void resolveMembers(TypeProvider t) {
 		for(Entry<String, Interface> e: interfaces.entrySet()){
 			Interface i = e.getValue();
-			i.decendants.add(this);
+			i.descendants.add(this);
 			methods.addInheritedMethods(i.methods);
 		}
 		super.resolveMembers(t);

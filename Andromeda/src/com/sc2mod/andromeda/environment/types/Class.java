@@ -45,16 +45,16 @@ public class Class extends RecordType implements IIdentifiable {
 	
 	public static final int DEFAULT_CLASS_INSTANCE_LIMIT = 128;
 
-	//XPilot: GenericClass should have access to these?
+	//XPilot: GenericClass should have access to (some of) these?
 	protected ClassNameProvider nameProvider;
 	protected ClassDeclaration declaration;
 	protected Class superClass;
 	protected Class topClass;
-	private HashMap<String,Interface> interfaces;
+	protected HashMap<String,Interface> interfaces;
 	private HashMap<String,Interface> interfacesTransClosure;
-	private int classIndex;
+	protected int classIndex;
 	private String allocatorName;
-	private int minInstanceofIndex;
+	protected int minInstanceofIndex;
 	private ArrayList<FieldDecl> hierarchyFields;
 	private int instanceLimit = DEFAULT_CLASS_INSTANCE_LIMIT;
 	private int instantiationCount;
@@ -62,6 +62,9 @@ public class Class extends RecordType implements IIdentifiable {
 	private VirtualCallTable virtualCallTable;
 
 	private boolean isStatic;
+	
+	//XPilot: added
+	protected TypeParameter[] typeParams;
 	
 	private static HashSet<String> allowedAnnotations = new HashSet<String>();
 	static{
@@ -146,7 +149,14 @@ public class Class extends RecordType implements IIdentifiable {
 		interfaces = new HashMap<String,Interface>();
 		interfacesTransClosure = new HashMap<String,Interface>();
 		this.declaration = declaration;
-
+		
+		//XPilot: moved from GenericClass
+		TypeParamList tl = declaration.getTypeParams();
+		int size = tl == null ? 0 : tl.size();
+		typeParams = new TypeParameter[size];
+		for(int i=0;i<size;i++){
+			typeParams[i] = new TypeParameter(this, tl.elementAt(i));
+		}
 	}
 	
 	protected Class(Class genericParent){
@@ -158,7 +168,7 @@ public class Class extends RecordType implements IIdentifiable {
 		return "Class, defined at:\n" + SourceEnvironment.getLastEnvironment().getSourceInformation(this.getDeclaration());
 	}
 
-	/*
+	/**
 	 * XPilot: enabled extending of generic classes.
 	 */
 	protected void resolveExtends(TypeProvider t) {
@@ -168,7 +178,6 @@ public class Class extends RecordType implements IIdentifiable {
 		}
 		superClass = (Class)type;
 	}
-
 
 	protected void resolveImplements(TypeProvider t) {
 		TypeList tl = declaration.getInterfaces();
@@ -218,7 +227,7 @@ public class Class extends RecordType implements IIdentifiable {
 			boolean hasParents = false;
 			for(String s:interfaces.keySet()){
 				Interface i = interfaces.get(s);
-				i.decendants.add(this);
+				i.descendants.add(this);
 				hasParents = true;
 			}
 			if(superClass!=null){
@@ -228,7 +237,7 @@ public class Class extends RecordType implements IIdentifiable {
 					throw new CompilationError(this.declaration.getSuperClass(),"Static classes may not extend any class.");
 				if(superClass.isStatic)
 					throw new CompilationError(this.declaration.getSuperClass(),"Static classes may not be extended.");
-				superClass.decendants.add(this);
+				superClass.descendants.add(this);
 				hasParents = true;
 			}
 			if(!hasParents) typeProvider.addRootRecord(this);
@@ -322,25 +331,16 @@ public class Class extends RecordType implements IIdentifiable {
 		return true;
 	}
 
-	
-	@Override
-	public boolean isInstanceof(Class c){
-		return classIndex >= c.minInstanceofIndex && classIndex <= c.classIndex;
-	}
-	
-
 	void generateClassIndex(TypeProvider tp){
 		minInstanceofIndex = tp.getCurInstanceofIndex();
 		
-		for(RecordType r: decendants){
+		for(RecordType r: descendants){
 			((Class)r).generateClassIndex(tp);
 		}
 		
 		classIndex = tp.getNextClassIndex();
 		
 	}
-
-
 	
 	public boolean isTopClass(){
 		return topClass == this;
@@ -434,9 +434,19 @@ public class Class extends RecordType implements IIdentifiable {
 	}
 	
 	@Override
+	public boolean isInstanceof(Class c){
+		//XPilot: changed implementation here, as it wasn't working properly...
+		//return classIndex >= c.minInstanceofIndex && classIndex <= c.classIndex;
+		if(this == c) return true;
+		if(superClass == null) return false;
+		return superClass.isInstanceof(c);
+	}
+	
+	@Override
 	public boolean canImplicitCastTo(Type toType) {
 		if(toType==this) return true;
-		if(toType.getCategory()!=CLASS) return false;
+		//XPilot: Can now implicit cast to a generic type
+		if(!toType.isClass()) return false;
 		return (this.isInstanceof((Class)toType));
 	}
 	
@@ -444,7 +454,7 @@ public class Class extends RecordType implements IIdentifiable {
 	public boolean canExplicitCastTo(Type toType) {
 		if(toType==this) return true;
 		if(toType.isTypeOrExtension(BasicType.INT)) return true;
-		if(toType.getCategory()!=CLASS) return false;
+		if(!toType.isClass()) return false;
 		return ((Class)toType).isInstanceof(this)||(this.isInstanceof((Class)toType));
 	}
 
@@ -516,7 +526,13 @@ public class Class extends RecordType implements IIdentifiable {
 		return 4; //Classes are implicit ints
 	}
 	
-
-
+	//XPilot: moved from GenericClass
+	public TypeParameter[] getTypeParams(){
+		return typeParams;
+	}
 	
+	@Override
+	public boolean isGeneric() {
+		return false;
+	}
 }

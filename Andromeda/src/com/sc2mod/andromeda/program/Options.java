@@ -133,6 +133,7 @@ public class Options {
 		nativeLibFolder = new File(Program.appDirectory,configHandler.getPropertyString("GENERAL", "nativeLibFolder", "./nativeLib"));
 		Util.checkForDir(nativeLibFolder,true);
 		libFolder = new File(Program.appDirectory,configHandler.getPropertyString("GENERAL", "libFolder", "./lib"));
+		//XPilot: can now use absolute file paths
 		if(!libFolder.exists()) {
 			libFolder = new File(configHandler.getPropertyString("GENERAL", "libFolder", "./lib"));
 		}

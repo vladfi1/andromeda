@@ -58,7 +58,7 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 	}
 
 	//Hierarchy for topologic sorting and stuff
-	protected LinkedList<RecordType> decendants;
+	protected LinkedList<RecordType> descendants;
 
 
 
@@ -95,8 +95,7 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 	
 	
 	protected static HashSet<String> allowedAnnotations = new HashSet<String>();
-	static{
-	}
+	//static{}
 	
 	@Override
 	public HashSet<String> getAllowedAnnotations() {
@@ -123,7 +122,7 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 	}
 
 	public LinkedList<RecordType> getDecendants() {
-		return decendants;
+		return descendants;
 	}
 
 
@@ -223,7 +222,7 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 	}
 	
 	private void createMembers() {
-		decendants = new LinkedList<RecordType>();
+		descendants = new LinkedList<RecordType>();
 		methods = new MethodSet(this);
 		fields = new FieldSet();
 
@@ -287,10 +286,12 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 				Constructor con = new Constructor(d,(Class)this,scope);
 				con.resolveTypes(t, null);
 				Constructor old = constructors.put(con.getSignature(), con);
+				/*
 				if(old!=null)
 					throw new CompilationError(con.getDefinition(),old
 							.getDefinition(),
 							"Duplicate constructor!","First Definition");
+				*/
 				member = con;
 				break;
 			}

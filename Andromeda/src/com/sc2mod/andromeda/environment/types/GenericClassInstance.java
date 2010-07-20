@@ -14,9 +14,12 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.classes.ClassNameProvider;
+import com.sc2mod.andromeda.classes.VirtualCallTable;
 import com.sc2mod.andromeda.environment.Constructor;
+import com.sc2mod.andromeda.environment.Destructor;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.variables.FieldSet;
+import com.sc2mod.andromeda.notifications.CompilationError;
 
 public class GenericClassInstance extends GenericClass{
 
@@ -35,6 +38,15 @@ public class GenericClassInstance extends GenericClass{
 		if(class1.membersResolved){
 			generateGenericMembers();
 		}
+		
+		//XPilot: need to pretend to be the original GenericClass
+		//otherwise, a null pointer exception is thrown in checkCallHierarchy
+		//this should be called in generateGenericMembers?
+		//but descendants should be registered to the original GenericClass, not this?
+		descendants = theType.descendants;
+		minInstanceofIndex = theType.minInstanceofIndex;
+		classIndex = theType.classIndex;
+		//interfaces = theType.interfaces;
 	}
 	
 	@Override
@@ -95,17 +107,37 @@ public class GenericClassInstance extends GenericClass{
 		return theType.getUid();
 	}
 	
+	/**
+	 * XPilot: now works for generic types
+	 */
+	@Override
+	public boolean isInstanceof(Class c) {
+		if(this == c) return true;
+		if(c.isGeneric()) {
+			GenericClassInstance gci = (GenericClassInstance)c;
+			if(theType == gci.theType) {
+				return signature.fits(gci.signature);
+			}
+		}
+		if(superClass == null) return false;
+		return superClass.isInstanceof(c);
+	}
+	
+	/* XPilot: Not needed, can use Class.canImplicitCastTo
 	@Override
 	public boolean canImplicitCastTo(Type toType) {
 		if(toType == this) return true;
+		//XPilot: Can now cast to a non-generic class
+		if(toType.getCategory() == CLASS) {
+			return theType.canImplicitCastTo(toType);
+		}
 		if(toType.getCategory() != GENERIC_CLASS) return false;
 		
 		//We can cast if the signature is okay and the non-generic prefix can be cast implicitly
 		if(!theType.canImplicitCastTo(toType.getWrappedType())) return false;
-		return signature.equals(((GenericClass)toType).getSignature());
-		
-		
+		return signature.equals(((GenericClassInstance)toType).getSignature());
 	}
+	*/
 	
 	public void generateGenericMembers(){
 		if(genericMembersResolved) return;
@@ -113,11 +145,20 @@ public class GenericClassInstance extends GenericClass{
 		
 		System.out.println("RSOLVING " + this.getFullName());
 		
+		//XPilot: certain fields
+		superClass = theType.superClass;
+		//if(superClass != null) {
+		//	System.out.println(this.getFullName());
+		//	System.out.println(theType.getFullName());
+		//	System.out.println(superClass.getFullName());
+		//}
+		topClass = theType.topClass;
+		
 		//Constructors
 		constructors = new LinkedHashMap<Signature, Constructor>();		
 		for(Entry<Signature, Constructor> e: theType.constructors.entrySet()){
 			Signature s = alterSignature(e.getKey());
-			constructors.put(s, e.getValue());			
+			constructors.put(s, e.getValue());
 		}
 		
 		//Fields
@@ -126,6 +167,8 @@ public class GenericClassInstance extends GenericClass{
 		//Methods
 		methods = theType.methods.getAlteredMethodSet(paramMap);
 		
+		//XPilot: Destructor
+		destructor = theType.destructor;
 	}
 
 	private Signature alterSignature(Signature sig){
@@ -154,5 +197,37 @@ public class GenericClassInstance extends GenericClass{
 	public Type replaceTypeParameters(TypeParamMapping paramMap) {
 		if(!containsTypeParams()) return this;
 		return theType.getGenericInstance(signature.replaceTypeParameters(paramMap));
+	}
+	
+	@Override
+	public boolean isGenericInstance() {
+		return true;
+	}
+
+	@Override
+	void resolveMembers(TypeProvider t) {
+		//XPilot: should not happen for GenericClassInstances? The base GenericClass does this for us
+		//System.out.println("GenericClass.resolveMembers(TypeProvider) called on a GenericClassInstance: " + getFullName());
+		throw new CompilationError("GenericClass.resolveMembers(TypeProvider) called on a GenericClassInstance: " + getFullName());
+	}
+	
+	@Override
+	protected void checkForHierarchyCircle(TypeProvider typeProvider,HashSet<RecordType> marked) {
+		//XPilot: should not happen for GenericClassInstances? The base GenericClass does this for us
+		//throw new CompilationError("GenericClass.checkForHierarchyCircle(TypeProvider, HashSet<Record>) called on a GenericClassInstance: " + getFullName());
+		theType.checkForHierarchyCircle(typeProvider, marked);
+	}
+	
+	/**
+	 * XPilot: Added so that the hierarchy can be properly traversed.
+	 */
+	@Override
+	public boolean isTopClass() {
+		return theType.isTopClass();
+	}
+	
+	@Override
+	public VirtualCallTable getVirtualCallTable() {
+		return theType.getVirtualCallTable();
 	}
 }

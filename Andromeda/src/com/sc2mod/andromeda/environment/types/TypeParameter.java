@@ -77,6 +77,7 @@ public class TypeParameter extends Type {
 		if(toType.isTypeOrExtension(BasicType.INT)) return true; 
 		if(toType.getCategory()==TYPE_PARAM)return true;
 		if(toType.getCategory()==CLASS) return true;
+		if(toType.getCategory()==GENERIC_CLASS) return true;//XPilot: added
 		return false;
 	}
 
@@ -93,7 +94,7 @@ public class TypeParameter extends Type {
 	@Override
 	public int getByteSize() {
 		throw new Error("Getting byte size of params not supported!");
-		//type parameters are always ints (pointers)
+		//XPilot: type parameters are always ints (pointers)
 		//return 4;
 	}
 }

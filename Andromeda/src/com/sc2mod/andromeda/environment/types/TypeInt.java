@@ -25,7 +25,8 @@ public class TypeInt extends NonReferentialType{
 	public boolean canExplicitCastTo(Type type) {
 		 if(super.canExplicitCastTo(type)) return true;
 		 if(type.getBaseType()==BasicType.BYTE) return true;
-		 if(type.getCategory()==CLASS) return true;	
+		 if(type.getCategory()==CLASS) return true;
+		 if(type.getCategory()==GENERIC_CLASS) return true;//XPilot: added
 		 if(type.getCategory()==TYPE_PARAM) return true;
 		 return canConcatenateCastTo(type);
 	}

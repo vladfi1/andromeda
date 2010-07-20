@@ -207,7 +207,7 @@ public class NameResolver {
 				throw new CompilationError(fieldAccess,"Super can only be used inside of classes.");
 			curClass = ((Class) curClass).getSuperClass();
 			if(curClass == null)
-				throw new CompilationError(fieldAccess,"Cannot use super here, since the class has no super class");
+				throw new CompilationError(fieldAccess,"Cannot use super here, since the class has no super class.");
 			leftType = curClass;
 			usesSuper = true;
 			break;
@@ -398,7 +398,7 @@ public class NameResolver {
 				throw new CompilationError(methodInvocation,"Super can only be used inside of classes.");
 			curClass = ((Class) curClass).getSuperClass();
 			if(curClass == null)
-				throw new CompilationError(methodInvocation,"Cannot use super here, since the class has no super class");
+				throw new CompilationError(methodInvocation,"Cannot use super here, since the class has no super class.");
 			canBeFunction = false;
 			
 			//Super calls are never virtual
@@ -419,7 +419,7 @@ public class NameResolver {
 				
 				//Non static method. Can we access it from here?
 				if(!inMember)
-					throw new CompilationError(methodInvocation,"Cannot call a non-static method from a static context");
+					throw new CompilationError(methodInvocation,"Cannot call a non-static method from a static context.");
 				
 				if(virtualAllowed&&m.isOverridden())
 					return Invocation.createVirtualInvocation(m, env);
@@ -437,7 +437,7 @@ public class NameResolver {
 			}
 		}
 		
-		throw new CompilationError(methodInvocation,"Could not resolve this function call. No visible function/method with this name and signature exists.\nInfered Signature: (" + s.toString() + ")");
+		throw new CompilationError(methodInvocation,"Could not resolve this function call. No visible function/method with this name and signature exists.\nInferred Signature: (" + s.toString() + ")");
 	}
 	
 
@@ -458,8 +458,7 @@ public class NameResolver {
 		return localVars.methodFinished(numParams);
 	}
 
-	public Invocation registerDelete(Class class1,
-			DeleteStatement deleteStatement) {
+	public Invocation registerDelete(Class class1, DeleteStatement deleteStatement) {
 		Destructor destructor = class1.getDestructor();
 		if(destructor.isOverridden())
 			return Invocation.createVirtualInvocation(destructor, env);

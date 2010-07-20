@@ -303,6 +303,8 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 
 		//Check type
 		if(!t.canImplicitCastTo(decl.getType())){
+			System.out.println(t.getFullName());
+			System.out.println(decl.getType().getFullName());
 			//For bytes, we might be able to cast if the value is a constant
 			boolean error = true;
 			if(decl.getType().getBaseType()==BasicType.BYTE){				
@@ -697,7 +699,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	@Override
 	public void visit(ForEachStatement forEachStmt) {
 		Statement thenStmt = forEachStmt.getThenStatement();
-		//Do not allow a non block statment as body
+		//Do not allow a non block statement as body
 		if(!(thenStmt instanceof BlockStatement)){
 			forEachStmt.setThenStatement(new BlockStatement(new StatementList(thenStmt)));
 		}
@@ -813,7 +815,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	@Override
 	public void visit(ForStatement forStatement) {
 		Statement thenStmt = forStatement.getThenStatement();
-		//Do not allow a non block statment as body
+		//Do not allow a non block statement as body
 		if(!(thenStmt instanceof BlockStatement)){
 			forStatement.setThenStatement(new BlockStatement(new StatementList(thenStmt)));
 		}
@@ -883,14 +885,15 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		Expression expr = deleteStatement.getExpression();
 		expr.accept(this);
 		Type type = expr.getInferedType();
-		if(type.getCategory()!=Type.CLASS){
+		//made generic class delete-able
+		if(type.getCategory()!=Type.CLASS && type.getCategory()!=Type.GENERIC_CLASS){
 			throw new CompilationError(expr, "The argument of a delete statement must be a class, but it is " 
 										+ type.getUid() + " (" + type.getDescription() + ").");
 		}
 
 		//Register destructor invocation
-		Invocation in = nameResolver.registerDelete(((Class)type),deleteStatement);
-		deleteStatement.setSemantics(in);		
+		Invocation in = nameResolver.registerDelete((Class)type,deleteStatement);
+		deleteStatement.setSemantics(in);
 		
 		execPathStack.pushSingleStatementFrame(deleteStatement);
 		
@@ -899,7 +902,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	
 	@Override
 	public void visit(IfThenElseStatement ifThenElseStatement) {
-		//Do not allow a non block statment as body, (in the else case possible if an ifthenelse follows)
+		//Do not allow a non block statement as body, (in the else case possible if an ifthenelse follows)
 		Statement thenStmt = ifThenElseStatement.getThenStatement();
 		if(!(thenStmt instanceof BlockStatement)){
 			ifThenElseStatement.setThenStatement(new BlockStatement(new StatementList(thenStmt)));
@@ -911,7 +914,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 			}				
 		}
 		
-		//Infere condition
+		//Infer condition
 		ifThenElseStatement.getCondition().accept(this);
 			
 		//Execution path & child visit:
@@ -930,7 +933,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		//Merge the two frames on the stack, so they all will be linked to later statements
 		execPathStack.mergeTopFrames();
 		
-		//Check condtion type
+		//Check condition type
 		Type t = ifThenElseStatement.getCondition().getInferedType();
 		if(!t.canImplicitCastTo(BasicType.BOOL)&&!t.canBeNull())
 			throw new CompilationError(ifThenElseStatement.getCondition(),"The condition of an if block must be of type bool or of a referential type, but it is of type " + ifThenElseStatement.getCondition().getInferedType().getUid());
