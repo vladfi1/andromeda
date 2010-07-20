@@ -29,23 +29,25 @@ public class ClassEnricherAntTask extends Task{
 	
 	@Override
 	public void execute() throws BuildException {
-		File dir = new File(path); 
-		if(!dir.exists()) throw new BuildException("Path does not exist!");
-		if(!dir.isDirectory()) throw new BuildException("Path is no directory!");
-		 
-		File[] files = dir.listFiles(new FilenameFilter(){
-
-			@Override
-			public boolean accept(File arg0, String arg1) {
-				return arg1.endsWith(".java");
-			}
+		if(path != null){
+			File dir = new File(path); 
+			if(!dir.exists()) throw new BuildException("Path does not exist!");
+			if(!dir.isDirectory()) throw new BuildException("Path is no directory!");
 			 
-		});
-		for(File f: files){
-			try {
-				ClassEnricher.enrich(f);
-			} catch (IOException e) {
-				throw new BuildException(e);
+			File[] files = dir.listFiles(new FilenameFilter(){
+	
+				@Override
+				public boolean accept(File arg0, String arg1) {
+					return arg1.endsWith(".java");
+				}
+				 
+			});
+			for(File f: files){
+				try {
+					ClassEnricher.enrich(f);
+				} catch (IOException e) {
+					throw new BuildException(e);
+				}
 			}
 		}
 		if(scannerPath!=null){

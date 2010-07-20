@@ -29,9 +29,12 @@ import mopaqlib.MoPaQException;
 
 import com.sc2mod.andromeda.gui.jobs.JobHandler;
 import com.sc2mod.andromeda.gui.misc.GUIController;
+import com.sc2mod.andromeda.parsing.ParseResult;
 import com.sc2mod.andromeda.parsing.AndromedaParser;
 import com.sc2mod.andromeda.parsing.AndromedaReader;
-import com.sc2mod.andromeda.parsing.AndromedaSource;
+import com.sc2mod.andromeda.parsing.ParserFactory;
+import com.sc2mod.andromeda.parsing.ParserLanguage;
+import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.AndromedaWorkflow;
 import com.sc2mod.andromeda.parsing.FileSource;
 import com.sc2mod.andromeda.parsing.SourceEnvironment;
@@ -72,6 +75,56 @@ public class Program {
 		return attributes.getValue("Implementation-Version");
 
 	}
+	
+	static class InitializationError extends Exception{
+
+		public InitializationError(Throwable cause) {
+			super(cause);
+		}
+
+		public InitializationError(String string) {
+			super(string);
+		}
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		
+	}
+	
+	private static Options setupParamsAndOptions(String args[]) throws InvalidParameterException, InitializationError{
+		
+		//Parse arguments
+		Options o;
+
+		params = new Parameters(args);
+
+		
+		//Load config
+		try {			
+			config = new ConfigHandler(new File(appDirectory,"andromeda.conf"), true);
+		} catch (FileNotFoundException e) {
+			throw new InitializationError("Config file (andromeda.conf) not found!");
+		} catch (IOException e) {
+			throw new InitializationError("Error reading config file (andromeda.conf)!");
+		}
+	
+		//Assemble options
+		o = new Options(config, params);
+	
+		
+		return o;
+	}
+	
+	/**
+	 * Method used by test cases. Starts andromeda just like the main method but does not do other program initialization.
+	 * @param args
+	 * @throws InitializationError 
+	 */
+	public static ParseResult invokeWorkflow(List<Source> sources, Options options, ParserLanguage language) throws InitializationError{
+		return new ParserFactory(language).createWorkflow(sources,options).compile();
+	}
 
 	public static void main(String[] args) throws URISyntaxException {
 				
@@ -84,41 +137,28 @@ public class Program {
 		//Do platform dependent stuff
 		platform = new Platform();
 		
-		//Parse arguments
+		//Params params, assemble options
+
 		Options o;
 		try {
-			params = new Parameters(args);
-	
-			
-			//Load config
-			try {			
-				config = new ConfigHandler(new File(appDirectory,"andromeda.conf"), true);
-			} catch (FileNotFoundException e) {
-				System.err.println("Config file (andromeda.conf) not found!");
-				e.printStackTrace();
-				return;
-			} catch (IOException e) {
-				System.err.println("Error reading config file (andromeda.conf)!");
-				e.printStackTrace();
-				return;
-			}
-		
-			//Assemble options
-			o = new Options(config, params);
-		} catch (InvalidParameterException e1) {
-			System.err.println("Invalid usage!:\n" + e1.getMessage());
+			o = setupParamsAndOptions(args);
+		} catch (InvalidParameterException e2) {
+			System.err.println("Invalid usage!:\n" + e2.getMessage());
+			return;
+		} catch (InitializationError e2) {
+			System.err.println("Andromeda could not be initialized!:\n" + e2.getMessage());
 			return;
 		}
-		
+				
 		//If no input was specified, start the GUI
-		List<AndromedaSource> files = params.getFiles();
+		List<Source> files = params.getFiles();
 		if (files.isEmpty()&&o.mapIn==null&&o.triggersIn==null) {
 			guiController = new GUIController();
 			return;
 		} 
 		
 		//We have input so do parsing
-		if(new AndromedaWorkflow(files, o).compile()){
+		if(new AndromedaWorkflow(files, o).compile().isSuccessful()){
 			System.exit(0);
 		} else {
 			System.exit(-1);

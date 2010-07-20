@@ -34,6 +34,8 @@ public class MetaClassInit {
 
 	public static void init(SyntaxGenerator sg, Environment env) {
 		TypeProvider tprov = env.typeProvider;
+		if(tprov.getClasses().isEmpty()) return;
+		
 		Class metaClass = tprov.getClass("Class");
 		if(metaClass == null){
 			throw new CompilationError("Meta class \"Class\" is missing!");		

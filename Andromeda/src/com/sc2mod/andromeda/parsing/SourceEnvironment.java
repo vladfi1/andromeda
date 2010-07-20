@@ -27,8 +27,8 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class SourceEnvironment {
 
-	private HashMap<Integer,AndromedaSource> sources = new HashMap<Integer,AndromedaSource>();
-	private HashMap<String,AndromedaSource> sourcesByPath = new HashMap<String,AndromedaSource>();
+	private HashMap<Integer,Source> sources = new HashMap<Integer,Source>();
+	private HashMap<String,Source> sourcesByPath = new HashMap<String,Source>();
 	private List<String> lookupDirs = new ArrayList<String>();
 	private List<String> libDirs = new ArrayList<String>();
 	private File nativeDir;
@@ -68,11 +68,11 @@ public class SourceEnvironment {
 		return bytesRead;
 	}
 	
-	public AndromedaSource getSourceById(int id){
+	public Source getSourceById(int id){
 		return sources.get(id);
 	}
 	
-	public AndromedaReader getReader(AndromedaSource f, int inclusionType){
+	public AndromedaReader getReader(Source f, int inclusionType){
 		if(sourcesByPath.containsKey(f.getFullPath())){
 			//This resource was already included! Do not get a reader on it.
 			return null;
@@ -90,8 +90,8 @@ public class SourceEnvironment {
 		return r;
 	}
 	
-	private AndromedaSource checkPathsForFile(String filePath, List<String> lookupDirs){
-		AndromedaSource toRead = null;
+	private Source checkPathsForFile(String filePath, List<String> lookupDirs){
+		Source toRead = null;
 		for(String base: lookupDirs){
 			toRead = new FileSource(base + "/" + filePath);
 			if(!(filePath.endsWith(".galaxy")||filePath.endsWith(".a"))){
@@ -107,8 +107,8 @@ public class SourceEnvironment {
 		return toRead;
 	}
 	
-	public AndromedaSource resolveFile(String filePath, int includeType){
-		AndromedaSource toRead = null;
+	public Source resolveFile(String filePath, int includeType){
+		Source toRead = null;
 		
 		//If this is a library include we only check the lib folders...
 		if(includeType == AndromedaFileInfo.TYPE_NATIVE){		
@@ -139,7 +139,7 @@ public class SourceEnvironment {
 	public AndromedaReader getReaderFromInclude(String s,int left, int right, int includeType, boolean importSyntax) {
 		int fileId = (left&0xFF000000);
 		if(!sources.containsKey(fileId)) throw new CompilationError("Unknown file id!");
-		AndromedaSource f = sources.get(fileId);
+		Source f = sources.get(fileId);
 		Matcher m;
 		if(importSyntax){
 			s = s.replace('.', '/');
@@ -152,7 +152,7 @@ public class SourceEnvironment {
 				throw new CompilationError("Malformed include directive:\n" + s);			
 		}
 				
-		AndromedaSource toRead = resolveFile(m.group(1), includeType);
+		Source toRead = resolveFile(m.group(1), includeType);
 		
 		try{
 			if(toRead==null||!toRead.exists()) throw new FileNotFoundException();

@@ -33,7 +33,7 @@ public class AndromedaReader extends FilterReader{
 		return inclusionType;
 	}	
 		
-	AndromedaReader(SourceEnvironment s, AndromedaSource f, int inclusionType, int count) throws IOException{
+	AndromedaReader(SourceEnvironment s, Source f, int inclusionType, int count) throws IOException{
 		super(f.createReader());
 		this.inclusionType = inclusionType;
 		this.index = count;

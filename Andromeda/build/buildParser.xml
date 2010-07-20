@@ -58,15 +58,18 @@
 	
   <target name="enrich" depends="classgen">
     <gexEnrich path="${java}/com/sc2mod/andromeda/syntaxNodes" scanner="${java}/com/sc2mod/andromeda/parser/Scanner.java"/>
+  	<gexEnrich scanner="${java}/com/sc2mod/andromeda/parser/GalaxyScanner.java"/>
   </target>
 
   <target name="cup" depends="classgen">
-  	 <cup srcfile="${cup}/andromedaFull.cup" destdir="${java}" interface="true" parser="Parser"/>
+  	 <cup srcfile="${cup}/andromeda.cup" destdir="${java}" interface="true" parser="Parser"/>
+ 	 <cup srcfile="${cup}/andromeda.cup" destdir="${java}" interface="true" parser="GalaxyParser"/>
   </target>
 
   <target name="jflex" depends="cup">
   	<jflex file="${flex}/unicode.flex" destdir="${java}"/>
     <jflex file="${flex}/andromeda.flex" destdir="${java}" skeleton="${skeleton}/flex/skeleton.nested"/>
+    <jflex file="${flex}/galaxy.flex" destdir="${java}" skeleton="${skeleton}/flex/skeleton.nested"/>
   </target>
 
   <target name="copy_src" depends="jflex,classgen,enrich">

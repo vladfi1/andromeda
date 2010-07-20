@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
-public class TriggerSource extends AndromedaSource {
+public class TriggerSource extends Source {
 
 	private String code;
 	private String name;

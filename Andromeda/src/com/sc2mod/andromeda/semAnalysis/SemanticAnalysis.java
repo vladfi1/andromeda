@@ -30,8 +30,10 @@ public class SemanticAnalysis {
 		StructureAnalysisVisitor typeAnalysisVisitor = new StructureAnalysisVisitor(env);
 		a.accept(typeAnalysisVisitor);
 		
-		//Resolve class hierarchy
-		env.resolveClassHierarchy();
+		//Resolve class hierarchy (if there are any classes)
+		if(!env.typeProvider.getClasses().isEmpty()){
+			env.resolveClassHierarchy();
+		}
 		
 		//Resolve constant variables
 		NameResolver r = new NameResolver(new ArrayLocalVarStack(), env);

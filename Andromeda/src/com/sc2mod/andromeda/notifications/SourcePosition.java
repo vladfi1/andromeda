@@ -9,7 +9,7 @@
  */
 package com.sc2mod.andromeda.notifications;
 
-import com.sc2mod.andromeda.parsing.AndromedaSource;
+import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.SourceEnvironment;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
@@ -44,5 +44,5 @@ public interface SourcePosition {
 	/**
 	 * Returns the source of the message
 	 */
-	public AndromedaSource getSource();
+	public Source getSource();
 }

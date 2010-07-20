@@ -14,7 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 
-public class FileSource extends AndromedaSource{
+public class FileSource extends Source{
 
 	private File file;
 	public FileSource(String path){

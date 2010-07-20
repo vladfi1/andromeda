@@ -1,3 +1,6 @@
+v0.1.5
+-Structs work again (bytesize error before)
+
 v0.1.4
 -Added key extensions (see spec)
 -Added setinstancelimit clause (see spec)

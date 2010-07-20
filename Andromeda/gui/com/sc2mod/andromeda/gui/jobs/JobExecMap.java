@@ -12,7 +12,7 @@ package com.sc2mod.andromeda.gui.jobs;
 import java.io.File;
 import java.util.ArrayList;
 
-import com.sc2mod.andromeda.parsing.AndromedaSource;
+import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.AndromedaWorkflow;
 import com.sc2mod.andromeda.program.InvalidParameterException;
 import com.sc2mod.andromeda.program.Options;
@@ -44,7 +44,7 @@ public class JobExecMap implements Job{
 		o.mapOut = outFile;
 		o.runMap = runMap;
 		Program.log.println("");
-		return new AndromedaWorkflow(new ArrayList<AndromedaSource>(0),o).compile();
+		return new AndromedaWorkflow(new ArrayList<Source>(0),o).compile().isSuccessful();
 	}
 
 	@Override

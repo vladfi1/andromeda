@@ -18,7 +18,7 @@ import javax.xml.stream.XMLStreamException;
 import com.sc2mod.andromeda.notifications.Message;
 import com.sc2mod.andromeda.notifications.MessageSeverity;
 import com.sc2mod.andromeda.notifications.SourcePosition;
-import com.sc2mod.andromeda.parsing.AndromedaSource;
+import com.sc2mod.andromeda.parsing.Source;
 
 public class ResultXMLWriter {
 
@@ -55,7 +55,7 @@ public class ResultXMLWriter {
 				writer.writeAttribute("text", m.getText());
 				for(SourcePosition s: m.getPositions()){
 					writer.writeEmptyElement("location");
-					AndromedaSource a = s.getSource();
+					Source a = s.getSource();
 					writer.writeAttribute("type", a.getTypeName());
 					writer.writeAttribute("name", a.getName());
 					writer.writeAttribute("line", String.valueOf(s.getLine()));

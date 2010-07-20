@@ -14,20 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sc2mod.andromeda.notifications.CompilationError;
-import com.sc2mod.andromeda.parsing.AndromedaSource;
+import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.FileSource;
 
 public class FileCollector {
 
 	
-	public static List<AndromedaSource> getFiles(File baseDir){
-		List<AndromedaSource> result = new ArrayList<AndromedaSource>();
+	public static List<Source> getFiles(File baseDir){
+		List<Source> result = new ArrayList<Source>();
 		if(!baseDir.exists()) throw new Error("Native library directory " + baseDir.getAbsolutePath() + " does not exist!");
 		getFilesInternal(baseDir,result);
 		return result;
 	}
 
-	private static void getFilesInternal(File file, List<AndromedaSource> result) {
+	private static void getFilesInternal(File file, List<Source> result) {
 		if(file.isDirectory()){
 			for(File f: file.listFiles()){
 				getFilesInternal(f, result);
@@ -39,8 +39,8 @@ public class FileCollector {
 		
 	}
 
-	public static List<AndromedaSource> getFilesFromList(File rootPath, String fileNames) {
-		ArrayList<AndromedaSource> result = new ArrayList<AndromedaSource>();
+	public static List<Source> getFilesFromList(File rootPath, String fileNames) {
+		ArrayList<Source> result = new ArrayList<Source>();
 		String[] files = fileNames.split(",");
 		for(String s: files){
 			File f = new File(rootPath.getAbsolutePath() + "/" + s);

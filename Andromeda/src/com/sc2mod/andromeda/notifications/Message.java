@@ -9,7 +9,7 @@
  */
 package com.sc2mod.andromeda.notifications;
 
-import com.sc2mod.andromeda.parsing.AndromedaSource;
+import com.sc2mod.andromeda.parsing.Source;
 
 public interface Message {
 
@@ -40,5 +40,11 @@ public interface Message {
 	 * @return message code
 	 */
 	public int getCode();
+
+	/**
+	 * Gets a unique identifier for this type of message
+	 * @return
+	 */
+	public int getId();
 
 }

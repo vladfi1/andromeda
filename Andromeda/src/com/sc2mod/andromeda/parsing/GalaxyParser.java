@@ -31,6 +31,7 @@ import com.sc2mod.andromeda.codetransform.UnusedFinder;
 import com.sc2mod.andromeda.codetransform.VirtualCallResolver;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.notifications.CompilationError;
+import com.sc2mod.andromeda.parser.GalaxyScanner;
 import com.sc2mod.andromeda.parser.Parser;
 import com.sc2mod.andromeda.parser.Scanner;
 import com.sc2mod.andromeda.program.FileCollector;
@@ -40,7 +41,7 @@ import com.sc2mod.andromeda.syntaxNodes.AndromedaFile;
 import com.sc2mod.andromeda.syntaxNodes.FileContent;
 import com.sc2mod.andromeda.syntaxNodes.IncludedFile;
 
-public class AndromedaParser extends Parser implements IParser {
+public class GalaxyParser extends com.sc2mod.andromeda.parser.GalaxyParser implements IParser {
 
 	private SourceEnvironment sourceEnvironment;
 
@@ -48,7 +49,7 @@ public class AndromedaParser extends Parser implements IParser {
 		return sourceEnvironment;
 	}
 
-	public AndromedaParser() {
+	public GalaxyParser() {
 		stack = new SymbolStack();
 		sourceEnvironment = new SourceEnvironment();
 	}
@@ -56,7 +57,7 @@ public class AndromedaParser extends Parser implements IParser {
 	private AndromedaFile parse(Source f, int inclusionType) throws Exception{
 		AndromedaReader a = sourceEnvironment.getReader(f, inclusionType);
 		if(a == null) return null;
-		this.setScanner(new Scanner(a));
+		this.setScanner(new GalaxyScanner(a));
 		Symbol sym = parse();
 		FileContent topContent = new FileContent();
 		AndromedaFile top = new AndromedaFile(null,null,topContent);
@@ -71,7 +72,7 @@ public class AndromedaParser extends Parser implements IParser {
 		if(fold==null) return parse(f,inclusionType);
 		AndromedaReader a = sourceEnvironment.getReader(f,inclusionType);
 		if(a == null) return fold;
-		this.setScanner(new Scanner(a));
+		this.setScanner(new GalaxyScanner(a));
 		Symbol sym = parse();
 		AndromedaFile fi = ((AndromedaFile)sym.value);
 		fi.setFileInfo(new AndromedaFileInfo(a.getFileId(), inclusionType,null));

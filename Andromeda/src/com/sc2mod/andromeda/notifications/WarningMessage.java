@@ -28,6 +28,11 @@ public class WarningMessage implements Message{
 	public int getCode() {
 		return 0;
 	}
+	
+	@Override
+	public int getId() {
+		return 0;
+	}
 
 	@Override
 	public SourcePosition[] getPositions() {

@@ -48,21 +48,21 @@ public class TriggerExtractor
 	private String actionIndex;
 	
 	
-	public List<AndromedaSource> extractTriggers(File triggerFile) throws IOException{
+	public List<Source> extractTriggers(File triggerFile) throws IOException{
 		return extractInternal(new InputSource(new FileReader(triggerFile)),triggerFile);
 	}
 	
-	public List<AndromedaSource> extractTriggers(MoPaQ map) throws IOException{
+	public List<Source> extractTriggers(MoPaQ map) throws IOException{
 		byte[] data = map.returnFileByName("triggers");
 		ByteArrayInputStream bais=new ByteArrayInputStream(data);
 		InputSource is=new InputSource(bais);
 		return extractInternal(is, map.getSourceFile());
 	}
 	
-	private List<AndromedaSource> extractInternal(InputSource is, File source) throws IOException{
+	private List<Source> extractInternal(InputSource is, File source) throws IOException{
 		DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
 		DocumentBuilder db;
-		ArrayList<AndromedaSource> out = new ArrayList<AndromedaSource>();
+		ArrayList<Source> out = new ArrayList<Source>();
 		
 	//	System.out.println(new String(data));
 		try {

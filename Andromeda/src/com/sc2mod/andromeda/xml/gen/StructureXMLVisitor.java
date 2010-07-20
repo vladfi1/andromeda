@@ -19,7 +19,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import com.sc2mod.andromeda.parsing.AndromedaFileInfo;
-import com.sc2mod.andromeda.parsing.AndromedaSource;
+import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.SourceEnvironment;
 import com.sc2mod.andromeda.program.Options;
 import com.sc2mod.andromeda.syntaxNodes.AccessorDeclaration;
@@ -92,7 +92,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 		
 		writer.writeStartElement("source");
 		
-		AndromedaSource source = env.getSourceById(info.getFileId());
+		Source source = env.getSourceById(info.getFileId());
 		writer.writeAttribute("name", source.getName());
 		writer.writeAttribute("type", source.getTypeName());
 		writer.writeAttribute("inclusionType", String.valueOf(inclusionType));

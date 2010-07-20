@@ -12,7 +12,7 @@ package com.sc2mod.andromeda.parsing;
 import java.io.IOException;
 import java.io.Reader;
 
-public abstract class AndromedaSource {
+public abstract class Source {
 
 	/**
 	 * Creates and returns a reader to read from this source

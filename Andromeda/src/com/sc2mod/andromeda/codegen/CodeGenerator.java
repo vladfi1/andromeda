@@ -61,16 +61,19 @@ public abstract class CodeGenerator extends VisitorAdaptor {
 		this.env = env2;
 		this.options = options2;
 		this.nameProvider = np;
-		systemClass = env.typeProvider.getClass("System");
-		if(systemClass == null){
-			throw new CompilationError("Internal class \"System\" is missing!");
-		}
 		
-		Signature s = new Signature(new Type[]{BasicType.STRING});
-		
-		errorMethod = systemClass.getMethods().getMethod("error",s);
-		if(errorMethod == null){
-			throw new CompilationError("The internal class \"System\" is missing the error(string) method!");
+		if(!env.typeProvider.getClasses().isEmpty()){
+			systemClass = env.typeProvider.getClass("System");
+			if(systemClass == null){
+					throw new CompilationError("Internal class \"System\" is missing!");
+			}
+			
+			Signature s = new Signature(new Type[]{BasicType.STRING});
+			
+			errorMethod = systemClass.getMethods().getMethod("error",s);
+			if(errorMethod == null){
+				throw new CompilationError("The internal class \"System\" is missing the error(string) method!");
+			}
 		}
 	}
 
@@ -181,7 +184,10 @@ public abstract class CodeGenerator extends VisitorAdaptor {
 		if(newLines)buffer.newLine(indent);	
 		buffer.append("trigger t;");
 		if(newLines)buffer.newLine(indent);	
-		buffer.append(classGen.getInitFunctionName()).append("();");
+		
+		//Only append class init function if there are classes
+		if(classGen!=null)
+			buffer.append(classGen.getInitFunctionName()).append("();");
 		
 		for(StaticInit s : env.getGlobalInits()){
 			writeStaticInit(s,indent);

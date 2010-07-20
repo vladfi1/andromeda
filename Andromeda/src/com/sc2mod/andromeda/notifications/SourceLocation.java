@@ -13,7 +13,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.sc2mod.andromeda.parsing.AndromedaSource;
+import com.sc2mod.andromeda.parsing.Source;
 
 public class SourceLocation {
 
@@ -26,11 +26,11 @@ public class SourceLocation {
 	
 	private String lineContent;
 	
-	private AndromedaSource source;
+	private Source source;
 	private int startUnderline;
 	private int endUnderline;
 	
-	public SourceLocation(AndromedaSource f, int pos, int length) throws IOException{
+	public SourceLocation(Source f, int pos, int length) throws IOException{
 		try {
 			BufferedReader b = new BufferedReader(f.createReader());
 			int lineNr = 1;

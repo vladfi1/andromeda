@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.sc2mod.andromeda.parsing.AndromedaSource;
+import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.FileSource;
 
 public class Parameters {
@@ -38,7 +38,7 @@ public class Parameters {
 	
 	private String[] params;
 	private HashMap<String,Object> paramTable = new HashMap<String,Object>(64);
-	private List<AndromedaSource> files = new ArrayList<AndromedaSource>();
+	private List<Source> files = new ArrayList<Source>();
 	private static HashMap<String,ParamHandler> longParamHandlers = new HashMap<String, ParamHandler>();
 	
 	static {
@@ -86,7 +86,7 @@ public class Parameters {
 	}
 
 
-	public List<AndromedaSource> getFiles() {
+	public List<Source> getFiles() {
 		return files;
 	}
 

@@ -13,6 +13,7 @@ import java.util.HashSet;
 
 import com.sc2mod.andromeda.environment.Scope;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
+import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.CompilationError;
 import com.sc2mod.andromeda.parsing.AndromedaReader;
 import com.sc2mod.andromeda.parsing.SourceEnvironment;
@@ -65,5 +66,15 @@ public class Struct extends RecordType {
 	@Override
 	public boolean isValidAsParameter() {
 		return false;
+	}
+	
+	@Override
+	protected int calcByteSize() {
+		int result = 0;
+		for(String s: fields.getFieldNames()){
+			VarDecl f = fields.getFieldByName(s);
+			result += f.getType().getMemberByteSize();
+		}
+		return result;
 	}
 }

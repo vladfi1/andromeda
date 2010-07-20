@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.text.NumberFormatter;
@@ -54,28 +55,19 @@ import com.sc2mod.andromeda.xml.gen.StructureXMLVisitor;
  * @author gex
  *
  */
-public class AndromedaWorkflow extends Workflow{
+public class GalaxyWorkflow extends Workflow{
 
-	public AndromedaWorkflow(List<Source> files, Options o) {
+	public GalaxyWorkflow(List<Source> files, Options o) {
 		super(files, o);
 	}
-	
+	  
 	protected IParser createParser(){
 		//Create parser
-		AndromedaParser p = new AndromedaParser();
+		GalaxyParser p = new GalaxyParser();
 		
 		//Assemble lookup paths
 		SourceEnvironment env = p.getSourceEnvironment();		
 		env.addLookupDir(options.nativeLibFolder);
-		
-		if(options.mapIn!=null){
-			//In map as lookup dir
-			env.addLookupDir(options.mapIn.getAbsoluteFile().getParentFile());
-		} else if(!files.isEmpty()) {
-			//Folder of first file lookup dir
-			env.addLookupDir(((FileSource)files.get(0)).getFile().getAbsoluteFile().getParentFile());
-		}
-		env.addLibDir(options.libFolder);	
 		env.setNativeDir(options.nativeLibFolder);
 		return p;
 		
@@ -83,8 +75,63 @@ public class AndromedaWorkflow extends Workflow{
 
 	@Override
 	protected List<Source> getLanguageFiles() {
-		return FileCollector.getFiles(new File(options.libFolder.getAbsolutePath() + "/a/lang"));
+		return new ArrayList<Source>(0);
 	}
-	  
 
+	public ParseResult compile() {
+		
+		long bytesOut = 0;
+	
+		long time = resetTime();
+		
+		IParser p = null;
+		try {
+			p = createParser();
+			
+			//*** Do the parsing ***
+			AndromedaFile af = parseAllFiles(p);
+			
+
+			//Do semantics analysis
+			System.out.print("No syntax errors. Checking semantics...");
+			Environment env = SemanticAnalysis.analyze(af,options);
+
+			System.out.println(" DONE (" + getTime() + " ms)");
+		
+			
+			
+			
+			time = (System.currentTimeMillis() - time);
+			long bytesIn = p.getSourceEnvironment().getBytesRead();
+
+			System.out
+					.println("=> Successfully compiled "
+							+ p.getSourceEnvironment().getFileCount()
+							+ " files ("
+							+ bytesIn
+							+ " bytes).\n=> Produced code: "
+							+ bytesOut
+							+ " bytes.\n=> Time: "
+							+ time
+							+ " ms ("
+							+ (int) (((bytesOut + bytesIn) / (double) (1 << 10)) / (time / 1000.0))
+							+ " KB/s)");
+			System.out.println("=> Memory Usage: " + ((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/(1<<20)) + " MB");
+			Program.log.caption("+++ Compilation successful +++");
+		} catch (Throwable e) {
+			reportError(e);
+			if(e instanceof CompilationError){
+				((CompilationError)e).setEnvironment(p.getSourceEnvironment());
+			}
+			if(e instanceof Message){
+				Program.log.addMessage((Message) e);
+			} else {
+				Program.log.addMessage(new UnlocatedErrorMessage(e.getMessage()));
+			}
+		}
+				
+		return getResult();
+		
+
+	}
 }

@@ -37,7 +37,7 @@ public class CompilationError extends RuntimeException implements Message {
 
 	private String description;
 	
-	public int getType() {
+	public int getId() {
 		return type;
 	}
 

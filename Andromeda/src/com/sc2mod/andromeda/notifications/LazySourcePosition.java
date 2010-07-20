@@ -11,7 +11,7 @@ package com.sc2mod.andromeda.notifications;
 
 import java.io.IOException;
 
-import com.sc2mod.andromeda.parsing.AndromedaSource;
+import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.SourceEnvironment;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
@@ -22,7 +22,7 @@ public class LazySourcePosition implements SourcePosition {
 	private int line = -1;
 	private int offset;
 	private int length;
-	private AndromedaSource source;
+	private Source source;
 	private int fileId;
 	private SourceLocation loadedLocation;
 	
@@ -76,7 +76,7 @@ public class LazySourcePosition implements SourcePosition {
 	}
 
 	@Override
-	public AndromedaSource getSource() {
+	public Source getSource() {
 		if(source==null) loadSource();
 		return source;
 	}
