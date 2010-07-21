@@ -69,20 +69,20 @@ public class TriggerExtractor
 			db = dbf.newDocumentBuilder();
 
 			Document doc=db.parse(is);
-			NodeList allNodes=doc.getElementsByTagName("element");
+			NodeList allNodes=doc.getElementsByTagName("Element");
 			//System.out.println(allNodes.getLength());
 			for(int i=0;i<allNodes.getLength();i++)
 			{
 				Element cur=(Element) allNodes.item(i);
-				if(cur.getAttribute("type").equalsIgnoreCase("FunctionDef"))
+				if(cur.getAttribute("Type").equalsIgnoreCase("FunctionDef"))
 				{
-					if(isThere(cur,"flagAction") && isThere(cur,"flagCustomScript") && isThere(cur,"flagHidden"))
+					if(isThere(cur,"FlagAction") && isThere(cur,"FlagCustomScript") && isThere(cur,"FlagHidden"))
 					{
-						NodeList innerNodes=cur.getElementsByTagName("script");
+						NodeList innerNodes=cur.getElementsByTagName("ScriptCode");
 						for(int j=0;j<innerNodes.getLength();j++)
 						{	
 //							System.out.println(":::" + cur.getElementsByTagName("identifier").item(0).getTextContent());
-							NodeList l = cur.getElementsByTagName("identifier");
+							NodeList l = cur.getElementsByTagName("Identifier");
 							String name;
 							if(l.item(0)==null){
 								name = "Untitled Action " + actionIndex;
