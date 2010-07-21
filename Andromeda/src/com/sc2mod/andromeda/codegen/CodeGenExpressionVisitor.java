@@ -125,8 +125,10 @@ public class CodeGenExpressionVisitor extends VisitorAdaptor {
 		SimpleBuffer curBuffer = curExprBuffer;
 		Literal l = literalExpression.getLiteral();
 		switch(l.getType()){
-		case LiteralType.BOOL:
 		case LiteralType.FLOAT:
+			System.out.println();
+			//break;
+		case LiteralType.BOOL:
 		case LiteralType.INT:
 			curBuffer.append(String.valueOf(l.getValue()));
 			break;
@@ -196,7 +198,7 @@ public class CodeGenExpressionVisitor extends VisitorAdaptor {
 		
 		boolean notStatic = !decl.isStatic();
 		
-		//Infere left child expression (unless this is static)
+		//Infer left child expression (unless this is static)
 		//if(notStatic)
 		//	fieldAccess.childrenAccept(this);
 		

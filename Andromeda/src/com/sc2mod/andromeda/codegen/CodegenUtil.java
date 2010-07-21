@@ -168,7 +168,7 @@ public final class CodegenUtil {
 		case UnaryOperator.POSTMINUSMINUS: return "--";
 		case UnaryOperator.ADDRESSOF: return "&";
 		case UnaryOperator.DEREFERENCE: return "*";
-		default: throw new CompilationError("Unkonwn unary operator type: " + type);
+		default: throw new CompilationError("Unknown unary operator type: " + type);
 		}
 
 	}

@@ -60,10 +60,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 		
 		//XPilot: invocationTarget is null for default constructors
 		if(invocationTarget == null) return;
-		
-		//HERE invocationTarget WILL BE NULL IF THE CLASS HAS NO DEFAULT CONSTRUCTOR
-		//THIS RESULTS IN A NULL POINTER EXCEPTION ON THE NEXT LINE
-		//TODO geX: FIX DEFAULT CONSTRUCTORS
+
 		if(!alreadyChecked&&invocationTarget.getScope().getInclusionType() != AndromedaFileInfo.TYPE_NATIVE){
 			//Only check it if it is no function defined in blizzard's libs
 			inv.getWhichFunction().getDefinition().accept(parent);

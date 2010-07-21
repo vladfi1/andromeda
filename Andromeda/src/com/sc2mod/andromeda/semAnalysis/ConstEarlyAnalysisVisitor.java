@@ -24,6 +24,7 @@ import com.sc2mod.andromeda.syntaxNodes.AndromedaFile;
 import com.sc2mod.andromeda.syntaxNodes.BinaryExpression;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.Expression;
 import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclaration;
@@ -33,6 +34,7 @@ import com.sc2mod.andromeda.syntaxNodes.IncludedFile;
 import com.sc2mod.andromeda.syntaxNodes.Literal;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
 import com.sc2mod.andromeda.syntaxNodes.LiteralType;
+import com.sc2mod.andromeda.syntaxNodes.ParenthesisExpression;
 import com.sc2mod.andromeda.syntaxNodes.StructDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.UnaryExpression;
 import com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl;
@@ -176,7 +178,10 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 	}
 	
 	@Override
-	public void visit(FieldAccess nameExpression) {		
+	public void visit(FieldAccess nameExpression) {
+		//XPilot: added (this is what ExpressionAnalysisVisitor does)
+		nameExpression.childrenAccept(this);
+		
 		VarDecl va = nameResolver.resolveVariable(scope,curType,nameExpression,false);
 		nameExpression.setSemantics(va);
 
@@ -226,6 +231,18 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 		le.accept(constResolve);
 	}
 	
-	
-
+	/**
+	 * XPilot: Copied from ExpressionAnalysisVisitor
+	 */
+	@Override
+	public void visit(ParenthesisExpression parenthesisExpression) {
+		Expression e = parenthesisExpression.getExpression();
+		e.accept(this);
+		parenthesisExpression.setInferedType(e.getInferedType());
+		
+		if(e.getConstant()){
+			parenthesisExpression.setConstant(true);
+			parenthesisExpression.setValue(e.getValue());
+		}
+	}
 }

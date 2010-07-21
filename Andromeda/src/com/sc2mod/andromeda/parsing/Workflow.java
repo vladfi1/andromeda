@@ -38,6 +38,12 @@ import com.sc2mod.andromeda.xml.gen.ResultXMLWriter;
 import com.sc2mod.andromeda.xml.gen.StructureXMLVisitor;
 
 public abstract class Workflow {
+	
+	/**
+	 * XPilot: for debugging
+	 */
+	private static boolean parseNatives = true;
+	
 	private long lastTime = 0;
 	protected Options options;
 	protected List<Source> files;
@@ -92,6 +98,7 @@ public abstract class Workflow {
 		}
 		
 		//Natives
+		if(parseNatives)
 		for (Source f: natives) {
 			System.out.print("Parsing native library ["+f.getName()+"]...");
 			af = p.parse(f,af,	AndromedaFileInfo.TYPE_NATIVE);

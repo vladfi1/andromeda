@@ -38,6 +38,8 @@ public class ExpressionAnalyzer {
 		int op = binaryExpression.getOperator();
 		Expression lExpr = binaryExpression.getLeftExpression();
 		Expression rExpr = binaryExpression.getRightExpression();
+		//System.out.println(binaryExpression);
+		
 		Type left = lExpr.getInferedType();
 		Type right = rExpr.getInferedType();
 		

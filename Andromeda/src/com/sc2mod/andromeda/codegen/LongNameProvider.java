@@ -103,7 +103,7 @@ public class LongNameProvider implements INameProvider {
 			builder.append("init___");
 			RecordType r = function.getContainingType();
 			if(r != null){
-				builder.append(function.getContainingType().getName()).append("__");
+				builder.append(r.getName()).append("__");
 			} else {
 				builder.append("global");
 			}

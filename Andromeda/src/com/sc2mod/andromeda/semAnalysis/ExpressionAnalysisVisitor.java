@@ -300,11 +300,9 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		VarDecl decl = (VarDecl)variableAssignDecl.getName().getSemantics();
 		variableAssignDecl.setSemantics(decl);
 		variableAssignDecl.setInferedType(decl.getType());
-
+		
 		//Check type
 		if(!t.canImplicitCastTo(decl.getType())){
-			System.out.println(t.getFullName());
-			System.out.println(decl.getType().getFullName());
 			//For bytes, we might be able to cast if the value is a constant
 			boolean error = true;
 			if(decl.getType().getBaseType()==BasicType.BYTE){				

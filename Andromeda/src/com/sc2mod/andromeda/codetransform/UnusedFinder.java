@@ -208,7 +208,7 @@ public class UnusedFinder {
 						handleUnusedVar(handleUnused,decl,"static field","read",true);
 					}
 				} else if(decl.getNumWriteAccesses()==0){
-					throw new CompilationError(decl.getDefinition(), "The static field " + decl.getUid() + " is read but never initialized");
+					//throw new CompilationError(decl.getDefinition(), "The static field " + decl.getUid() + " is read but never initialized");
 				}
 			}
 			

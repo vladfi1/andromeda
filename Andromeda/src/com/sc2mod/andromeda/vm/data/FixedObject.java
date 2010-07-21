@@ -9,6 +9,9 @@
  */
 package com.sc2mod.andromeda.vm.data;
 
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.Type;
@@ -45,7 +48,10 @@ public class FixedObject extends DataObject {
 //		if(val == (int)val){
 //			return String.valueOf(val).concat(".0");
 //		}
-		return String.valueOf(val);
+		//Formatter f = new Formatter();
+		//f.format("%f", val);
+		//System.out.println(val + ": " + f.toString());
+		return String.format("%f", val);
 	}
 	
 	

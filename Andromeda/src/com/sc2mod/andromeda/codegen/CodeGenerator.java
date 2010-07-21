@@ -9,6 +9,9 @@
  */
 package com.sc2mod.andromeda.codegen;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.sc2mod.andromeda.classes.ClassGenerator;
@@ -173,7 +176,7 @@ public abstract class CodeGenerator extends VisitorAdaptor {
 		}
 	}
 	
-	public void writeInit(){
+	public void writeInit() {
 		SimpleBuffer buffer = functionBuffer;
 		boolean newLines = options.newLines;
 		
@@ -189,12 +192,32 @@ public abstract class CodeGenerator extends VisitorAdaptor {
 		if(classGen!=null)
 			buffer.append(classGen.getInitFunctionName()).append("();");
 		
+		//XPilot: merge static inits
+		ArrayList<StaticInit> staticInits =
+			new ArrayList<StaticInit>(env.getGlobalInits().size()+env.typeProvider.getTypeInits().size());
+		staticInits.addAll(env.getGlobalInits());
+		staticInits.addAll(env.typeProvider.getTypeInits());
+		
+		//XPilot: sort global inits by scope (high inclusion type => call it first)
+		Collections.sort(staticInits, new Comparator<StaticInit>() {
+			@Override
+			public int compare(StaticInit arg0, StaticInit arg1) {
+				return arg1.getScope().getInclusionType() - arg0.getScope().getInclusionType();
+			}
+		});
+		
+		for(StaticInit s : staticInits) {
+			writeStaticInit(s, indent);
+		}
+		
+		/*
 		for(StaticInit s : env.getGlobalInits()){
 			writeStaticInit(s,indent);
 		}
 		for(StaticInit s: env.typeProvider.getTypeInits()){
 			writeStaticInit(s,indent);
 		}
+		*/
 		
 		generateMethodFooter(buffer);
 		if (options.newLines)
