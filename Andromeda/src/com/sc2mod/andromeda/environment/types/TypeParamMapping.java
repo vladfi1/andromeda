@@ -25,7 +25,6 @@ public class TypeParamMapping {
 		public final Type from;
 		public final Type to;
 		public ParamMapEntry(Type from, Type to) {
-			super();
 			this.from = from;
 			this.to = to;
 		}

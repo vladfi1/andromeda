@@ -508,9 +508,7 @@ public class Class extends RecordType implements IIdentifiable {
 	 */
 	public static boolean isHierarchyShared(Class left, Class right) {
 		return left.isInstanceof(right)||right.isInstanceof(left);
-				
 	}
-	
 	
 	@Override
 	protected int calcByteSize() {
