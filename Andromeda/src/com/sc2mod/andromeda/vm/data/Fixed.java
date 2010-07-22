@@ -1,39 +1,20 @@
-package com.sc2mod.andromeda.test;
+package com.sc2mod.andromeda.vm.data;
 
 /**
  * Emulates Galaxy's "fixed" data type.
  * @author XPilot
  */
 public class Fixed {
-	public static void main(String[] args) {
-		Fixed f1 = fromDecimal(1.0 + 1.0 / FRACTION_FACTOR);
-		Fixed f2 = fromDecimal(2.0 / FRACTION_FACTOR);
-		
-		test(f1, f2);
-	}
-	
-	public static void test(Fixed f1, Fixed f2) {
-		System.out.println("f1 = " + f1);
-		
-		System.out.println("f2 = " + f2);
-		
-		System.out.println("f1 + f2 = " + sum(f1, f2));
-		System.out.println("f1 - f2 = " + difference(f1, f2));
-		System.out.println("f1 * f2 = " + product(f1, f2));
-		System.out.println("f1 / f2 = " + quotient(f1, f2));
-		System.out.println("f1 % f2 = " + modulus(f1, f2));
-	}
-	
 	private static final int FRACTION_BITS = 12;
 	private static final int FRACTION_FACTOR = 1 << FRACTION_BITS;
 	
-	private long value;
+	private int value;
 	
-	private Fixed(long value) {
+	private Fixed(int value) {
 		this.value = value;
 	}
 	
-	public boolean isValid() {
+	private static boolean isValid(long value) {
 		return value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE;
 	}
 	
@@ -51,17 +32,16 @@ public class Fixed {
 		return String.format("%." + Math.max(decimalDigits(), 1) + "f", (double)value / FRACTION_FACTOR);
 	}
 	
-	public static int toInt(Fixed f) {
-		return (int)(f.value >> FRACTION_BITS);
+	public int toInt() {
+		return (int)(value >> FRACTION_BITS);
 	}
 	
 	public static Fixed fromInt(int i) {
-		long value = i;
-		return new Fixed(value << FRACTION_BITS);
+		return new Fixed(i << FRACTION_BITS);
 	}
 	
 	public static Fixed fromDecimal(double d) {
-		long value = (long)(d * FRACTION_FACTOR);
+		int value = (int)(d * FRACTION_FACTOR);
 		return new Fixed(value);
 	}
 	
@@ -71,6 +51,10 @@ public class Fixed {
 
 	public static Fixed fromString(String s) {
 		return fromDecimal(Double.parseDouble(s));
+	}
+	
+	public Fixed negate() {
+		return new Fixed(-value);
 	}
 	
 	public static Fixed sum(Fixed f1, Fixed f2) {
@@ -84,21 +68,41 @@ public class Fixed {
 	public static Fixed product(Fixed f1, Fixed f2) {
 		long value = f1.value * f2.value;
 		value = value >> FRACTION_BITS;
-		return new Fixed(value);
+		return new Fixed((int)value);
 	}
 	
 	public static Fixed quotient(Fixed f1, Fixed f2) {
-		long value = f1.value << FRACTION_BITS;
-		value /= f2.value;
-		return new Fixed(value);
+		long value = f1.value;
+		value = (value << FRACTION_BITS) / f2.value;
+		return new Fixed((int)value);
 	}
 	
 	public static Fixed modulus(Fixed f1, Fixed f2) {
-		long value = f1.value % f2.value;
+		int value = f1.value % f2.value;
 		return new Fixed(value);
 	}
 	
-	public static boolean areEqual(Fixed f1, Fixed f2) {
+	public static boolean equal(Fixed f1, Fixed f2) {
 		return f1.value == f2.value;
+	}
+	
+	public static boolean notEqual(Fixed f1, Fixed f2) {
+		return f1.value != f2.value;
+	}
+	
+	public static boolean lessThan(Fixed f1, Fixed f2) {
+		return f1.value < f2.value;
+	}
+	
+	public static boolean greaterThan(Fixed f1, Fixed f2) {
+		return f1.value > f2.value;
+	}
+	
+	public static boolean lessThanOrEqualTo(Fixed f1, Fixed f2) {
+		return f1.value <= f2.value;
+	}
+	
+	public static boolean greaterThanOrEqualTo(Fixed f1, Fixed f2) {
+		return f1.value >= f2.value;
 	}
 }

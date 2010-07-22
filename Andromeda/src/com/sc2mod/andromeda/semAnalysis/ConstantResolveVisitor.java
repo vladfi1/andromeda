@@ -29,6 +29,7 @@ import com.sc2mod.andromeda.syntaxNodes.UnaryOperator;
 import com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl;
 import com.sc2mod.andromeda.vm.data.BoolObject;
 import com.sc2mod.andromeda.vm.data.DataObject;
+import com.sc2mod.andromeda.vm.data.Fixed;
 import com.sc2mod.andromeda.vm.data.FixedObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
 import com.sc2mod.andromeda.vm.data.StringObject;
@@ -132,8 +133,8 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 				break;
 			} 
 			if(type == BasicType.FLOAT){
-				float i = val.getFloatValue();
-				unaryExpression.setValue(new FixedObject(-i));
+				Fixed f = val.getFixedValue();
+				unaryExpression.setValue(new FixedObject(f.negate()));
 				break;
 			}
 			throw new Error("!");
@@ -255,9 +256,9 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 		case BinaryOperator.PLUS:
 		{
 			if(resultType == BasicType.TEXT|| resultType == BasicType.STRING){
-				String f1 = lVal.getStringValue();
-				String f2 = rVal.getStringValue();
-				binaryExpression.setValue(new StringObject(f1 + f2));
+				String s1 = lVal.getStringValue();
+				String s2 = rVal.getStringValue();
+				binaryExpression.setValue(new StringObject(s1 + s2));
 				break;
 			}
 		}
@@ -268,28 +269,28 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 		{
 			//If one of both operands is float, then the result is float, else int
 			if(resultType == BasicType.FLOAT){
-				float f1 = lVal.getFloatValue();
-				float f2 = rVal.getFloatValue();
-				float result;
+				Fixed f1 = lVal.getFixedValue();
+				Fixed f2 = rVal.getFixedValue();
+				Fixed result;
 				switch(op){
-				case BinaryOperator.PLUS:	result = f1 + f2; break;
-				case BinaryOperator.MINUS:	result = f1 - f2; break;
-				case BinaryOperator.DIV:	result = f1 / f2; break;
-				case BinaryOperator.MULT:	result = f1 * f2; break;
-				case BinaryOperator.MOD:	result = f1 % f2; break;
+				case BinaryOperator.PLUS:	result = Fixed.sum(f1, f2); break;
+				case BinaryOperator.MINUS:	result = Fixed.difference(f1, f2); break;
+				case BinaryOperator.DIV:	result = Fixed.quotient(f1, f2); break;
+				case BinaryOperator.MULT:	result = Fixed.product(f1, f2); break;
+				case BinaryOperator.MOD:	result = Fixed.modulus(f1, f2); break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(new FixedObject(result));
 			} else {
-				int f1 = lVal.getIntValue();
-				int f2 = rVal.getIntValue();
+				int i1 = lVal.getIntValue();
+				int i2 = rVal.getIntValue();
 				int result;
 				switch(op){
-				case BinaryOperator.PLUS:	result = f1 + f2; break;
-				case BinaryOperator.MINUS:	result = f1 - f2; break;
-				case BinaryOperator.DIV:	result = f1 / f2; break;
-				case BinaryOperator.MULT:	result = f1 * f2; break;
-				case BinaryOperator.MOD:	result = f1 % f2; break;
+				case BinaryOperator.PLUS:	result = i1 + i2; break;
+				case BinaryOperator.MINUS:	result = i1 - i2; break;
+				case BinaryOperator.DIV:	result = i1 / i2; break;
+				case BinaryOperator.MULT:	result = i1 * i2; break;
+				case BinaryOperator.MOD:	result = i1 % i2; break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(new IntObject(result));	
@@ -299,12 +300,12 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 		case BinaryOperator.EQEQ:
 		case BinaryOperator.NOTEQ:
 			if(left == BasicType.BOOL&&right == BasicType.BOOL){
-				boolean f1 = lVal.getBoolValue();
+				boolean b1 = lVal.getBoolValue();
 				boolean f2 = rVal.getBoolValue();
 				boolean result;
 				switch(op){
-				case BinaryOperator.EQEQ:	result = f1 == f2; break;
-				case BinaryOperator.NOTEQ:	result = f1 != f2; break;
+				case BinaryOperator.EQEQ:	result = b1 == f2; break;
+				case BinaryOperator.NOTEQ:	result = b1 != f2; break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(BoolObject.getBool(result));
@@ -315,30 +316,30 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 		case BinaryOperator.LTEQ:
 		case BinaryOperator.GTEQ:
 			if(left == BasicType.FLOAT||right == BasicType.FLOAT){
-				float f1 = lVal.getFloatValue();
-				float f2 = rVal.getFloatValue();
+				Fixed f1 = lVal.getFixedValue();
+				Fixed f2 = rVal.getFixedValue();
 				boolean result;
 				switch(op){
-				case BinaryOperator.EQEQ:	result = f1 == f2; break;
-				case BinaryOperator.NOTEQ:	result = f1 != f2; break;
-				case BinaryOperator.LT:		result = f1 < f2; break;
-				case BinaryOperator.GT:		result = f1 > f2; break;
-				case BinaryOperator.LTEQ:	result = f1 <= f2; break;
-				case BinaryOperator.GTEQ:	result = f1 >= f2; break;
+				case BinaryOperator.EQEQ:	result = Fixed.equal(f1, f2); break;
+				case BinaryOperator.NOTEQ:	result = Fixed.notEqual(f1, f2); break;
+				case BinaryOperator.LT:		result = Fixed.lessThan(f1, f2); break;
+				case BinaryOperator.GT:		result = Fixed.greaterThan(f1, f2); break;
+				case BinaryOperator.LTEQ:	result = Fixed.lessThanOrEqualTo(f1, f2); break;
+				case BinaryOperator.GTEQ:	result = Fixed.greaterThanOrEqualTo(f1, f2); break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(BoolObject.getBool(result));
 			} else {
-				int f1 = lVal.getIntValue();
-				int f2 = rVal.getIntValue();
+				int i1 = lVal.getIntValue();
+				int i2 = rVal.getIntValue();
 				boolean result;
 				switch(op){
-				case BinaryOperator.EQEQ:	result = f1 == f2; break;
-				case BinaryOperator.NOTEQ:	result = f1 != f2; break;
-				case BinaryOperator.LT:		result = f1 < f2; break;
-				case BinaryOperator.GT:		result = f1 > f2; break;
-				case BinaryOperator.LTEQ:	result = f1 <= f2; break;
-				case BinaryOperator.GTEQ:	result = f1 >= f2; break;
+				case BinaryOperator.EQEQ:	result = i1 == i2; break;
+				case BinaryOperator.NOTEQ:	result = i1 != i2; break;
+				case BinaryOperator.LT:		result = i1 < i2; break;
+				case BinaryOperator.GT:		result = i1 > i2; break;
+				case BinaryOperator.LTEQ:	result = i1 <= i2; break;
+				case BinaryOperator.GTEQ:	result = i1 >= i2; break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(BoolObject.getBool(result));
@@ -350,15 +351,15 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 		case BinaryOperator.RSHIFT:
 		case BinaryOperator.URSHIFT:
 			{
-				int f1 = lVal.getIntValue();
-				int f2 = rVal.getIntValue();
+				int i1 = lVal.getIntValue();
+				int i2 = rVal.getIntValue();
 				int result;
 				switch(op){
-				case BinaryOperator.AND:	result = f1 & f2; break;
-				case BinaryOperator.OR:		result = f1 | f2; break;
-				case BinaryOperator.LSHIFT:	result = f1 << f2; break;
-				case BinaryOperator.RSHIFT:	result = f1 >> f2; break;
-				case BinaryOperator.URSHIFT:result = f1 >>> f2; break;
+				case BinaryOperator.AND:	result = i1 & i2; break;
+				case BinaryOperator.OR:		result = i1 | i2; break;
+				case BinaryOperator.LSHIFT:	result = i1 << i2; break;
+				case BinaryOperator.RSHIFT:	result = i1 >> i2; break;
+				case BinaryOperator.URSHIFT:result = i1 >>> i2; break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(new IntObject(result));

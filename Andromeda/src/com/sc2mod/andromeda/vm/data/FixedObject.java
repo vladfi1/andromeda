@@ -9,37 +9,56 @@
  */
 package com.sc2mod.andromeda.vm.data;
 
-import java.math.RoundingMode;
-import java.text.NumberFormat;
-
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.Literal;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
 import com.sc2mod.andromeda.syntaxNodes.LiteralType;
 
+/**
+ * XPilot: modified to use Fixed type.
+ */
 public class FixedObject extends DataObject {
 	
-	private float val;
+	private Fixed val;
 	
-		
+	/*	
 	public FixedObject(float val) {
 		this.val = val;
 	}
+	*/
+	
+	public FixedObject(int val) {
+		this.val = Fixed.fromInt(val);
+	}
 	
 	public FixedObject(Number val){
-		this.val = val.floatValue();
+		this.val = Fixed.fromDecimal(val.doubleValue());
 	}
-
+	
+	public FixedObject(Fixed val) {
+		this.val = val;
+	}
+	
+	/*
 	@Override
 	public float getFloatValue() {
-		return val;
+		return (float)val.toDouble();
 	}
 	
 	@Override
 	public void setFloatValue(float f) {
+		val = Fixed.fromDecimal(f);
+	}
+	*/
+	
+	@Override
+	public Fixed getFixedValue() {
+		return val;
+	}
+	
+	@Override
+	public void setFixedValue(Fixed f) {
 		val = f;
 	}
 	
@@ -48,10 +67,8 @@ public class FixedObject extends DataObject {
 //		if(val == (int)val){
 //			return String.valueOf(val).concat(".0");
 //		}
-		//Formatter f = new Formatter();
-		//f.format("%f", val);
-		//System.out.println(val + ": " + f.toString());
-		return String.format("%f", val);
+		//return String.format("%f", val);
+		return val.toString();
 	}
 	
 	@Override
@@ -61,7 +78,7 @@ public class FixedObject extends DataObject {
 	
 	@Override
 	public int getIntValue() {
-		return (int)val;
+		return val.toInt();
 	}
 	
 	@Override
@@ -73,7 +90,7 @@ public class FixedObject extends DataObject {
 	public DataObject castTo(Type type) {
 		switch(type.getRuntimeType()){
 		case RuntimeType.FLOAT: return this;
-		case RuntimeType.INT: return new IntObject((int)val);
+		case RuntimeType.INT: return new IntObject(val.toInt());
 		case RuntimeType.STRING: return new StringObject(String.valueOf(val));
 		case RuntimeType.TEXT: return new TextObject(String.valueOf(val));
 		}

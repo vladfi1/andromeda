@@ -43,6 +43,14 @@ public abstract class DataObject {
 		throw new ExecutionError("Cannot get this type!");
 	}
 	
+	public void setFixedValue(Fixed f){
+		throw new ExecutionError("Cannot set to this type!");
+	}
+	
+	public Fixed getFixedValue(){
+		throw new ExecutionError("Cannot get this type!");
+	}
+	
 	public void setStringValue(String s){
 		throw new ExecutionError("Cannot set to this type!");
 	}
