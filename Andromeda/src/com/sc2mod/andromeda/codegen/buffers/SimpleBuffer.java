@@ -21,24 +21,17 @@ public class SimpleBuffer extends CodeBuffer {
 	
 	public static final String LINE_SEPERATOR = "\r\n";
 	private static final int MAX_LINE_LENGTH = 2046;
-	private static final String[] indentStrs = 
-	{
-		"",
-		"\t",
-		"\t\t",
-		"\t\t\t",
-		"\t\t\t\t",
-		"\t\t\t\t\t",
-		"\t\t\t\t\t\t",
-		"\t\t\t\t\t\t\t",
-		"\t\t\t\t\t\t\t\t",
-		"\t\t\t\t\t\t\t\t\t",
-		"\t\t\t\t\t\t\t\t\t\t",
-		"\t\t\t\t\t\t\t\t\t\t\t",
-		"\t\t\t\t\t\t\t\t\t\t\t\t",
-		"\t\t\t\t\t\t\t\t\t\t\t\t\t",
-		"\t\t\t\t\t\t\t\t\t\t\t\t\t\t"
-	};
+	private static int MAX_INDENTS = 14;
+	private static final String[] indentStrs;
+	
+	static {
+		indentStrs = new String[MAX_INDENTS + 1];
+		indentStrs[0] = "";
+		for(int i = 1; i <= MAX_INDENTS; i++) {
+			indentStrs[i] = indentStrs[i-1] + "\t";
+		}
+	}
+	
 	protected StringBuffer buffer;
 	protected int charSinceNewLine;
 	protected boolean containsNewLine;
@@ -106,6 +99,13 @@ public class SimpleBuffer extends CodeBuffer {
 		return this;
 	}
 	
+	//XPilot: added for string re-escapes
+	public SimpleBuffer append(char c) {
+		charSinceNewLine++;
+		buffer.append(c);
+		return this;
+	}
+	
 	public SimpleBuffer append(int i){
 		append(String.valueOf(i),false);
 		return this;
@@ -121,7 +121,7 @@ public class SimpleBuffer extends CodeBuffer {
 		buffer.append(LINE_SEPERATOR);
 		containsNewLine = true;
 		if(indent>0){
-			if(indent > 14) indent = 14;
+			if(indent > MAX_INDENTS) indent = MAX_INDENTS;
 			buffer.append(indentStrs[indent]);
 		}
 		charSinceNewLine = indent;

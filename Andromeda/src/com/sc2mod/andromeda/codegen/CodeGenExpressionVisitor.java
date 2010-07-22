@@ -126,22 +126,20 @@ public class CodeGenExpressionVisitor extends VisitorAdaptor {
 		Literal l = literalExpression.getLiteral();
 		switch(l.getType()){
 		case LiteralType.FLOAT:
-			System.out.println();
-			//break;
 		case LiteralType.BOOL:
 		case LiteralType.INT:
 			curBuffer.append(String.valueOf(l.getValue()));
 			break;
 		case LiteralType.STRING:
-			String s = String.valueOf(l.getValue());
+			String s = reEscape(String.valueOf(l.getValue()));
 			curBuffer.appendStringLiteral(s, parent);
 			break;
 		case LiteralType.TEXT:
 			curBuffer.append("StringToText(\"");
-			curBuffer.append(String.valueOf(l.getValue()));
+			curBuffer.append(reEscape(String.valueOf(l.getValue())));
 			curBuffer.append("\")");
 			break; 
-		case LiteralType.CHAR:			
+		case LiteralType.CHAR:
 			curBuffer.append("'");
 			curBuffer.append(String.valueOf(l.getValue()));
 			curBuffer.append("'");
@@ -154,9 +152,32 @@ public class CodeGenExpressionVisitor extends VisitorAdaptor {
 		}
 			
 	}
-	
-
-	
+	/**
+	 * XPilot: re-escapes certain characters.
+	 * @param s The string to re-escape.
+	 * @return The re-escaped string.
+	 */
+	private static String reEscape(String s) {
+		StringBuilder buffer = new StringBuilder(s.length());
+		for(int i = 0; i < s.length(); i++) {
+			char c = s.charAt(i);
+			switch(c) {
+			case '\n': buffer.append("\\n");
+				break;
+			case '\r': buffer.append("\\r");
+				break;
+			case '\t': buffer.append("\\t");
+				break;
+			case '\f': buffer.append("\\f");
+				break;
+			case '\b': buffer.append("\\b");
+				break;
+			case '\"': case '\\': buffer.append('\\');
+			default: buffer.append(c);
+			}
+		}
+		return buffer.toString();
+	}
 
 	@Override
 	public void visit(Assignment assignment) {

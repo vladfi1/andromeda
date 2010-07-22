@@ -6,7 +6,7 @@ package com.sc2mod.andromeda.test;
  */
 public class StringEscape {
 	public static void main(String[] args) {
-		String s = "\"\\\t\\\"";
+		String s = "//";
 		test(s);
 	}
 	
@@ -25,6 +25,10 @@ public class StringEscape {
 			case '\r': buffer.append("\\r");
 				break;
 			case '\t': buffer.append("\\t");
+				break;
+			case '\f': buffer.append("\\f");
+				break;
+			case '\b': buffer.append("\\b");
 				break;
 			case '\"': case '\\': buffer.append('\\');
 			default: buffer.append(c);
