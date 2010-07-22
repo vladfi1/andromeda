@@ -256,8 +256,9 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 		case BinaryOperator.PLUS:
 		{
 			if(resultType == BasicType.TEXT|| resultType == BasicType.STRING){
-				String s1 = lVal.getStringValue();
-				String s2 = rVal.getStringValue();
+				//XPilot: replaced getStringValue() with toString()
+				String s1 = lVal.toString();
+				String s2 = rVal.toString();
 				binaryExpression.setValue(new StringObject(s1 + s2));
 				break;
 			}
