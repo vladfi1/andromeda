@@ -292,7 +292,8 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 				case BinaryOperator.MOD:	result = f1 % f2; break;
 				default:					throw new Error("!");
 				}
-				binaryExpression.setValue(new IntObject(result));						}
+				binaryExpression.setValue(new IntObject(result));	
+			}
 			break;
 		}
 		case BinaryOperator.EQEQ:

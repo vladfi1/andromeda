@@ -54,8 +54,6 @@ public class FixedObject extends DataObject {
 		return String.format("%f", val);
 	}
 	
-	
-	
 	@Override
 	public Expression getExpression() {
 		return getLiteralExpr(LiteralType.FLOAT);
@@ -81,6 +79,5 @@ public class FixedObject extends DataObject {
 		}
 		return super.castTo(type);	
 	}
-	
 
 }
