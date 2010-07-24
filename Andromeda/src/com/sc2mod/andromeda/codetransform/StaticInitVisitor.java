@@ -3,6 +3,7 @@ package com.sc2mod.andromeda.codetransform;
 import com.sc2mod.andromeda.syntaxNodes.AndromedaFile;
 import com.sc2mod.andromeda.syntaxNodes.ClassBody;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.FileContent;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.Visitor;
@@ -46,4 +47,8 @@ public class StaticInitVisitor extends VisitorAdaptor {
 		fileContent.childrenAccept(this);
 	}
 
+	@Override
+	public void visit(EnrichDeclaration enrichDeclaration) {
+		enrichDeclaration.getBody().childrenAccept(this);
+	}
 }

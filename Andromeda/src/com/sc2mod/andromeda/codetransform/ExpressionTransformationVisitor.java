@@ -93,6 +93,8 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 	
 	@Override
 	public void visit(ArrayAccess arrayAccess) {
+		//System.out.println(((FieldAccess)arrayAccess.getLeftExpression()).getName());
+		
 		//Do left expression
 		invokeSelf(arrayAccess.getLeftExpression());
 		if (parent.replaceExpression != null) {

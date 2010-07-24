@@ -9,44 +9,45 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-public class TypeInt extends NonReferentialType{
+public class TypeInt extends NonReferentialType {
 
 	public TypeInt() {
 		super("int");
 	}
 	
-	 @Override
+	@Override
 	public boolean canImplicitCastTo(Type toType) {
-		 if(toType == this|| toType == FLOAT) return true;
-		 return false;
+		if(toType == this|| toType == FLOAT) return true;
+		return false;
 	}
 	 
-	 @Override
+	@Override
 	public boolean canExplicitCastTo(Type type) {
-		 if(super.canExplicitCastTo(type)) return true;
-		 if(type.getBaseType()==BasicType.BYTE) return true;
-		 if(type.getCategory()==CLASS) return true;
-		 if(type.getCategory()==GENERIC_CLASS) return true;//XPilot: added
-		 if(type.getCategory()==TYPE_PARAM) return true;
-		 return canConcatenateCastTo(type);
+		if(super.canExplicitCastTo(type)) return true;
+		if(type.getBaseType()==BasicType.BYTE) return true;
+		if(type.getCategory()==CLASS) return true;
+		if(type.getCategory()==GENERIC_CLASS) return true;//XPilot: added
+		if(type.getCategory()==TYPE_PARAM) return true;
+		return canConcatenateCastTo(type);
 	}
 	 
-	 @Override
+	@Override
 	public boolean canConcatenateCastTo(Type toType) {
 		if(toType == this|| toType == FLOAT || toType == STRING || toType == TEXT) return true;
 		return false;
 	}
 	 
-	 @Override
+	@Override
 	public String getDefaultValueStr() {
 		return "0";
 	}
 	 
-	 @Override
+	@Override
 	public int getRuntimeType() {
 		 return RuntimeType.INT;
 	}
 
+	@Override
 	public boolean isIntegerType(){
 		return true;
 	}

@@ -15,6 +15,21 @@ public class TypeBool extends NonReferentialType{
 		super("bool");
 	}
 	
+	//XPilot: these are necessary if we want bool -> string/text casts...
+	/*
+	@Override
+	public boolean canExplicitCastTo(Type type) {
+		if(super.canExplicitCastTo(type)) return true;
+		return canConcatenateCastTo(type);
+	}
+	 
+	@Override
+	public boolean canConcatenateCastTo(Type toType) {
+		if(toType == STRING || toType == TEXT) return true;
+		return false;
+	}
+	*/
+	
 	@Override
 	public String getDefaultValueStr() {
 		return "false";
@@ -29,5 +44,4 @@ public class TypeBool extends NonReferentialType{
 	public int getByteSize() {
 		return 1;
 	}
-	
 }

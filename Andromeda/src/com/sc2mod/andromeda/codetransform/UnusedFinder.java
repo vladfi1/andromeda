@@ -167,6 +167,8 @@ public class UnusedFinder {
 					isLib = false;
 				}
 
+				//System.out.println(decl.getGeneratedName());
+				
 				//XPilot: don't remove a variable if it is written to
 				if(decl.getNumReadAccesses()==0 && decl.getNumReadAccesses() == 0){
 					if(isLib||decl.getNumInlines()>0){

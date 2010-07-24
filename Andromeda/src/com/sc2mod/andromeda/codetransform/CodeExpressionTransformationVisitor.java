@@ -68,6 +68,8 @@ public class CodeExpressionTransformationVisitor extends ExpressionTransformatio
 	public void visit(FieldAccess fieldAccess) {
 		if(replaceByConst(fieldAccess,true)) return;		
 
+		//System.out.println(fieldAccess.getName());
+		
 		//Do children
 		super.visit(fieldAccess);
 		

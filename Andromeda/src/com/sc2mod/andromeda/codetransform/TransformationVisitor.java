@@ -51,7 +51,7 @@ import com.sc2mod.andromeda.syntaxNodes.VisitorAdaptor;
 import com.sc2mod.andromeda.syntaxNodes.WhileStatement;
 
 /**
- * General superclass for all visitors that can do transformations to the syntaxtree.
+ * General superclass for all visitors that can do transformations to the syntax tree.
  * (Expressions can be exchanged, statements can be appended before the processed statement)
  * @author J. 'gex' Finis 
  */
@@ -87,9 +87,6 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		insertBeforeStmts.add(statement);
 	}
 
-
-	
-	
 	Expression replaceExpression;
 	SyntaxGenerator syntaxGenerator;
 	ImplicitLocalVarProvider varProvider = new ImplicitLocalVarProvider();
@@ -174,7 +171,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	@Override
 	public void visit(EnrichDeclaration enrichDeclaration) {
 		enrichDeclaration.getBody().childrenAccept(this);
-	}	
+	}
 	@Override
 	public void visit(FieldDeclaration fieldDeclaration) {
 		VariableDeclarators v = fieldDeclaration.getDeclaredVariables();
@@ -182,20 +179,19 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(
-			LocalVariableDeclarationStatement l) {
+	public void visit(LocalVariableDeclarationStatement l) {
 		VariableDeclarators vds = l.getVarDeclaration().getDeclarators();
 		int size = vds.size();
 		for(int i=0;i<size;i++){
 			VariableDeclarator vd = vds.elementAt(i);
 			vd.accept(this);
-			
-
 		}
 	}
 	
 	@Override
 	public void visit(VariableAssignDecl variableAssignDecl) {		
+		
+		//System.out.println(variableAssignDecl.getName().getName());
 		
 		invokeExprVisitor(variableAssignDecl.getInitializer(),true);
 		
@@ -293,7 +289,6 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		popBeforeContinue();
 	}
 	
-	
 	@Override
 	public void visit(IfThenElseStatement s) {
 		
@@ -346,7 +341,6 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		s.accept(this);
 		popBeforeContinue();
 	}
-	
 
 	@Override
 	public void visit(ForStatement forStatement) {
@@ -395,8 +389,6 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		blockStatement.childrenAccept(this);
 	}
 	
-
-	
 	@Override
 	public void visit(StatementList statementList) {
 		int size = statementList.size();
@@ -431,7 +423,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		}
 	}
 	
-	
+	@Override
 	public void visit(ExpressionStatement e){
 		invokeExprVisitor(e.getExpression());
 		if(replaceExpression!=null){
@@ -440,8 +432,4 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		}
 	}
 
-
-	
-	
-	
 }

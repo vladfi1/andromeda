@@ -58,6 +58,8 @@ public final class CodegenUtil {
 		cur.put(BasicType.INT, new StringPair("StringToInt(TextToString(","))"));
 		cur.put(BasicType.STRING, new StringPair("TextToString(",")"));
 		cur.put(BasicType.BOOL, new StringPair("(","!=null)"));
+		
+		//XPilot: Casts from bool?
 	}
 	
 	public static StringPair getCastOp(Type fromType, Type toType){
@@ -84,7 +86,7 @@ public final class CodegenUtil {
 			case AssignmentOperatorType.XOREQ: return " ^= ";
 			case AssignmentOperatorType.OREQ: return " |= ";		
 			default: throw new CompilationError("Unkonwn assignment operator type: " + type);
-			}	
+			}
 		}
 		switch(type){
 		case AssignmentOperatorType.EQ: return "=";
@@ -171,10 +173,5 @@ public final class CodegenUtil {
 		default: throw new CompilationError("Unknown unary operator type: " + type);
 		}
 
-	}
-	
-	
-
-
-	
+	}	
 }

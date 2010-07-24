@@ -104,14 +104,14 @@ public class ExpressionAnalyzer {
 			
 			if(lBase == BasicType.STRING || rBase == BasicType.STRING){
 				if(lBase ==BasicType.STRING && rBase == BasicType.STRING){
-					//The infered type is the common super type
+					//The inferred type is the common super type
 					binaryExpression.setInferedType(left.getCommonSupertype(right));
 				} else if(lBase == BasicType.STRING){
 					if(!right.canConcatenateCastTo(BasicType.STRING)) throw new CompilationError(binaryExpression,"Incompatible types for this operator.\nTypes: " + left.getUid() + "," + right.getUid());
-					binaryExpression.setInferedType(left); //Infered type is the left one
+					binaryExpression.setInferedType(left); //Inferred type is the left one
 				} else {
 					if(!left.canConcatenateCastTo(BasicType.STRING)) throw new CompilationError(binaryExpression,"Incompatible types for this operator.\nTypes: " + left.getUid() + "," + right.getUid());
-					binaryExpression.setInferedType(right); //Infered type is the right onw
+					binaryExpression.setInferedType(right); //Inferred type is the right one
 				}
 				
 				binaryExpression.setLeftExpectedType(BasicType.STRING);

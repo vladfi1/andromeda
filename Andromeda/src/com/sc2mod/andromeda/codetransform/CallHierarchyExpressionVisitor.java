@@ -32,7 +32,6 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 		super(options);
 	}
 	
-	
 	@Override
 	public void visit(LiteralExpression literalExpression) {
 		DataObject o = literalExpression.getLiteral().getValue();
@@ -92,6 +91,8 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 	public void visit(FieldAccess fieldAccess){
 		VarDecl vd = (VarDecl) fieldAccess.getSemantics();
 		
+		//System.out.println(fieldAccess.getName());
+		
 		if(isRead) vd.registerAccess(false);
 		if(isWrite) vd.registerAccess(true);
 		
@@ -103,10 +104,12 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 			vd.getDeclarator().accept(parent);
 		}
 	}
-	
+
 	@Override
 	public void visit(ArrayAccess arrayAccess) {
 		VarDecl vd = (VarDecl) arrayAccess.getSemantics();
+		
+		//System.out.println(((FieldAccess)arrayAccess.getLeftExpression()).getName());
 		
 		if(isRead) vd.registerAccess(false);
 		if(isWrite) vd.registerAccess(true);
@@ -125,7 +128,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 		//Children
 		super.visit(c);
 		
-		//Register class instanciation
+		//Register class instantiation
 		ConstructorInvocation ci = (ConstructorInvocation) c.getSemantics();
 		Class cl = (Class)c.getInferedType();
 		cl.registerInstantiation();
