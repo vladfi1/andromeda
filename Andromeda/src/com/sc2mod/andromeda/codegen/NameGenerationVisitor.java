@@ -200,7 +200,8 @@ public class NameGenerationVisitor extends VisitorAdaptor{
 		int size = v.size();
 		for(int i=0;i<size;i++){
 			FieldDecl decl = (FieldDecl) v.elementAt(i).getName().getSemantics();
-			if(inLib&&decl.getNumReadAccesses()==0) continue;
+			//XPilot: variables that are written to are also needed
+			if(inLib&&decl.getNumReadAccesses()==0 && decl.getNumWriteAccesses() == 0) continue;
 			decl.setGeneratedName(nameProvider.getFieldName(decl,curType));
 		}
 		

@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.classes.ClassNameProvider;
 import com.sc2mod.andromeda.classes.VirtualCallTable;
+import com.sc2mod.andromeda.environment.AbstractFunction;
 import com.sc2mod.andromeda.environment.Constructor;
 import com.sc2mod.andromeda.environment.Destructor;
 import com.sc2mod.andromeda.environment.Signature;
@@ -167,10 +168,20 @@ public class GenericClassInstance extends GenericClass{
 		//Methods
 		methods = theType.methods.getAlteredMethodSet(paramMap);
 		
+		//for(AbstractFunction f : methods.getMyMethods()) {
+		//	System.out.println(f.getSignature());
+		//}
+		
 		//XPilot: Destructor
 		destructor = theType.destructor;
 	}
 
+	//XPilot: added
+	@Override
+	public String getGeneratedDefinitionName() {
+		return theType.getGeneratedDefinitionName();
+	}
+	
 	private Signature alterSignature(Signature sig){
 		if(sig.isEmpty()) return sig;
 		if(!sig.containsTypeParams()) return sig;

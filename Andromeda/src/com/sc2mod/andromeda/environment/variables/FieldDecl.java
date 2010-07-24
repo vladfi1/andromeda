@@ -41,6 +41,7 @@ public class FieldDecl extends FieldOrAccessorDecl {
 	
 	@Override
 	public String getGeneratedName() {
+		//XPilot: usesField seems to always be null...
 		if(usesField!=null) return usesField.getGeneratedName();
 		return super.getGeneratedName();
 	}

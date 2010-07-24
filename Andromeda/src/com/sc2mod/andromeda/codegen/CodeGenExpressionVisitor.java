@@ -212,8 +212,6 @@ public class CodeGenExpressionVisitor extends VisitorAdaptor {
 	@Override
 	public void visit(FieldAccess fieldAccess) {
 
-		
-				
 		int accessType = fieldAccess.getAccessType();
 		VarDecl decl = (VarDecl)fieldAccess.getSemantics();
 		
@@ -432,8 +430,7 @@ public class CodeGenExpressionVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(
-			ClassInstanceCreationExpression c) {
+	public void visit(ClassInstanceCreationExpression c) {
 		ConstructorInvocation ci = (ConstructorInvocation) c.getSemantics();
 		Class clazz = (Class)c.getInferedType();
 		SimpleBuffer bufferBefore = parent.curBuffer;

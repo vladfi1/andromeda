@@ -182,12 +182,11 @@ public class Function extends AbstractFunction{
 		return scope;
 	}
 
+	@Override
 	public Signature getSignature() {
 		return signature;
 	}
-	
 
-	
 	@Override
 	public String getUid() {
 		return name;
@@ -198,12 +197,10 @@ public class Function extends AbstractFunction{
 		return visibility;
 	}
 	
+	@Override
 	public boolean hasBody(){
 		return this.body != null;
 	}
-
-
-	
 
 	@Override
 	public boolean isAbstract() {
@@ -215,7 +212,7 @@ public class Function extends AbstractFunction{
 		return false;
 	}
 
-
+	@Override
 	public boolean isCreateCode() {
 		return createCode;
 	}
@@ -225,6 +222,7 @@ public class Function extends AbstractFunction{
 		return isFinal;
 	}
 	
+	@Override
 	public boolean isForwardDeclaration(){
 		return this.body == null && !isNative;
 	}
@@ -233,12 +231,11 @@ public class Function extends AbstractFunction{
 		return isInline;
 	}
 
+	@Override
 	public boolean isMarked() {
 		return marked;
 	}
 	
-
-
 	@Override
 	public boolean isNative() {
 		return isNative;
@@ -254,15 +251,17 @@ public class Function extends AbstractFunction{
 		return false;
 	}
 
+	@Override
 	public boolean isStrcall() {
 		return isStrcall;
 	}
 
-
+	@Override
 	public void mark() {
 		this.marked = true;
 	}
 	
+	@Override
 	public void resolveTypes(TypeProvider t, List<ParamDecl> implicitParameters) {
 		
 		//Only resolve return type if it hasn't been resolved yet (for constructors for example)
@@ -309,6 +308,7 @@ public class Function extends AbstractFunction{
 		throw new CompilationError(declaration.getHeader().getModifiers(),"Functions cannot be 'const'.");
 	}
 
+	@Override
 	public void setCreateCode(boolean createCode) {
 		this.createCode = createCode;
 	}
@@ -318,23 +318,28 @@ public class Function extends AbstractFunction{
 		isFinal = true;
 	}
 
+	@Override
 	public void setFlowReachesEnd(boolean b) {
 		flowReachesEnd = b;
 	}
 
+	@Override
 	public synchronized void setGeneratedName(String generatedName) {
 		this.generatedName = generatedName;
 	}
 
+	@Override
 	public void setIndex(int index) {
 		this.index = index;
 	}
 
 
+	@Override
 	public void setLocals(LocalVarDecl[] locals) {
 		this.locals = locals;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -355,25 +360,27 @@ public class Function extends AbstractFunction{
 		visibility = Visibility.PRIVATE;
 	}
 	
-	
-	
 	@Override
 	public void setVisibility(int visibility) {
 		this.visibility = visibility;
 	}
 	
+	@Override
 	public boolean usesThis() {
 		return false;
 	}
 	
+	@Override
 	void setReturnType(Type returnType) {
 		this.returnType = returnType;
 	}
 
+	@Override
 	public int getFunctionType(){
 		return isNative?TYPE_NATIVE:TYPE_FUNCTION;
 	}
 	
+	@Override
 	public boolean isMember(){
 		return false;
 	}

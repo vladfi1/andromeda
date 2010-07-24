@@ -43,7 +43,7 @@ public abstract class VarDecl extends SemanticsElement implements IIdentifiable,
 	public static final int TYPE_STATIC_FIELD = 4;
 	public static final int TYPE_PARAMETER = 5;
 	public static final int TYPE_ACCESSOR = 6;
-	public static final int TYPE_STATIC_ACCESSOR = 7;	
+	public static final int TYPE_STATIC_ACCESSOR = 7;
 	public static final int TYPE_STATIC = 8;
 	public static final int TYPE_FUNCTION_POINTER = 9;
 	public static final int TYPE_IMPLICIT = 10;
@@ -51,7 +51,7 @@ public abstract class VarDecl extends SemanticsElement implements IIdentifiable,
 	private VariableDeclaratorId declaration;
 	private com.sc2mod.andromeda.syntaxNodes.Type syntaxType;
 	protected Type type;
-	private String generatedName;	
+	private String generatedName;
 	private String name;
 	private Modifiers mods;
 	private DataObject value;
@@ -88,7 +88,7 @@ public abstract class VarDecl extends SemanticsElement implements IIdentifiable,
 	public abstract int getDeclType();
 	
 	public void resolveType(TypeProvider t){
-		this.type = t.resolveType(syntaxType);		
+		this.type = t.resolveType(syntaxType);
 		declaration.setInferedType(this.type);
 	}
 	

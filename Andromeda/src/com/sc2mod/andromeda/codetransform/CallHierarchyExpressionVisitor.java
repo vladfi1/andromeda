@@ -60,7 +60,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 		
 		//XPilot: invocationTarget is null for default constructors
 		if(invocationTarget == null) return;
-
+		
 		if(!alreadyChecked&&invocationTarget.getScope().getInclusionType() != AndromedaFileInfo.TYPE_NATIVE){
 			//Only check it if it is no function defined in blizzard's libs
 			inv.getWhichFunction().getDefinition().accept(parent);
@@ -72,7 +72,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 			invocationTarget.addInline();
 			throw new Error("inline not yet supported.");
 		} else {
-			invocationTarget.addInvocation();			
+			invocationTarget.addInvocation();
 		}
 	}
 	
@@ -121,8 +121,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 	}
 	
 	@Override
-	public void visit(
-			ClassInstanceCreationExpression c) {
+	public void visit(ClassInstanceCreationExpression c) {
 		//Children
 		super.visit(c);
 		
@@ -143,8 +142,6 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 		Invocation i = (Invocation)deleteStatement.getSemantics();
 		
 		registerInvocation(i);
-
-		
 	}
 
 }

@@ -170,13 +170,6 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	public void visit(GlobalInitDeclaration g){
 		g.getInitDecl().accept(this);
 	}
-	@Override
-	public void visit(StaticInitDeclaration s){
-		s.childrenAccept(this);
-		
-		//flush implicit locals
-		varProvider.flushMethodBufferToFunction((Function) s.getSemantics());
-	}
 	
 	@Override
 	public void visit(EnrichDeclaration enrichDeclaration) {
@@ -201,7 +194,6 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		}
 	}
 	
-	
 	@Override
 	public void visit(VariableAssignDecl variableAssignDecl) {		
 		
@@ -220,23 +212,29 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 
 	}
 	
-	
 	@Override
 	public void visit(AccessorDeclaration accessorDeclaration) {
 		accessorDeclaration.childrenAccept(this);
 	}
 	
-	
 	@Override
-	public void visit(MethodDeclaration functionDeclaration) {		
-		//Get function body, if this function has none (abstract/inteface) we don't have to do anything
-		Statement body = functionDeclaration.getBody();
-		if(body == null) return;
-		
-		functionDeclaration.childrenAccept(this);
+	public void visit(StaticInitDeclaration s){
+		s.childrenAccept(this);
 		
 		//flush implicit locals
-		varProvider.flushMethodBufferToFunction((Function) functionDeclaration.getSemantics());
+		varProvider.flushMethodBufferToFunction((Function) s.getSemantics());
+	}
+	
+	@Override
+	public void visit(MethodDeclaration methodDeclaration) {		
+		//Get function body, if this function has none (abstract/interface) we don't have to do anything
+		Statement body = methodDeclaration.getBody();
+		if(body == null) return;
+		
+		methodDeclaration.childrenAccept(this);
+		
+		//flush implicit locals
+		varProvider.flushMethodBufferToFunction((Function) methodDeclaration.getSemantics());
 	}
 	
 	@Override

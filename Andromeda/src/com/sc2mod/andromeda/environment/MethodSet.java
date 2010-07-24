@@ -37,7 +37,6 @@ public class MethodSet implements Cloneable {
 	public ArrayList<AbstractFunction> getMyMethods() {
 		return myMethods;
 	}
-
 	
 	public MethodSet(RecordType containingType) {
 		this.containingType = containingType;
@@ -239,6 +238,10 @@ public class MethodSet implements Cloneable {
 				
 				Signature newSignature = e2.getKey().replaceTypeParameters(paramMap);
 				
+				//XPilot: added signature to GenericFunctionProxy
+				meths.put(newSignature, new GenericFunctionProxy(vd, newSignature, t2));
+				
+				/*
 				if(t != t2){
 					//Type has changed we need a generic proxy
 					meths.put(newSignature, new GenericFunctionProxy(vd,t2));
@@ -246,6 +249,7 @@ public class MethodSet implements Cloneable {
 					//Type has not changed, just use the old field
 					meths.put(newSignature, vd);
 				}
+				*/
 			}
 			
 		}

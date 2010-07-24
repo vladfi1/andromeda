@@ -25,16 +25,18 @@ import com.sc2mod.andromeda.syntaxNodes.ReturnStatement;
 import com.sc2mod.andromeda.syntaxNodes.Statement;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
-public class GenericFunctionProxy extends AbstractFunction{
+//XPilot: added signature to GenericFunctionProxy
+public class GenericFunctionProxy extends AbstractFunction {
 
 	private AbstractFunction function;
+	private Signature signature;
 	private Type returnType;
 	
-	public GenericFunctionProxy(AbstractFunction vd, Type returnType) {
+	public GenericFunctionProxy(AbstractFunction vd, Signature signature, Type returnType) {
 		function = vd;
-		this.returnType = returnType;		
+		this.signature = signature;
+		this.returnType = returnType;
 	}
-
 	
 	@Override
 	public Type getReturnType() {
@@ -111,11 +113,10 @@ public class GenericFunctionProxy extends AbstractFunction{
 		return function.getParams();
 	}
 
-
-
 	@Override
 	public Signature getSignature() {
-		return function.getSignature();
+		//now returns the modified signature
+		return signature;
 	}
 
 	@Override
@@ -268,8 +269,6 @@ public class GenericFunctionProxy extends AbstractFunction{
 		function.setStatic();
 	}
 
-
-
 	@Override
 	public void setVisibility(int visibility) {
 		function.setVisibility(visibility);
@@ -290,50 +289,62 @@ public class GenericFunctionProxy extends AbstractFunction{
 		return function.getBody();
 	}
 	
+	@Override
 	public void addOverride(AbstractFunction m) {
 		function.addOverride(m);
 	}
 
+	@Override
 	public boolean isOverridden() {
 		return function.isOverridden();
 	}
 
+	@Override
 	public boolean isCalledVirtually() {
 		return function.isCalledVirtually();
 	}
 
+	@Override
 	public AbstractFunction getOverridenMethod() {
 		return function.getOverridenMethod();
 	}
 
+	@Override
 	public int getVirtualTableIndex() {
 		return function.getVirtualTableIndex();
 	}
 
+	@Override
 	public int getCurVirtualCallChildIndex() {
 		return function.getCurVirtualCallChildIndex();
 	}
 
+	@Override
 	public void setVirtualCallIndex(int callIndex) {
 		function.setVirtualCallIndex(callIndex);
 	}
 
+	@Override
 	public void setVirtualTableIndex(int tableIndex) {
 		function.setVirtualTableIndex(tableIndex);
 	}
 
+	@Override
 	public int getNextVirtualCallChildIndex() {
 		return function.getNextVirtualCallChildIndex();
 	}
 
+	@Override
 	public void setVirtualCallerName(String virtualCallerName) {
 		function.setVirtualCallerName(virtualCallerName);
 	}
 
+	@Override
 	public int getVirtualCallIndex() {
 		return function.getVirtualCallIndex();
 	}
 
+	@Override
 	public String getVirtualCaller() {
 		return function.getVirtualCaller();
 	}
@@ -356,12 +367,12 @@ public class GenericFunctionProxy extends AbstractFunction{
 		function.setAnnotationTable(annotations);
 	}
 
-
 	@Override
 	public void afterAnnotationsProcessed() {
 		function.afterAnnotationsProcessed();
 	}
 	
+	@Override
 	protected void registerVirtualCall() {
 		function.registerVirtualCall();
 	}
@@ -370,7 +381,6 @@ public class GenericFunctionProxy extends AbstractFunction{
 	protected void setOverriddenMethod(Method method) {
 		function.setOverriddenMethod(method);
 	}
-
 
 	@Override
 	public FuncPointerDecl getPointerDecl(TypeProvider tp) {

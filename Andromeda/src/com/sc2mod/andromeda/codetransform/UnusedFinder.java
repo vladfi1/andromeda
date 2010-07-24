@@ -38,6 +38,7 @@ import com.sc2mod.andromeda.syntaxNodes.TypeCategory;
  * @author J. 'gex' Finis
  *
  */
+//XPilot: no longer remove variables that are not written to
 public class UnusedFinder {
 
 	
@@ -166,7 +167,8 @@ public class UnusedFinder {
 					isLib = false;
 				}
 
-				if(decl.getNumReadAccesses()==0){
+				//XPilot: don't remove a variable if it is written to
+				if(decl.getNumReadAccesses()==0 && decl.getNumReadAccesses() == 0){
 					if(isLib||decl.getNumInlines()>0){
 						decl.setCreateCode(false);
 					} else {
@@ -201,14 +203,16 @@ public class UnusedFinder {
 			FieldSet fi = r.getFields();
 			ArrayList<FieldDecl> fields = fi.getStaticClassFields();
 			for(FieldDecl decl: fields){
-				if(decl.getNumReadAccesses()==0){
+				//XPilot: don't remove a variable if it is written to
+				if(decl.getNumReadAccesses()==0 && decl.getNumWriteAccesses() == 0){
 					if(isLib|| decl.getNumInlines()>0){
 						decl.setCreateCode(false);
 					} else {
 						handleUnusedVar(handleUnused,decl,"static field","read",true);
 					}
 				} else if(decl.getNumWriteAccesses()==0){
-					//throw new CompilationError(decl.getDefinition(), "The static field " + decl.getUid() + " is read but never initialized");
+					throw new CompilationError(decl.getDefinition(), "The static field " + decl.getUid() + " is read but never initialized.");
+					//System.out.println("The static field " + decl.getUid() + " is read but never initialized.");
 				}
 			}
 			
@@ -216,14 +220,16 @@ public class UnusedFinder {
 			handleUnused = options.handleUnusedFields;
 			fields = fi.getNonStaticClassFields();
 			for(FieldDecl decl: fields){
-				if(decl.getNumReadAccesses()==0){
+				//XPilot: don't remove a variable if it is written to
+				if(decl.getNumReadAccesses()==0 && decl.getNumWriteAccesses() == 0){
 					if(isLib){
 						//Fields cannot be removed, so do nothing in a lib
 					} else {
 						handleUnusedVar(handleUnused,decl,"field","read",false);
 					}
 				} else if(decl.getNumWriteAccesses()==0){
-					throw new CompilationError(decl.getDefinition(), "The field " + decl.getUid() + " is read but never initialized");
+					throw new CompilationError(decl.getDefinition(), "The field " + decl.getUid() + " is read but never initialized.");
+					//System.out.println("The field " + decl.getUid() + " is read but never initialized.");
 				}
 			}
 		}

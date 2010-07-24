@@ -22,6 +22,7 @@ import com.sc2mod.andromeda.syntaxNodes.DeleteStatement;
 import com.sc2mod.andromeda.syntaxNodes.ForEachStatement;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.Statement;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl;
 
 public class CallHierarchyVisitor extends TransformationVisitor{
@@ -29,25 +30,30 @@ public class CallHierarchyVisitor extends TransformationVisitor{
 	boolean readAccess = true;
 	boolean writeAccess;
 	private CallHierarchyExpressionVisitor exprVisitor;
-	
+	private StaticInitVisitor staticInitVisitor;
 	
 	public CallHierarchyVisitor(Options options, NameResolver nameResolver) {
 		super(new CallHierarchyExpressionVisitor(options), options,false,nameResolver);
 		exprVisitor = (CallHierarchyExpressionVisitor) super.exprVisitor;
+		staticInitVisitor = new StaticInitVisitor(this);
 	}
-	
 
 
 	//*********** GLOBAL CONSTRUCTS (just loop through) **********
 	@Override
 	public void visit(AndromedaFile andromedaFile) {
 		int inclType = andromedaFile.getFileInfo().getInclusionType();
-		if(inclType == AndromedaFileInfo.TYPE_LIBRARY || inclType == AndromedaFileInfo.TYPE_NATIVE || inclType == AndromedaFileInfo.TYPE_LANGUAGE){
+		if(inclType == AndromedaFileInfo.TYPE_NATIVE || inclType == AndromedaFileInfo.TYPE_LANGUAGE){
 			//Natives and libraries do not get parsed (only if they are called)
 			return;
 		}
+		//XPilot: must visit the static inits of libraries
+		if(inclType == AndromedaFileInfo.TYPE_LIBRARY) {
+			staticInitVisitor.visit(andromedaFile);
+			return;
+		}
+		
 		andromedaFile.childrenAccept(this);
-				
 	}
 
 	//*********** Methods **********
@@ -66,12 +72,38 @@ public class CallHierarchyVisitor extends TransformationVisitor{
 
 		//An inited variable is written
 		((VarDecl)vad.getName().getSemantics()).registerAccess(true);
+		
+		//System.out.println(vad.getName().getName());
+	}
+	
+	//Xpilot: added
+	@Override
+	public void visit(StaticInitDeclaration s) {
+		//Get the function body
+		Statement body = s.getBody();
+		
+		//Set current function
+		Function f = (Function)s.getSemantics();
+		
+		//XPilot: Not sure if static inits are ever marked
+		
+		//Function already marked? Return
+		if(f.isMarked()) return;
+		
+		//Now check the body for calls
+		body.accept(this);
+		
+		//Mark function as visited
+		f.mark();
+		
+		//Check for unused locals
+		UnusedFinder.checkForUnusedLocals(f, options);
 	}
 	
 	@Override
 	public void visit(MethodDeclaration methodDeclaration) {
 
-		//Get function body, if this function has none (abstract/inteface) we don't have to do anything
+		//Get function body, if this function has none (abstract/interface) we don't have to do anything
 		Statement body = methodDeclaration.getBody();
 		if(body == null) return;
 		
@@ -82,7 +114,7 @@ public class CallHierarchyVisitor extends TransformationVisitor{
 		if(f.isMarked()) return;
 		
 		//Now check the body for calls
-		body.accept(this);		
+		body.accept(this);
 		
 		//Mark function as visited
 		f.mark();
@@ -90,8 +122,6 @@ public class CallHierarchyVisitor extends TransformationVisitor{
 		//Check for unused locals
 		UnusedFinder.checkForUnusedLocals(f,options);
 	}
-	
-
 	
 	//************** STATEMENTS (just loop through and replace expressions if necessary) ********
 	

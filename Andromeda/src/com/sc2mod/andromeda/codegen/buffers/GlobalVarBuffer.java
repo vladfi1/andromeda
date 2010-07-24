@@ -22,6 +22,7 @@ public class GlobalVarBuffer extends SimpleBuffer{
 
 	
 	public GlobalVarBuffer beginVarDecl(Type varType, String varName){
+		//System.out.println(varName);
 		append(varType.getGeneratedDefinitionName()).append(" ").append(varName);
 		bytes+=varType.getGeneratedType().getByteSize();
 		return this;

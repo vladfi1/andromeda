@@ -574,7 +574,8 @@ public class CodeGenVisitor extends CodeGenerator {
 		int size = f.size();
 		for (int i = 0; i < size; i++) {
 			FieldDecl field = (FieldDecl) f.elementAt(i).getSemantics();
-			if (inLib && field.getNumReadAccesses() == 0)
+			//XPilot: don't remove a variable if it is written to
+			if (inLib && field.getNumReadAccesses() == 0 && field.getNumWriteAccesses() == 0)
 				continue;
 			if (field.isStatic()) {
 				// Static fields are treated like globals (but they are never

@@ -27,7 +27,7 @@ import com.sc2mod.andromeda.syntaxNodes.TypeAlias;
 import com.sc2mod.andromeda.syntaxNodes.TypeExtension;
 
 /**
- * Analyses the coarse syntax structure (finds global structures like functions, global variables and classes)
+ * Analyzes the coarse syntax structure (finds global structures like functions, global variables and classes)
  * @author J. 'gex' Finis
  *
  */
