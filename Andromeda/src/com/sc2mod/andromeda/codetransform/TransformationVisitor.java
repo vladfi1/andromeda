@@ -24,6 +24,7 @@ import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.ContinueStatement;
 import com.sc2mod.andromeda.syntaxNodes.DoWhileStatement;
 import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.ExplicitConstructorInvocationStatement;
 import com.sc2mod.andromeda.syntaxNodes.Expression;
 import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
 import com.sc2mod.andromeda.syntaxNodes.ExpressionStatement;
@@ -102,7 +103,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		this.flushAfterExpression = flushAfterExpression;
 		this.exprVisitor.setParent(this);
 		insertBeforeContinue.add(EMPTY_LIST);
-	}	
+	}
 	
 	protected void invokeExprVisitor(Expression expression, boolean inExpr){
 		if(inExpr){
@@ -164,7 +165,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(GlobalInitDeclaration g){
+	public void visit(GlobalInitDeclaration g) {
 		g.getInitDecl().accept(this);
 	}
 	
@@ -189,10 +190,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(VariableAssignDecl variableAssignDecl) {		
-		
-		//System.out.println(variableAssignDecl.getName().getName());
-		
+	public void visit(VariableAssignDecl variableAssignDecl) {
 		invokeExprVisitor(variableAssignDecl.getInitializer(),true);
 		
 		if(replaceExpression!=null){
@@ -432,4 +430,12 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		}
 	}
 
+	//XPilot: added
+	@Override
+	public void visit(ExplicitConstructorInvocationStatement explicitConstructorInvocationStatement) {
+		//invokeExprVisitor(explicitConstructorInvocationStatement.getExpression());
+		exprVisitor.invokeSelf(explicitConstructorInvocationStatement.getExpression());
+		exprVisitor.visit(explicitConstructorInvocationStatement.getArguments());
+		//explicitConstructorInvocationStatement.accept(exprVisitor);
+	}
 }

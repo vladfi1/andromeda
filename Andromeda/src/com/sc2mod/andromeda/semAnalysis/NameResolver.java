@@ -394,7 +394,7 @@ public class NameResolver {
 			return resolvePrefixedFunctionCall(scope, curClass, methodInvocation, methodInvocation.getPrefix().getInferedType(), s, name,isStatic);
 		case AccessType.NAMED_SUPER:
 		case AccessType.SUPER:
-			if(curClass == null  || curClass.getCategory()!= Type.CLASS)
+			if(curClass == null  || !curClass.isClass())
 				throw new CompilationError(methodInvocation,"Super can only be used inside of classes.");
 			curClass = ((Class) curClass).getSuperClass();
 			if(curClass == null)

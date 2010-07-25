@@ -73,7 +73,6 @@ public abstract class Workflow {
 		List<Source> langFiles = getLanguageFiles();
 		List<Source> triggers = null;
 		
-		
 		int numFiles = files.size();
 		if(options.mapIn != null){
 			if(numFiles > 0){

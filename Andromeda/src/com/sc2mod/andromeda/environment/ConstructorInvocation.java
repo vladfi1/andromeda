@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import com.sc2mod.andromeda.environment.types.Class;
 
-public class ConstructorInvocation extends Invocation{
+public class ConstructorInvocation extends Invocation {
 
 	private boolean implicit;
 	private ArrayList<Class> wrappedFieldInits;
@@ -43,9 +43,4 @@ public class ConstructorInvocation extends Invocation{
 	public boolean isImplicit() {
 		return implicit;
 	}
-	
-	
-	
-	
-	
 }

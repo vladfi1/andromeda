@@ -9,9 +9,7 @@
  */
 package com.sc2mod.andromeda.environment;
 
-import com.sc2mod.andromeda.notifications.CompilationError;
-
-public class Invocation extends SemanticsElement{
+public class Invocation extends SemanticsElement {
 
 	public static final int TYPE_STATIC = 1;
 	public static final int TYPE_VIRTUAL = 2;
@@ -22,11 +20,11 @@ public class Invocation extends SemanticsElement{
 	private int accessType;
 	private boolean isUsed;
 	
-	public void use(){
+	public void use() {
 		isUsed = true;
 	}
 	
-	public boolean isUsed(){
+	public boolean isUsed() {
 		return isUsed;
 	}
 
@@ -38,13 +36,12 @@ public class Invocation extends SemanticsElement{
 		return whichFunction;
 	}
 	
-	public Invocation( AbstractFunction meth, int accessType){
-		//if(whichFunction == null) throw new CompilationError("Invocation method is null!");
+	public Invocation( AbstractFunction meth, int accessType) {
 		this.whichFunction = meth;
 		this.accessType = accessType;
 	}
 
-	public static Invocation createVirtualInvocation(AbstractFunction meth, Environment env){
+	public static Invocation createVirtualInvocation(AbstractFunction meth, Environment env) {
 		Invocation inv = new Invocation(meth,TYPE_VIRTUAL);
 		env.addVirtualInvocation(inv);
 		return inv;
@@ -54,5 +51,4 @@ public class Invocation extends SemanticsElement{
 		accessType = at;		
 	}
 
-	
 }

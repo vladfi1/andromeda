@@ -172,8 +172,10 @@ public class Class extends RecordType implements IIdentifiable {
 	 * XPilot: enabled extending of generic classes.
 	 */
 	protected void resolveExtends(TypeProvider t) {
+		t.pushTypeParams(typeParams);
 		Type type = t.resolveType(declaration.getSuperClass());
-		if(type.getCategory()!=CLASS && type.getCategory()!=GENERIC_CLASS){
+		t.popTypeParams(typeParams);
+		if(!type.isClass()){
 			throw new CompilationError(declaration.getSuperClass(), "Classes may only extend other classes!");
 		}
 		superClass = (Class)type;

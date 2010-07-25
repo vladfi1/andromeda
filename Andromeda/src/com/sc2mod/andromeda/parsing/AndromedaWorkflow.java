@@ -75,7 +75,7 @@ public class AndromedaWorkflow extends Workflow{
 			//Folder of first file lookup dir
 			env.addLookupDir(((FileSource)files.get(0)).getFile().getAbsoluteFile().getParentFile());
 		}
-		env.addLibDir(options.libFolder);	
+		env.addLibDir(options.libFolder);
 		env.setNativeDir(options.nativeLibFolder);
 		return p;
 		

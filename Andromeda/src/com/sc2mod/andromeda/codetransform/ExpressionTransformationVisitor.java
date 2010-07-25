@@ -17,6 +17,7 @@ import com.sc2mod.andromeda.syntaxNodes.AssignmentOperatorType;
 import com.sc2mod.andromeda.syntaxNodes.BinaryExpression;
 import com.sc2mod.andromeda.syntaxNodes.CastExpression;
 import com.sc2mod.andromeda.syntaxNodes.ClassInstanceCreationExpression;
+import com.sc2mod.andromeda.syntaxNodes.ExplicitConstructorInvocationStatement;
 import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
 import com.sc2mod.andromeda.syntaxNodes.KeyOfExpression;
@@ -93,8 +94,6 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 	
 	@Override
 	public void visit(ArrayAccess arrayAccess) {
-		//System.out.println(((FieldAccess)arrayAccess.getLeftExpression()).getName());
-		
 		//Do left expression
 		invokeSelf(arrayAccess.getLeftExpression());
 		if (parent.replaceExpression != null) {
@@ -188,7 +187,6 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 		//Visit arguments
 		invokeSelf(c.getArguments());
 	}
-	
 	
 	@Override
 	public void visit(Assignment a) {

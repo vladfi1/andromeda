@@ -261,11 +261,16 @@ public class TypeProvider {
 
 
 	public void resolveInheritance() {
+		ArrayList<RecordType> recordTypes = new ArrayList<RecordType>();
 		for(String s: types.keySet()){
 			Type t = types.get(s);
-			if(t instanceof RecordType){
-				((RecordType)t).resolveInheritance(this);
+			if(t instanceof RecordType) {
+				recordTypes.add((RecordType)t);
 			}
+		}
+		//XPilot: avoids concurrent modification exception, as type parameters will be pushed
+		for(RecordType type : recordTypes) {
+			type.resolveInheritance(this);
 		}
 	}
 	

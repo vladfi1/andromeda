@@ -9,8 +9,10 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
+import com.sc2mod.andromeda.environment.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.Function;
 import com.sc2mod.andromeda.environment.Invocation;
+import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.AndromedaFileInfo;
 import com.sc2mod.andromeda.program.Options;
@@ -19,13 +21,14 @@ import com.sc2mod.andromeda.semAnalysis.LoopSemantics;
 import com.sc2mod.andromeda.semAnalysis.NameResolver;
 import com.sc2mod.andromeda.syntaxNodes.AndromedaFile;
 import com.sc2mod.andromeda.syntaxNodes.DeleteStatement;
+import com.sc2mod.andromeda.syntaxNodes.ExplicitConstructorInvocationStatement;
 import com.sc2mod.andromeda.syntaxNodes.ForEachStatement;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.Statement;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl;
 
-public class CallHierarchyVisitor extends TransformationVisitor{
+public class CallHierarchyVisitor extends TransformationVisitor {
 	
 	boolean readAccess = true;
 	boolean writeAccess;
@@ -38,12 +41,11 @@ public class CallHierarchyVisitor extends TransformationVisitor{
 		staticInitVisitor = new StaticInitVisitor(this);
 	}
 
-
 	//*********** GLOBAL CONSTRUCTS (just loop through) **********
 	@Override
 	public void visit(AndromedaFile andromedaFile) {
 		int inclType = andromedaFile.getFileInfo().getInclusionType();
-		if(inclType == AndromedaFileInfo.TYPE_NATIVE || inclType == AndromedaFileInfo.TYPE_LANGUAGE){
+		if(inclType == AndromedaFileInfo.TYPE_NATIVE || inclType == AndromedaFileInfo.TYPE_LANGUAGE) {
 			//Natives and libraries do not get parsed (only if they are called)
 			return;
 		}
@@ -58,10 +60,10 @@ public class CallHierarchyVisitor extends TransformationVisitor{
 
 	//*********** Methods **********
 	@Override
-	public void visit(VariableAssignDecl vad){
+	public void visit(VariableAssignDecl vad) {
 		//Marked? do nothing
 		VarDecl vd = (VarDecl) vad.getName().getSemantics();
-		if(vd.isMarked()){
+		if(vd.isMarked()) {
 			return;
 		}
 		
@@ -72,8 +74,6 @@ public class CallHierarchyVisitor extends TransformationVisitor{
 
 		//An inited variable is written
 		((VarDecl)vad.getName().getSemantics()).registerAccess(true);
-		
-		//System.out.println(vad.getName().getName());
 	}
 	
 	//Xpilot: added
@@ -145,8 +145,16 @@ public class CallHierarchyVisitor extends TransformationVisitor{
 		
 		//Visit children
 		super.visit(forEachStatement);
+	}
+	
+	//XPilot: added
+	@Override
+	public void visit(ExplicitConstructorInvocationStatement explicitConstructorInvocationStatement) {
+		//Visit children
+		super.visit(explicitConstructorInvocationStatement);
 		
-		
+		ConstructorInvocation ci = (ConstructorInvocation)explicitConstructorInvocationStatement.getSemantics();
+		exprVisitor.registerInvocation(ci);
 	}
 	
 	//************** EXPRESSIONS (just loop through and replace expressions if necessary) ********

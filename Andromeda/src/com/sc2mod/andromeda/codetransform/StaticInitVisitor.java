@@ -5,6 +5,8 @@ import com.sc2mod.andromeda.syntaxNodes.ClassBody;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.FileContent;
+import com.sc2mod.andromeda.syntaxNodes.IncludedFile;
+import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.Visitor;
 import com.sc2mod.andromeda.syntaxNodes.VisitorAdaptor;
@@ -33,8 +35,18 @@ public class StaticInitVisitor extends VisitorAdaptor {
 	}
 
 	@Override
+	public void visit(IncludedFile includedFile) {
+		includedFile.childrenAccept(this);
+	}
+	
+	@Override
 	public void visit(ClassBody classBody) {
 		classBody.childrenAccept(this);
+	}
+
+	@Override
+	public void visit(InterfaceDeclaration interfaceDeclaration) {
+		interfaceDeclaration.childrenAccept(this);
 	}
 
 	@Override

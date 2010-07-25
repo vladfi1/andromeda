@@ -20,13 +20,14 @@ import com.sc2mod.andromeda.program.Options;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccess;
 import com.sc2mod.andromeda.syntaxNodes.ClassInstanceCreationExpression;
 import com.sc2mod.andromeda.syntaxNodes.DeleteStatement;
+import com.sc2mod.andromeda.syntaxNodes.ExplicitConstructorInvocationStatement;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
 import com.sc2mod.andromeda.syntaxNodes.MethodInvocation;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.FuncNameObject;
 
-public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisitor{
+public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisitor {
 
 	public CallHierarchyExpressionVisitor(Options options) {
 		super(options);
@@ -46,7 +47,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 	
 	//**************** INVOCATIONS (WHERE THIS VISITOR DOES ITS JOB) *************
 	
-	public void registerInvocation(Invocation inv){
+	public void registerInvocation(Invocation inv) {
 		if(inv == null) return;
 		//If it is already used we were already here
 		boolean alreadyChecked = inv.isUsed();
@@ -60,9 +61,16 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 		//XPilot: invocationTarget is null for default constructors
 		if(invocationTarget == null) return;
 		
+		/*
+		if(inv instanceof ConstructorInvocation) {
+			System.out.println(invocationTarget.getDescription() + "(" + invocationTarget.getSignature() + ")");
+			System.out.println(invocationTarget.getDefinition());
+		}
+		*/
+		
 		if(!alreadyChecked&&invocationTarget.getScope().getInclusionType() != AndromedaFileInfo.TYPE_NATIVE){
 			//Only check it if it is no function defined in blizzard's libs
-			inv.getWhichFunction().getDefinition().accept(parent);
+			invocationTarget.getDefinition().accept(parent);
 		}
 
 		//Check if we can inline this function call
@@ -88,7 +96,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 	}
 		
 	@Override
-	public void visit(FieldAccess fieldAccess){
+	public void visit(FieldAccess fieldAccess) {
 		VarDecl vd = (VarDecl) fieldAccess.getSemantics();
 		
 		//System.out.println(fieldAccess.getName());

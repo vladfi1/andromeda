@@ -191,7 +191,7 @@ public class Parameters {
 			} else {
 				File f = new File(s);
 				Util.checkForFile(f);
-				files .add(new FileSource(f));
+				files.add(new FileSource(f));
 			}
 		}
 	}

@@ -22,7 +22,7 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.variables.FieldSet;
 import com.sc2mod.andromeda.notifications.CompilationError;
 
-public class GenericClassInstance extends GenericClass{
+public class GenericClassInstance extends GenericClass {
 
 	private GenericClass theType;
 	private Signature signature;
@@ -74,8 +74,6 @@ public class GenericClassInstance extends GenericClass{
 	public ClassNameProvider getNameProvider() {
 		return theType.getNameProvider();
 	}
-	
-
 
 	@Override
 	public int getCategory() {
@@ -102,7 +100,6 @@ public class GenericClassInstance extends GenericClass{
 		return signature;
 	}
 	
-	
 	@Override
 	public String getUid() {
 		return theType.getUid();
@@ -115,9 +112,17 @@ public class GenericClassInstance extends GenericClass{
 	public boolean isInstanceof(Class c) {
 		if(this == c) return true;
 		if(c.isGeneric()) {
-			GenericClassInstance gci = (GenericClassInstance)c;
-			if(theType == gci.theType) {
-				return signature.fits(gci.signature);
+			if(c instanceof GenericClassInstance) {
+				GenericClassInstance gci = (GenericClassInstance)c;
+				if(theType == gci.theType) {
+					return signature.fits(gci.signature);
+				}
+			} else {
+				//XPilot: why check if instanceof a base GenericClass (not an instance)?
+				//System.out.println(c.getFullName());
+				//System.out.println(getFullName());
+				//throw new Error();
+				return false;
 			}
 		}
 		if(superClass == null) return false;
@@ -147,12 +152,11 @@ public class GenericClassInstance extends GenericClass{
 		System.out.println("RSOLVING " + this.getFullName());
 		
 		//XPilot: certain fields
-		superClass = theType.superClass;
-		//if(superClass != null) {
-		//	System.out.println(this.getFullName());
-		//	System.out.println(theType.getFullName());
-		//	System.out.println(superClass.getFullName());
-		//}
+		if(theType.superClass == null) {
+			superClass = null;
+		} else {
+			superClass = (Class) theType.superClass.replaceTypeParameters(paramMap);
+		}
 		topClass = theType.topClass;
 		
 		//Constructors
