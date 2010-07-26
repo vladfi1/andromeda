@@ -9,9 +9,13 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
+import java.util.ArrayList;
+
+import com.sc2mod.andromeda.environment.AbstractFunction;
 import com.sc2mod.andromeda.environment.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.Function;
 import com.sc2mod.andromeda.environment.Invocation;
+import com.sc2mod.andromeda.environment.Method;
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.AndromedaFileInfo;
@@ -102,25 +106,37 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	
 	@Override
 	public void visit(MethodDeclaration methodDeclaration) {
-
-		//Get function body, if this function has none (abstract/interface) we don't have to do anything
-		Statement body = methodDeclaration.getBody();
-		if(body == null) return;
-		
 		//Set current function
 		Function f = (Function)methodDeclaration.getSemantics();
+
+		//XPilot: visit overriding methods
+		/*
+		if(f instanceof Method) {
+			ArrayList<AbstractFunction> overriders = ((Method)f).getOverridingMethods();
+			if(overriders != null) {
+				for(AbstractFunction overrider : overriders) {
+					System.out.println(overrider);
+					overrider.getDefinition().accept(this);
+				}
+			}
+		}
+		*/
 		
 		//Function already marked? Return
 		if(f.isMarked()) return;
 		
-		//Now check the body for calls
-		body.accept(this);
+		Statement body = methodDeclaration.getBody();
+		
+		if(body != null) {
+			//Now check the body for calls
+			body.accept(this);
+			
+			//Check for unused locals
+			UnusedFinder.checkForUnusedLocals(f,options);
+		}
 		
 		//Mark function as visited
 		f.mark();
-		
-		//Check for unused locals
-		UnusedFinder.checkForUnusedLocals(f,options);
 	}
 	
 	//************** STATEMENTS (just loop through and replace expressions if necessary) ********

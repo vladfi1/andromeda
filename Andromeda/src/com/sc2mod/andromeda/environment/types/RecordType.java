@@ -60,8 +60,6 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 	//Hierarchy for topologic sorting and stuff
 	protected LinkedList<RecordType> descendants;
 
-
-
 	private boolean isAbstract;
 	private boolean isFinal;
 	private int visibility;
@@ -203,6 +201,10 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 		return getName();
 	}
 	
+	@Override
+	public String toString() {
+		return getFullName();
+	}
 
 	public RecordType(GlobalStructure g, Scope s) {
 		super();

@@ -36,7 +36,7 @@ import com.sc2mod.andromeda.syntaxNodes.Statement;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
-public class Function extends AbstractFunction{
+public class Function extends AbstractFunction {
 
 	
 	public static final int TYPE_FUNCTION = 1;
@@ -94,9 +94,11 @@ public class Function extends AbstractFunction{
 		if(isNative){
 			if(isFinal) throw new CompilationError(declaration.getHeader().getModifiers(),"Native functions cannot be declared final.");
 			if(body!=null) throw new CompilationError(declaration.getHeader().getModifiers(),"Native functions may not have a body.");
-		}
-		
+		}	
 	}
+	
+	//XPilot: for function proxies
+	protected Function() {}
 	
 	protected Function(StaticInitDeclaration decl, Scope scope){
 		this.declaration = decl;

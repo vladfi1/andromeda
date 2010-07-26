@@ -170,4 +170,9 @@ public abstract class AbstractFunction extends SemanticsElement implements IIden
 	protected void setOverriddenMethod(Method method) {
 		throw new Error("Abstract method!");
 	}
+	
+	@Override
+	public String toString() {
+		return getDescription();
+	}
 }

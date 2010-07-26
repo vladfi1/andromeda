@@ -74,7 +74,7 @@ public class MethodSet implements Cloneable {
 		AbstractFunction old = meths.put(m.getSignature(), m);
 		
 		//Abstract?
-		if(m.getBody() == null) numUnimplementedMethods++;
+		if(m.isAbstract()) numUnimplementedMethods++;
 			
 		// No duplicate method? Everything fine!
 		if (old == null){
@@ -129,7 +129,7 @@ public class MethodSet implements Cloneable {
 		old.addOverride(m);
 		
 		//Was the old one without body? Reduce abstract count
-		if(old.getBody() == null){
+		if(old.isAbstract()){
 			numUnimplementedMethods--;
 		}
 	}
@@ -238,8 +238,8 @@ public class MethodSet implements Cloneable {
 				
 				Signature newSignature = e2.getKey().replaceTypeParameters(paramMap);
 				
-				//XPilot: added signature to GenericFunctionProxy
-				meths.put(newSignature, new GenericFunctionProxy(vd, newSignature, t2));
+				//XPilot: changed to GenericMethodProxy
+				meths.put(newSignature, new GenericMethodProxy((Method)vd, newSignature, t2));
 				
 				/*
 				if(t != t2){

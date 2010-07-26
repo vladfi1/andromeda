@@ -31,6 +31,7 @@ public class VirtualCallResolver {
 		outer: for(int i=0;i<size;i++){			
 			
 			Invocation inv = invocations.get(i);
+//			System.out.println(inv.getWhichFunction().getDescription() + ": " + inv.isUsed());
 			//Unused? Skip!
 			if(!inv.isUsed()) continue;
 			
@@ -39,6 +40,7 @@ public class VirtualCallResolver {
 			ArrayList<AbstractFunction> overriders = meth.getOverridingMethods();
 			for(AbstractFunction m: overriders){
 				Class cl = (Class)m.getContainingType();
+//				System.out.println(cl.getDescription() + ": " + cl.isUsed());
 				//Found a subclass that is used, so we cannot resolve this call :(
 				if(cl.isUsed()){
 					//The method is really called virtually! Register this

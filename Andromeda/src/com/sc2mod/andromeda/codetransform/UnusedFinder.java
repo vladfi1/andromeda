@@ -83,6 +83,7 @@ public class UnusedFinder {
 				isLib = false;
 			}
 			if(isLib){
+				//System.out.println(f.getDescription());
 				f.setCreateCode(false);
 			} else {
 				handleUnusedFunction(f);

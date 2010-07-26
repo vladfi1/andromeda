@@ -91,9 +91,6 @@ public class Class extends RecordType implements IIdentifiable {
 	public VirtualCallTable getVirtualCallTable() {
 		return virtualCallTable;
 	}
-	
-
-
 
 	public void setVirtualCallTable(VirtualCallTable virtualCallTable) {
 		this.virtualCallTable = virtualCallTable;
@@ -105,7 +102,6 @@ public class Class extends RecordType implements IIdentifiable {
 	
 	public void setInstanceLimit(int instanceLimit) {
 		this.instanceLimit = instanceLimit;
-		
 	}
 	
 	public int getInstanceLimit() {
@@ -465,7 +461,7 @@ public class Class extends RecordType implements IIdentifiable {
 		if(superClass != null) superClass.registerIndirectInstantiation();
 	}
 
-	private void registerIndirectInstantiation() {
+	protected void registerIndirectInstantiation() {
 		indirectInstantiationCount++;
 		if(superClass != null) superClass.registerIndirectInstantiation();
 	}

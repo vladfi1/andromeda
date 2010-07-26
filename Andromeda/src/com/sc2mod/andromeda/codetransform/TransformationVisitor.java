@@ -435,7 +435,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	public void visit(ExplicitConstructorInvocationStatement explicitConstructorInvocationStatement) {
 		//invokeExprVisitor(explicitConstructorInvocationStatement.getExpression());
 		exprVisitor.invokeSelf(explicitConstructorInvocationStatement.getExpression());
-		exprVisitor.visit(explicitConstructorInvocationStatement.getArguments());
+		exprVisitor.invokeSelf(explicitConstructorInvocationStatement.getArguments());
 		//explicitConstructorInvocationStatement.accept(exprVisitor);
 	}
 }

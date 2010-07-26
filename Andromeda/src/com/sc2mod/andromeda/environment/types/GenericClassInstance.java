@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -19,8 +20,10 @@ import com.sc2mod.andromeda.environment.AbstractFunction;
 import com.sc2mod.andromeda.environment.Constructor;
 import com.sc2mod.andromeda.environment.Destructor;
 import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.FieldSet;
 import com.sc2mod.andromeda.notifications.CompilationError;
+import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class GenericClassInstance extends GenericClass {
 
@@ -82,7 +85,7 @@ public class GenericClassInstance extends GenericClass {
 	
 	@Override
 	public Type getWrappedType() {
-		return theType;
+		return theType.getWrappedType();
 	}
 
 	@Override
@@ -244,5 +247,194 @@ public class GenericClassInstance extends GenericClass {
 	@Override
 	public VirtualCallTable getVirtualCallTable() {
 		return theType.getVirtualCallTable();
+	}
+	
+	@Override
+	public void registerInstantiation() {
+		theType.registerInstantiation();
+	}
+
+	@Override
+	protected void registerIndirectInstantiation() {
+		theType.registerIndirectInstantiation();
+	}
+
+	@Override
+	public boolean hasFieldInit() {
+		return theType.hasFieldInit();
+	}
+
+	@Override
+	public Type getGeneratedType() {
+		return theType.getGeneratedType();
+	}
+
+	@Override
+	public int getMemberByteSize() {
+		return theType.getMemberByteSize();
+	}
+	
+	//***** XPilot: methods that should not be called? *****
+	
+	@Override
+	protected int calcByteSize() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public boolean canConcatenateCastTo(Type toType) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public boolean canExplicitCastTo(Type toType) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void checkHierarchy(TypeProvider typeProvider) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void checkImplicitConstructor() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	void generateClassIndex(TypeProvider tp) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void generateImplementsTransClosure() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public HashSet<String> getAllowedAnnotations() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public int getClassIndex() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public ArrayList<FieldDecl> getHierarchyFields() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public int getInstanceLimit() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public Class getTopClass() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public TypeParameter[] getTypeParams() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public boolean isImplicitReferenceType() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public boolean isStatic() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public boolean isUsed() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	protected void resolveExtends(TypeProvider t) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	protected void resolveImplements(TypeProvider t) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public boolean resolveInheritance(TypeProvider t) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setAllocatorName(String allocatorName) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setDeallocatorName(String deallocatorName) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setGeneratedName(String generatedName) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setHierarchyFields(ArrayList<FieldDecl> hierarchyFields) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setInstanceLimit(int instanceLimit) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setMetaClassName(String name) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setStatic() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setVirtualCallTable(VirtualCallTable virtualCallTable) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
 	}
 }

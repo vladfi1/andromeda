@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import com.sc2mod.andromeda.environment.AbstractFunction;
 import com.sc2mod.andromeda.environment.Environment;
+import com.sc2mod.andromeda.environment.GenericFunctionProxy;
 import com.sc2mod.andromeda.environment.Method;
 import com.sc2mod.andromeda.environment.types.Class;
 import com.sc2mod.andromeda.environment.types.RecordType;
@@ -35,8 +36,10 @@ public class VirtualCallTable {
 		for(Class clazz : env.typeProvider.getClasses()){
 			//Create a class table for all top classes, these will
 			//then recursively create VCTs for child classes.
-			//System.out.println(clazz.getFullName());
-			if(clazz.isTopClass()) new VirtualCallTable(clazz, env);
+			if(clazz.isTopClass()) {
+//				System.out.println("Generating VCT for " + clazz.getFullName());
+				new VirtualCallTable(clazz, env);
+			}
 		}
 	}
 	
@@ -67,12 +70,17 @@ public class VirtualCallTable {
 	private VirtualCallTable(Class clazz, Environment env){
 		this.clazz = clazz;
 		
+		System.out.println("Generating VCT for " + clazz.getFullName());
+
 		//Set this as table of the class
 		clazz.setVirtualCallTable(this);
 		
 		//Add the table from the superclass
 		Class superClass = clazz.getSuperClass();
-		if(superClass != null){
+		if(superClass != null) {
+			//XPilot: make sure we are not using the GenericClassInstance
+			superClass = (Class) superClass.getWrappedType();
+			System.out.println("Super class = " + superClass);
 			superTable = superClass.getVirtualCallTable();
 			superTable.subTables.add(this);
 			table.addAll(superTable.table);
@@ -80,7 +88,7 @@ public class VirtualCallTable {
 		
 		ArrayList<AbstractFunction> methods = clazz.getMethods().getMyMethods();
 		int size = methods.size();
-		for(int i=0;i<=size;i++){
+		for(int i=0;i<=size;i++) {
 			AbstractFunction m;
 			if(i<size){
 				//First we test all methods
@@ -95,19 +103,27 @@ public class VirtualCallTable {
 				
 			}
 			//Methods without body and static methods and methods that are not called virtually are ignored
-			if(m.isStatic()||!m.isCalledVirtually()) continue;
-								
+			if(m.isStatic()||!m.isCalledVirtually()) {
+//				System.out.println(m + " virtual = false.");
+				continue;
+			}
+			
+//			System.out.println(m + " virtual = true.");
+			
 			AbstractFunction overrides = m.getOverridenMethod();
+			
+//			System.out.println("Overrides: " + overrides);
+			
 			int callIndex;
 			int tableIndex;
-			if(overrides != null && overrides.isCalledVirtually()){
+			if(overrides != null && overrides.isCalledVirtually()) {
 				//This method is already in the call table!
 				tableIndex = overrides.getVirtualTableIndex();
-				if(m.isAbstract()){					
+				if(m.isAbstract()) {
 					callIndex = overrides.getCurVirtualCallChildIndex();
-				} else {				
+				} else {
 					callIndex = superTable.incCallIndex(tableIndex);
-				}				
+				}
 				
 				//Set in table
 				table.set(tableIndex, m);
@@ -116,22 +132,26 @@ public class VirtualCallTable {
 				tableIndex = table.size();
 				if(m.isAbstract()){					
 					callIndex = -1;
-				} else {				
+				} else {
 					callIndex = 0;
 				}
 				
 				//Add to table
 				table.add(m);	
 				
+				System.out.println("Adding " + m);
+				
 				env.registerMaxVCTSize(table.size());
 			}
 			//Set the indices for the method
 			m.setVirtualCallIndex(callIndex);
-			m.setVirtualTableIndex(tableIndex);	
+			m.setVirtualTableIndex(tableIndex);
 		}
 		
+		System.out.println(table);
+		
 		//Generate tables for subclasses
-		for(RecordType r : clazz.getDecendants()){
+		for(RecordType r : clazz.getDecendants()) {
 			new VirtualCallTable((Class) r, env);
 		}
 	}
@@ -143,15 +163,19 @@ public class VirtualCallTable {
 	 * @return the incremented call index
 	 */
 	private int incCallIndex(int tableIndex) {
-		if(superTable != null){
+//		System.out.println("incCallIndex(" + tableIndex + ") on " + clazz);
+		if(superTable != null) {
 			superTable.incCallIndex(tableIndex);
 		}
-		if(table.size()<=tableIndex) return -1;
+		if(table.size()<=tableIndex) {
+//			System.out.println("Returning -1");
+			return -1;
+		}
 		AbstractFunction m = table.get(tableIndex);
 		
-		//If the method is identic with the method in the top table, we do not increment the index
+		//If the method is identical to the method in the top table, we do not increment the index
 		//(since we have done it already in the top table in the recursive call)
-		if(superTable != null && superTable.table.get(tableIndex)==m) return m.getCurVirtualCallChildIndex();
+		if(superTable != null && !superTable.isEmpty() && superTable.table.get(tableIndex)==m) return m.getCurVirtualCallChildIndex();
 		return table.get(tableIndex).getNextVirtualCallChildIndex();
 	}
 
@@ -163,5 +187,7 @@ public class VirtualCallTable {
 		return table;
 	}
 
-
+	public boolean isEmpty() {
+		return table.isEmpty();
+	}
 }

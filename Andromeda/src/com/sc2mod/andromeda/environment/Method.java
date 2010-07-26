@@ -31,35 +31,43 @@ public class Method extends Function {
 	private String virtualCaller;
 	
 
+	@Override
 	public String getVirtualCaller() {
 		return virtualCaller;
 	}
 
+	@Override
 	public void setVirtualCallerName(String virtualCallerName) {
 		virtualCaller = virtualCallerName;
 	}
 	
+	@Override
 	public int getNextVirtualCallChildIndex(){
 		virtualCallOffset++;
 		return virtualCallIndex + virtualCallOffset;
 	}
 	
+	@Override
 	public int getCurVirtualCallChildIndex(){
 		return virtualCallIndex + virtualCallOffset;
 	}
 	
+	@Override
 	public int getVirtualTableIndex() {
 		return virtualTableIndex;
 	}
 
+	@Override
 	public void setVirtualTableIndex(int virtualTableIndex) {
 		this.virtualTableIndex = virtualTableIndex;
 	}
 
+	@Override
 	public int getVirtualCallIndex() {
 		return virtualCallIndex;
 	}
 
+	@Override
 	public void setVirtualCallIndex(int virtualCallIndex) {
 		this.virtualCallIndex = virtualCallIndex;
 	}
@@ -70,20 +78,22 @@ public class Method extends Function {
 	}
 
 	@Override
-	public void addOverride(AbstractFunction overrider){
+	public void addOverride(AbstractFunction overrider) {
+//		System.out.println(overrider.getDescription() + " -> " + this.getDescription());
 		overrider.setOverriddenMethod(this);
 		overrideCount++;
 		if(overriders==null) overriders = new ArrayList<AbstractFunction>(2);
 		overriders.add(overrider);
 	}
 	
-		
+	@Override
 	public String getDescription(){
 		RecordType t = getContainingType();
 		if(t == null) return "method " + getUid();
-		return "method " + getContainingType().getUid() + "." + getUid();
+		return "method " + t.getFullName() + "." + getUid();
 	}
 	
+	@Override
 	public boolean isOverridden(){
 		return overriders != null;
 	}
@@ -92,11 +102,15 @@ public class Method extends Function {
 		return overriders;		
 	}
 	
+	@Override
 	public AbstractFunction getOverridenMethod(){
 		return overrides;
 	}
 	
-	public void registerVirtualCall(){
+	@Override
+	public void registerVirtualCall() {
+		System.out.println("Registering virtual call for " + this);
+		
 		//Already called virtually, skip!
 		if(isCalledVirtually) return;
 
@@ -108,14 +122,17 @@ public class Method extends Function {
 			}
 	}
 	
-	public boolean isCalledVirtually(){
+	@Override
+	public boolean isCalledVirtually() {
 		return isCalledVirtually;
 	}
 	
+	@Override
 	public int getFunctionType(){
 		return isStatic?TYPE_STATIC_METHOD:TYPE_METHOD;
 	}
 	
+	@Override
 	public RecordType getContainingType() {
 		return containingType;
 	}
@@ -143,6 +160,9 @@ public class Method extends Function {
 			if(body==null)throw new CompilationError(declaration.getHeader().getModifiers(), "Static methods cannot be declared without body.");
 		}
 	}
+	
+	//XPilot: for method proxies
+	protected Method() {}
 	
 	@Override
 	public void setNative() {
