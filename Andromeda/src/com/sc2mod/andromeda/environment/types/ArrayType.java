@@ -68,7 +68,7 @@ public class ArrayType extends Type {
 	
 	@Override
 	public int getByteSize() {
-		return wrappedType.getByteSize()*dimension;
+		//XPilot: changed from wrappedType.getByteSize()
+		return wrappedType.getMemberByteSize()*dimension;
 	}
-
 }
