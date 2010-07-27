@@ -1170,8 +1170,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 			c.setSemantics(ci);
 			break;
 		default:
-			throw new CompilationError(c,
-					"Only classes can be instanced by a constructor invocation.");
+			throw new CompilationError(c, "Only classes can be instanced by a constructor invocation.");
 		}
 
 	}
@@ -1227,8 +1226,8 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	
 	@Override
 	public void visit(KeyOfExpression keyOfExpression) {
-		Type t;
-		keyOfExpression.setInferedType(t = typeProvider.resolveType(keyOfExpression.getType()));
+		Type t = typeProvider.resolveType(keyOfExpression.getType());
+		keyOfExpression.setInferedType(t);
 		keyOfExpression.setConstant(true);
 		keyOfExpression.accept(constResolve);
 	}

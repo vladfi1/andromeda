@@ -23,6 +23,8 @@ import com.sc2mod.andromeda.codetransform.SyntaxGenerator;
 import com.sc2mod.andromeda.codetransform.UnusedFinder;
 import com.sc2mod.andromeda.codetransform.VirtualCallResolver;
 import com.sc2mod.andromeda.environment.Environment;
+import com.sc2mod.andromeda.environment.Invocation;
+import com.sc2mod.andromeda.environment.Method;
 import com.sc2mod.andromeda.notifications.CompilationError;
 import com.sc2mod.andromeda.notifications.Message;
 import com.sc2mod.andromeda.notifications.UnlocatedErrorMessage;
@@ -50,12 +52,12 @@ public abstract class Workflow {
 	private MoPaQ map;
 	private ParseResult result = new ParseResult();
 	
-	public Workflow(List<Source> files, Options o){
+	public Workflow(List<Source> files, Options o) {
 		this.options = o;
 		this.files = files;
 	}
 	
-	protected long getTime(){
+	protected long getTime() {
 		long result = System.currentTimeMillis() - lastTime;
 		lastTime = System.currentTimeMillis();
 		return result;
@@ -74,8 +76,8 @@ public abstract class Workflow {
 		List<Source> triggers = null;
 		
 		int numFiles = files.size();
-		if(options.mapIn != null){
-			if(numFiles > 0){
+		if(options.mapIn != null) {
+			if(numFiles > 0) {
 				Program.log.caption("+++ Compiling map " + options.mapIn.getName() + " and " + numFiles + " additional script files +++");
 			} else {
 				Program.log.caption("+++ Compiling map " + options.mapIn.getName() + " +++");
@@ -85,11 +87,11 @@ public abstract class Workflow {
 			triggers = new TriggerExtractor().extractTriggers(map);
 			System.out.println(" DONE (" + getTime() + " ms)");
 		} else {
-			if(options.triggersIn != null){
+			if(options.triggersIn != null) {
 				triggers = new TriggerExtractor().extractTriggers(options.triggersIn);
 			}
 			Program.log.caption("+++ Compiling " + numFiles + " script files +++");
-			if(numFiles > 0){
+			if(numFiles > 0) {
 				
 			} else {
 				Program.log.caption("+++ Compiling map " + options.mapIn.getName() + " +++");
@@ -112,15 +114,15 @@ public abstract class Workflow {
 		}
 		
 		//Normal files
-		for(Source f: files){
+		for(Source f: files) {
 			System.out.print("Parsing " + f.getTypeName() + " ["+f.getName()+"]...");
 			af = p.parse(f,af,	AndromedaFileInfo.TYPE_MAIN);
 			System.out.println(" DONE (" + getTime() + " ms)");
 		}
 		
 		//Triggers in the input map if one was specified
-		if(triggers != null){
-			for(Source f: triggers){
+		if(triggers != null) {
+			for(Source f: triggers) {
 				System.out.print("Parsing " + f.getTypeName() + " ["+f.getName()+"]...");
 				af = p.parse(f,af,	AndromedaFileInfo.TYPE_MAIN);
 				System.out.println(" DONE (" + getTime() + " ms)");
@@ -145,11 +147,11 @@ public abstract class Workflow {
 		bw.close();
 		
 		//If we have an input map, manipulate its mapScript
-		if(map != null|| options.mapScriptIn != null){
+		if(map != null|| options.mapScriptIn != null) {
 			
 			//Write map script to output folder
 			String mapScript;
-			if(map != null){
+			if(map != null) {
 				mapScript = ScriptInjector.getManipulatedMapScript(map);
 			} else {
 				mapScript = ScriptInjector.getManipulatedMapScript(options.mapScriptIn);
@@ -159,7 +161,7 @@ public abstract class Workflow {
 			bw2.close();
 			
 			//Write to map file if specified
-			if(options.mapOut != null){
+			if(options.mapOut != null) {
 				ScriptInjector.injectAndromeda(map, mapScript, code);
 				map.save(options.mapOut);
 				outputName = options.mapOut.getName();
@@ -175,7 +177,7 @@ public abstract class Workflow {
 		System.err.println("--- Compilation unsuccessful, no code generated! ---");
 	}
 	
-	protected long resetTime(){
+	protected long resetTime() {
 		lastTime = System.currentTimeMillis();
 		return lastTime;
 	}
@@ -203,7 +205,7 @@ public abstract class Workflow {
 			
 			String outputName = "-NO OUTPUT-";
 			OutputStats outputStats = null;
-			if(!options.noCodegen){
+			if(!options.noCodegen) {
 				//Transform code
 				System.out.print("No semantic errors. Doing code transformations...");
 				CodeTransformationVisitor trans = new CodeTransformationVisitor(options,env.typeProvider,env.nameResolver);
@@ -212,12 +214,20 @@ public abstract class Workflow {
 				
 				//Call hierarchy check
 				System.out.print("Checking call hierarchy...");
+				
 				CallHierarchyVisitor chv = new CallHierarchyVisitor(options,env.nameResolver);
 				chv.visit(af);
+				
+				VirtualCallResolver vcr = new VirtualCallResolver(env, chv);
+				vcr.tryResolve();
+				
+				//XPilot: completes hierarchy analysis
+				//chv.visitVirtualInvocations(env.getVirtualInvocations());
+				
 				UnusedFinder.process(options, env);
-				new VirtualCallResolver(env).tryResolve();
 				VirtualCallTable.generateVCTs(env);
 				MetaClassInit.init(new SyntaxGenerator(options,env.nameResolver),env);
+				
 				System.out.println(" DONE (" + getTime() + " ms)");
 				
 				//Names
@@ -234,7 +244,7 @@ public abstract class Workflow {
 				//Generate code
 				System.out.print("Generating code...");
 				CodeGenVisitor c = new CodeGenVisitor(env, options,snv.getNameProvider());
-				if(!env.typeProvider.getClasses().isEmpty()){
+				if(!env.typeProvider.getClasses().isEmpty()) {
 					ClassGenerator cg = new IndexClassGenerator(env,c,snv.getNameProvider(), options);
 					cg.generateClasses(env.typeProvider.getClasses());
 				}
@@ -251,7 +261,7 @@ public abstract class Workflow {
 			}
 			
 			//Output structure to xml if desired to
-			if(options.xmlStructure != null){
+			if(options.xmlStructure != null) {
 				System.out.print("Writing structure to XML...");
 				new StructureXMLVisitor(options).genXml(p.getSourceEnvironment(), options.xmlStructure, af);
 				System.out.println(" DONE (" + getTime() + " ms)");
@@ -278,7 +288,7 @@ public abstract class Workflow {
 							+ (int) (((bytesOut + bytesIn) / (double) (1 << 10)) / (time / 1000.0))
 							+ " KB/s)");
 			System.out.println("=> Memory Usage: " + ((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/(1<<20)) + " MB");
-			if(outputStats!=null){
+			if(outputStats!=null) {
 				System.out.println("Generated code memory usage:");
 				System.out.println("=> Global variables: " + outputStats.globalsBytes / 1000f + " KB" );
 				System.out.println("=> String literals: " + outputStats.stringLiteralBytes / 1000f + " KB" );
@@ -288,10 +298,10 @@ public abstract class Workflow {
 			Program.log.caption("+++ Compilation successful" + (options.noCodegen?"":", code written to " + outputName) + " +++");
 		} catch (Throwable e) {
 			reportError(e);
-			if(e instanceof CompilationError){
+			if(e instanceof CompilationError) {
 				((CompilationError)e).setEnvironment(p.getSourceEnvironment());
 			}
-			if(e instanceof Message){
+			if(e instanceof Message) {
 				Program.log.addMessage((Message) e);
 			} else {
 				Program.log.addMessage(new UnlocatedErrorMessage(e.getMessage()));
@@ -302,7 +312,7 @@ public abstract class Workflow {
 		//Write parse result to xml if desired to and add messages to result
 		List<Message> messages = Program.log.flushMessages();
 		getResult().addMessages(messages);
-		if(options.xmlErrors != null){
+		if(options.xmlErrors != null) {
 			new ResultXMLWriter().genXML(messages, options.xmlErrors);
 		}
 		
@@ -310,7 +320,7 @@ public abstract class Workflow {
 		if (abort) return getResult();
 		
 		//If desired, run the map
-		if(options.runMap){
+		if(options.runMap) {
 			Program.log.println("Running created map...");
 			try {
 				new MapRunner(Program.platform,options,Program.config).test(options.mapOut);

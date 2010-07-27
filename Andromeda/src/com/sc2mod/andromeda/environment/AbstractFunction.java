@@ -30,7 +30,7 @@ import com.sc2mod.andromeda.syntaxNodes.Statement;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
-public abstract class AbstractFunction extends SemanticsElement implements IIdentifiable, IModifiable, IDefined, IGlobal, IAnnotatable{
+public abstract class AbstractFunction extends SemanticsElement implements IIdentifiable, IModifiable, IDefined, IGlobal, IAnnotatable {
 
 	private static int curHashCode = 1;
 	private int hashCode = curHashCode++;

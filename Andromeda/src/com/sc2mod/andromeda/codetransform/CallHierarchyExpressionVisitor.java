@@ -9,10 +9,13 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
+import java.util.ArrayList;
+
 import com.sc2mod.andromeda.environment.AbstractFunction;
 import com.sc2mod.andromeda.environment.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.Function;
 import com.sc2mod.andromeda.environment.Invocation;
+import com.sc2mod.andromeda.environment.Method;
 import com.sc2mod.andromeda.environment.types.Class;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.AndromedaFileInfo;
@@ -20,7 +23,6 @@ import com.sc2mod.andromeda.program.Options;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccess;
 import com.sc2mod.andromeda.syntaxNodes.ClassInstanceCreationExpression;
 import com.sc2mod.andromeda.syntaxNodes.DeleteStatement;
-import com.sc2mod.andromeda.syntaxNodes.ExplicitConstructorInvocationStatement;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
 import com.sc2mod.andromeda.syntaxNodes.MethodInvocation;
@@ -36,7 +38,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 	@Override
 	public void visit(LiteralExpression literalExpression) {
 		DataObject o = literalExpression.getLiteral().getValue();
-		if(o instanceof FuncNameObject){
+		if(o instanceof FuncNameObject) {
 			//We have an inlined function name. This function name could be called!
 			AbstractFunction f = ((FuncNameObject)o).getFunction();
 			f.addInvocation();
@@ -55,31 +57,24 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 		//The invocation is used indeed
 		inv.use();
 		
-		
 		AbstractFunction invocationTarget = inv.getWhichFunction();
 		
 		//XPilot: invocationTarget is null for default constructors
 		if(invocationTarget == null) return;
 		
-		/*
-		if(inv instanceof ConstructorInvocation) {
-			System.out.println(invocationTarget.getDescription() + "(" + invocationTarget.getSignature() + ")");
-			System.out.println(invocationTarget.getDefinition());
-		}
-		*/
-		
-		if(!alreadyChecked&&invocationTarget.getScope().getInclusionType() != AndromedaFileInfo.TYPE_NATIVE){
+		if(!alreadyChecked&&invocationTarget.getScope().getInclusionType() != AndromedaFileInfo.TYPE_NATIVE) {
 			//Only check it if it is no function defined in blizzard's libs
 			invocationTarget.getDefinition().accept(parent);
 		}
 
 		//Check if we can inline this function call
 		int inlineType = InlineDecider.decide(inv);
-		if(inlineType != InlineDecider.INLINE_NO){
+		if(inlineType != InlineDecider.INLINE_NO) {
 			invocationTarget.addInline();
 			throw new Error("inline not yet supported.");
 		} else {
 			invocationTarget.addInvocation();
+			//visit(invocationTarget);
 		}
 	}
 	
@@ -108,7 +103,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 		super.visit(fieldAccess);
 		
 		//If this is a global decl and it has an init, parse this
-		if(vd.isGlobalField()&&vd.isInitDecl()){
+		if(vd.isGlobalField()&&vd.isInitDecl()) {
 			vd.getDeclarator().accept(parent);
 		}
 	}
@@ -126,7 +121,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 		super.visit(arrayAccess);
 		
 		//If this is a global decl and it has an init, parse this
-		if(vd.isGlobalField()&&vd.isInitDecl()){
+		if(vd.isGlobalField()&&vd.isInitDecl()) {
 			vd.getDeclarator().accept(parent);
 		}
 	}

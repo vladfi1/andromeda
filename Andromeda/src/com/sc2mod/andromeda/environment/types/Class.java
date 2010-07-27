@@ -474,7 +474,7 @@ public class Class extends RecordType implements IIdentifiable {
 	 * Any code for them can be omitted and virtual calls might be resolvable at compile time
 	 * @return whether this class is ever used (including subclassing)
 	 */
-	public boolean isUsed(){
+	public boolean isUsed() {
 		return (instantiationCount + indirectInstantiationCount) > 0;
 	}
 

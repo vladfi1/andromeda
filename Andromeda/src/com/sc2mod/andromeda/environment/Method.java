@@ -42,13 +42,13 @@ public class Method extends Function {
 	}
 	
 	@Override
-	public int getNextVirtualCallChildIndex(){
+	public int getNextVirtualCallChildIndex() {
 		virtualCallOffset++;
 		return virtualCallIndex + virtualCallOffset;
 	}
 	
 	@Override
-	public int getCurVirtualCallChildIndex(){
+	public int getCurVirtualCallChildIndex() {
 		return virtualCallIndex + virtualCallOffset;
 	}
 	
@@ -87,39 +87,46 @@ public class Method extends Function {
 	}
 	
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		RecordType t = getContainingType();
 		if(t == null) return "method " + getUid();
 		return "method " + t.getFullName() + "." + getUid();
 	}
 	
 	@Override
-	public boolean isOverridden(){
+	public boolean isOverridden() {
 		return overriders != null;
 	}
 	
-	public ArrayList<AbstractFunction> getOverridingMethods(){
+	public ArrayList<AbstractFunction> getOverridingMethods() {
 		return overriders;		
 	}
 	
 	@Override
-	public AbstractFunction getOverridenMethod(){
+	public AbstractFunction getOverridenMethod() {
 		return overrides;
 	}
 	
+	/**
+	 * Only called by VirtualCallResolver.
+	 */
 	@Override
 	public void registerVirtualCall() {
-		System.out.println("Registering virtual call for " + this);
+//		System.out.println("Registering virtual call for " + this);
 		
 		//Already called virtually, skip!
-		if(isCalledVirtually) return;
+		//if(isCalledVirtually) return;
 
 		//This and all overriders are called virtually
 		isCalledVirtually = true;
+		
+		// XPilot: these will be set in VirtualCallResolver
+		/*
 		if(overriders != null)
-			for(AbstractFunction m: overriders){
+			for(AbstractFunction m: overriders) {
 				m.registerVirtualCall();
 			}
+		*/
 	}
 	
 	@Override
@@ -128,7 +135,7 @@ public class Method extends Function {
 	}
 	
 	@Override
-	public int getFunctionType(){
+	public int getFunctionType() {
 		return isStatic?TYPE_STATIC_METHOD:TYPE_METHOD;
 	}
 	
@@ -140,21 +147,21 @@ public class Method extends Function {
 	public Method(MethodDeclaration functionDeclaration, RecordType containingType, Scope scope) {
 		super(functionDeclaration,scope);
 		this.containingType = containingType;
-		if(body==null){
-			if(containingType instanceof Interface){
-				if(isAbstract){
+		if(body==null) {
+			if(containingType instanceof Interface) {
+				if(isAbstract) {
 					throw new CompilationError(declaration, "Inteface methods may not be declared abstract (they are implicitly).");
 				}
 			} else
-			if(!isAbstract){
+			if(!isAbstract) {
 				throw new CompilationError(declaration, "A method was not declared abstract must have a body.");
 			}
 		} else {
-			if(isAbstract){
+			if(isAbstract) {
 				throw new CompilationError(declaration, "A method was declared abstract may not have a body.");
 			}
 		}
-		if(isStatic){
+		if(isStatic) {
 			if(isFinal()) throw new CompilationError(declaration.getHeader().getModifiers(), "Static methods cannot be final.");
 			if(isAbstract)throw new CompilationError(declaration.getHeader().getModifiers(), "Static methods cannot be abstract.");
 			if(body==null)throw new CompilationError(declaration.getHeader().getModifiers(), "Static methods cannot be declared without body.");

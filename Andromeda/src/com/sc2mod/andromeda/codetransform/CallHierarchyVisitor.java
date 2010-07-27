@@ -10,6 +10,7 @@
 package com.sc2mod.andromeda.codetransform;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.sc2mod.andromeda.environment.AbstractFunction;
 import com.sc2mod.andromeda.environment.ConstructorInvocation;
@@ -17,6 +18,7 @@ import com.sc2mod.andromeda.environment.Function;
 import com.sc2mod.andromeda.environment.Invocation;
 import com.sc2mod.andromeda.environment.Method;
 import com.sc2mod.andromeda.environment.SemanticsElement;
+import com.sc2mod.andromeda.environment.types.Class;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.AndromedaFileInfo;
 import com.sc2mod.andromeda.program.Options;
@@ -34,8 +36,10 @@ import com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl;
 
 public class CallHierarchyVisitor extends TransformationVisitor {
 	
-	boolean readAccess = true;
-	boolean writeAccess;
+	//XPilot: these are not used...
+	//boolean readAccess = true;
+	//boolean writeAccess;
+	
 	private CallHierarchyExpressionVisitor exprVisitor;
 	private StaticInitVisitor staticInitVisitor;
 	
@@ -45,6 +49,12 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 		staticInitVisitor = new StaticInitVisitor(this);
 	}
 
+	/*
+	public void resetMarked() {
+		marked.clear();
+	}
+	*/
+	
 	//*********** GLOBAL CONSTRUCTS (just loop through) **********
 	@Override
 	public void visit(AndromedaFile andromedaFile) {
@@ -108,19 +118,6 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	public void visit(MethodDeclaration methodDeclaration) {
 		//Set current function
 		Function f = (Function)methodDeclaration.getSemantics();
-
-		//XPilot: visit overriding methods
-		/*
-		if(f instanceof Method) {
-			ArrayList<AbstractFunction> overriders = ((Method)f).getOverridingMethods();
-			if(overriders != null) {
-				for(AbstractFunction overrider : overriders) {
-					System.out.println(overrider);
-					overrider.getDefinition().accept(this);
-				}
-			}
-		}
-		*/
 		
 		//Function already marked? Return
 		if(f.isMarked()) return;
@@ -175,4 +172,33 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	
 	//************** EXPRESSIONS (just loop through and replace expressions if necessary) ********
 	
+
+	/**
+	 * Virtual methods may not have been properly checked.
+	 * They are checked now.
+	 * @author XPilot
+	 */
+	public void visitVirtualInvocations(ArrayList<Invocation> virtualInvocations) {
+		for(Invocation inv : virtualInvocations) {
+			visit((Method)inv.getWhichFunction());
+		}
+	}
+	
+	/**
+	 * XPilot: visit overriders
+	 */
+	private void visit(Method m) {
+		System.out.println(m);
+		ArrayList<AbstractFunction> overriders = m.getOverridingMethods();
+		if(overriders != null) {
+			for(AbstractFunction overrider : overriders) {
+				//if(!overrider.isMarked()) {
+					overrider.mark();
+					overrider.getDefinition().accept(this);
+					overrider.addInvocation();
+				//}
+				visit((Method)overrider);
+			}
+		}
+	}
 }

@@ -45,7 +45,7 @@ public final class Environment {
 	private ArrayList<InstanceLimitSetter> instanceLimits = new ArrayList<InstanceLimitSetter>();
 	
 
-	public void registerInstanceLimitSetter(InstanceLimitSetter ils){
+	public void registerInstanceLimitSetter(InstanceLimitSetter ils) {
 		instanceLimits.add(ils);
 	}
 	
@@ -82,11 +82,11 @@ public final class Environment {
 		globals.add(globalVarDeclaration,scope);
 	}
 	
-	public void registerGlobalInit(StaticInitDeclaration staticInit, Scope scope){
+	public void registerGlobalInit(StaticInitDeclaration staticInit, Scope scope) {
 		globalInitializers.add(new StaticInit(staticInit,scope));
 	}
 	
-	public void resolveClassHierarchy(){
+	public void resolveClassHierarchy() {
 		
 		//Register the system class Object
 		typeProvider.registerObjectClass();
@@ -105,7 +105,7 @@ public final class Environment {
 
 	}
 	
-	public void resolveTypes(){
+	public void resolveTypes() {
 		
 
 		//Global vars already resolved from const early analysis
@@ -119,12 +119,12 @@ public final class Environment {
 
 		
 		//Resolve global functions
-		for(Function f: functionsTrans){
+		for(Function f: functionsTrans) {
 			f.resolveTypes(typeProvider,null);
 			functions.addFunction(f);
 		}
 		
-		for(StaticInit i: globalInitializers){
+		for(StaticInit i: globalInitializers) {
 			i.resolveTypes(typeProvider, null);
 		}
 		
@@ -144,7 +144,8 @@ public final class Environment {
 		typeProvider.addEnrichment(enrichDeclaration, scope);
 	}
 	
-	public void addVirtualInvocation(Invocation inv) {		
+	public void addVirtualInvocation(Invocation inv) {
+		System.out.println("Virtual Invocation: " + inv.getWhichFunction());
 		virtualInvocations.add(inv);
 	}
 
@@ -158,25 +159,25 @@ public final class Environment {
 	}
 
 	public void adjustClassInstanceLimit() {
-		HashSet<Type> instanceLimits = new HashSet<Type>();
-		for(InstanceLimitSetter ils: this.instanceLimits){
+		//HashSet<Type> instanceLimits = new HashSet<Type>();
+		for(InstanceLimitSetter ils: this.instanceLimits) {
 			Type t = typeProvider.resolveType(ils.getEnrichedType());
 			DataObject instanceLimit = ils.getInstanceLimit().getValue();
-			if(instanceLimit == null){
+			if(instanceLimit == null) {
 				throw new CompilationError(ils.getInstanceLimit(), "Could not determine the instance limit. Only constant expressions that can be resolved during compilation may be used here.");
 			}
-			if(!(instanceLimit instanceof IntObject)){
+			if(!(instanceLimit instanceof IntObject)) {
 				throw new CompilationError(ils.getInstanceLimit(), "The instance limit did not resolve to an integer number but to " + ils.getInstanceLimit().getInferedType());
 			}
-			if(t.getCategory() != Type.CLASS){
+			if(t.getCategory() != Type.CLASS) {
 				throw new CompilationError(ils.getEnrichedType(),"The type in a setinstancelimit clause must be a class.");
 			}
 			Class c = (Class)t;
-			if(!c.isTopClass()){
+			if(!c.isTopClass()) {
 				throw new CompilationError(ils.getEnrichedType(),"The class in a setinstancelimit clause must be a top class (a class extending no other class).");
 			}
 			int i = instanceLimit.getIntValue();
-			if(i <= 0){
+			if(i <= 0) {
 				throw new CompilationError(ils.getInstanceLimit(),"Only positive numbers are not allowed as instance limit. The specified instance limit was " + i );
 			}
 			c.setInstanceLimit(i);

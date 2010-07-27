@@ -39,7 +39,7 @@ public class GenericClassInstance extends GenericClass {
 		paramMap = new TypeParamMapping(theType.typeParams,signature);
 		class1.genericInstances.put(s, this);
 		//If the generic class has already resolved its members, we can copy it from there
-		if(class1.membersResolved){
+		if(class1.membersResolved) {
 			generateGenericMembers();
 		}
 		
@@ -148,11 +148,11 @@ public class GenericClassInstance extends GenericClass {
 	}
 	*/
 	
-	public void generateGenericMembers(){
+	public void generateGenericMembers() {
 		if(genericMembersResolved) return;
 		genericMembersResolved = true;
 		
-		System.out.println("RSOLVING " + this.getFullName());
+//		System.out.println("RESOLVING " + this.getFullName());
 		
 		//XPilot: certain fields
 		if(theType.superClass == null) {
@@ -164,7 +164,7 @@ public class GenericClassInstance extends GenericClass {
 		
 		//Constructors
 		constructors = new LinkedHashMap<Signature, Constructor>();		
-		for(Entry<Signature, Constructor> e: theType.constructors.entrySet()){
+		for(Entry<Signature, Constructor> e: theType.constructors.entrySet()) {
 			Signature s = alterSignature(e.getKey());
 			constructors.put(s, e.getValue());
 		}
@@ -189,14 +189,14 @@ public class GenericClassInstance extends GenericClass {
 		return theType.getGeneratedDefinitionName();
 	}
 	
-	private Signature alterSignature(Signature sig){
+	private Signature alterSignature(Signature sig) {
 		if(sig.isEmpty()) return sig;
 		if(!sig.containsTypeParams()) return sig;
 		
 		Type[] types = sig.getTypeArrayCopy();
-		int numTypeParams = theType.typeParams.length;
+		//int numTypeParams = theType.typeParams.length;
 		int sigSize = types.length;
-		for(int i=0;i<sigSize;i++){
+		for(int i=0;i<sigSize;i++) {
 			types[i] = types[i].replaceTypeParameters(paramMap);
 		}
 		return new Signature(types);
@@ -226,13 +226,13 @@ public class GenericClassInstance extends GenericClass {
 	void resolveMembers(TypeProvider t) {
 		//XPilot: should not happen for GenericClassInstances? The base GenericClass does this for us
 		//System.out.println("GenericClass.resolveMembers(TypeProvider) called on a GenericClassInstance: " + getFullName());
-		throw new CompilationError("GenericClass.resolveMembers(TypeProvider) called on a GenericClassInstance: " + getFullName());
+		throw new Error("GenericClass.resolveMembers(TypeProvider) called on a GenericClassInstance: " + getFullName());
 	}
 	
 	@Override
 	protected void checkForHierarchyCircle(TypeProvider typeProvider,HashSet<RecordType> marked) {
 		//XPilot: should not happen for GenericClassInstances? The base GenericClass does this for us
-		//throw new CompilationError("GenericClass.checkForHierarchyCircle(TypeProvider, HashSet<Record>) called on a GenericClassInstance: " + getFullName());
+		//throw new Error("GenericClass.checkForHierarchyCircle(TypeProvider, HashSet<Record>) called on a GenericClassInstance: " + getFullName());
 		theType.checkForHierarchyCircle(typeProvider, marked);
 	}
 	
