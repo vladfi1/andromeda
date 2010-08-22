@@ -1,5 +1,7 @@
 package com.sc2mod.andromeda.vm.data;
 
+import java.util.Locale;
+
 /**
  * Emulates Galaxy's "fixed" data type.
  * @author XPilot
@@ -13,11 +15,7 @@ public class Fixed {
 	private Fixed(int value) {
 		this.value = value;
 	}
-	
-	private static boolean isValid(long value) {
-		return value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE;
-	}
-	
+
 	public int decimalDigits() {
 		int i = 0;
 		while(i < FRACTION_BITS) {
@@ -29,7 +27,7 @@ public class Fixed {
 	
 	@Override
 	public String toString() {
-		return String.format("%." + Math.max(decimalDigits(), 1) + "f", (double)value / FRACTION_FACTOR);
+		return String.format((Locale)null, "%." + Math.max(decimalDigits(), 1) + "f", (double)value / FRACTION_FACTOR);
 	}
 	
 	public int toInt() {

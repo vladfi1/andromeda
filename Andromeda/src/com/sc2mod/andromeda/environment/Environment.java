@@ -145,7 +145,7 @@ public final class Environment {
 	}
 	
 	public void addVirtualInvocation(Invocation inv) {
-		System.out.println("Virtual Invocation: " + inv.getWhichFunction());
+		//System.out.println("Virtual Invocation: " + inv.getWhichFunction());
 		virtualInvocations.add(inv);
 	}
 

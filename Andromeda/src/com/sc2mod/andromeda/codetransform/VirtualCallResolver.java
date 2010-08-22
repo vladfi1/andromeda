@@ -14,7 +14,6 @@ import java.util.HashSet;
 
 import com.sc2mod.andromeda.environment.AbstractFunction;
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.environment.Function;
 import com.sc2mod.andromeda.environment.Invocation;
 import com.sc2mod.andromeda.environment.Method;
 import com.sc2mod.andromeda.environment.types.Class;
@@ -48,6 +47,7 @@ public class VirtualCallResolver {
 					if(!method.isCalledVirtually()) {
 						method.registerVirtualCall();
 					}
+					inv.setAccessType(Invocation.TYPE_VIRTUAL);
 				} else {
 					inv.setAccessType(Invocation.TYPE_METHOD);
 				}
@@ -81,9 +81,10 @@ public class VirtualCallResolver {
 	}
 
 	/**
-	 * Recursive helper to {@link #tryResolve()}.
+	 * Recursive helper to {@link #tryResolve()}. Registers all overriding methods
+	 * that are not yet called virtually, but whose enclosing classes are used.
 	 * @param method Method whose overriders are to be registered.
-	 * @param methods Registered methods.
+	 * @param methods Set of registered methods.
 	 */
 	private void registerOverriders(Method method, HashSet<Method> methods) {
 		ArrayList<AbstractFunction> overriders = method.getOverridingMethods();

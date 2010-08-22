@@ -9,21 +9,13 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import com.sc2mod.andromeda.environment.AbstractFunction;
 import com.sc2mod.andromeda.environment.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.Function;
 import com.sc2mod.andromeda.environment.Invocation;
-import com.sc2mod.andromeda.environment.Method;
-import com.sc2mod.andromeda.environment.SemanticsElement;
-import com.sc2mod.andromeda.environment.types.Class;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.AndromedaFileInfo;
 import com.sc2mod.andromeda.program.Options;
 import com.sc2mod.andromeda.semAnalysis.ForeachSemantics;
-import com.sc2mod.andromeda.semAnalysis.LoopSemantics;
 import com.sc2mod.andromeda.semAnalysis.NameResolver;
 import com.sc2mod.andromeda.syntaxNodes.AndromedaFile;
 import com.sc2mod.andromeda.syntaxNodes.DeleteStatement;
@@ -171,34 +163,4 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	}
 	
 	//************** EXPRESSIONS (just loop through and replace expressions if necessary) ********
-	
-
-	/**
-	 * Virtual methods may not have been properly checked.
-	 * They are checked now.
-	 * @author XPilot
-	 */
-	public void visitVirtualInvocations(ArrayList<Invocation> virtualInvocations) {
-		for(Invocation inv : virtualInvocations) {
-			visit((Method)inv.getWhichFunction());
-		}
-	}
-	
-	/**
-	 * XPilot: visit overriders
-	 */
-	private void visit(Method m) {
-		System.out.println(m);
-		ArrayList<AbstractFunction> overriders = m.getOverridingMethods();
-		if(overriders != null) {
-			for(AbstractFunction overrider : overriders) {
-				//if(!overrider.isMarked()) {
-					overrider.mark();
-					overrider.getDefinition().accept(this);
-					overrider.addInvocation();
-				//}
-				visit((Method)overrider);
-			}
-		}
-	}
 }

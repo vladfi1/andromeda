@@ -32,7 +32,7 @@ public class FixedObject extends DataObject {
 		this.val = Fixed.fromInt(val);
 	}
 	
-	public FixedObject(Number val){
+	public FixedObject(Number val) {
 		this.val = Fixed.fromDecimal(val.doubleValue());
 	}
 	
