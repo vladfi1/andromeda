@@ -462,7 +462,7 @@ annotationsOpt ::= annotations:a {: RESULT = a; :}
 		
 //Generic stuff
 
-//Gemeric decl
+//Generic decl
 typeBound ::= EXTENDS classOrInterfaceType {: RESULT = null; :}
 		;
 typeBoundOpt ::= typeBound {: RESULT = null; :}
@@ -493,6 +493,7 @@ actualTypeParamList ::= actualTypeParam:a {: RESULT = new TypeList(a); RESULT.se
 		;
 
 actualTypeParam ::= referenceType:r {: RESULT = r; :}
+		|	integralType:i {: RESULT = i; :}
 		|	wildcard {: RESULT = null; :}
 		;
 

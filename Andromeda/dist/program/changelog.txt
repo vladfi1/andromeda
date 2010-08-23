@@ -1,3 +1,18 @@
+v0.1.5
+-Added generic inheritance
+-Fixed that it was not possible to delete generic classes
+-Fixed explicit constructor bug
+-Fixed default constructor bug
+-Fixed that imported static init blocks were not checked
+-Imported static init blocks are now executed first
+-Fixed resolution of constant expressions
+-Structs work again (bytesize error before)
+-Fixed that recursive class references break byte size calculations for arrays
+-Fixed string + const int concatenation bug
+-The 'fixed' data type is now correctly computed and written
+-Fixed string escapes
+-Fixed byte size of generic parameters
+
 v0.1.4
 -Added key extensions (see spec)
 -Added setinstancelimit clause (see spec)
