@@ -273,9 +273,14 @@ public class GenericClassInstance extends GenericClass {
 	public int getMemberByteSize() {
 		return theType.getMemberByteSize();
 	}
-	
+		
+	@Override
+	public boolean hasAnnotation(String name) {
+		return theType.hasAnnotation(name);
+	}
+
 	//***** XPilot: methods that should not be called? *****
-	
+
 	@Override
 	protected int calcByteSize() {
 		// TODO Auto-generated method stub

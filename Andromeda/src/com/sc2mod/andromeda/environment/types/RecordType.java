@@ -102,6 +102,8 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 
 	@Override
 	public boolean hasAnnotation(String name) {
+		//XPilot: added
+		if(annotationTable == null) return false;
 		return annotationTable.containsKey(name);
 	}
 	

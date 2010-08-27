@@ -264,8 +264,9 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	
-	private void generateFunctionBody(Function m, Statement body, boolean isConstructor){
-	
+	private void generateFunctionBody(Function m, Statement body, boolean isConstructor) {		
+//		System.out.println(m.getDescription());
+		
 		// Do a forward declaration
 		functionBuffer.appendTo(fileBuffer.forwardDeclarations, true);
 		fileBuffer.forwardDeclarations.append(";", true);
@@ -285,9 +286,12 @@ public class CodeGenVisitor extends CodeGenerator {
 
 		LocalVarDecl[] locals = m.getLocals();
 		boolean skipInit = false;
+		
 		for (int i = 0, size = locals.length; i < size; i++) {
 			LocalVarDecl local = locals[i];
-
+			
+//			System.out.println(local.getUid());
+			
 			// Inlined constants are not generated
 			if (local.isConst() && local.getNumReadAccesses() == 0)
 				continue;
@@ -408,7 +412,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		if (!m.hasBody() && !m.isNative())
 			return;
 
-		// Uncalled library funcitons are not written
+		// Uncalled library functions are not written
 		if (inLib && m.getInvocationCount() == 0)
 			return;
 

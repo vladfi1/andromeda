@@ -748,7 +748,8 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 			
 			
 			throw new Error("array foreach not yet supported");
-			
+		
+		case Type.GENERIC_CLASS://XPilot: added so that generic classes can be iterated
 		case Type.BASIC:
 		case Type.CLASS:
 		case Type.INTERFACE:

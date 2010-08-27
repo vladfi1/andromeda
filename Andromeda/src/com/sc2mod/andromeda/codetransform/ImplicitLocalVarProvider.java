@@ -30,6 +30,8 @@ public class ImplicitLocalVarProvider {
 	private ArrayList<LocalVarDecl> methodDeclBuffer = new ArrayList<LocalVarDecl>(); 
 	
 	public FieldAccess getImplicitLocalVar(Type t){
+//		System.out.println(t.getDescription());
+		
 		//Try to get one from the method buffer
 		FieldAccess var = null;
 		int size = methodBuffer.size();
