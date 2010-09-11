@@ -41,8 +41,8 @@ public class IntObject extends DataObject {
 	}
 	
 	@Override
-	public float getFloatValue() {
-		return val;
+	public Fixed getFixedValue() {
+		return Fixed.fromInt(val);
 	}
 	
 	@Override
@@ -61,7 +61,7 @@ public class IntObject extends DataObject {
 		case RuntimeType.STRING: return new StringObject(String.valueOf(val));
 		case RuntimeType.TEXT: return new TextObject(String.valueOf(val));
 		}
-		return super.castTo(type);	
+		return super.castTo(type);
 	}
 	
 	@Override
