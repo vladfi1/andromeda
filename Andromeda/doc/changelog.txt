@@ -1,3 +1,7 @@
+v0.1.6
+-Fixed certain fixed-point arithmetic bugs
+-Floating-point literals are now replaced by their closest fixed value (before they were rounded down)
+
 v0.1.5
 -Added generic inheritance
 -Fixed that it was not possible to delete generic classes

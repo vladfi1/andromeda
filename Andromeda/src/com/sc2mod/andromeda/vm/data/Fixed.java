@@ -2,8 +2,6 @@ package com.sc2mod.andromeda.vm.data;
 
 import java.util.Locale;
 
-import com.sc2mod.andromeda.notifications.CompilationError;
-
 /**
  * Emulates Galaxy's "fixed" data type.
  * @author XPilot
@@ -12,14 +10,13 @@ public class Fixed {
 	private static final int FRACTION_BITS = 12;
 	private static final int FRACTION_FACTOR = 1 << FRACTION_BITS;
 	
-	private static int serial = 0;
+	//private static int serial = 0;
 	
 	private int value;
-	private int id;
+	//private int id = serial++;
 	
 	private Fixed(int value) {
 		this.value = value;
-		id = serial++;
 	}
 
 	public int decimalDigits() {
@@ -45,7 +42,7 @@ public class Fixed {
 	}
 	
 	public static Fixed fromDecimal(double d) {
-		int value = (int)(d * FRACTION_FACTOR);
+		int value = (int) Math.round(d * FRACTION_FACTOR);
 		return new Fixed(value);
 	}
 	
