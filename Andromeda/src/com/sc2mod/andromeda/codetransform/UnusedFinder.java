@@ -32,6 +32,7 @@ import com.sc2mod.andromeda.program.Options;
 import com.sc2mod.andromeda.program.Program;
 import com.sc2mod.andromeda.syntaxNodes.Type;
 import com.sc2mod.andromeda.syntaxNodes.TypeCategory;
+import com.sc2mod.andromeda.environment.types.Class;
 
 /**
  * Class for finding unused content
@@ -232,6 +233,8 @@ public class UnusedFinder {
 						handleUnusedVar(handleUnused,decl,"field","read",false);
 					}
 				} else if(decl.getNumWriteAccesses()==0){
+					//XPilot: containing class may not be used
+					if(decl.getContainingType().isClass() && ((Class)decl.getContainingType()).isUsed())
 					throw new CompilationError(decl.getDefinition(), "The field " + decl.getUid() + " is read but never initialized.");
 					//System.out.println("The field " + decl.getUid() + " is read but never initialized.");
 				}
