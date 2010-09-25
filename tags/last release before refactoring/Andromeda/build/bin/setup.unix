@@ -1,0 +1,25 @@
+#!/bin/bash
+SAVEDIR=`pwd`
+CCK_HOME=`dirname $0`
+CCK_HOME=`cd "$CCK_HOME/.." && pwd`
+cd $CCK_HOME/bin
+CONFIG_FILE=~/.profile
+if test `echo "$SHELL" | grep bash`; then 
+  echo "export CCK_HOME=$CCK_HOME" >> ~/.bashrc
+  echo "export PATH=\$PATH:\$CCK_HOME/bin" >> ~/.bashrc 
+fi;
+if test `echo "$SHELL" | grep csh`; then
+  echo "setenv CCK_HOME $CCK_HOME" >> ~/.tcshrc
+  echo "setenv PATH \${PATH}:\$CCK_HOME/bin" >> ~/.tcshrc 
+fi;
+if test `echo "$SHELL" | grep ksh`; then 
+  echo "CCK_HOME=$CCK_HOME" >> ~/.kshrc
+  echo "PATH=\$PATH:\$CCK_HOME/bin" >> ~/.kshrc 
+fi;
+
+if [ -d "$HOME/Desktop" ] ; then 
+  echo "Exec=java -jar $CCK_HOME/lib/JFlex.jar" >> JFlex.desktop
+  mv JFlex.desktop ~/Desktop
+fi;
+rm *.bat
+rm setup.*

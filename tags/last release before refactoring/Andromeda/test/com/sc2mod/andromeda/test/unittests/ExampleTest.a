@@ -1,0 +1,15 @@
+struct aaa{
+
+int i;
+};
+
+aaa[5] e;
+
+
+void bla(){
+	e[3].i = 3;
+}
+
+static{
+bla();
+}

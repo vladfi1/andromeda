@@ -1,0 +1,327 @@
+
+//VIEW THIS FILE WITH AN EDITOR WITH SYNTAX HIGHLIGHTING FOR JAVA FOR BEST RESULTS!
+
+/********************************************************* 
+** Comments, compatibility to galaxy				     **
+ *********************************************************/
+/* 
+	of course, andromeda allows block comments like this one, like every good language *cough* galaxy *cough*
+	And of course, all comments are removed in the compiled version to save space.
+*/
+
+/*
+	The andromeda syntax is a superset of the galaxy syntax, so a galaxy file will also compile
+	in andromeda and probably have the same semantics (but andromeda might do some optimizations).
+	
+	This is either good for working with "legacy" galaxy code and it was necessary to parse the native and trigger
+	libraries of starcraft 2.
+*/
+
+/*
+	The syntax and semantics of andromeda are tied to the java specification. Especially when working with
+	classes and interfaces, the syntax tries to stay as near as the java specification as possible.
+	(this ranges from abstract classes to interfaces to calls of constructors, inheritance stuff and so on)
+	Only where galaxy had another concept, the syntax was adopted, and some aspects were added.
+	So, if you know how to write a java class, this class will probably also compile in andromeda (of course,
+	andromeda hasn't got the core classes of java, only the syntax is meant here).
+
+*/
+
+
+//Function prototypes used in the upcoming examples to refer to an arbitrary action or condition
+void doSomething(){}
+bool testSomething(){return false;}
+unit getSomeUnit(){return null;}
+
+
+/********************************************************* 
+** Fast and intelligent local variable declarations      **
+ *********************************************************/
+ 
+/*
+	Andromeda allows you to declare locals whereever you want
+	and declare as many variables after one type keyword as you want.
+*/
+
+void localTest(){
+	
+	doSomething();
+	
+	//A declaration can be here. Note that we define many variables at once
+	int i=5,j=i,k=6;
+	
+	if(testSomething()){
+		int y=4;
+	} else {
+		int z=7;
+	}
+}
+
+/*
+	Note that the andromeda compiler is clever and tries to optimize local variables.
+	In this example, the variables y and z were declared in totally different scopes.
+	Since they cannot interfere with each other, the andromeda compiler will actually
+	create only one local variable for these two and use it for both.
+*/
+
+/********************************************************* 
+** New statements 			                             **
+ *********************************************************/
+/*
+	Andromeda comes with the loops that galaxy is missing.
+*/
+void loopTest(){
+	/*
+		Do-while-loop: (common semantics)
+	*/
+	do{
+		doSomething();
+	} while(testSomething());
+
+	/*
+		For-loop: (c/java/... semantics)
+	*/
+	for(int i=0;i<5;i++){
+	
+	}
+	
+	/*
+		Note that, just like in other languages,
+		we can even put more stuff in the header with commas.
+		If this supports readability is in doubt, of course...
+	*/
+	int i,j;
+	for(i=0,j=5;i<j;i++,j--){
+	
+	}
+	
+}
+
+/********************************************************* 
+** No forward-declaration of functions                   **
+ *********************************************************/
+
+/*
+	Luckily, galaxy allows you to forward-declare functions, to call
+	them in functions above their definition. But that still sucks!
+	Who wants to write such declarations if also a compiler can do that for you.
+	
+	In andromeda, you don't have to care about forward declaring.
+	You can call every function from any other function without forward declaration.
+	Andromeda allows forward declarations (since it is compatible to galaxy) but ignores them.
+	
+	Watch this:
+*/
+
+int A(){return B();}
+
+int B(){return 0;}
+/*
+	Error in galaxy since B was called before its declaration, works fine in andromeda
+*/
+
+ 
+/********************************************************* 
+** Implicit casting			                             **
+ *********************************************************/
+
+ /*
+	Andromeda casts implicitly from string to text, when it is needed.
+	That means, whenever a string is concatenated (+) with a text or
+	a string is handed to a function that takes text, andromeda will do
+	the casting for you. You never have to use that ugly "StringToText" function
+	anymore.
+*/
+
+/*
+	Here is how galaxy does it (since andromeda is a superset of galaxy, it of course
+	also compiles with an andromeda compiler). But be careful, it will hurt your eyes:
+*/
+void DebugAIPlayerGalaxy (int player, string s) {
+    if (DEBUG) {
+        TriggerDebugOutput(
+            1,
+			//-- HERE :( --
+            StringToText("[") +
+            PlayerColorName(PlayerGetColorIndex(player, false)) +
+            StringToText("] ") +
+            StringToText(s),
+            true
+        );
+    }
+}
+
+/*
+	Here is how andromeda does it. Ahh what a joy ;).
+*/
+void DebugAIPlayerAndromeda (int player, string s) {
+    if (DEBUG) {
+        TriggerDebugOutput(
+			1,
+			//-- HERE :) --
+			"[" + PlayerColorName(PlayerGetColorIndex(player, false)) + "] " + s,
+            true);
+    }
+}
+
+
+/*
+	Next, if a non string/text value is concatenated with a string
+	or text, andromeda tries to cast it to string/text. So no more
+	IntToString or stuff like that anymore :).
+*/
+
+//galaxy
+string makeStringFromNumbers(int num1, fixed num2){
+	return "BLA" + IntToString(num1) + ":" + FixedToString(num2,2);
+}
+
+//andromeda
+string makeStringFromNumbersAndromeda(int num1, fixed num2){
+	return "BLA" + num1 + ":" + num2;
+}
+
+/********************************************************* 
+** Explicit C-Style casting                              **
+ *********************************************************/
+ 
+/*
+	So galaxy is like C? Why are C style casts missing then?
+	Andromeda of course does it :).
+*/
+
+//galaxy
+int round(fixed f){
+	return FixedToInt(f+0.5);
+}
+
+//andromeda
+int roundAndromeda(fixed f){
+	return (int)(f+0.5);
+}
+
+/********************************************************* 
+** Function and method overloading                       **
+ *********************************************************/
+
+ /*
+	Andromeda allows you to overload functions and methods,
+	i.e. to create two functions / methods with the same name but
+	different signatures. See this example for a ToString() function
+	that can work with int, string and fixed:
+*/
+string ToString(int i){ return (string)i; }
+string ToString(fixed f){ return (string)f; }
+string ToString(string s){ return s; }
+
+/*
+	If an overloaded function is called, andromeda first checks
+	if there is a function that exactly matches the parameter types
+	of one of the functions. If none is found, then andromeda checks
+	if there are functions to whose signature the parameter can be
+	cast implicitly. If such a function is found, it is called.
+	If two or more such functions are found, andromeda will raise an
+	error, stating that the function call is ambigous and asking
+	you to specify the function by casting explicitly.
+*/
+
+ 
+/********************************************************* 
+** Overriding and native calls                           **
+ *********************************************************/
+
+/* 
+	We override a native to alter its behaviour.
+	Whenever this native is called in your code, the call
+	will instead call the method that is overriding the native
+	method.
+	If you want to call the native method in the overriding method
+	prefix the call with 'native.'.
+*/
+   
+override string IntToString(int i){
+	//Call the native with the doubled value.
+	return native.IntToString(i*2);
+}
+
+/********************************************************* 
+** Private functions		                             **
+ *********************************************************/
+/*
+	Galaxy allows you to make a function only visible in one file
+	by prefixing it with "static". WTF? What has static to do with
+	visibility? Andromeda makes this clearer. If you want a file
+	private function, you prefix it with the intuitive "private".
+	However, "static" is still accepted for compatibility reasons.
+*/
+
+//galaxy, also accepted in andromeda
+static void privateFunction(){}
+
+//andromeda
+private void privateFunctionAndromeda(){}
+
+/********************************************************* 
+** Enrichments				                             **
+ *********************************************************/
+ 
+/*
+	Now we are getting to object orientation. But before using
+	real classes, let's introduce enrichments. Enrichments
+	add no real functionality, they just emulate object oriented
+	syntax for basic native types.
+	
+	Enrichments allow you to add methods, accessors and static fields
+	to basic types. Let's start with an example for enriching units.
+*/
+
+enrich unit{ //Enrichment block for the native type unit
+
+	//(readonly) accessor method for getting a unit's type
+	public string Type{
+		get{
+			return UnitGetType(this);
+		}	
+	}
+	
+	public bool isOrderValid(order o){
+		return UnitOrderIsValid(this,o);
+	}
+}
+
+/*
+	We enriched the type unit with an accessor and a method, now
+	let's use it.
+*/
+public void enrichExample(order o){
+	unit u = getSomeUnit();
+	
+	//Accessor usage:
+	string type = u.Type;
+	
+	//Method usage
+	if(u.isOrderValid(o)){
+		doSomething();
+	}
+	
+}
+
+/*
+	As you see, the type unit now behaves like a class. At the upper example
+	only primitive wrappers for native functions were created. But of course,
+	you could also create whole complex functions for units.
+	Andromeda will come with standard libraries that contain standard enrichments
+	for all native types which contain methods that always make sence
+	(for example unit.Hp to get or set a unit's hp)
+	
+	Unlike classes, enrichments cannot have fields, because there is no datastructure
+	that would contain these fields. However, static fields are possible:
+*/
+enrich int{
+	public static const int MAX = 2147483647;
+}
+
+public void enrichExample2(){
+	//Static fields are accessed by prefixing them with the enriched type.
+	int i = int.MAX;
+}

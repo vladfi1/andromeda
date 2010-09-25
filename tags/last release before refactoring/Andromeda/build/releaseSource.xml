@@ -1,0 +1,55 @@
+<project name="Source Release" default="enrich" basedir="..">
+  <property name="lib" location="lib"/>
+  <property name="bin" location="build/temp/bin"/>
+  <property name="customAnt" location="build/customAnt"/>
+  <property environment="env"/>
+  <property name="distZip" location="dist/source" />
+	
+  <path id="binaries">
+    <pathelement location="${bin}"/>
+    <fileset dir="${bin}">
+      <include name="**/*.jar"/>
+      <include name="**/*.zip"/>
+    </fileset>
+    <!-- When the user installed CCK, we use these tool directories -->
+    <fileset dir="lib" includes="**/*.jar"/>
+    <pathelement path="${java.class.path}"/>
+    <pathelement path="${customAnt}"/>
+  </path>
+
+  <path id="libraries">
+    <pathelement location="${lib}"/>
+    <fileset dir="${lib}">
+      <include name="**/*.jar"/>
+      <include name="**/*.zip"/>
+    </fileset>
+    <!-- When the user installed CCK, we use these lib directories -->
+    <fileset dir="lib" includes="**/*.jar"/>
+    <pathelement path="${java.class.path}"/>
+  </path>
+
+	<taskdef name="genCopyright" classname="com.sc2mod.compilerGen.CopyrightGeneratorAntTask" classpathref="binaries"/>
+		
+	<target name="mkdirs">
+		<mkdir dir="${distZip}"/>
+	</target>
+	
+	  <target name="enrich">
+	    <genCopyright basePath="${basedir}" path="${basedir}" recursive="true"/>
+	  </target>
+
+	  <target name="distrSource" depends="enrich,mkdirs">
+
+	  	<loadproperties srcFile="build/version.num"/>
+	  	<loadproperties srcFile="build/build.num"/>
+		<zip destfile="${distZip}/Andromeda_v${version.num}.${build.number}-SOURCE.zip">
+			<fileset dir="${basedir}">
+				<exclude name="dist/**"/>
+			</fileset>
+		</zip>
+	  </target>
+
+
+
+
+</project>
