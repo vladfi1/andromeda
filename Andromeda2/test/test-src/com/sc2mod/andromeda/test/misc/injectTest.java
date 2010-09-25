@@ -7,7 +7,7 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.test;
+package com.sc2mod.andromeda.test.misc;
 
 import java.io.File;
 import java.io.FileInputStream;

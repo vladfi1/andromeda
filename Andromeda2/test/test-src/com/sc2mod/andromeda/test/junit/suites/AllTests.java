@@ -1,9 +1,9 @@
-package com.sc2mod.andromeda.test.suites;
+package com.sc2mod.andromeda.test.junit.suites;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import com.sc2mod.andromeda.test.unittests.ExampleTest;
+import com.sc2mod.andromeda.test.junit.unittests.ExampleTest;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

@@ -32,7 +32,7 @@ import com.sc2mod.andromeda.parsing.options.ConfigFile;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.InvalidParameterException;
 import com.sc2mod.andromeda.parsing.options.Parameter;
-import com.sc2mod.andromeda.test.PerfTest;
+import com.sc2mod.andromeda.test.misc.PerfTest;
 import com.sc2mod.andromeda.util.Files;
 import com.sc2mod.andromeda.util.logging.ConsoleLog;
 import com.sc2mod.andromeda.util.logging.Logger;

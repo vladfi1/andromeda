@@ -1,4 +1,4 @@
-package com.sc2mod.andromeda.test;
+package com.sc2mod.andromeda.test.junit;
 
 import static org.junit.Assert.fail;
 

@@ -1,4 +1,4 @@
-package com.sc2mod.andromeda.test;
+package com.sc2mod.andromeda.test.misc;
 
 /**
  * Re-escapes strings.

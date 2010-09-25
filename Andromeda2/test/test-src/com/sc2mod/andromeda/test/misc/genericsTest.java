@@ -7,18 +7,19 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.test;
+package com.sc2mod.andromeda.test.misc;
 
-import java.io.File;
-import java.net.URISyntaxException;
+import java.util.LinkedList;
+import java.util.List;
 
-import com.sc2mod.andromeda.program.Program;
+class v<T extends Object> extends LinkedList<String>{
 
-public class EclipseTestRunner {
+}
+public class genericsTest {
 
 	
-	public static void main(String args[]) throws URISyntaxException{
-		Program.appDirectory = new File(".");
-		Program.main(args);
+	public static void main(String[] args) {
+		List<? extends String> l;
+		
 	}
 }

@@ -1,8 +1,8 @@
-package com.sc2mod.andromeda.test.unittests;
+package com.sc2mod.andromeda.test.junit.unittests;
 
 import org.junit.Test;
 
-import com.sc2mod.andromeda.test.AndromedaSingleRunTest;
+import com.sc2mod.andromeda.test.junit.AndromedaSingleRunTest;
 
 
 public class ExampleTest extends AndromedaSingleRunTest {

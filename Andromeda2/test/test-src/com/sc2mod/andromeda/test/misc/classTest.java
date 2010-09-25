@@ -7,7 +7,7 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.test;
+package com.sc2mod.andromeda.test.misc;
 class DFS{
 	public static void e(){}
 }

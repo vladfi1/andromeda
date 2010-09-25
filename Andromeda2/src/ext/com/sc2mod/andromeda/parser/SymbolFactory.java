@@ -48,7 +48,7 @@ public class SymbolFactory {
 		return symbol;
 	}
 	
-	public Symbol newSymbol(String string, int id, Symbol l,
+	public Symbol newSymbol( int id, Symbol l,
 			Symbol r, Object value) {
 		Symbol symbol = getSymbol();
 		symbol.sym = id;
@@ -76,7 +76,7 @@ public class SymbolFactory {
 		return symbol;
 	}
 	
-	public Symbol newSymbol(String name,int sym, Symbol l, Symbol r){
+	public Symbol newSymbol(int sym, Symbol l, Symbol r){
 		Symbol symbol = getSymbol();
 		symbol.sym = sym;
 		symbol.left = l.left;
