@@ -9,12 +9,20 @@ playergroup libNtve_gv__PlayersInCineMode;
 bool[33] libNtve_gv__CineModeSavedSettingFog;
 bool[33] libNtve_gv__CineModeSavedSettingMask;
 int libNtve_gv__CineModeSavedSpeed;
+bool libNtve_gv__CineModeSavedCheatNoDefeatAllowed;
+bool libNtve_gv__CineModeSavedCheatNoVictoryAllowed;
 trigger[51] libNtve_gv_screenButtonCallbacks;
 int[51] libNtve_gv_screenButtonDialogs;
 const int libNtve_gv_c_ScreenButtonMaxCount = 50;
 int[51] libNtve_gv_screenButtons;
 bool[51] libNtve_gv_screenButtonsFlashing;
 bool[51] libNtve_gv_screenButtonsFlashStopping;
+int[51] libNtve_gv_screenButtonsBorderType;
+string[51] libNtve_gv_screenButtonsBorderImage;
+string[51] libNtve_gv_screenButtonsHoverImage;
+int[51] libNtve_gv_screenButtonsFlashingBorderType;
+string[51] libNtve_gv_screenButtonsFlashingBorderImage;
+string[51] libNtve_gv_screenButtonsFlashingHoverImage;
 int libNtve_gv_tP_FlashScreenButtonID;
 fixed libNtve_gv_tP_FlashScreenButtonFlashTime;
 color libNtve_gv_tP_FlashScreenButtonColor1;
@@ -27,7 +35,6 @@ int libNtve_gv_tP_PulseScreenImageID;
 fixed libNtve_gv_tP_PulseScreenImagePeriod;
 fixed libNtve_gv_tP_PulseScreenImageTransparency1;
 fixed libNtve_gv_tP_PulseScreenImageTransparency2;
-timer[33] libNtve_gv__GameTimer;
 const int libNtve_gv_pLAYERMAX = 32;
 int[8] libNtve_gv_portraits;
 unitgroup[34] libNtve_gv_unitSelectionStored;
@@ -36,6 +43,7 @@ bool[33] libNtve_gv__StoryModeSavedSettingUI_Resource;
 bool[33] libNtve_gv__StoryModeSavedSettingUI_Supply;
 const int libNtve_gv__BBC_BossBarMaxCount = 50;
 playergroup[51] libNtve_gv__BB_Players;
+int[51] libNtve_gv__BB_Race;
 string[51] libNtve_gv__BB_Portraits;
 text[51] libNtve_gv__BB_Title;
 unit[51] libNtve_gv__BB_Boss;
@@ -53,27 +61,12 @@ int[51] libNtve_gv__BB_HpFullImage;
 int[51] libNtve_gv__BB_HpCurrentImage;
 int[51] libNtve_gv__BB_BarWidth;
 int[51] libNtve_gv__BB_BarHeight;
-bool[33] libNtve_gv__GameUIVisible_Alert;
-bool[33] libNtve_gv__GameUIVisible_BattleReport;
-bool[33] libNtve_gv__GameUIVisible_Cash;
-bool[33] libNtve_gv__GameUIVisible_CharacterSheetButton;
-bool[33] libNtve_gv__GameUIVisible_Error;
-bool[33] libNtve_gv__GameUIVisible_Hero;
-bool[33] libNtve_gv__GameUIVisible_MenuBar;
-bool[33] libNtve_gv__GameUIVisible_Mercenary;
-bool[33] libNtve_gv__GameUIVisible_Objective;
-bool[33] libNtve_gv__GameUIVisible_Planet;
-bool[33] libNtve_gv__GameUIVisible_Purchase;
-bool[33] libNtve_gv__GameUIVisible_Research;
-bool[33] libNtve_gv__GameUIVisible_Resource;
-bool[33] libNtve_gv__GameUIVisible_Room;
-bool[33] libNtve_gv__GameUIVisible_Supply;
-bool[33] libNtve_gv__GameUIVisible_TipAlert;
-bool[33] libNtve_gv__GameUIVisible_Victory;
+bool[33][31] libNtve_gv__GameUIVisible;
 unit libNtve_gv_lastReplacedUnit;
 
 void libNtve_InitVariables () {
     int init_i;
+    int init_j;
 
     libNtve_gv__CineModeGlobalOn = false;
     libNtve_gv__PlayersInCineMode = PlayerGroupEmpty();
@@ -87,6 +80,8 @@ void libNtve_InitVariables () {
         libNtve_gv__CineModeSavedSettingMask[init_i] = false;
         init_i = init_i + 1;
     }
+    libNtve_gv__CineModeSavedCheatNoDefeatAllowed = false;
+    libNtve_gv__CineModeSavedCheatNoVictoryAllowed = false;
     init_i = 0;
     while (init_i <= 50) {
         libNtve_gv_screenButtonCallbacks[init_i] = null;
@@ -110,6 +105,36 @@ void libNtve_InitVariables () {
     init_i = 0;
     while (init_i <= 50) {
         libNtve_gv_screenButtonsFlashStopping[init_i] = false;
+        init_i = init_i + 1;
+    }
+    init_i = 0;
+    while (init_i <= 50) {
+        libNtve_gv_screenButtonsBorderType[init_i] = c_triggerImageTypeEndCap;
+        init_i = init_i + 1;
+    }
+    init_i = 0;
+    while (init_i <= 50) {
+        libNtve_gv_screenButtonsBorderImage[init_i] = "Assets\\Textures\\ui_mission_hackingbuttonglow_normalpressed.dds";
+        init_i = init_i + 1;
+    }
+    init_i = 0;
+    while (init_i <= 50) {
+        libNtve_gv_screenButtonsHoverImage[init_i] = "Assets\\Textures\\ui_mission_hackingbuttonglow_normaloverpressedover.dds";
+        init_i = init_i + 1;
+    }
+    init_i = 0;
+    while (init_i <= 50) {
+        libNtve_gv_screenButtonsFlashingBorderType[init_i] = c_triggerImageTypeEndCap;
+        init_i = init_i + 1;
+    }
+    init_i = 0;
+    while (init_i <= 50) {
+        libNtve_gv_screenButtonsFlashingBorderImage[init_i] = "Assets\\Textures\\ui_mission_hackingbuttonglow_anim.dds";
+        init_i = init_i + 1;
+    }
+    init_i = 0;
+    while (init_i <= 50) {
+        libNtve_gv_screenButtonsFlashingHoverImage[init_i] = "Assets\\Textures\\ui_mission_hackingbuttonglow_anim.dds";
         init_i = init_i + 1;
     }
     libNtve_gv_tP_FlashScreenButtonID = 0;
@@ -136,11 +161,6 @@ void libNtve_InitVariables () {
     libNtve_gv_tP_PulseScreenImageTransparency1 = 0.0;
     libNtve_gv_tP_PulseScreenImageTransparency2 = 0.0;
     init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameTimer[init_i] = null;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
     while (init_i <= 33) {
         libNtve_gv_unitSelectionStored[init_i] = UnitGroupEmpty();
         init_i = init_i + 1;
@@ -159,6 +179,11 @@ void libNtve_InitVariables () {
     init_i = 0;
     while (init_i <= 50) {
         libNtve_gv__BB_Players[init_i] = PlayerGroupEmpty();
+        init_i = init_i + 1;
+    }
+    init_i = 0;
+    while (init_i <= 50) {
+        libNtve_gv__BB_Race[init_i] = 0;
         init_i = init_i + 1;
     }
     init_i = 0;
@@ -238,97 +263,21 @@ void libNtve_InitVariables () {
     }
     init_i = 0;
     while (init_i <= 50) {
-        libNtve_gv__BB_BarWidth[init_i] = 480;
+        libNtve_gv__BB_BarWidth[init_i] = 520;
         init_i = init_i + 1;
     }
     init_i = 0;
     while (init_i <= 50) {
-        libNtve_gv__BB_BarHeight[init_i] = 80;
+        libNtve_gv__BB_BarHeight[init_i] = 120;
         init_i = init_i + 1;
     }
     init_i = 0;
     while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Alert[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_BattleReport[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Cash[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_CharacterSheetButton[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Error[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Hero[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_MenuBar[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Mercenary[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Objective[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Planet[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Purchase[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Research[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Resource[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Room[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Supply[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_TipAlert[init_i] = true;
-        init_i = init_i + 1;
-    }
-    init_i = 0;
-    while (init_i <= 32) {
-        libNtve_gv__GameUIVisible_Victory[init_i] = true;
+        init_j = 0;
+        while (init_j <= 30) {
+            libNtve_gv__GameUIVisible[init_i][init_j] = true;
+            init_j = init_j + 1;
+        }
         init_i = init_i + 1;
     }
     libNtve_gv_lastReplacedUnit = null;
@@ -336,8 +285,10 @@ void libNtve_InitVariables () {
 
 // Function Declarations
 actor libNtve_gf_AttachModelToUnit (unit lp_unit, string lp_model, string lp_attachPoint);
-actorscope libNtve_gf_LastCreatedActorScope ();
-actor libNtve_gf_LastCreatedActor ();
+actorscope libNtve_gf_ActorScopeLastCreated ();
+actorscope libNtve_gf_ActorScopeLastCreatedSend ();
+actor libNtve_gf_ActorLastCreated ();
+actor libNtve_gf_ActorLastCreatedSend ();
 actor libNtve_gf_AttachActorToUnit (unit lp_unit, string lp_actor, string lp_attachPoint);
 actor libNtve_gf_CreateActorAtPoint (string lp_actor, point lp_position);
 actor libNtve_gf_CreateModelAtPoint (string lp_model, point lp_position);
@@ -425,10 +376,10 @@ string libNtve_gf_SetRotation (fixed lp_forwardX, fixed lp_forwardY, fixed lp_fo
 string libNtve_gf_SetRotationFrom (string lp_actor);
 string libNtve_gf_SetScale (fixed lp_x, fixed lp_y, fixed lp_z, fixed lp_blendDuration);
 string libNtve_gf_SetScaleAbsolute (fixed lp_x, fixed lp_y, fixed lp_z, fixed lp_blendDuration);
-string libNtve_gf_SetShowing (bool lp_showing);
 string libNtve_gf_SetTeamColor (color lp_diffuseColor, color lp_emissiveColor);
 string libNtve_gf_SetLocalTintColor (color lp_color);
-string libNtve_gf_SetTintColor (color lp_color, fixed lp_duration);
+string libNtve_gf_SetTintColor (color lp_color, fixed lp_hdr, fixed lp_duration);
+string libNtve_gf_SetVisibility (bool lp_visible);
 string libNtve_gf_SetWalkAnimMoveSpeed (fixed lp_value);
 string libNtve_gf_SetZ (fixed lp_z);
 string libNtve_gf_Signal (string lp_signal);
@@ -452,6 +403,7 @@ string libNtve_gf_TimerSet (fixed lp_duration, string lp_timerName);
 string libNtve_gf_TimerKill (string lp_timerName);
 void libNtve_gf_KillModel (actor lp_model);
 void libNtve_gf_RemoveDoodadsinRegion (region lp_target, string lp_doodadType);
+void libNtve_gf_RemoveDeathModelsinRegion (region lp_region);
 actor libNtve_gf_LookAtTargetFromPointWithZOffset (point lp_point, fixed lp_z);
 actor libNtve_gf_LookAtTargetFromUnitAttachPoint (unit lp_unit, string lp_attachPoint);
 void libNtve_gf_CreateLookAtTargetAtPoint (point lp_point);
@@ -500,6 +452,7 @@ void libNtve_gf__CineModeRestoreUI (playergroup lp_players);
 void libNtve_gf_CinematicMode (bool lp_onOff, playergroup lp_players, fixed lp_duration);
 void libNtve_gf_GlobalCinematicSetting (bool lp_onOff);
 bool libNtve_gf_PlayerInCinematicMode (int lp_player);
+void libNtve_gf_MovieDynamicSubtitlesandDuration (string lp_soundFile);
 text libNtve_gf_ConvertBooleanToText (bool lp_value);
 string libNtve_gf_ConvertBooleanToString (bool lp_value);
 color libNtve_gf_ConvertPlayerColorToColor (int lp_playerColor);
@@ -508,6 +461,12 @@ string libNtve_gf_ConvertBearingsToString (fixed lp_positionX, fixed lp_position
 string libNtve_gf_ConvertXYToString (fixed lp_x, fixed lp_y);
 string libNtve_gf_Convert3DVectorToString (fixed lp_x, fixed lp_y, fixed lp_z);
 string libNtve_gf_Convert3DRotationToString (fixed lp_forwardX, fixed lp_forwardY, fixed lp_forwardZ, fixed lp_upX, fixed lp_upY, fixed lp_upZ);
+void libNtve_gf_SaveDataTableValueDialogItem (bool lp_scope, string lp_name, int lp_value);
+void libNtve_gf_SaveDataTableValueDifficultyLevel (bool lp_scope, string lp_name, int lp_value);
+void libNtve_gf_SaveDataTableValuePlayerColor (bool lp_scope, string lp_name, int lp_value);
+int libNtve_gf_ValueFromDataTableDialogItem (bool lp_scope, string lp_name);
+int libNtve_gf_ValueFromDataTableDifficultyLevel (bool lp_scope, string lp_name);
+int libNtve_gf_ValueFromDataTablePlayerColor (bool lp_scope, string lp_name);
 void libNtve_gf_SetDialogItemText (int lp_dialogItem, text lp_text, playergroup lp_players);
 text libNtve_gf_DialogItemText (int lp_dialogItem, int lp_player);
 int libNtve_gf_CreateDialogItemAchievement (int lp_dialog, int lp_width, int lp_height, int lp_anchor, int lp_offsetX, int lp_offsetY, text lp_tooltip, string lp_achievement);
@@ -548,9 +507,10 @@ void libNtve_gf_DisplayScreenButton (int lp_screenButtonID, text lp_text, int lp
 void libNtve_gf_HideScreenButton (bool lp_showHide, int lp_screenButtonID);
 void libNtve_gf_FlashScreenButton (int lp_screenButtonID, fixed lp_flashTime, color lp_color1, color lp_color2);
 void libNtve_gf_StopFlashingScreenButton (int lp_screenButtonID);
+void libNtve_gf_SetScreenButtonBorderImage (int lp_screenButtonID, string lp_borderImage, string lp_hoverImage, int lp_borderType);
+void libNtve_gf_SetScreenButtonFlashingBorderImage (int lp_screenButtonID, string lp_borderImage, string lp_hoverImage, int lp_borderType);
 int libNtve_gf_ScreenButtonDialog (int lp_screenButtonID);
 int libNtve_gf_ScreenButton (int lp_screenButtonID);
-int libNtve_gf_ConvertTransparencyToAlpha (fixed lp_transparency);
 void libNtve_gf_DisplayScreenImage (int lp_screenImageID, string lp_image, int lp_blendMode, int lp_width, int lp_height, int lp_anchor, int lp_offsetX, int lp_offsetY);
 void libNtve_gf_HideScreenImage (bool lp_showHideOption, int lp_screenImageID);
 void libNtve_gf_PulseScreenImage (int lp_screenImageID, fixed lp_period, fixed lp_transparency1, fixed lp_transparency2);
@@ -571,6 +531,7 @@ void libNtve_gf_PreloadSoundObject (string lp_id, bool lp_queue);
 void libNtve_gf_PreloadSoundtrack (string lp_soundtrack, bool lp_queue);
 void libNtve_gf_PreloadUnit (string lp_unit, bool lp_queue);
 void libNtve_gf_WaitForTimer (timer lp_timer, fixed lp_time, bool lp_waitType);
+void libNtve_gf_ShowHideLeaderboard (int lp_board, bool lp_showHide, playergroup lp_players);
 int libNtve_gf_ArithmeticIntClamp (int lp_value, int lp_min, int lp_max);
 fixed libNtve_gf_ArithmeticRealClamp (fixed lp_value, fixed lp_min, fixed lp_max);
 fixed libNtve_gf_RandomPercent ();
@@ -628,6 +589,7 @@ void libNtve_gf_DisplayBossBar (int lp_bossBarID, string lp_portrait, text lp_ti
 void libNtve_gf_SetBossBarMaximumValue (int lp_bossBarID, int lp_max, bool lp_refresh);
 void libNtve_gf_SetBossBarCurrentValue (int lp_bossBarID, int lp_current, bool lp_refresh);
 void libNtve_gf_SetBossBarBoss (int lp_bossBarID, unit lp_boss, bool lp_refresh);
+void libNtve_gf_SetBossBarRace (int lp_bossBarID, int lp_race, bool lp_refresh);
 void libNtve_gf_MoveBossBar (int lp_bossBarID, int lp_anchor, int lp_offsetX, int lp_offsetY);
 void libNtve_gf_ShowHideBossBar (bool lp_showHide, int lp_bossBarID);
 void libNtve_gf_RefreshBossBar (int lp_bossBarID);
@@ -663,25 +625,25 @@ bool libNtve_gf_UnitIsInsideTransport (unit lp_u);
 bool libNtve_gf_UnitCanAttackUnit (unit lp_u, unit lp_s);
 bool libNtve_gf_UnitIsUnderConstruction (unit lp_u);
 void libNtve_gf_UnitRemoveChargeRegen (unit lp_inUnit, string lp_inCharge);
+void libNtve_gf_UnitAbilityRemoveChargeUsed (unit lp_inUnit, string lp_inAbil, string lp_inCharge);
 void libNtve_gf_UnitAbilityRemoveChargeRegen (unit lp_inUnit, string lp_inAbil, string lp_inCharge);
+void libNtve_gf_UnitRemoveChargeUsed (unit lp_inUnit, string lp_inCharge);
+void libNtve_gf_UnitBehaviorRemoveChargeUsed (unit lp_inUnit, string lp_inBehavior, string lp_inCharge);
+void libNtve_gf_UnitBehaviorRemoveChargeRegen (unit lp_inUnit, string lp_inBehavior, string lp_inCharge);
 void libNtve_gf_UnitRemoveCooldown (unit lp_inUnit, string lp_inCooldown);
 void libNtve_gf_UnitAbilityRemoveCooldown (unit lp_inUnit, string lp_inAbil, string lp_inCooldown);
 void libNtve_gf_UnitBehaviorRemoveCooldown (unit lp_inUnit, string lp_inBehavior, string lp_inCooldown);
-void libNtve_gf_UnitBehaviorRemoveChargeRegen (unit lp_inUnit, string lp_inBehavior, string lp_inCharge);
-void libNtve_gf_UnitRemoveChargeUsed (unit lp_inUnit, string lp_inCharge);
-void libNtve_gf_UnitAbilityRemoveChargeUsed (unit lp_inUnit, string lp_inAbil, string lp_inCharge);
-void libNtve_gf_UnitBehaviorRemoveChargeUsed (unit lp_inUnit, string lp_inBehavior, string lp_inCharge);
 unitgroup libNtve_gf_ConvertUnitToUnitGroup (unit lp_unit);
 void libNtve_gf_AddUnitGroupToUnitGroup (unitgroup lp_sourceUnitGroup, unitgroup lp_targetUnitGroup);
 void libNtve_gf_RemoveUnitGroupFromUnitGroup (unitgroup lp_sourceUnitGroup, unitgroup lp_targetUnitGroup);
 unit libNtve_gf_ClosestUnitToPoint (point lp_point, unitgroup lp_group);
 point libNtve_gf_CenterOfUnitGroup (unitgroup lp_unitGroup);
+void libNtve_gf_ShowHidePlacementModels (bool lp_show);
 
 // Trigger Declarations
 trigger libNtve_gt_ScreenButtonClicked;
 trigger libNtve_gt_FlashScreenButton;
 trigger libNtve_gt_PulseScreenImage;
-trigger libNtve_gt__MapInitialization;
 trigger libNtve_gt__BB_BossHPChanged;
 
 // Functions
@@ -695,18 +657,28 @@ actor libNtve_gf_AttachModelToUnit (unit lp_unit, string lp_model, string lp_att
     // Implementation
     lv_scope = ActorScopeFromUnit(lp_unit);
     ActorCreate(lv_scope, "SiteHosted", lp_attachPoint, "", "");
-    lv_a = libNtve_gf_LastCreatedActor();
+    lv_a = libNtve_gf_ActorLastCreated();
     ActorCreate(lv_scope, "ModelHosted", (lp_model), "", "");
-    lv_a = libNtve_gf_LastCreatedActor();
+    lv_a = libNtve_gf_ActorLastCreated();
     return lv_a;
 }
 
-actorscope libNtve_gf_LastCreatedActorScope () {
+actorscope libNtve_gf_ActorScopeLastCreated () {
     // Implementation
     return ActorScopeFrom("::LastCreated");
 }
 
-actor libNtve_gf_LastCreatedActor () {
+actorscope libNtve_gf_ActorScopeLastCreatedSend () {
+    // Implementation
+    return ActorScopeFrom("::LastCreated");
+}
+
+actor libNtve_gf_ActorLastCreated () {
+    // Implementation
+    return ActorFrom("::LastCreated");
+}
+
+actor libNtve_gf_ActorLastCreatedSend () {
     // Implementation
     return ActorFrom("::LastCreated");
 }
@@ -721,10 +693,10 @@ actor libNtve_gf_AttachActorToUnit (unit lp_unit, string lp_actor, string lp_att
     // Implementation
     lv_scope = ActorScopeFromUnit(lp_unit);
     ActorCreate(lv_scope, "SiteHosted", lp_attachPoint, "", "");
-    lv_a = libNtve_gf_LastCreatedActor();
+    lv_a = libNtve_gf_ActorLastCreated();
     ActorSend(lv_a, "RefSet ::scope.hostsite ::Self");
     ActorCreate(lv_scope, lp_actor, "", "", "");
-    lv_a = libNtve_gf_LastCreatedActor();
+    lv_a = libNtve_gf_ActorLastCreated();
     ActorSend(lv_a, "RefSet ::Host ::scope.hostsite");
     return lv_a;
 }
@@ -738,7 +710,7 @@ actor libNtve_gf_CreateActorAtPoint (string lp_actor, point lp_position) {
 
     // Implementation
     ActorCreate(null, lp_actor, null, null, null);
-    lv_a = libNtve_gf_LastCreatedActor();
+    lv_a = libNtve_gf_ActorLastCreated();
     ActorSend(lv_a, libNtve_gf_SetPositionH(PointGetX(lp_position), PointGetY(lp_position), PointGetHeight(lp_position)));
     return lv_a;
 }
@@ -751,8 +723,8 @@ actor libNtve_gf_CreateModelAtPoint (string lp_model, point lp_position) {
     lv_a = null;
 
     // Implementation
-    ActorCreate(null, "Model", (lp_model), null, "null");
-    lv_a = libNtve_gf_LastCreatedActor();
+    ActorCreate(null, "TriggerModel", (lp_model), null, "null");
+    lv_a = libNtve_gf_ActorLastCreated();
     ActorSend(lv_a, libNtve_gf_ActorMsg1("SetPositionH", libNtve_gf_ConvertXYToString(PointGetX(lp_position), PointGetY(lp_position))));
     ActorSend(lv_a, libNtve_gf_SetHeight(PointGetHeight(lp_position)));
     return lv_a;
@@ -777,7 +749,7 @@ void libNtve_gf_SendActorMessageToGameRegion (region lp_region, string lp_messag
 
     // Implementation
     ActorRegionCreate(null, "TriggerRegion", lp_region);
-    lv_actorRegion = libNtve_gf_LastCreatedActor();
+    lv_actorRegion = libNtve_gf_ActorLastCreated();
     ActorRegionSend(lv_actorRegion, c_actorIntersectAgainstRadiusContact, lp_message, null, null);
     ActorSend(lv_actorRegion, "Destroy");
 }
@@ -791,29 +763,29 @@ void libNtve_gf_SendActorMessageToGameRegionWithFilters (region lp_region, int l
 
     // Implementation
     ActorRegionCreate(null, "TriggerRegion", lp_region);
-    lv_actorRegion = libNtve_gf_LastCreatedActor();
+    lv_actorRegion = libNtve_gf_ActorLastCreated();
     ActorRegionSend(lv_actorRegion, lp_intersectType, lp_message, lp_classFilters, lp_terms);
     ActorSend(lv_actorRegion, "Destroy");
 }
 
 string libNtve_gf_ActorMsg1 (string lp_msgName, string lp_param1) {
     // Implementation
-    return ((lp_msgName + " " + lp_param1));
+    return ((lp_msgName + " {" + lp_param1 + "}"));
 }
 
 string libNtve_gf_ActorMsg2 (string lp_msgName, string lp_param1, string lp_param2) {
     // Implementation
-    return ((lp_msgName + " " + lp_param1 + " " + lp_param2));
+    return ((lp_msgName + " {" + lp_param1 + "} {" + lp_param2 + "}"));
 }
 
 string libNtve_gf_ActorMsg3 (string lp_msgName, string lp_param1, string lp_param2, string lp_param3) {
     // Implementation
-    return ((lp_msgName + " " + lp_param1 + " " + lp_param2 + " " + lp_param3));
+    return ((lp_msgName + " {" + lp_param1 + "} {" + lp_param2 + "} {" + lp_param3 + "}"));
 }
 
 string libNtve_gf_ActorMsg4 (string lp_msgName, string lp_param1, string lp_param2, string lp_param3, string lp_param4) {
     // Implementation
-    return ((lp_msgName + " " + lp_param1 + " " + lp_param2 + " " + lp_param3 + " " + lp_param4));
+    return ((lp_msgName + " {" + lp_param1 + "} {" + lp_param2 + "} {" + lp_param3 + "} {" + lp_param4 + "}"));
 }
 
 string libNtve_gf_ActionDamage () {
@@ -1216,16 +1188,6 @@ string libNtve_gf_SetScaleAbsolute (fixed lp_x, fixed lp_y, fixed lp_z, fixed lp
     }
 }
 
-string libNtve_gf_SetShowing (bool lp_showing) {
-    // Implementation
-    if ((lp_showing == true)) {
-        return libNtve_gf_ActorMsg1("SetShowing", "1");
-    }
-    else {
-        return libNtve_gf_ActorMsg1("SetShowing", "0");
-    }
-}
-
 string libNtve_gf_SetTeamColor (color lp_diffuseColor, color lp_emissiveColor) {
     // Implementation
     return libNtve_gf_ActorMsg2("SetTeamColor", libNtve_gf_ConvertColorToString(lp_diffuseColor), libNtve_gf_ConvertColorToString(lp_emissiveColor));
@@ -1236,9 +1198,19 @@ string libNtve_gf_SetLocalTintColor (color lp_color) {
     return libNtve_gf_ActorMsg1("SetLocalTintColor", libNtve_gf_ConvertColorToString(lp_color));
 }
 
-string libNtve_gf_SetTintColor (color lp_color, fixed lp_duration) {
+string libNtve_gf_SetTintColor (color lp_color, fixed lp_hdr, fixed lp_duration) {
     // Implementation
-    return libNtve_gf_ActorMsg2("SetTintColor", libNtve_gf_ConvertColorToString(lp_color), FixedToString(lp_duration, c_fixedPrecisionAny));
+    return libNtve_gf_ActorMsg2("SetTintColor", (libNtve_gf_ConvertColorToString(lp_color) + " " + FixedToString(lp_hdr, c_fixedPrecisionAny)), FixedToString(lp_duration, c_fixedPrecisionAny));
+}
+
+string libNtve_gf_SetVisibility (bool lp_visible) {
+    // Implementation
+    if ((lp_visible == true)) {
+        return libNtve_gf_ActorMsg1("SetVisibility", "1");
+    }
+    else {
+        return libNtve_gf_ActorMsg1("SetVisibility", "0");
+    }
 }
 
 string libNtve_gf_SetWalkAnimMoveSpeed (fixed lp_value) {
@@ -1362,7 +1334,7 @@ void libNtve_gf_RemoveDoodadsinRegion (region lp_target, string lp_doodadType) {
 
     // Implementation
     ActorRegionCreate(null, "TriggerRegion", lp_target);
-    lv_actorRegion = libNtve_gf_LastCreatedActor();
+    lv_actorRegion = libNtve_gf_ActorLastCreated();
     if ((lp_doodadType != null)) {
         lv_animTermsString = ("ScopeContains " + (lp_doodadType));
         lv_animTermsString = (lv_animTermsString + "; ");
@@ -1374,17 +1346,32 @@ void libNtve_gf_RemoveDoodadsinRegion (region lp_target, string lp_doodadType) {
     ActorScopeKill(ActorScopeFromActor(lv_actorRegion));
 }
 
+void libNtve_gf_RemoveDeathModelsinRegion (region lp_region) {
+    // Variable Declarations
+    actor lv_actorRegion;
+
+    // Variable Initialization
+    lv_actorRegion = null;
+
+    // Implementation
+    ActorRegionCreate(null, "TriggerRegion", lp_region);
+    lv_actorRegion = libNtve_gf_ActorLastCreated();
+    ActorRegionSend(lv_actorRegion, c_actorIntersectAgainstRadiusContact, "Destroy", "Model", "ScopeContains _DeathModel");
+    ActorWorldParticleFXDestroy();
+    ActorScopeKill(ActorScopeFromActor(lv_actorRegion));
+}
+
 actor libNtve_gf_LookAtTargetFromPointWithZOffset (point lp_point, fixed lp_z) {
     // Implementation
     libNtve_gf_CreateActorAtPoint("LookAtTarget", lp_point);
-    ActorSend(libNtve_gf_LastCreatedActor(), libNtve_gf_SetHeight(lp_z));
-    return libNtve_gf_LastCreatedActor();
+    ActorSend(libNtve_gf_ActorLastCreated(), libNtve_gf_SetHeight(lp_z));
+    return libNtve_gf_ActorLastCreated();
 }
 
 actor libNtve_gf_LookAtTargetFromUnitAttachPoint (unit lp_unit, string lp_attachPoint) {
     // Implementation
     libNtve_gf_AttachModelToUnit(lp_unit, "Invisible", lp_attachPoint);
-    return libNtve_gf_LastCreatedActor();
+    return libNtve_gf_ActorLastCreated();
 }
 
 void libNtve_gf_CreateLookAtTargetAtPoint (point lp_point) {
@@ -1405,13 +1392,13 @@ void libNtve_gf_SimpleLookAtStart (unit lp_unit, string lp_type, actor lp_lookAt
 void libNtve_gf_MakeUnitLookAtPoint (unit lp_unit, string lp_type, point lp_point) {
     // Implementation
     libNtve_gf_CreateActorAtPoint("LookAtTarget", lp_point);
-    libNtve_gf_SimpleLookAtStart(lp_unit, lp_type, libNtve_gf_LastCreatedActor());
+    libNtve_gf_SimpleLookAtStart(lp_unit, lp_type, libNtve_gf_ActorLastCreated());
 }
 
 void libNtve_gf_MakeUnitLookAtUnit (unit lp_unit, string lp_type, unit lp_lookAtTargetUnit, string lp_attachPoint) {
     // Implementation
     libNtve_gf_AttachModelToUnit(lp_lookAtTargetUnit, "Invisible", lp_attachPoint);
-    libNtve_gf_SimpleLookAtStart(lp_unit, lp_type, libNtve_gf_LastCreatedActor());
+    libNtve_gf_SimpleLookAtStart(lp_unit, lp_type, libNtve_gf_ActorLastCreated());
 }
 
 void libNtve_gf_SimpleLookAtStop (unit lp_unit, string lp_type) {
@@ -1651,7 +1638,7 @@ void libNtve_gf_PlayAnimationOnDoodadsInRegion (region lp_target, string lp_dood
     }
     lv_actorMessageString = ("AnimPlay " + lp_identifier + " " + lv_animationString + " " + lv_flagString + " " + FixedToString(lp_blendTime, c_fixedPrecisionAny));
     ActorRegionCreate(null, "TriggerRegion", lp_target);
-    lv_actorRegion = libNtve_gf_LastCreatedActor();
+    lv_actorRegion = libNtve_gf_ActorLastCreated();
     if ((lp_doodadType != null)) {
         lv_termsString = ("ScopeContains " + lp_doodadType);
     }
@@ -1674,7 +1661,7 @@ void libNtve_gf_KillDoodadsInRegion (region lp_target, string lp_doodadType) {
 
     // Implementation
     ActorRegionCreate(null, "TriggerRegion", lp_target);
-    lv_actorRegion = libNtve_gf_LastCreatedActor();
+    lv_actorRegion = libNtve_gf_ActorLastCreated();
     if ((lp_doodadType != null)) {
         lv_animTermsString = ("ScopeContains " + (lp_doodadType));
         lv_statusTermsString = lv_animTermsString;
@@ -1704,7 +1691,7 @@ void libNtve_gf_ClearAnimationOnDoodadsInRegion (region lp_target, string lp_doo
 
     // Implementation
     ActorRegionCreate(null, "TriggerRegion", lp_target);
-    lv_actorRegion = libNtve_gf_LastCreatedActor();
+    lv_actorRegion = libNtve_gf_ActorLastCreated();
     if ((lp_doodadType != null)) {
         lv_termsString = ("ScopeContains " + lp_doodadType);
     }
@@ -1840,6 +1827,7 @@ camerainfo libNtve_gf_CopyOfCameraObject (camerainfo lp_cam) {
     lv_newCam = CameraInfoDefault();
 
     // Implementation
+    CameraInfoSetTarget(lv_newCam, CameraInfoGetTarget(lp_cam));
     CameraInfoSetValue(lv_newCam, c_cameraValuePitch, CameraInfoGetValue(lp_cam, c_cameraValuePitch));
     CameraInfoSetValue(lv_newCam, c_cameraValueDistance, CameraInfoGetValue(lp_cam, c_cameraValueDistance));
     CameraInfoSetValue(lv_newCam, c_cameraValueFarClip, CameraInfoGetValue(lp_cam, c_cameraValueFarClip));
@@ -1876,11 +1864,9 @@ void libNtve_gf__CineModeTurnOnOffForPlayer (int lp_player, bool lp_onOff) {
     // Implementation
     if ((lp_onOff == true)) {
         PlayerGroupAdd(libNtve_gv__PlayersInCineMode, lp_player);
-        TimerPause(libNtve_gv__GameTimer[lp_player], true);
     }
     else {
         PlayerGroupRemove(libNtve_gv__PlayersInCineMode, lp_player);
-        TimerPause(libNtve_gv__GameTimer[lp_player], false);
     }
 }
 
@@ -1971,24 +1957,23 @@ void libNtve_gf__CineModeChangeMaskSettingForPlayerGroup (playergroup lp_players
 }
 
 void libNtve_gf__CineModeHideUI (playergroup lp_players) {
+    // Variable Declarations
+    int lv_uIFrame;
+
+    // Variable Initialization
+    lv_uIFrame = c_syncFrameTypeMenuBar;
+
     // Implementation
     libNtve_gf__StoreGameUIVisibleStates(true, lp_players);
-    UISetFrameVisible(lp_players, c_syncFrameTypeAlertPanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeBattleReportPanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeCashPanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeCharacterSheetButton, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeHeroPanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeMenuBar, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeMercenaryPanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeObjectivePanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypePlanetPanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypePurchasePanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeResearchPanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeResourcePanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeRoomPanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeSupply, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeTipAlertPanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeVictoryPanel, false);
+    lv_uIFrame = c_syncFrameTypeFirst;
+    while (lv_uIFrame <= c_syncFrameTypeLast) {
+        if (((GameMapIsBlizzard() == true) || (lv_uIFrame != c_syncFrameTypeBattleUI))) {
+            UISetFrameVisible(lp_players, lv_uIFrame, false);
+        }
+        else {
+        }
+        lv_uIFrame = lv_uIFrame + 1;
+    }
 }
 
 void libNtve_gf__CineModeRestoreUI (playergroup lp_players) {
@@ -2001,18 +1986,18 @@ void libNtve_gf_CinematicMode (bool lp_onOff, playergroup lp_players, fixed lp_d
     int auto0ACAB445_p;
     playergroup autoA2450245_g;
     int autoA2450245_p;
-    playergroup auto7ADDD6AA_g;
-    int auto7ADDD6AA_p;
-    playergroup auto4433D759_g;
-    int auto4433D759_p;
     playergroup auto451C348A_g;
     int auto451C348A_p;
     playergroup auto10906981_g;
     int auto10906981_p;
+    playergroup auto1544564B_g;
+    int auto1544564B_p;
     playergroup auto74C9138D_g;
     int auto74C9138D_p;
     playergroup autoCF5F6C0D_g;
     int autoCF5F6C0D_p;
+    playergroup auto2009A28F_g;
+    int auto2009A28F_p;
 
     // Variable Declarations
     playergroup lv_validPlayers;
@@ -2045,11 +2030,10 @@ void libNtve_gf_CinematicMode (bool lp_onOff, playergroup lp_players, fixed lp_d
         }
         libNtve_gf__CineModeTurnOnOffForPlayerGroup(lv_validPlayers, true);
         libNtve_gf__CineModeHideUI(lv_validPlayers);
-        libNtve_gf__CineModeChangeFogSettingForPlayerGroup(lv_validPlayers, true);
-        libNtve_gf__CineModeChangeMaskSettingForPlayerGroup(lv_validPlayers, true);
         CinematicMode(lv_validPlayers, true, lp_duration);
         UIClearMessages(lv_validPlayers, c_messageAreaAll);
         UISetCursorVisible(lv_validPlayers, false);
+        libNtve_gf_ShowHidePlacementModels(false);
         libNtve_gf_SetAllSoundChannelVolumes(0, lv_validPlayers, lp_duration);
         auto74C9138D_g = lv_validPlayers;
         auto74C9138D_p = 1;
@@ -2060,8 +2044,6 @@ void libNtve_gf_CinematicMode (bool lp_onOff, playergroup lp_players, fixed lp_d
                 auto74C9138D_p = auto74C9138D_p + 1;
             }
         }
-        VisEnable(c_visTypeMask, false);
-        VisEnable(c_visTypeFog, false);
         autoCF5F6C0D_g = lv_validPlayers;
         autoCF5F6C0D_p = 1;
         while (autoCF5F6C0D_p <= PlayerGroupCount(autoCF5F6C0D_g)) {
@@ -2072,6 +2054,16 @@ void libNtve_gf_CinematicMode (bool lp_onOff, playergroup lp_players, fixed lp_d
                 autoCF5F6C0D_p = autoCF5F6C0D_p + 1;
             }
         }
+        auto2009A28F_g = lv_validPlayers;
+        auto2009A28F_p = 1;
+        while (auto2009A28F_p <= PlayerGroupCount(auto2009A28F_g)) {
+            lv_pickedPlayer = PlayerGroupPlayer(auto2009A28F_g, auto2009A28F_p);
+            PlayerScoreValueEnableAll(lv_pickedPlayer, false);
+            if (lv_pickedPlayer == PlayerGroupPlayer(auto2009A28F_g, auto2009A28F_p)) {
+                auto2009A28F_p = auto2009A28F_p + 1;
+            }
+        }
+        UIFlyerHelperOverride(lv_validPlayers, 0);
     }
     else {
         auto0ACAB445_g = lv_validPlayers;
@@ -2093,37 +2085,7 @@ void libNtve_gf_CinematicMode (bool lp_onOff, playergroup lp_players, fixed lp_d
         else {
         }
         TransmissionClearAll();
-        ConversationDataStop();
         libNtve_gf__CineModeTurnOnOffForPlayerGroup(lv_validPlayers, false);
-        auto7ADDD6AA_g = lv_validPlayers;
-        auto7ADDD6AA_p = 1;
-        while (auto7ADDD6AA_p <= PlayerGroupCount(auto7ADDD6AA_g)) {
-            lv_pickedPlayer = PlayerGroupPlayer(auto7ADDD6AA_g, auto7ADDD6AA_p);
-            if ((libNtve_gf__CineModeFogSetting(lv_pickedPlayer) == true)) {
-                VisEnable(c_visTypeFog, true);
-            }
-            else {
-                VisEnable(c_visTypeFog, false);
-            }
-            if (lv_pickedPlayer == PlayerGroupPlayer(auto7ADDD6AA_g, auto7ADDD6AA_p)) {
-                auto7ADDD6AA_p = auto7ADDD6AA_p + 1;
-            }
-        }
-        auto4433D759_g = lv_validPlayers;
-        auto4433D759_p = 1;
-        while (auto4433D759_p <= PlayerGroupCount(auto4433D759_g)) {
-            lv_pickedPlayer = PlayerGroupPlayer(auto4433D759_g, auto4433D759_p);
-            if ((libNtve_gf__CineModeMaskSetting(lv_pickedPlayer) == true)) {
-                VisEnable(c_visTypeMask, true);
-            }
-            else {
-                VisEnable(c_visTypeMask, false);
-            }
-            if (lv_pickedPlayer == PlayerGroupPlayer(auto4433D759_g, auto4433D759_p)) {
-                auto4433D759_p = auto4433D759_p + 1;
-            }
-        }
-        TransmissionClearAll();
         libNtve_gf_SetAllSoundChannelVolumes(2, lv_validPlayers, lp_duration);
         libNtve_gf__CineModeRestoreUI(lv_validPlayers);
         CinematicMode(lv_validPlayers, false, lp_duration);
@@ -2142,6 +2104,7 @@ void libNtve_gf_CinematicMode (bool lp_onOff, playergroup lp_players, fixed lp_d
             }
         }
         UISetCursorVisible(lv_validPlayers, true);
+        libNtve_gf_ShowHidePlacementModels(true);
         auto10906981_g = lv_validPlayers;
         auto10906981_p = 1;
         while (auto10906981_p <= PlayerGroupCount(auto10906981_g)) {
@@ -2152,6 +2115,16 @@ void libNtve_gf_CinematicMode (bool lp_onOff, playergroup lp_players, fixed lp_d
                 auto10906981_p = auto10906981_p + 1;
             }
         }
+        auto1544564B_g = lv_validPlayers;
+        auto1544564B_p = 1;
+        while (auto1544564B_p <= PlayerGroupCount(auto1544564B_g)) {
+            lv_pickedPlayer = PlayerGroupPlayer(auto1544564B_g, auto1544564B_p);
+            PlayerScoreValueEnableAll(lv_pickedPlayer, true);
+            if (lv_pickedPlayer == PlayerGroupPlayer(auto1544564B_g, auto1544564B_p)) {
+                auto1544564B_p = auto1544564B_p + 1;
+            }
+        }
+        UIFlyerHelperClearOverride(lv_validPlayers);
     }
 }
 
@@ -2164,16 +2137,36 @@ void libNtve_gf_GlobalCinematicSetting (bool lp_onOff) {
     }
     if ((lp_onOff == true)) {
         libNtve_gv__CineModeSavedSpeed = GameGetSpeedValue();
+        libNtve_gv__CineModeSavedCheatNoDefeatAllowed = GameCheatIsAllowed(c_gameCheatNoDefeat);
+        libNtve_gv__CineModeSavedCheatNoVictoryAllowed = GameCheatIsAllowed(c_gameCheatNoVictory);
         GameSetSpeedValue(c_gameSpeedNormal);
         GameSetSpeedLocked(true);
         GameSetSeedLocked(true);
         GamePauseAllCharges(true);
+        VisEnable(c_visTypeMask, false);
+        VisEnable(c_visTypeFog, false);
+        GameSetMissionTimePaused(true);
+        GameCheatAllow(c_gameCheatAny, false);
     }
     else {
         GameSetSpeedValue(libNtve_gv__CineModeSavedSpeed);
         GameSetSpeedLocked(false);
         GameSetSeedLocked(false);
         GamePauseAllCharges(false);
+        VisEnable(c_visTypeMask, true);
+        VisEnable(c_visTypeFog, true);
+        GameSetMissionTimePaused(false);
+        GameCheatAllow(c_gameCheatAny, true);
+        if ((libNtve_gv__CineModeSavedCheatNoDefeatAllowed == false)) {
+            GameCheatAllow(c_gameCheatNoDefeat, false);
+        }
+        else {
+        }
+        if ((libNtve_gv__CineModeSavedCheatNoVictoryAllowed == false)) {
+            GameCheatAllow(c_gameCheatNoVictory, false);
+        }
+        else {
+        }
     }
     libNtve_gv__CineModeGlobalOn = lp_onOff;
 }
@@ -2181,6 +2174,11 @@ void libNtve_gf_GlobalCinematicSetting (bool lp_onOff) {
 bool libNtve_gf_PlayerInCinematicMode (int lp_player) {
     // Implementation
     return PlayerGroupHasPlayer(libNtve_gv__PlayersInCineMode, lp_player);
+}
+
+void libNtve_gf_MovieDynamicSubtitlesandDuration (string lp_soundFile) {
+    // Implementation
+    MovieAddSubTitleText((StringExternal("Param/Value/lib_Ntve_2790CD6C") + StringExternal(CatalogFieldValueGet(c_gameCatalogSound, (lp_soundFile), "AssetArray[0].Speaker", c_playerAny)) + StringExternal("Param/Value/lib_Ntve_112EB177") + StringExternal(CatalogFieldValueGet(c_gameCatalogSound, (lp_soundFile), "AssetArray[0].Subtitle", c_playerAny))), ((1000 * FixedToInt(SoundLengthSync(SoundLink(lp_soundFile, 0)))) + 400), -1);
 }
 
 text libNtve_gf_ConvertBooleanToText (bool lp_value) {
@@ -2231,6 +2229,36 @@ string libNtve_gf_Convert3DVectorToString (fixed lp_x, fixed lp_y, fixed lp_z) {
 string libNtve_gf_Convert3DRotationToString (fixed lp_forwardX, fixed lp_forwardY, fixed lp_forwardZ, fixed lp_upX, fixed lp_upY, fixed lp_upZ) {
     // Implementation
     return (libNtve_gf_Convert3DVectorToString(lp_forwardX, lp_forwardY, lp_forwardZ) + "," + libNtve_gf_Convert3DVectorToString(lp_upX, lp_upY, lp_upZ));
+}
+
+void libNtve_gf_SaveDataTableValueDialogItem (bool lp_scope, string lp_name, int lp_value) {
+    // Implementation
+    DataTableSetInt(lp_scope, lp_name, lp_value);
+}
+
+void libNtve_gf_SaveDataTableValueDifficultyLevel (bool lp_scope, string lp_name, int lp_value) {
+    // Implementation
+    DataTableSetInt(lp_scope, lp_name, lp_value);
+}
+
+void libNtve_gf_SaveDataTableValuePlayerColor (bool lp_scope, string lp_name, int lp_value) {
+    // Implementation
+    DataTableSetInt(lp_scope, lp_name, lp_value);
+}
+
+int libNtve_gf_ValueFromDataTableDialogItem (bool lp_scope, string lp_name) {
+    // Implementation
+    return DataTableGetInt(lp_scope, lp_name);
+}
+
+int libNtve_gf_ValueFromDataTableDifficultyLevel (bool lp_scope, string lp_name) {
+    // Implementation
+    return DataTableGetInt(lp_scope, lp_name);
+}
+
+int libNtve_gf_ValueFromDataTablePlayerColor (bool lp_scope, string lp_name) {
+    // Implementation
+    return DataTableGetInt(lp_scope, lp_name);
 }
 
 void libNtve_gf_SetDialogItemText (int lp_dialogItem, text lp_text, playergroup lp_players) {
@@ -2513,16 +2541,16 @@ void libNtve_gf_DisplayScreenButton (int lp_screenButtonID, text lp_text, int lp
     if ((libNtve_gv_screenButtons[lp_screenButtonID] == c_invalidDialogControlId)) {
         DialogControlCreate(libNtve_gv_screenButtonDialogs[lp_screenButtonID], c_triggerControlTypeButton);
         libNtve_gv_screenButtons[lp_screenButtonID] = DialogControlLastCreated();
-        libNtve_gf_SetDialogItemImageType(DialogControlLastCreated(), c_triggerImageTypeBorder, PlayerGroupAll());
-        libNtve_gf_SetDialogItemImage(DialogControlLastCreated(), "Assets\\Textures\\ui_mission_hackingbutton_normalpressed.dds", PlayerGroupAll());
-        libNtve_gf_SetDialogItemImage2(DialogControlLastCreated(), "Assets\\Textures\\ui_mission_hackingbutton_normaloverpressedover.dds", PlayerGroupAll());
+        libNtve_gf_SetDialogItemImageType(DialogControlLastCreated(), libNtve_gv_screenButtonsBorderType[lp_screenButtonID], PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage(DialogControlLastCreated(), libNtve_gv_screenButtonsBorderImage[lp_screenButtonID], PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage2(DialogControlLastCreated(), libNtve_gv_screenButtonsHoverImage[lp_screenButtonID], PlayerGroupAll());
+        libNtve_gf_SetDialogItemStyle(DialogControlLastCreated(), "ScreenButtonText", PlayerGroupAll());
     }
     else {
     }
     DialogControlSetSize(libNtve_gv_screenButtons[lp_screenButtonID], PlayerGroupAll(), lp_width, lp_height);
     DialogControlSetPosition(libNtve_gv_screenButtons[lp_screenButtonID], PlayerGroupAll(), c_anchorCenter, 0, 0);
     DialogControlSetPropertyAsText(libNtve_gv_screenButtons[lp_screenButtonID], c_triggerControlPropertyText, PlayerGroupAll(), lp_text);
-    libNtve_gf_SetDialogItemStyle(libNtve_gv_screenButtons[lp_screenButtonID], "ScreenButton", PlayerGroupAll());
     libNtve_gv_screenButtonCallbacks[lp_screenButtonID] = lp_callback;
     DialogSetVisible(libNtve_gv_screenButtonDialogs[lp_screenButtonID], PlayerGroupAll(), true);
 }
@@ -2569,8 +2597,26 @@ void libNtve_gf_StopFlashingScreenButton (int lp_screenButtonID) {
     else {
     }
     libNtve_gv_screenButtonsFlashStopping[lp_screenButtonID] = true;
-    libNtve_gf_SetDialogItemImage(libNtve_gf_ScreenButton(lp_screenButtonID), "Assets\\Textures\\ui_mission_hackingbutton_normalpressed.dds", PlayerGroupAll());
-    libNtve_gf_SetDialogItemImage2(libNtve_gf_ScreenButton(lp_screenButtonID), "Assets\\Textures\\ui_mission_hackingbutton_normaloverpressedover.dds", PlayerGroupAll());
+    libNtve_gf_SetDialogItemImageType(libNtve_gv_screenButtons[lp_screenButtonID], libNtve_gv_screenButtonsBorderType[lp_screenButtonID], PlayerGroupAll());
+    libNtve_gf_SetDialogItemImage(libNtve_gf_ScreenButton(lp_screenButtonID), libNtve_gv_screenButtonsFlashingBorderImage[lp_screenButtonID], PlayerGroupAll());
+    libNtve_gf_SetDialogItemImage2(libNtve_gf_ScreenButton(lp_screenButtonID), libNtve_gv_screenButtonsFlashingHoverImage[lp_screenButtonID], PlayerGroupAll());
+}
+
+void libNtve_gf_SetScreenButtonBorderImage (int lp_screenButtonID, string lp_borderImage, string lp_hoverImage, int lp_borderType) {
+    // Implementation
+    libNtve_gv_screenButtonsBorderType[lp_screenButtonID] = lp_borderType;
+    libNtve_gv_screenButtonsBorderImage[lp_screenButtonID] = lp_borderImage;
+    libNtve_gv_screenButtonsHoverImage[lp_screenButtonID] = lp_hoverImage;
+    libNtve_gf_SetDialogItemImageType(libNtve_gv_screenButtons[lp_screenButtonID], libNtve_gv_screenButtonsBorderType[lp_screenButtonID], PlayerGroupAll());
+    libNtve_gf_SetDialogItemImage(libNtve_gf_ScreenButton(lp_screenButtonID), libNtve_gv_screenButtonsBorderImage[lp_screenButtonID], PlayerGroupAll());
+    libNtve_gf_SetDialogItemImage2(libNtve_gf_ScreenButton(lp_screenButtonID), libNtve_gv_screenButtonsHoverImage[lp_screenButtonID], PlayerGroupAll());
+}
+
+void libNtve_gf_SetScreenButtonFlashingBorderImage (int lp_screenButtonID, string lp_borderImage, string lp_hoverImage, int lp_borderType) {
+    // Implementation
+    libNtve_gv_screenButtonsFlashingBorderType[lp_screenButtonID] = lp_borderType;
+    libNtve_gv_screenButtonsFlashingBorderImage[lp_screenButtonID] = lp_borderImage;
+    libNtve_gv_screenButtonsFlashingHoverImage[lp_screenButtonID] = lp_hoverImage;
 }
 
 int libNtve_gf_ScreenButtonDialog (int lp_screenButtonID) {
@@ -2581,11 +2627,6 @@ int libNtve_gf_ScreenButtonDialog (int lp_screenButtonID) {
 int libNtve_gf_ScreenButton (int lp_screenButtonID) {
     // Implementation
     return libNtve_gv_screenButtons[lp_screenButtonID];
-}
-
-int libNtve_gf_ConvertTransparencyToAlpha (fixed lp_transparency) {
-    // Implementation
-    return FixedToInt(((100.0 - lp_transparency) * 2.55));
 }
 
 void libNtve_gf_DisplayScreenImage (int lp_screenImageID, string lp_image, int lp_blendMode, int lp_width, int lp_height, int lp_anchor, int lp_offsetX, int lp_offsetY) {
@@ -2674,7 +2715,7 @@ void libNtve_gf_CreateExplosionAtPoint (int lp_size, int lp_race, point lp_point
 
     // Implementation
     libNtve_gf_CreateActorAtPoint("TriggeredExplosion", lp_point);
-    lv_explosion = libNtve_gf_LastCreatedActor();
+    lv_explosion = libNtve_gf_ActorLastCreated();
     if ((lp_race == 1)) {
         lv_race = "Protoss";
     }
@@ -2715,7 +2756,7 @@ bool libNtve_gf_UnitCanCreateEffectOnUnit (unit lp_caster, string lp_effect, uni
 
 fixed libNtve_gf_GamePlayTime (int lp_player) {
     // Implementation
-    return TimerGetElapsed(libNtve_gv__GameTimer[lp_player]);
+    return GameGetMissionTime();
 }
 
 void libNtve_gf_GameRemoveChargeRegen (string lp_inCharge) {
@@ -2764,6 +2805,16 @@ void libNtve_gf_WaitForTimer (timer lp_timer, fixed lp_time, bool lp_waitType) {
         while (!((TimerGetRemaining(lp_timer) <= lp_time))) {
             Wait(0.05, c_timeGame);
         }
+    }
+}
+
+void libNtve_gf_ShowHideLeaderboard (int lp_board, bool lp_showHide, playergroup lp_players) {
+    // Implementation
+    if ((lp_showHide == true)) {
+        BoardSetState(lp_board, lp_players, c_boardStateShowing, true);
+    }
+    else {
+        BoardSetState(lp_board, lp_players, c_boardStateShowing, false);
     }
 }
 
@@ -3188,7 +3239,7 @@ void libNtve_gf_PortraitSetTintColor (int lp_Portrait, color lp_color) {
 
     // Implementation
     lv_a = ActorFromPortrait(lp_Portrait);
-    ActorSend(lv_a, libNtve_gf_SetTintColor(lp_color, -1.0));
+    ActorSend(lv_a, libNtve_gf_SetTintColor(lp_color, 1.0, -1.0));
 }
 
 void libNtve_gf_ClearPortraitAnimation (int lp_portrait, string lp_identifier) {
@@ -3369,18 +3420,22 @@ void libNtve_gf__StoryModeOnOffForPlayerGroup (playergroup lp_players, bool lp_o
 
 void libNtve_gf__StoryModeHideUI (playergroup lp_players) {
     // Variable Declarations
-    int lv_player;
+    int lv_indexFrame;
 
     // Variable Initialization
-    lv_player = 0;
+    lv_indexFrame = c_syncFrameTypeMenuBar;
 
     // Implementation
     libNtve_gf__StoreGameUIVisibleStates(true, lp_players);
-    UISetFrameVisible(lp_players, c_syncFrameTypeAlertPanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeHeroPanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeObjectivePanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeResourcePanel, false);
-    UISetFrameVisible(lp_players, c_syncFrameTypeSupply, false);
+    lv_indexFrame = c_syncFrameTypeFirst;
+    while (lv_indexFrame <= c_syncFrameTypeLast) {
+        if (((lv_indexFrame != c_syncFrameTypeBattleUI) && (lv_indexFrame != c_syncFrameTypeMenuBar) && (lv_indexFrame != c_syncFrameTypeCashPanel) && (lv_indexFrame != c_syncFrameTypeTipAlertPanel) && (lv_indexFrame != c_syncFrameTypeAchievementMenuButton) && (lv_indexFrame != c_syncFrameTypeHelpMenuButton))) {
+            UISetFrameVisible(lp_players, lv_indexFrame, false);
+        }
+        else {
+        }
+        lv_indexFrame = lv_indexFrame + 1;
+    }
 }
 
 void libNtve_gf__StoryModeRestoreUI (playergroup lp_players) {
@@ -3499,7 +3554,7 @@ void libNtve_gf_UIErrorMessage (playergroup lp_players, text lp_message, soundli
 
 int libNtve_gf__BB_PortraitBorderWidth (int lp_barID) {
     // Implementation
-    return FixedToInt((IntToFixed(libNtve_gv__BB_BarHeight[lp_barID]) - 4.0));
+    return FixedToInt((IntToFixed(libNtve_gv__BB_BarHeight[lp_barID]) - 40.0));
 }
 
 int libNtve_gf__BB_PortraitBorderHeight (int lp_barID) {
@@ -3509,7 +3564,7 @@ int libNtve_gf__BB_PortraitBorderHeight (int lp_barID) {
 
 int libNtve_gf__BB_PortraitWidth (int lp_barID) {
     // Implementation
-    return FixedToInt((IntToFixed(libNtve_gf__BB_PortraitBorderWidth(lp_barID)) - 4.0));
+    return FixedToInt((IntToFixed(libNtve_gf__BB_PortraitBorderWidth(lp_barID)) - 10.0));
 }
 
 int libNtve_gf__BB_PortraitHeight (int lp_barID) {
@@ -3519,7 +3574,7 @@ int libNtve_gf__BB_PortraitHeight (int lp_barID) {
 
 int libNtve_gf__BB_TitleBarWidth (int lp_barID) {
     // Implementation
-    return ((libNtve_gv__BB_BarWidth[lp_barID] - libNtve_gf__BB_PortraitWidth(lp_barID)) - 10);
+    return ((libNtve_gv__BB_BarWidth[lp_barID] - libNtve_gf__BB_PortraitWidth(lp_barID)) - 30);
 }
 
 int libNtve_gf__BB_TitleBarHeight (int lp_barID) {
@@ -3529,22 +3584,22 @@ int libNtve_gf__BB_TitleBarHeight (int lp_barID) {
 
 int libNtve_gf__BB_HPBorderWidth (int lp_barID) {
     // Implementation
-    return (libNtve_gf__BB_TitleBarWidth(lp_barID) - 46);
+    return (libNtve_gf__BB_TitleBarWidth(lp_barID) - 60);
 }
 
 int libNtve_gf__BB_HPBorderHeight (int lp_barID) {
     // Implementation
-    return FixedToInt((IntToFixed(libNtve_gv__BB_BarHeight[lp_barID]) * 0.4));
+    return FixedToInt((IntToFixed(libNtve_gv__BB_BarHeight[lp_barID]) * 0.31));
 }
 
 int libNtve_gf__BB_HPBarWidth (int lp_barID) {
     // Implementation
-    return FixedToInt((IntToFixed(libNtve_gf__BB_HPBorderWidth(lp_barID)) - 6.0));
+    return FixedToInt((IntToFixed(libNtve_gf__BB_HPBorderWidth(lp_barID)) - 10.0));
 }
 
 int libNtve_gf__BB_HPBarHeight (int lp_barID) {
     // Implementation
-    return FixedToInt((IntToFixed(libNtve_gf__BB_HPBorderHeight(lp_barID)) - 4.0));
+    return FixedToInt((IntToFixed(libNtve_gf__BB_HPBorderHeight(lp_barID)) - 3.0));
 }
 
 int libNtve_gf__BB_HPBarCurrentWidth (int lp_barID) {
@@ -3644,8 +3699,10 @@ bool auto_libNtve_gf__BB_HPBarChange_TriggerFunc (bool testConds, bool runAction
     lv_newWidth = libNtve_gf__BB_HPBarCurrentWidth(lp_barID);
     lv_width = (libNtve_gv__BB_HPOldWidth[lp_barID] - lv_newWidth);
     libNtve_gv__BB_HPOldWidth[lp_barID] = lv_newWidth;
-    if ((lv_width >= 4)) {
+    if ((lv_width >= 1)) {
         DialogControlCreate(libNtve_gv__BB_Dialog[lp_barID], c_triggerControlTypeImage);
+        libNtve_gf_SetDialogItemImageType(DialogControlLastCreated(), c_triggerImageTypeBorder, PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage(DialogControlLastCreated(), "Assets\\Textures\\ui_mission_leaderboard_progressbar_fill.dds", PlayerGroupAll());
         libNtve_gf_SetDialogItemColor(DialogControlLastCreated(), Color(78.43, 78.43, 0.00), libNtve_gv__BB_Players[lp_barID]);
         DialogControlSetSize(DialogControlLastCreated(), libNtve_gv__BB_Players[lp_barID], lv_width, libNtve_gf__BB_HPBarHeight(lp_barID));
         DialogControlSetPositionRelative(DialogControlLastCreated(), libNtve_gv__BB_Players[lp_barID], c_anchorLeft, libNtve_gv__BB_HpFullImage[lp_barID], c_anchorLeft, lv_newWidth, 0);
@@ -3695,12 +3752,11 @@ void libNtve_gf_DisplayBossBar (int lp_bossBarID, string lp_portrait, text lp_ti
         libNtve_gv__BB_BGImgBar[lp_bossBarID] = DialogControlLastCreated();
         DialogControlSetFullDialog(DialogControlLastCreated(), PlayerGroupAll(), true);
         libNtve_gf_SetDialogItemImageType(DialogControlLastCreated(), c_triggerImageTypeBorder, PlayerGroupAll());
-        libNtve_gf_SetDialogItemImage(DialogControlLastCreated(), "Assets\\Textures\\ui_battlenet_settings_listboxframe.dds", PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage(DialogControlLastCreated(), "Assets\\Textures\\ui_mission_leaderboard_frame_light.dds", PlayerGroupAll());
         DialogControlCreate(DialogLastCreated(), c_triggerControlTypeImage);
         libNtve_gv__BB_BGImgPortrait[lp_bossBarID] = DialogControlLastCreated();
         libNtve_gf_SetDialogItemImageType(DialogControlLastCreated(), c_triggerImageTypeBorder, PlayerGroupAll());
-        libNtve_gf_SetDialogItemImage(DialogControlLastCreated(), "Assets\\Textures\\ui_voicechat_background_talkeritem.dds", PlayerGroupAll());
-        libNtve_gf_SetDialogItemColor(DialogControlLastCreated(), Color(53.33, 75.29, 100.00), PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage(DialogControlLastCreated(), "Assets\\Textures\\ui_mission_leaderboard_frame_unit.dds", PlayerGroupAll());
         DialogControlCreate(DialogLastCreated(), c_triggerControlTypeImage);
         libNtve_gv__BB_PortraitImage[lp_bossBarID] = DialogControlLastCreated();
         DialogControlCreate(DialogLastCreated(), c_triggerControlTypeLabel);
@@ -3709,15 +3765,17 @@ void libNtve_gf_DisplayBossBar (int lp_bossBarID, string lp_portrait, text lp_ti
         DialogControlCreate(DialogLastCreated(), c_triggerControlTypeImage);
         libNtve_gv__BB_HpBorderImage[lp_bossBarID] = DialogControlLastCreated();
         libNtve_gf_SetDialogItemImageType(DialogControlLastCreated(), c_triggerImageTypeBorder, PlayerGroupAll());
-        libNtve_gf_SetDialogItemImage(DialogControlLastCreated(), "Assets\\Textures\\ui_ingame_help_glossary_racebuttonframe.dds", PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage(DialogControlLastCreated(), "Assets\\Textures\\ui_mission_leaderboard_progressbar_frame.dds", PlayerGroupAll());
         DialogControlCreate(DialogLastCreated(), c_triggerControlTypeImage);
         libNtve_gv__BB_HpFullImage[lp_bossBarID] = DialogControlLastCreated();
-        libNtve_gf_SetDialogItemImageType(DialogControlLastCreated(), c_triggerImageTypeNormal, PlayerGroupAll());
-        libNtve_gf_SetDialogItemColor(DialogControlLastCreated(), Color(64.31, 0.00, 0.00), PlayerGroupAll());
+        libNtve_gf_SetDialogItemImageType(DialogControlLastCreated(), c_triggerImageTypeBorder, PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage(DialogControlLastCreated(), "Assets\\Textures\\ui_mission_leaderboard_progressbar_fill.dds", PlayerGroupAll());
+        libNtve_gf_SetDialogItemColor(DialogControlLastCreated(), Color(100.00, 0.00, 0.00), PlayerGroupAll());
         DialogControlCreate(DialogLastCreated(), c_triggerControlTypeImage);
         libNtve_gv__BB_HpCurrentImage[lp_bossBarID] = DialogControlLastCreated();
-        libNtve_gf_SetDialogItemImageType(DialogControlLastCreated(), c_triggerImageTypeNormal, PlayerGroupAll());
-        libNtve_gf_SetDialogItemColor(DialogControlLastCreated(), Color(6.27, 64.31, 0.00), PlayerGroupAll());
+        libNtve_gf_SetDialogItemImageType(DialogControlLastCreated(), c_triggerImageTypeBorder, PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage(DialogControlLastCreated(), "Assets\\Textures\\ui_mission_leaderboard_progressbar_fill.dds", PlayerGroupAll());
+        libNtve_gf_SetDialogItemColor(DialogControlLastCreated(), Color(0.00, 100.00, 0.00), PlayerGroupAll());
         DialogControlCreate(DialogLastCreated(), c_triggerControlTypeLabel);
         libNtve_gv__BB_HpLabel[lp_bossBarID] = DialogControlLastCreated();
         libNtve_gf_SetDialogItemStyle(DialogControlLastCreated(), "BossBarHP", PlayerGroupAll());
@@ -3778,6 +3836,16 @@ void libNtve_gf_SetBossBarBoss (int lp_bossBarID, unit lp_boss, bool lp_refresh)
     }
 }
 
+void libNtve_gf_SetBossBarRace (int lp_bossBarID, int lp_race, bool lp_refresh) {
+    // Implementation
+    libNtve_gv__BB_Race[lp_bossBarID] = lp_race;
+    if ((lp_refresh == true)) {
+        libNtve_gf_RefreshBossBar(lp_bossBarID);
+    }
+    else {
+    }
+}
+
 void libNtve_gf_MoveBossBar (int lp_bossBarID, int lp_anchor, int lp_offsetX, int lp_offsetY) {
     // Implementation
     if ((libNtve_gv__BB_Dialog[lp_bossBarID] == c_invalidDialogId)) {
@@ -3799,6 +3867,8 @@ void libNtve_gf_ShowHideBossBar (bool lp_showHide, int lp_bossBarID) {
 }
 
 void libNtve_gf_RefreshBossBar (int lp_bossBarID) {
+    int auto070B1B5C_val;
+
     // Implementation
     if ((libNtve_gv__BB_Dialog[lp_bossBarID] == c_invalidDialogId)) {
         return ;
@@ -3806,7 +3876,7 @@ void libNtve_gf_RefreshBossBar (int lp_bossBarID) {
     else {
     }
     DialogControlSetSize(libNtve_gv__BB_BGImgPortrait[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], libNtve_gf__BB_PortraitBorderWidth(lp_bossBarID), libNtve_gf__BB_PortraitBorderHeight(lp_bossBarID));
-    DialogControlSetPosition(libNtve_gv__BB_BGImgPortrait[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], c_anchorLeft, 4, 0);
+    DialogControlSetPosition(libNtve_gv__BB_BGImgPortrait[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], c_anchorLeft, 18, 1);
     libNtve_gf_SetDialogItemImage(libNtve_gv__BB_PortraitImage[lp_bossBarID], libNtve_gv__BB_Portraits[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID]);
     DialogControlSetSize(libNtve_gv__BB_PortraitImage[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], libNtve_gf__BB_PortraitWidth(lp_bossBarID), libNtve_gf__BB_PortraitHeight(lp_bossBarID));
     DialogControlSetPositionRelative(libNtve_gv__BB_PortraitImage[lp_bossBarID], PlayerGroupAll(), c_anchorCenter, libNtve_gv__BB_BGImgPortrait[lp_bossBarID], c_anchorCenter, 0, 0);
@@ -3814,167 +3884,76 @@ void libNtve_gf_RefreshBossBar (int lp_bossBarID) {
     DialogControlSetSize(libNtve_gv__BB_TitleLabel[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], libNtve_gf__BB_TitleBarWidth(lp_bossBarID), libNtve_gf__BB_TitleBarHeight(lp_bossBarID));
     DialogControlSetPositionRelative(libNtve_gv__BB_TitleLabel[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], c_anchorTopLeft, libNtve_gv__BB_PortraitImage[lp_bossBarID], c_anchorTopRight, 0, 0);
     DialogControlSetSize(libNtve_gv__BB_HpBorderImage[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], libNtve_gf__BB_HPBorderWidth(lp_bossBarID), libNtve_gf__BB_HPBorderHeight(lp_bossBarID));
-    DialogControlSetPositionRelative(libNtve_gv__BB_HpBorderImage[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], c_anchorTop, libNtve_gv__BB_TitleLabel[lp_bossBarID], c_anchorBottom, 0, 3);
+    DialogControlSetPositionRelative(libNtve_gv__BB_HpBorderImage[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], c_anchorTop, libNtve_gv__BB_TitleLabel[lp_bossBarID], c_anchorBottom, 0, -12);
     libNtve_gf_SetDialogItemText(libNtve_gv__BB_HpLabel[lp_bossBarID], libNtve_gf__BB_HPBarFormatLabel(lp_bossBarID), PlayerGroupAll());
     DialogControlSetSize(libNtve_gv__BB_HpLabel[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], libNtve_gf__BB_HPBorderWidth(lp_bossBarID), libNtve_gf__BB_HPBorderHeight(lp_bossBarID));
     DialogControlSetPositionRelative(libNtve_gv__BB_HpLabel[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], c_anchorCenter, libNtve_gv__BB_HpBorderImage[lp_bossBarID], c_anchorCenter, 0, 1);
     DialogControlSetSize(libNtve_gv__BB_HpFullImage[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], libNtve_gf__BB_HPBarWidth(lp_bossBarID), libNtve_gf__BB_HPBarHeight(lp_bossBarID));
-    DialogControlSetPositionRelative(libNtve_gv__BB_HpFullImage[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], c_anchorCenter, libNtve_gv__BB_HpBorderImage[lp_bossBarID], c_anchorCenter, 0, 1);
+    DialogControlSetPositionRelative(libNtve_gv__BB_HpFullImage[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], c_anchorCenter, libNtve_gv__BB_HpBorderImage[lp_bossBarID], c_anchorCenter, 0, 0);
     DialogControlSetSize(libNtve_gv__BB_HpCurrentImage[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], libNtve_gf__BB_HPBarCurrentWidth(lp_bossBarID), libNtve_gf__BB_HPBarHeight(lp_bossBarID));
     DialogControlSetPositionRelative(libNtve_gv__BB_HpCurrentImage[lp_bossBarID], libNtve_gv__BB_Players[lp_bossBarID], c_anchorLeft, libNtve_gv__BB_HpFullImage[lp_bossBarID], c_anchorLeft, 0, 0);
     libNtve_gf__BB_HPBarChange(lp_bossBarID);
+    auto070B1B5C_val = libNtve_gv__BB_Race[lp_bossBarID];
+    if (auto070B1B5C_val == 0) {
+        libNtve_gf_SetDialogItemStyle(libNtve_gv__BB_TitleLabel[lp_bossBarID], "BossBarTitleTerran", PlayerGroupAll());
+        libNtve_gf_SetDialogItemColor(libNtve_gv__BB_BGImgBar[lp_bossBarID], Color(21.18, 82.35, 49.80), PlayerGroupAll());
+        libNtve_gf_SetDialogItemColor(libNtve_gv__BB_BGImgPortrait[lp_bossBarID], Color(21.18, 82.35, 49.80), PlayerGroupAll());
+        libNtve_gf_SetDialogItemColor(libNtve_gv__BB_HpBorderImage[lp_bossBarID], Color(21.18, 82.35, 49.80), PlayerGroupAll());
+    }
+    else if (auto070B1B5C_val == 1) {
+        libNtve_gf_SetDialogItemStyle(libNtve_gv__BB_TitleLabel[lp_bossBarID], "BossBarTitleProtoss", PlayerGroupAll());
+        libNtve_gf_SetDialogItemColor(libNtve_gv__BB_BGImgBar[lp_bossBarID], Color(24.71, 70.98, 89.41), PlayerGroupAll());
+        libNtve_gf_SetDialogItemColor(libNtve_gv__BB_BGImgPortrait[lp_bossBarID], Color(24.71, 70.98, 89.41), PlayerGroupAll());
+        libNtve_gf_SetDialogItemColor(libNtve_gv__BB_HpBorderImage[lp_bossBarID], Color(24.71, 70.98, 89.41), PlayerGroupAll());
+    }
+    else if (auto070B1B5C_val == 2) {
+        libNtve_gf_SetDialogItemStyle(libNtve_gv__BB_TitleLabel[lp_bossBarID], "BossBarTitleZerg", PlayerGroupAll());
+        libNtve_gf_SetDialogItemColor(libNtve_gv__BB_BGImgBar[lp_bossBarID], Color(100.00, 50.20, 0.00), PlayerGroupAll());
+        libNtve_gf_SetDialogItemColor(libNtve_gv__BB_BGImgPortrait[lp_bossBarID], Color(100.00, 50.20, 0.00), PlayerGroupAll());
+        libNtve_gf_SetDialogItemColor(libNtve_gv__BB_HpBorderImage[lp_bossBarID], Color(71.37, 32.16, 8.63), PlayerGroupAll());
+    }
+    else {
+    }
 }
 
 void libNtve_gf__StoreGameUIVisibleStates (bool lp_storeRestore, playergroup lp_players) {
-    playergroup autoA6498F0F_g;
-    int autoA6498F0F_p;
     playergroup auto1380166C_g;
     int auto1380166C_p;
 
     // Variable Declarations
     int lv_player;
+    int lv_indexFrame;
 
     // Variable Initialization
     lv_player = 0;
+    lv_indexFrame = c_syncFrameTypeMenuBar;
 
     // Implementation
-    if ((lp_storeRestore == true)) {
-        auto1380166C_g = lp_players;
-        auto1380166C_p = 1;
-        while (auto1380166C_p <= PlayerGroupCount(auto1380166C_g)) {
-            lv_player = PlayerGroupPlayer(auto1380166C_g, auto1380166C_p);
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeAlertPanel) == true)) {
-                libNtve_gv__GameUIVisible_Alert[lv_player] = true;
+    auto1380166C_g = lp_players;
+    auto1380166C_p = 1;
+    while (auto1380166C_p <= PlayerGroupCount(auto1380166C_g)) {
+        lv_player = PlayerGroupPlayer(auto1380166C_g, auto1380166C_p);
+        lv_indexFrame = c_syncFrameTypeFirst;
+        while (lv_indexFrame <= c_syncFrameTypeLast) {
+            if (((GameMapIsBlizzard() == true) || (lv_indexFrame != c_syncFrameTypeBattleUI))) {
+                if ((lp_storeRestore == true)) {
+                    if ((UIFrameVisible(lv_player, lv_indexFrame) == true)) {
+                        libNtve_gv__GameUIVisible[lv_player][lv_indexFrame] = true;
+                    }
+                    else {
+                        libNtve_gv__GameUIVisible[lv_player][lv_indexFrame] = false;
+                    }
+                }
+                else {
+                    UISetFrameVisible(PlayerGroupSingle(lv_player), lv_indexFrame, libNtve_gv__GameUIVisible[lv_player][lv_indexFrame]);
+                }
             }
             else {
-                libNtve_gv__GameUIVisible_Alert[lv_player] = false;
             }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeBattleReportPanel) == true)) {
-                libNtve_gv__GameUIVisible_BattleReport[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_BattleReport[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeCashPanel) == true)) {
-                libNtve_gv__GameUIVisible_Cash[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Cash[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeCharacterSheetButton) == true)) {
-                libNtve_gv__GameUIVisible_CharacterSheetButton[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_CharacterSheetButton[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeErrorDisplayPanel) == true)) {
-                libNtve_gv__GameUIVisible_Error[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Error[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeHeroPanel) == true)) {
-                libNtve_gv__GameUIVisible_Hero[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Hero[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeMenuBar) == true)) {
-                libNtve_gv__GameUIVisible_MenuBar[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_MenuBar[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeMercenaryPanel) == true)) {
-                libNtve_gv__GameUIVisible_Mercenary[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Mercenary[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeObjectivePanel) == true)) {
-                libNtve_gv__GameUIVisible_Objective[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Objective[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypePlanetPanel) == true)) {
-                libNtve_gv__GameUIVisible_Planet[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Planet[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypePurchasePanel) == true)) {
-                libNtve_gv__GameUIVisible_Purchase[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Purchase[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeResearchPanel) == true)) {
-                libNtve_gv__GameUIVisible_Research[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Research[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeResourcePanel) == true)) {
-                libNtve_gv__GameUIVisible_Resource[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Resource[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeRoomPanel) == true)) {
-                libNtve_gv__GameUIVisible_Room[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Room[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeSupply) == true)) {
-                libNtve_gv__GameUIVisible_Supply[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Supply[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeTipAlertPanel) == true)) {
-                libNtve_gv__GameUIVisible_TipAlert[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_TipAlert[lv_player] = false;
-            }
-            if ((UIFrameVisible(lv_player, c_syncFrameTypeVictoryPanel) == true)) {
-                libNtve_gv__GameUIVisible_Victory[lv_player] = true;
-            }
-            else {
-                libNtve_gv__GameUIVisible_Victory[lv_player] = false;
-            }
-            if (lv_player == PlayerGroupPlayer(auto1380166C_g, auto1380166C_p)) {
-                auto1380166C_p = auto1380166C_p + 1;
-            }
+            lv_indexFrame = lv_indexFrame + 1;
         }
-    }
-    else {
-        autoA6498F0F_g = lp_players;
-        autoA6498F0F_p = 1;
-        while (autoA6498F0F_p <= PlayerGroupCount(autoA6498F0F_g)) {
-            lv_player = PlayerGroupPlayer(autoA6498F0F_g, autoA6498F0F_p);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeAlertPanel, libNtve_gv__GameUIVisible_Alert[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeBattleReportPanel, libNtve_gv__GameUIVisible_BattleReport[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeCashPanel, libNtve_gv__GameUIVisible_Cash[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeCharacterSheetButton, libNtve_gv__GameUIVisible_CharacterSheetButton[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeErrorDisplayPanel, libNtve_gv__GameUIVisible_Error[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeHeroPanel, libNtve_gv__GameUIVisible_Hero[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeMenuBar, libNtve_gv__GameUIVisible_MenuBar[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeMercenaryPanel, libNtve_gv__GameUIVisible_Mercenary[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeObjectivePanel, libNtve_gv__GameUIVisible_Objective[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypePlanetPanel, libNtve_gv__GameUIVisible_Planet[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypePurchasePanel, libNtve_gv__GameUIVisible_Purchase[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeResearchPanel, libNtve_gv__GameUIVisible_Research[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeResourcePanel, libNtve_gv__GameUIVisible_Resource[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeRoomPanel, libNtve_gv__GameUIVisible_Room[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeSupply, libNtve_gv__GameUIVisible_Supply[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeTipAlertPanel, libNtve_gv__GameUIVisible_TipAlert[lv_player]);
-            UISetFrameVisible(PlayerGroupSingle(lv_player), c_syncFrameTypeVictoryPanel, libNtve_gv__GameUIVisible_Victory[lv_player]);
-            if (lv_player == PlayerGroupPlayer(autoA6498F0F_g, autoA6498F0F_p)) {
-                autoA6498F0F_p = autoA6498F0F_p + 1;
-            }
+        if (lv_player == PlayerGroupPlayer(auto1380166C_g, auto1380166C_p)) {
+            auto1380166C_p = auto1380166C_p + 1;
         }
     }
 }
@@ -3987,9 +3966,11 @@ void libNtve_gf_HideGameUI (bool lp_showHide, playergroup lp_players) {
 
     // Variable Declarations
     int lv_player;
+    int lv_uIFrame;
 
     // Variable Initialization
     lv_player = 0;
+    lv_uIFrame = c_syncFrameTypeMenuBar;
 
     // Implementation
     if ((lp_showHide == true)) {
@@ -4023,23 +4004,15 @@ void libNtve_gf_HideGameUI (bool lp_showHide, playergroup lp_players) {
             }
         }
         libNtve_gf__StoreGameUIVisibleStates(true, lp_players);
-        UISetFrameVisible(lp_players, c_syncFrameTypeAlertPanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeBattleReportPanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeCashPanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeCharacterSheetButton, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeErrorDisplayPanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeHeroPanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeMenuBar, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeMercenaryPanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeObjectivePanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypePlanetPanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypePurchasePanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeResearchPanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeResourcePanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeRoomPanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeSupply, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeTipAlertPanel, false);
-        UISetFrameVisible(lp_players, c_syncFrameTypeVictoryPanel, false);
+        lv_uIFrame = c_syncFrameTypeFirst;
+        while (lv_uIFrame <= c_syncFrameTypeLast) {
+            if (((GameMapIsBlizzard() == true) || (lv_uIFrame != c_syncFrameTypeBattleUI))) {
+                UISetFrameVisible(lp_players, lv_uIFrame, false);
+            }
+            else {
+            }
+            lv_uIFrame = lv_uIFrame + 1;
+        }
     }
 }
 
@@ -4613,9 +4586,29 @@ void libNtve_gf_UnitRemoveChargeRegen (unit lp_inUnit, string lp_inCharge) {
     UnitAddChargeRegen(lp_inUnit, lp_inCharge, (-1.0 * UnitGetChargeRegen(lp_inUnit, lp_inCharge)));
 }
 
+void libNtve_gf_UnitAbilityRemoveChargeUsed (unit lp_inUnit, string lp_inAbil, string lp_inCharge) {
+    // Implementation
+    UnitAbilityAddChargeUsed(lp_inUnit, lp_inAbil, lp_inCharge, (-1.0 * UnitAbilityGetChargeUsed(lp_inUnit, lp_inAbil, lp_inCharge)));
+}
+
 void libNtve_gf_UnitAbilityRemoveChargeRegen (unit lp_inUnit, string lp_inAbil, string lp_inCharge) {
     // Implementation
     UnitAbilityAddChargeRegen(lp_inUnit, lp_inAbil, lp_inCharge, (-1.0 * UnitAbilityGetChargeRegen(lp_inUnit, lp_inAbil, lp_inCharge)));
+}
+
+void libNtve_gf_UnitRemoveChargeUsed (unit lp_inUnit, string lp_inCharge) {
+    // Implementation
+    UnitAddChargeUsed(lp_inUnit, lp_inCharge, (-1.0 * UnitGetChargeUsed(lp_inUnit, lp_inCharge)));
+}
+
+void libNtve_gf_UnitBehaviorRemoveChargeUsed (unit lp_inUnit, string lp_inBehavior, string lp_inCharge) {
+    // Implementation
+    UnitBehaviorAddChargeUsed(lp_inUnit, lp_inBehavior, lp_inCharge, (-1.0 * UnitBehaviorGetChargeUsed(lp_inUnit, lp_inBehavior, lp_inCharge)));
+}
+
+void libNtve_gf_UnitBehaviorRemoveChargeRegen (unit lp_inUnit, string lp_inBehavior, string lp_inCharge) {
+    // Implementation
+    UnitBehaviorAddChargeRegen(lp_inUnit, lp_inBehavior, lp_inCharge, (-1.0 * UnitBehaviorGetChargeRegen(lp_inUnit, lp_inBehavior, lp_inCharge)));
 }
 
 void libNtve_gf_UnitRemoveCooldown (unit lp_inUnit, string lp_inCooldown) {
@@ -4631,26 +4624,6 @@ void libNtve_gf_UnitAbilityRemoveCooldown (unit lp_inUnit, string lp_inAbil, str
 void libNtve_gf_UnitBehaviorRemoveCooldown (unit lp_inUnit, string lp_inBehavior, string lp_inCooldown) {
     // Implementation
     UnitBehaviorAddCooldown(lp_inUnit, lp_inBehavior, lp_inCooldown, (-1.0 * UnitBehaviorGetCooldown(lp_inUnit, lp_inBehavior, lp_inCooldown)));
-}
-
-void libNtve_gf_UnitBehaviorRemoveChargeRegen (unit lp_inUnit, string lp_inBehavior, string lp_inCharge) {
-    // Implementation
-    UnitBehaviorAddChargeRegen(lp_inUnit, lp_inBehavior, lp_inCharge, (-1.0 * UnitBehaviorGetChargeRegen(lp_inUnit, lp_inBehavior, lp_inCharge)));
-}
-
-void libNtve_gf_UnitRemoveChargeUsed (unit lp_inUnit, string lp_inCharge) {
-    // Implementation
-    UnitAddChargeUsed(lp_inUnit, lp_inCharge, (-1.0 * UnitGetChargeUsed(lp_inUnit, lp_inCharge)));
-}
-
-void libNtve_gf_UnitAbilityRemoveChargeUsed (unit lp_inUnit, string lp_inAbil, string lp_inCharge) {
-    // Implementation
-    UnitAbilityAddChargeUsed(lp_inUnit, lp_inAbil, lp_inCharge, (-1.0 * UnitAbilityGetChargeUsed(lp_inUnit, lp_inAbil, lp_inCharge)));
-}
-
-void libNtve_gf_UnitBehaviorRemoveChargeUsed (unit lp_inUnit, string lp_inBehavior, string lp_inCharge) {
-    // Implementation
-    UnitBehaviorAddChargeUsed(lp_inUnit, lp_inBehavior, lp_inCharge, (-1.0 * UnitBehaviorGetChargeUsed(lp_inUnit, lp_inBehavior, lp_inCharge)));
 }
 
 unitgroup libNtve_gf_ConvertUnitToUnitGroup (unit lp_unit) {
@@ -4797,6 +4770,16 @@ point libNtve_gf_CenterOfUnitGroup (unitgroup lp_unitGroup) {
     }
 }
 
+void libNtve_gf_ShowHidePlacementModels (bool lp_show) {
+    // Implementation
+    if ((lp_show == true)) {
+        libNtve_gf_SendActorMessageToGameRegion(RegionEntireMap(), "Signal ShowPlacement");
+    }
+    else {
+        libNtve_gf_SendActorMessageToGameRegion(RegionEntireMap(), "Signal HidePlacement");
+    }
+}
+
 // Triggers
 //--------------------------------------------------------------------------------------------------
 // Trigger: ScreenButton Clicked
@@ -4902,22 +4885,25 @@ bool libNtve_gt_FlashScreenButton_Func (bool testConds, bool runActions) {
         }
         else {
         }
-        libNtve_gf_SetDialogItemImage(libNtve_gf_ScreenButton(lv_iD), "Assets\\Textures\\ui_mission_hackingbutton_anim.dds", PlayerGroupAll());
-        libNtve_gf_SetDialogItemImage2(libNtve_gf_ScreenButton(lv_iD), "Assets\\Textures\\ui_mission_hackingbutton_anim.dds", PlayerGroupAll());
+        libNtve_gf_SetDialogItemImageType(libNtve_gf_ScreenButton(lv_iD), libNtve_gv_screenButtonsFlashingBorderType[lv_iD], PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage(libNtve_gf_ScreenButton(lv_iD), libNtve_gv_screenButtonsFlashingBorderImage[lv_iD], PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage2(libNtve_gf_ScreenButton(lv_iD), libNtve_gv_screenButtonsFlashingHoverImage[lv_iD], PlayerGroupAll());
         Wait(lv_flashTimeHalf, c_timeReal);
         if (((libNtve_gf_ScreenButtonDialog(lv_iD) == c_invalidDialogId) || (libNtve_gv_screenButtonsFlashing[lv_iD] == false) || (libNtve_gv_screenButtonsFlashStopping[lv_iD] == true))) {
             break;
         }
         else {
         }
-        libNtve_gf_SetDialogItemImage(libNtve_gf_ScreenButton(lv_iD), "Assets\\Textures\\ui_mission_hackingbutton_normalpressed.dds", PlayerGroupAll());
-        libNtve_gf_SetDialogItemImage2(libNtve_gf_ScreenButton(lv_iD), "Assets\\Textures\\ui_mission_hackingbutton_normaloverpressedover.dds", PlayerGroupAll());
+        libNtve_gf_SetDialogItemImageType(libNtve_gf_ScreenButton(lv_iD), libNtve_gv_screenButtonsBorderType[lv_iD], PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage(libNtve_gf_ScreenButton(lv_iD), libNtve_gv_screenButtonsBorderImage[lv_iD], PlayerGroupAll());
+        libNtve_gf_SetDialogItemImage2(libNtve_gf_ScreenButton(lv_iD), libNtve_gv_screenButtonsHoverImage[lv_iD], PlayerGroupAll());
         Wait(lv_flashTimeHalf, c_timeReal);
     }
     libNtve_gv_screenButtonsFlashing[lv_iD] = false;
     libNtve_gv_screenButtonsFlashStopping[lv_iD] = false;
-    libNtve_gf_SetDialogItemImage(libNtve_gf_ScreenButton(lv_iD), "Assets\\Textures\\ui_mission_hackingbutton_normalpressed.dds", PlayerGroupAll());
-    libNtve_gf_SetDialogItemImage2(libNtve_gf_ScreenButton(lv_iD), "Assets\\Textures\\ui_mission_hackingbutton_normaloverpressedover.dds", PlayerGroupAll());
+    libNtve_gf_SetDialogItemImageType(libNtve_gf_ScreenButton(lv_iD), libNtve_gv_screenButtonsBorderType[lv_iD], PlayerGroupAll());
+    libNtve_gf_SetDialogItemImage(libNtve_gf_ScreenButton(lv_iD), libNtve_gv_screenButtonsBorderImage[lv_iD], PlayerGroupAll());
+    libNtve_gf_SetDialogItemImage2(libNtve_gf_ScreenButton(lv_iD), libNtve_gv_screenButtonsHoverImage[lv_iD], PlayerGroupAll());
     return true;
 }
 
@@ -4984,48 +4970,6 @@ bool libNtve_gt_PulseScreenImage_Func (bool testConds, bool runActions) {
 //--------------------------------------------------------------------------------------------------
 void libNtve_gt_PulseScreenImage_Init () {
     libNtve_gt_PulseScreenImage = TriggerCreate("libNtve_gt_PulseScreenImage_Func");
-}
-
-//--------------------------------------------------------------------------------------------------
-// Trigger: _Map Initialization
-//--------------------------------------------------------------------------------------------------
-bool libNtve_gt__MapInitialization_Func (bool testConds, bool runActions) {
-    playergroup autoF196A52B_g;
-    int autoF196A52B_p;
-
-    // Variable Declarations
-    int lv_player;
-
-    // Variable Initialization
-    lv_player = 0;
-
-    // Actions
-    if (!runActions) {
-        return true;
-    }
-
-    autoF196A52B_g = PlayerGroupAll();
-    autoF196A52B_p = 1;
-    while (autoF196A52B_p <= PlayerGroupCount(autoF196A52B_g)) {
-        lv_player = PlayerGroupPlayer(autoF196A52B_g, autoF196A52B_p);
-        libNtve_gv__GameTimer[lv_player] = TimerCreate();
-        TimerStart(libNtve_gv__GameTimer[lv_player], c_timerDurationInfinite, false, c_timeGame);
-        if ((libNtve_gf_PlayerInCinematicMode(lv_player) == true)) {
-            TimerPause(libNtve_gv__GameTimer[lv_player], true);
-        }
-        else {
-        }
-        if (lv_player == PlayerGroupPlayer(autoF196A52B_g, autoF196A52B_p)) {
-            autoF196A52B_p = autoF196A52B_p + 1;
-        }
-    }
-    return true;
-}
-
-//--------------------------------------------------------------------------------------------------
-void libNtve_gt__MapInitialization_Init () {
-    libNtve_gt__MapInitialization = TriggerCreate("libNtve_gt__MapInitialization_Func");
-    TriggerAddEventMapInit(libNtve_gt__MapInitialization);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -5103,15 +5047,22 @@ void libNtve_InitTriggers () {
     libNtve_gt_ScreenButtonClicked_Init();
     libNtve_gt_FlashScreenButton_Init();
     libNtve_gt_PulseScreenImage_Init();
-    libNtve_gt__MapInitialization_Init();
     libNtve_gt__BB_BossHPChanged_Init();
 }
 
 //--------------------------------------------------------------------------------------------------
 // Library Initialization
 //--------------------------------------------------------------------------------------------------
+bool libNtve_InitLib_completed = false;
+
 void libNtve_InitLib () {
+    if (libNtve_InitLib_completed) {
+        return;
+    }
+
     libNtve_InitVariables();
     libNtve_InitTriggers();
+
+    libNtve_InitLib_completed = true;
 }
 

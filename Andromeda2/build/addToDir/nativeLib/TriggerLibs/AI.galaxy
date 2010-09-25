@@ -34,6 +34,7 @@ const int c_defaultGasPeonCount = -1;
 const int c_expandDefault       = 1;
 const int c_expandVitalHard     = 4;
 const int c_expandNormalHard    = 6;
+const int c_expandIdleHard      = 7;
 
 const int c_unitAttributeNone   = -1;
 
@@ -62,6 +63,9 @@ const int c_prioScriptControlled  = 16;
 //--------------------------------------------------------------------------------------------------
 //  Races
 //--------------------------------------------------------------------------------------------------
+// needs to match Galaxy.cpp
+const int c_raceMulti   = -1;
+const int c_raceUnknown = 0;
 const int c_raceProtoss = 1;
 const int c_raceTerran  = 2;
 const int c_raceZerg    = 3;
@@ -193,6 +197,7 @@ const int c_diffFleeWorkers         = 15;
 const int c_diffFleeDanger          = 16;
 const int c_diffHoldAtIdleChokes    = 17;
 const int c_diffAllowResourceReq    = 18;
+const int c_diffUseRetreatLogic     = 19;
 
 native void AISetDifficulty (int player, int index, bool state);
 native bool AIGetDifficulty (int player, int index);
@@ -245,6 +250,7 @@ native int AIGetAirTownLocs (point loc);
 native int AIRandomVal (int player, int which);
 native void AINewChooseSubState (int player, int which, int min, int max, int defaultSubState);
 native void AISetSubStateChance (int subState, int chance);
+native void AISetSubStateChanceRace (int subState, int randChance, int protChance, int terrChance, int zergChance);
 native int AIChooseSubState ();
 
 native bool AIWantsMultipleTransport (int player);
@@ -261,12 +267,18 @@ native bool AIAnyWorkersFleeingNearby (int player, point loc, fixed radius);
 native int AIGetNumEnemies (int player);
 native int AIGetNumAllies (int player);
 
+native int AIGetEnemyRaceVal (int player);
+
 native point AIPlacementNearbyFindTest (int player, point loc, fixed range, string unitType);
 
 native void AIAddToExtraScoutGroup (int player, unit u);
 native bool AIOfferNewScout (int player, unit u);
 
 native void AIAddHealer (int player, string healer, string healAbil, int healAbilIdx);
+
+native unit AIGetDropoffWithFewestGuards (int player, string guardType);
+
+native bool AIHasNearbyAttackers (int player, point loc, fixed range);
 
 //--------------------------------------------------------------------------------------------------
 // Misc Melee
@@ -323,6 +335,9 @@ native void AISetGroupNotUsableInWaves (unitgroup ug, bool enable);
 
 native void AISetWantsToUpgrade (unit u);
 
+native void AISetUnitForceMover (unit u, bool enable);
+native void AISetGroupForceMover (unitgroup ug, bool enable);
+
 native void AIInitCampaignTowns (int player);
 native void AIInitCampaignHarvest (int player);
 
@@ -355,6 +370,7 @@ native int AIGetMaxPeonCount (int player, int town);
 native int AIGetMineralAmountLeft (int player, int town);
 native int AIGetGasAmountLeft (int player, int town);
 native int AIGetMineralNumSpots (int player, int town);
+native int AIGetHarvestableGasNumSpots (int player, int town);
 native int AIGetRawGasNumSpots (int player, int town);
 
 native point AIGetGatherLocation (int player, int town);//xxx remove old functions
@@ -374,6 +390,9 @@ native void AISetScoutTimes (int player, int starts, int obstructed, int resourc
 
 native point AIGetNextScoutLoc (int player);
 native void AIClearCampaignScout (int player);
+
+native void AIEarlyDefenseEnable (int player, bool enableScouting, bool enableDefending);
+native void AIEarlyDefenseProps (int player, fixed scoutRange, fixed peonRange, fixed threatRange);
 
 //--------------------------------------------------------------------------------------------------
 //  Construction
@@ -607,6 +626,7 @@ native wavetarget AIWaveTargetEscortNL (unitgroup g, int replaceType);
 native wavetarget AIWaveTargetGatherO (int player, int town);
 native wavetarget AIWaveTargetGatherD (int player, int town);
 native wavetarget AIWaveTargetRegion (region r, int replaceType);
+native wavetarget AIWaveTargetGuardHomeUnit (unit u);
 
 native point AIWaveTargetGatherOPoint (int player, int town);
 native point AIWaveTargetGatherDPoint (int player, int town);
@@ -644,8 +664,12 @@ native void AIWaveTargetClearWaypoints (wavetarget wt);
 native wave AIWaveGet (int player, int waveName);
 native void AIWaveSet (int player, int waveName, wave waveRef);
 native int  AIWaveType (wave waveRef);
-//native void AIWaveSetUserData (wave waveRef, int index, int data);
-//native int  AIWaveGetUserData (wave waveRef, int index);
+native void AIWaveSetUserData (wave waveRef, int index, int data);
+native int  AIWaveGetUserData (wave waveRef, int index);
+
+// by default campaign wave and melee suicide/merge waves are deleted when empty, 
+// this allows other melee waves to also be deleted when empty.
+native void AIWaveSetDeleteWhenEmpty (wave waveRef, bool turnOnDeleteWhenEmpty);
 
 native void AIWaveMerge (int player, int waveFrom, int waveInto);
 native void AIWaveMergeMelee (int player);

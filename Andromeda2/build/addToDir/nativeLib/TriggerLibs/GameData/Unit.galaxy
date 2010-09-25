@@ -63,7 +63,9 @@ const int c_unitFlagArmorDisabledWhileConstructing = 46;
 const int c_unitFlagPawnable = 47;
 const int c_unitFlagAIFleeDamageDisabled = 48;
 const int c_unitFlagAIPressForwardDisabled = 49;
-const int c_unitFlagForceCollisionCheck = 50;
+const int c_unitFlagAIObservatory = 50;
+const int c_unitFlagForceCollisionCheck = 51;
+const int c_unitFlagAIChangeling = 52;
 const string c_unitFlagBounceName = "Bounce";
 const string c_unitFlagTurnableName = "Turnable";
 const string c_unitFlagMovableName = "Movable";
@@ -114,7 +116,9 @@ const string c_unitFlagArmorDisabledWhileConstructingName = "ArmorDisabledWhileC
 const string c_unitFlagPawnableName = "Pawnable";
 const string c_unitFlagAIFleeDamageDisabledName = "AIFleeDamageDisabled";
 const string c_unitFlagAIPressForwardDisabledName = "AIPressForwardDisabled";
+const string c_unitFlagAIObservatoryName = "AIObservatory";
 const string c_unitFlagForceCollisionCheckName = "ForceCollisionCheck";
+const string c_unitFlagAIChangelingName = "AIChangeling";
 
 //  EUnitAttribute
 const int c_unitAttributeLight = 0;

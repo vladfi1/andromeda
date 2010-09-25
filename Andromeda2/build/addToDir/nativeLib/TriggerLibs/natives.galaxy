@@ -125,7 +125,14 @@ const int c_anchorBottomRight   = 8;
 //--------------------------------------------------------------------------------------------------
 // Achievements
 //--------------------------------------------------------------------------------------------------
+native void AchievementAward (int player, string name);     //  Blizzard maps only
+native void AchievementErase (int player, string name);     //  Blizzard maps only
+native void AchievementPanelSetCategory (playergroup players, string name);
 native void AchievementPanelSetVisible (playergroup players, bool visible);
+native text AchievementPercentText (int player, string category); // Blizzard maps only
+
+native void AchievementTermQuantitySet (int player, string term, int quantity);     //  Blizzard maps only
+
 native void AchievementsDisable (int player);
 
 //--------------------------------------------------------------------------------------------------
@@ -164,6 +171,8 @@ native void AchievementsDisable (int player);
 // A03  It is exactly enough to create a beam with a custom model and two custom sites.
 //--------------------------------------------------------------------------------------------------
 native actorscope   ActorScopeCreate (string name);
+native actorscope   ActorScopeLastCreated ();
+native actorscope   ActorScopeLastCreatedSend ();
 native actorscope   ActorScopeFrom (string name);
 native actorscope   ActorScopeFromActor (actor a);
 native actorscope   ActorScopeFromUnit (unit u);
@@ -175,6 +184,8 @@ native actor        ActorScopeRefGet (actorscope as, string refName);
 native void         ActorScopeRefSet (actorscope as, string refName, actor aValue);
 native void         ActorScopeSend (actorscope as, string msg);
 native actor        ActorCreate (actorscope as, string actorName, string content1Name, string content2Name, string content3Name);
+native actor        ActorLastCreated ();
+native actor        ActorLastCreatedSend ();
 native actor        ActorFrom (string name);
 native actor        ActorFromActor (actor a, string name);
 native actor        ActorFromScope (actorscope as, string name);
@@ -221,9 +232,6 @@ const int c_animFlagPlayForever                     = (1 << 1);
 const int c_animFlagNonLooping                      = (1 << 2);
 const int c_animFlagAssetDrivenLooping              = (1 << 3);
 const int c_animFlagRandomStartOffset               = (1 << 4);
-
-// Currently unused.
-const int e_actorRefFlagGroup                       = (1 << 1);
 
 const int c_actorRefSpaceGlobal                     = 1;
 const int c_actorRefSpaceScope                      = 2;
@@ -375,6 +383,7 @@ native string   BankName (bank b);
 native int      BankPlayer (bank b);
 native void     BankRemove (bank b);
 native void     BankSave (bank b);
+native void     BankDeleteCampaignBanks (int player);     //  Blizzard maps only
 
 native int      BankSectionCount (bank b);
 native bool     BankSectionExists (bank b, string section);
@@ -448,9 +457,9 @@ native void     BattleReportSetMissionImage (int inBattleReportId, string inImag
 native void     BattleReportSetDifficultyLevelCompleted (int inBattleReportId, int inDifficultyLevel, bool inCompleted);
 native void     BattleReportSetDifficultyLevelBestTimeText (int inBattleReportId, int inDifficultyLevel, text inText);
 native void     BattleReportAddAchievement (int inBattleReportId, string inAchievement);
-
 native void     BattleReportSetSceneText (int inBattleReportId, text inText);
 native void     BattleReportSetSceneImage (int inBattleReportId, string inImage);
+native void     BattleReportSetShownInMissionTotal (int inBattleReportId, bool inShown);
 
 // Battle Report events
 native void     TriggerAddEventBattleReportPanelExit (trigger t, int inPlayer);
@@ -472,6 +481,10 @@ native int          BoardLastCreated ();
 native void         BoardDestroy (int inBoard);
 
 native void         BoardShowAll (bool inShow, playergroup inPlayers);
+
+// Board position
+native void         BoardSetPosition (int inBoard, int inX, int inY);
+native void         BoardResetPosition (int inBoard);
 
 // Board title
 const int c_boardColorText          = 0;
@@ -858,6 +871,9 @@ native int          ConversationDataLineGetPickedCount (string convId, string li
 native void         ConversationDataSaveStateValues (string stateId, bank b, string section);
 native void         ConversationDataLoadStateValues (string stateId, bank b, string section);
 
+native void         ConversationDataSaveStateValue (string stateIndex, bank b, string section);
+native void         ConversationDataLoadStateValue (string stateIndex, bank b, string section);
+
 native void         ConversationDataResetStateValues (string stateId);
 
 // - Node state is the read/unread and picked state associated with lines and choices (nodes)
@@ -928,22 +944,21 @@ const int c_dataTypePortrait            = 23;
 const int c_dataTypeRegion              = 24;
 const int c_dataTypeReply               = 25;
 const int c_dataTypeRevealer            = 26;
-const int c_dataTypeRoom                = 27;
-const int c_dataTypeSound               = 28;
-const int c_dataTypeSoundLink           = 29;
-const int c_dataTypeString              = 30;
-const int c_dataTypeText                = 31;
-const int c_dataTypeTimer               = 32;
-const int c_dataTypeTransmission        = 33;
-const int c_dataTypeTransmissionSource  = 34;
-const int c_dataTypeTrigger             = 35;
-const int c_dataTypeUnit                = 36;
-const int c_dataTypeUnitFilter          = 37;
-const int c_dataTypeUnitGroup           = 38;
-const int c_dataTypeUnitRef             = 39;
-const int c_dataTypeWave                = 40;
-const int c_dataTypeWaveInfo            = 41;
-const int c_dataTypeWaveTarget          = 42;
+const int c_dataTypeSound               = 27;
+const int c_dataTypeSoundLink           = 28;
+const int c_dataTypeString              = 29;
+const int c_dataTypeText                = 30;
+const int c_dataTypeTimer               = 31;
+const int c_dataTypeTransmission        = 32;
+const int c_dataTypeTransmissionSource  = 33;
+const int c_dataTypeTrigger             = 34;
+const int c_dataTypeUnit                = 35;
+const int c_dataTypeUnitFilter          = 36;
+const int c_dataTypeUnitGroup           = 37;
+const int c_dataTypeUnitRef             = 38;
+const int c_dataTypeWave                = 39;
+const int c_dataTypeWaveInfo            = 40;
+const int c_dataTypeWaveTarget          = 41;
 
 // General functionality
 native void     DataTableClear (bool global);
@@ -1061,10 +1076,6 @@ native int          DataTableGetReply (bool global, string name);
 // - c_dataTypeRevealer
 native void         DataTableSetRevealer (bool global, string name, revealer val);
 native revealer     DataTableGetRevealer (bool global, string name);
-
-// - c_dataTypeRoom
-native void         DataTableSetRoom (bool global, string name, int val);
-native int          DataTableGetRoom (bool global, string name);
 
 // - c_dataTypeSound
 native void         DataTableSetSound (bool global, string name, sound val);
@@ -1186,6 +1197,7 @@ const int c_triggerControlTypePulldown                  = 6;
 const int c_triggerControlTypeProgressBar               = 7;
 const int c_triggerControlTypeSlider                    = 8;
 const int c_triggerControlTypeEditBox                   = 9;
+const int c_triggerControlTypeFlash                     = 10;
 const int c_triggerControlTypeAchievement               = 11;
 
 // Control properties
@@ -1261,6 +1273,7 @@ native void     DialogControlSetEnabled (int control, playergroup players, bool 
 native void     DialogControlSetFullDialog (int control, playergroup players, bool isFullDialog);
 native void     DialogControlFadeTransparency  (int control, playergroup players, fixed fadeTime, fixed inTargetTransparency);
 
+native int      DialogControlGetDialog (int control);
 native int      DialogControlGetType (int control);
 native int      DialogControlGetWidth (int control, int player);
 native int      DialogControlGetHeight (int control, int player);
@@ -1354,8 +1367,8 @@ native void     PathingUpdate ();
 native void     PathingReset ();
 
 // Power
-native int      PowerLevel (int inPlayer, point inPos);
-native bool     PowerIsProvidedBy (int inPlayer, point inPos, unit inSource, int inMinLevel);
+native int      PowerLevel (int inPlayer, point inPos, string inLink);
+native bool     PowerIsProvidedBy (int inPlayer, point inPos, string inLink, unit inSource, int inMinLevel);
 
 // Height
 native int      CliffLevel (point inPos);
@@ -1404,14 +1417,50 @@ native void     EnvironmentShow (int inType, bool inShow);
 native bool     ConsoleCommand (string inText, bool allowDefault, bool allowMacros);
 native bool		GameIsDebugOptionSet (string inOptionName, int player);
 
+native void     GameSaveCreate (text inName, text inDescription, string inImage, bool inAutomatic);     //  Blizzard maps only
+
 const int c_gameSpeedSlower     = 0;
 const int c_gameSpeedSlow       = 1;
 const int c_gameSpeedNormal     = 2;
 const int c_gameSpeedFast       = 3;
 const int c_gameSpeedFaster     = 4;
 
+const int c_gameCheatAny               = -1;
+const int c_gameCheatCooldown          = 0;
+const int c_gameCheatDefeat            = 1;
+const int c_gameCheatFastBuild         = 2;
+const int c_gameCheatFastHeal          = 3;
+const int c_gameCheatFood              = 4;
+const int c_gameCheatFree              = 5;
+const int c_gameCheatGimme             = 6;
+const int c_gameCheatGod               = 7;
+const int c_gameCheatMinerals          = 8;
+const int c_gameCheatNoDefeat          = 9;
+const int c_gameCheatNoVictory         = 10;
+const int c_gameCheatResourceCustom    = 11;
+const int c_gameCheatShowmap           = 12;
+const int c_gameCheatTechTree          = 13;
+const int c_gameCheatTerrazine         = 14;
+const int c_gameCheatTimeOfDay         = 15;
+const int c_gameCheatUpgrade           = 16;
+const int c_gameCheatVespene           = 17;
+const int c_gameCheatVictory           = 18;
+const int c_gameCheatProgress          = 19;
+const int c_gameCheatScene             = 20;
+const int c_gameCheatTV                = 21;
+const int c_gameCheatCredits           = 22;
+const int c_gameCheatResearch          = 23;
+
+const int c_gameCheatCategoryPublic         = 0;
+const int c_gameCheatCategoryDevelopment    = 1;
+
 native text     GameMapName ();
 native text     GameMapDescription ();
+native bool     GameMapIsBlizzard ();
+
+native void     GameSetMissionTimePaused (bool inPaused);
+native bool     GameIsMissionTimePaused ();
+native fixed    GameGetMissionTime ();
 
 native fixed    GameGetSpeed ();
 native void     GameSetSpeedValue (int speed);
@@ -1421,8 +1470,9 @@ native int      GameGetSpeedValueMinimum ();
 native void     GameSetSpeedLocked (bool isLocked);
 native bool     GameIsSpeedLocked ();
 
-native string   GameAttributeGameValue (string name);
-native string   GameAttributePlayerValue (string name, int player);
+native string       GameAttributeGameValue (string name);
+native string       GameAttributePlayerValue (string name, int player);
+native playergroup  GameAttributePlayersForTeam (int team);
 
 native void     GameSetSeedLocked (bool locked);
 native bool     GameIsSeedLocked ();
@@ -1458,14 +1508,21 @@ const int c_gameOverDefeat  = 1;
 const int c_gameOverTie     = 2;
 
 native void     GameOver (int player, int type, bool showDialog, bool showScore);
-native void		RestartGame (playergroup inPlayerGroup);
+native void     RestartGame (playergroup inPlayerGroup);
+
+native void     GameCheatAllow (int cheat, bool allow);
+native bool     GameCheatIsAllowed (int cheat);
+native bool     GameCheatsEnabled (int category);
 
 // Game Events
 native void     TriggerAddEventMapInit (trigger t);
 native void     TriggerAddEventSaveGame (trigger t);
+native void     TriggerAddEventSaveGameDone (trigger t);
 native void     TriggerAddEventChatMessage (trigger t, int player, string inText, bool exact);
+native void     TriggerAddEventCheatUsed (trigger t, int player, int inCheat);
 
 native string   EventChatMessage (bool matchedOnly);
+native int      EventCheatUsed ();
 
 //--------------------------------------------------------------------------------------------------
 // Looping
@@ -1522,8 +1579,24 @@ native bool     MarkerGetMismatchFlag (marker m, int flag);
 // Math
 //--------------------------------------------------------------------------------------------------
 // General math
+native fixed Floor (fixed x);
+native fixed Ceiling (fixed x);
+native fixed Trunc (fixed x);
+native fixed Round (fixed x);
 native fixed SquareRoot (fixed x);
+native fixed Pow2 (fixed x);
+native fixed Log2 (fixed x);
 native fixed Pow (fixed x, fixed power);
+
+native int FloorI (fixed x);
+native int CeilingI (fixed x);
+native int TruncI (fixed x);
+native int RoundI (fixed x);
+native int SquareRootI (fixed x);
+native int Pow2I (fixed x);
+native int Log2I (fixed x);
+native int PowI (fixed x, fixed power);
+
 native fixed ModF (fixed x, fixed m);
 native fixed MinF (fixed x1, fixed x2);
 native fixed MaxF (fixed x1, fixed x2);
@@ -1607,6 +1680,8 @@ native bool     MercenaryIsRecentlyPurchased (int inMercenaryId);
 
 native void     MercenarySetSelected (playergroup inPlayerGroup, int inMercenaryId);
 native int      MercenaryGetSelected (int player);
+native void     MercenaryPanelSetCloseButtonEnabled (playergroup players, bool inEnabled);
+native void     MercenaryPanelSetDismissButtonEnabled (playergroup players, bool inEnabled);
 
 // Mercenary events
 native void     TriggerAddEventMercenaryPanelExit (trigger t, int player);
@@ -1632,6 +1707,11 @@ native void    EngineReset ();
 // Movie
 //--------------------------------------------------------------------------------------------------
 native void     MoviePlayAfterGame (playergroup players, string assetLink);
+native void     MovieStartRecording (string inName);     //  Blizzard maps only
+native void     MovieStopRecording ();     //  Blizzard maps only
+native void     MovieAddSubTitle (string title, int duration, int timeStamp);     //  Blizzard maps only
+native void     MovieAddSubTitleText (text title, int duration, int timeStamp);     //  Blizzard maps only
+native void     MovieAddTriggerFunction (string functionName, int timeStamp);     //  Blizzard maps only
 
 native void     TriggerAddEventMovieStarted (trigger t, int player);
 native void     TriggerAddEventMovieFinished (trigger t, int player);
@@ -1836,6 +1916,10 @@ native void         PlanetSetTechnologyUnitLink (int inPlanetId, string inUnitLi
 native void         PlanetPanelSetContactButtonState (playergroup players, int inState);
 native int          PlanetPanelGetContactButtonState (int player);
 native void         PlanetPanelSetBackButtonEnabled (playergroup players, bool inEnabled);
+native void         PlanetPanelSetDismissButtonEnabled (playergroup players, bool inEnabled);
+native void         PlanetPanelSetBackButtonText (playergroup players, text inText);
+native void         PlanetPanelSetBackButtonShortcut (playergroup players, text inText);
+native void         PlanetPanelSetBackButtonTooltip (playergroup players, text inText);
 native void         PlanetPanelSetBackgroundImage (playergroup players, string inFilePath);
 
 // Planet events
@@ -1852,6 +1936,7 @@ native int          EventPlanetPanelDifficultySelected ();
 //--------------------------------------------------------------------------------------------------
 // Victory Panel
 //--------------------------------------------------------------------------------------------------
+native void         VictoryPanelSetVictoryText (text inText);
 native void         VictoryPanelSetMissionTitle (text inText);
 native void         VictoryPanelSetMissionText (text inText);
 native void         VictoryPanelSetMissionTimeTitle (text inText);
@@ -1864,6 +1949,8 @@ native void         VictoryPanelSetStatisticsTitle (text inText);
 native void         VictoryPanelSetCustomStatisticText (text inText);
 native void         VictoryPanelSetCustomStatisticValue (text inText);
 native void         VictoryPanelSetPlanetModelLink (string inModelLink);
+native void         VictoryPanelSetBackgroundFilePath (string inFilePath);
+native void         VictoryPanelSetSummaryBackgroundFilePath (string inFilePath);
 native void         VictoryPanelAddCustomStatisticLine (text inText, text inValueText);
 native void         VictoryPanelClearCustomStatisticTable ();
 native void         VictoryPanelAddTrackedStatistic (string inStatistic);
@@ -1889,31 +1976,6 @@ native void         HelpPanelEnableTechGlossaryButton (playergroup inPlayerGroup
 native void         HelpPanelShowTechTreeRace (playergroup inPlayerGroup, string inRace, bool inShow);
 
 native void         TipAlertPanelClear (playergroup inPlayerGroup);
-
-//--------------------------------------------------------------------------------------------------
-// Room
-//--------------------------------------------------------------------------------------------------
-const int c_invalidRoomId = 0;
-
-native void         RoomPanelSetPositionUnit (unit inUnit);
-
-native void	        RoomPanelAddButton (playergroup players, text buttonText, string iconPath);
-native int          RoomPanelLastAdded ();
-
-native void	        RoomPanelRemoveButton (int roomId);
-native void	        RoomPanelRemoveAllButtons (playergroup players);
-native void         RoomPanelShowRoomButton (int roomId, playergroup players, bool isVisible);
-native void         RoomPanelSetButtonPressedIcon (int inRoomId, string inPressedIconPath);
-native void         RoomPanelSetButtonEnabled (int inRoomId, bool inEnabled);
-
-// Room events
-native void         TriggerAddEventRoomPanelPressedButton (trigger t, int player, int roomId);
-native void         TriggerAddEventRoomPanelCanceled (trigger t, int player);
-
-native void         TriggerAddEventRoomPanelMouseRollOver (trigger t, int player);
-native void         TriggerAddEventRoomPanelMouseRollOut (trigger t, int player);
-
-native int          EventRoomPanelButtonPressed ();
 
 //--------------------------------------------------------------------------------------------------
 // Players
@@ -2012,6 +2074,7 @@ native int PlayerValidateEffectPoint (int inPlayer, string inEffect, point inTar
 native int PlayerValidateEffectUnit (int inPlayer, string inEffect, unit inTarget);
 
 // Player scores
+native void PlayerScoreValueEnableAll (int player, bool enable);
 native void PlayerScoreValueEnable (int player, string value, bool enable);
 native fixed PlayerScoreValueGetAsFixed (int player, string value);
 native int PlayerScoreValueGetAsInt (int player, string value);
@@ -2028,9 +2091,28 @@ native void TriggerAddEventPlayerAllianceChange (trigger inTrigger, int player);
 native void TriggerAddEventPlayerLeft (trigger inTrigger, int player, int inResult);
 native void TriggerAddEventPlayerPropChange (trigger inTrigger, int player, int inProp);
 native void TriggerAddEventPlayerAIWave (trigger inTrigger, int player);
+native void TriggerAddEventPlayerEffectUsed (trigger t, int player, string inEffect);
 
-native int  EventPlayer ();
-native int  EventPlayerProperty ();
+// Effect amounts
+const int c_effectAmountAbsorbed    = 0;
+const int c_effectAmountDamaged     = 1;
+const int c_effectAmountDodged      = 2;
+const int c_effectAmountFound       = 3;
+const int c_effectAmountHealed      = 4;
+const int c_effectAmountKilled      = 5;
+const int c_effectAmountSplashed    = 6;
+
+native int      EventPlayer ();
+native int      EventPlayerProperty ();
+native int      EventPlayerPropertyChangeInt ();
+native fixed    EventPlayerPropertyChangeFixed ();
+native string   EventPlayerEffectUsed ();
+native point    EventPlayerEffectUsedPoint (int inLocation);
+native unit     EventPlayerEffectUsedUnit (int inLocation);
+native int      EventPlayerEffectUsedUnitOwner (int inLocation);
+native string   EventPlayerEffectUsedUnitType (int inLocation);
+native int      EventPlayerEffectUsedAmountInt (int inAmount, bool total);
+native fixed    EventPlayerEffectUsedAmountFixed (int inAmount, bool total);
 
 // Difficulty info
 native text DifficultyName (int inDifficulty);
@@ -2120,6 +2202,7 @@ native void         PortraitWaitForLoad (int p);
 native int          PortraitGetGame ();
 native int          PortraitGetPlanetPanel ();
 native void         PortraitSetModel (int p, string modelLink, bool waitUntilLoaded);
+native void         PortraitSetModelAnim (int p, string modelLink, string anim, int flags, bool waitUntilLoaded);
 native void         PortraitSetAnim (int p, string anim);
 native void         PortraitSetCamera (int p, string cameraName);
 native void         PortraitSetSize (int p, int width, int height);
@@ -2492,6 +2575,9 @@ native void     SoundtrackWait (string soundtrack);
 // Story Mode
 //--------------------------------------------------------------------------------------------------
 native void     StoryMode (playergroup players, bool storyMode);     //  Blizzard maps only
+native void     StorySetChange ();     //  Blizzard maps only
+
+native void     CampaignMode (playergroup players, bool campaignMode);     //  Blizzard maps only
 
 //--------------------------------------------------------------------------------------------------
 // Strings
@@ -2755,6 +2841,9 @@ native int      TimerWindowCreate (timer inTimer, text inTitle, bool inShow, boo
 native int      TimerWindowLastCreated ();
 native void     TimerWindowDestroy (int inWindow);
 
+native void     TimerWindowSetPosition (int inWindow, int inX, int inY);
+native void     TimerWindowResetPosition (int inWindow);
+
 native void     TimerWindowShow (int inWindow, playergroup inPlayers, bool inShow);
 native bool     TimerWindowVisible (int inWindow, int inPlayer);
 native void     TimerWindowSetTimer (int inWindow, timer inTimer);
@@ -2790,6 +2879,8 @@ const int c_transmissionDurationAdd     = 1;
 const int c_transmissionDurationSub     = 2;
 const int c_transmissionDurationSet     = 3;
 
+const int c_transmissionOptionHideAlertPanel    = 1;
+
 native transmissionsource   TransmissionSource ();
 native transmissionsource   TransmissionSourceFromUnit (unit u, bool flash, bool overridePortrait, string anim);
 native transmissionsource   TransmissionSourceFromUnitType (string unitType, bool overridePortrait);
@@ -2811,6 +2902,7 @@ native int                  TransmissionSend (
 native int                  TransmissionLastSent ();
 native void                 TransmissionClear (int t);
 native void                 TransmissionClearAll ();
+native void                 TransmissionSetOption (int inOptionIndex, bool inValue);
 native void                 TransmissionWait (int t, fixed offset);
 
 //--------------------------------------------------------------------------------------------------
@@ -3005,6 +3097,12 @@ const int c_unitPropMovementSpeed   = 20;
 const int c_unitPropTurnRate        = 21; // Read-only
 const int c_unitPropResources       = 22;
 const int c_unitPropRadius          = 23; // Read-only
+const int c_unitPropXP              = 24;
+const int c_unitPropLevel           = 25;
+const int c_unitPropBountyMinerals  = 26;
+const int c_unitPropBountyVespene   = 27;
+const int c_unitPropBountyTerrazine = 28;
+const int c_unitPropBountyCustom    = 29;
 
 const bool c_unitPropCurrent = true;
 const bool c_unitPropNormal  = false;
@@ -3030,6 +3128,8 @@ native void     UnitCreateEffectPoint (unit inUnit, string inEffect, point inTar
 native void     UnitCreateEffectUnit (unit inUnit, string inEffect, unit inTarget);
 native int      UnitValidateEffectPoint (unit inUnit, string inEffect, point inTarget);
 native int      UnitValidateEffectUnit (unit inUnit, string inEffect, unit inTarget);
+
+native void     UnitDamage (unit inAttacker, string inEffect, unit inVictim, fixed inBonus);
 
 // Unit AI options
 const int c_unitAIOptionUsable      = 0;
@@ -3228,15 +3328,20 @@ native int UnitTechTreeUnitCount (unit inUnit, string unitType, int countType);
 native int UnitTechTreeUpgradeCount (unit inUnit, string upgradeType, int countType);
 
 // Unit inventory
-const int c_unitInventoryCountCarried    = 0;
-const int c_unitInventoryCountEmpty      = 1;
-const int c_unitInventoryCountTotal      = 2;
+const int c_unitInventoryCountCarried   = 0;
+const int c_unitInventoryCountEmpty     = 1;
+const int c_unitInventoryCountTotal     = 2;
 
+native int       UnitInventoryContainer (unit inUnit);
 native int       UnitInventoryCount (unit inUnit, int inCountType);
-native unit      UnitInventoryItem (unit inUnit, int inIndex);
-native unitgroup UnitInventoryGroup (unit inUnit);
 native unit      UnitInventoryCreate (unit inUnit, string itemType);
+native unitgroup UnitInventoryGroup (unit inUnit);
+native int       UnitInventoryIndex (unit inItem);
+native unit      UnitInventoryItem (unit inUnit, int inIndex);
 native unit      UnitInventoryLastCreated ();
+native void      UnitInventoryMove (unit inItem, int inContainer, int inSlot);
+native int       UnitInventorySlot (unit inItem);
+native unit      UnitInventoryUnit (unit inItem);
 
 // Unit weapons
 native void         UnitWeaponAdd (unit inUnit, string inWeapon, string inTurret);
@@ -3285,6 +3390,19 @@ const int c_unitDamageTypeMelee     = 1;
 const int c_unitDamageTypeRanged    = 2;
 const int c_unitDamageTypeSplash    = 3;
 
+// Inventory changes
+const int c_unitInventoryChangeUses             = 0;
+const int c_unitInventoryChangeExhausts         = 1;
+const int c_unitInventoryChangeGains            = 2;
+const int c_unitInventoryChangeLoses            = 3;
+const int c_unitInventoryChangePicksUp          = 4;
+const int c_unitInventoryChangeDrops            = 5;
+const int c_unitInventoryChangeBuys             = 6;
+const int c_unitInventoryChangeSells            = 7;
+const int c_unitInventoryChangeGives            = 8;
+const int c_unitInventoryChangeReceives         = 9;
+const int c_unitInventoryChangeMoves            = 10;
+
 native void     TriggerAddEventUnitCreated (trigger t, unitref u, string creatorAbil, string creatorBehavior);
 native void     TriggerAddEventUnitRemoved (trigger t, unitref u);
 native void     TriggerAddEventUnitDied (trigger t, unitref u);
@@ -3296,6 +3414,7 @@ native void     TriggerAddEventUnitAttacked (trigger t, unitref u);
 native void     TriggerAddEventUnitAttributeChange (trigger t, unitref u);
 native void     TriggerAddEventUnitDamaged (trigger inTrigger, unitref inUnit, int inDamageType, int inDamageFatal, string inEffect);
 native void     TriggerAddEventUnitBecomesIdle (trigger t, unitref u, bool idle);
+native void     TriggerAddEventUnitInventoryChange (trigger t, unitref u, int inChangeType, unitref inItem);
 
 native unit     EventUnit ();
 native unit     EventUnitTarget ();
@@ -3321,8 +3440,19 @@ native string   EventUnitBehavior ();
 native fixed    EventUnitXPDelta ();
 native int      EventUnitAttributePoints ();
 
+// - c_unitEventInventoryChange
+native unit     EventUnitInventoryItem ();
+native int      EventUnitInventoryItemContainer ();
+native int      EventUnitInventoryItemSlot ();
+native point    EventUnitInventoryItemTargetPoint ();
+native unit     EventUnitInventoryItemTargetUnit ();
+
 // Property change events
 native void     TriggerAddEventUnitProperty (trigger t, unitref u, int prop);
+
+native int      EventUnitProperty ();
+native int      EventUnitPropertyChangeInt ();
+native fixed    EventUnitPropertyChangeFixed ();
 
 // State events
 //   region/range events    - true = entered,       false = exited
@@ -3344,6 +3474,11 @@ native unit     EventUnitCargo ();
 native void     TriggerAddEventUnitSelected (trigger t, unitref u, int player, bool state);
 native void     TriggerAddEventUnitClick (trigger t, unitref u, int player);
 native void     TriggerAddEventUnitHighlight (trigger t, unitref u, int player, bool state);
+
+// Change Owner
+native void     TriggerAddEventUnitChangeOwner (trigger t, unitref u);
+native int      EventUnitOwnerOld ();
+native int      EventUnitOwnerNew ();
 
 // Order events
 native void     TriggerAddEventUnitOrder (trigger t, unitref u, abilcmd a);
@@ -3503,6 +3638,7 @@ const int   c_messageAreaSubtitle           = 5;
 const int   c_messageAreaCinematic          = 6;
 const int   c_messageAreaDebug              = 7;
 const int   c_messageAreaWarning            = 8;
+const int   c_messageAreaCheat              = 9;
 
 const int   c_uiModeFullscreen              = 0;
 const int   c_uiModeLetterboxed             = 1;
@@ -3634,26 +3770,40 @@ const int c_customDialogResultYes = 1;
 const int c_customDialogResultNo  = 2;
     
 // Frames that can be synchronously shown / hidden
-const int c_syncFrameTypeMenuBar              = 0;
-const int c_syncFrameTypeCashPanel            = 1;
-const int c_syncFrameTypeTipAlertPanel        = 2;
-const int c_syncFrameTypeObjectivePanel       = 3;    
-const int c_syncFrameTypeCharacterSheetButton = 4;
-const int c_syncFrameTypeSupply               = 5;
-const int c_syncFrameTypeResourcePanel        = 6;
-const int c_syncFrameTypeRoomPanel            = 7;
-const int c_syncFrameTypePlanetPanel          = 8;
-const int c_syncFrameTypeMercenaryPanel       = 9;
-const int c_syncFrameTypeResearchPanel        = 10;
-const int c_syncFrameTypePurchasePanel        = 11;
-const int c_syncFrameTypeVictoryPanel         = 12;
-const int c_syncFrameTypeBattleReportPanel    = 13;
-const int c_syncFrameTypeAlertPanel           = 14;
-const int c_syncFrameTypeHeroPanel            = 15;
-const int c_syncFrameTypeErrorDisplayPanel    = 16;
-const int c_syncFrameTypeCreditsPanel		  = 17;
-const int c_syncFrameTypeTechTreePanel        = 18;
-const int c_syncFrameTypeTechGlossaryPanel    = 19;
+const int c_syncFrameTypeFirst                = 0;
+
+const int c_syncFrameTypeMenuBar                = 0;
+const int c_syncFrameTypeCashPanel              = 1;
+const int c_syncFrameTypeTipAlertPanel          = 2;
+const int c_syncFrameTypeObjectivePanel         = 3;    
+const int c_syncFrameTypeCharacterSheetButton   = 4;
+const int c_syncFrameTypeSupply                 = 5;
+const int c_syncFrameTypeResourcePanel          = 6;
+const int c_syncFrameTypeRoomPanel              = 7;
+const int c_syncFrameTypePlanetPanel            = 8;
+const int c_syncFrameTypeMercenaryPanel         = 9;
+const int c_syncFrameTypeResearchPanel          = 10;
+const int c_syncFrameTypePurchasePanel          = 11;
+const int c_syncFrameTypeVictoryPanel           = 12;
+const int c_syncFrameTypeBattleReportPanel      = 13;
+const int c_syncFrameTypeAlertPanel             = 14;
+const int c_syncFrameTypeHeroPanel              = 15;
+const int c_syncFrameTypeErrorDisplayPanel      = 16;
+const int c_syncFrameTypeCreditsPanel		    = 17;
+const int c_syncFrameTypeTechTreePanel          = 18;
+const int c_syncFrameTypeTechGlossaryPanel      = 19;
+const int c_syncFrameTypeBattleUI               = 20;
+const int c_syncFrameTypeMinimapPanel           = 21;
+const int c_syncFrameTypeCommandPanel           = 22;
+const int c_syncFrameTypeInventoryPanel         = 23;
+const int c_syncFrameTypeAllianceButton         = 24;
+const int c_syncFrameTypeTeamResourceButton     = 25;
+const int c_syncFrameTypeAchievementMenuButton  = 26;
+const int c_syncFrameTypeHelpMenuButton         = 27;
+const int c_syncFrameTypeMissionTimePanel       = 28;
+
+// This should always be equivalent to the highest value in the syncFrameType list above
+const int c_syncFrameTypeLast                   = 28;
 
 // Game Menu Dialog Items
 const int c_gameMenuDialogItemAny                     = -1;
@@ -3707,6 +3857,9 @@ native void         UIHideTextCrawl (playergroup inPlayers);
 native void         UIUnitColorStyleOverride (playergroup inPlayers, int style);
 native void         UIUnitColorStyleClearOverride (playergroup inPlayers);
 
+native void         UIFlyerHelperOverride (playergroup inPlayers, int display);
+native void         UIFlyerHelperClearOverride (playergroup inPlayers);
+
 native void         UISetNextLoadingScreen (string imagePath, text title, text subtitle, text body, text  help, bool waitForInput);
 native void         UISetNextLoadingScreenImageScale (int imageScale);
 native void         UISetNextLoadingScreenTextPosition (int anchor, int offsetX, int offsetY, int width, int height);
@@ -3739,10 +3892,20 @@ native void			UIShowCustomDialog (playergroup inPlayers, int inType, text inTitl
 native void         UISetResourceTradeCountdownTime (int time);
 
 native void         UISetButtonHighlighted (playergroup inPlayers, abilcmd inAbilCmd, bool inHighlight);
+
 native void         UISetMiniMapBackGroundColor (color inColor);
+native void         UISetMiniMapCameraFoVVisible (bool visible);
 
 native void         UISetCommandAllowed (playergroup players, int option, bool allow);
 native void         UISetCommandDisallowedMessage (playergroup players, text message);
+
+native void         UISetChallengeMode (playergroup players, bool challengeMode);     //  Blizzard maps only
+native void         UISetChallengeScoreText (playergroup players, string challengeId, text scoreText);     //  Blizzard maps only
+native void         UISetChallengeHighScore (playergroup players, string challengeName, int highScore);     //  Blizzard maps only
+native void         UISetChallengeCompleted (playergroup players, string challengeName, bool completed);     //  Blizzard maps only
+
+native void         UISetBattleNetButtonOffset (playergroup inPlayers, int inOffsetX, int inOffsetY);
+native void         UIClearBattleNetButtonOffset (playergroup inPlayers);
 
 // User Interface events
 native void         TriggerAddEventAbortMission (trigger t, int player);

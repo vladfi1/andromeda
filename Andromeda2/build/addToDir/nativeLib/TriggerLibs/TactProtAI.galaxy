@@ -7,6 +7,7 @@
 //  *** Disruptor ***
 //--------------------------------------------------------------------------------------------------
 const fixed c_forceFieldRadius = 3;
+const fixed c_forceFieldRange  = 8;
 
 order AIForceField (int player, unit aiUnit, unitgroup scanGroup, fixed scanRange, marker m) {
     order ord;
@@ -176,7 +177,7 @@ static bool Hallucinate (int player, unit aiUnit, unitgroup scanGroup) {
         }
     }
 
-    if (AITechCount(player, c_PR_DisruptorHallucination, c_techCountCompleteOnly) < 1) {
+    if (AITechCount(player, c_PR_SentryHallucination, c_techCountCompleteOnly) < 1) {
         return false;
     }
 
@@ -251,29 +252,33 @@ static bool Hallucinate (int player, unit aiUnit, unitgroup scanGroup) {
     return false;
 }
 
-//--------------------------------------------------------------------------------------------------
-static bool ForceField (int player, unit aiUnit, unitgroup scanGroup) {
-
-    return false;
-
+////--------------------------------------------------------------------------------------------------
+//static bool ForceField (int player, unit aiUnit, unitgroup scanGroup) {
+//
 //    forceFieldMarker = MarkerCastingUnit(c_MK_Snipe, aiUnit);
 //    MarkerSetMatchFlag(forceFieldMarker, c_markerMatchLink, true);
 //    MarkerSetMismatchFlag(forceFieldMarker, c_markerMatchId, true);
 //
-//    ord = AIForceField(player, aiUnit, scanGroup, c_disruptorRange, forceFieldMarker);
+//    ord = AIForceField(player, aiUnit, scanGroup, c_forceFieldRange, forceFieldMarker);
 //
 //    if (ord) {
 //        AICast(aiUnit, ord, forceFieldMarker, c_castHold);
-//        return;
+//        return true;
 //    }
-}
+//
+//    return false;
+//}
 
 //--------------------------------------------------------------------------------------------------
 static bool GuardianShield (int player, unit aiUnit, unitgroup scanGroup) {
     order ord;
     unitgroup enemyGroup;
 
-    if (UnitBehaviorCount(aiUnit, c_BF_GuadrianShield) > 0) {
+    if (!AIUnitIsInCombat(aiUnit)) {
+        return false;
+    }
+
+    if (UnitBehaviorCount(aiUnit, c_BF_GuardianShield) > 0) {
         return false;
     }
 
@@ -299,9 +304,9 @@ void AIThinkDisruptor (int player, unit aiUnit, unitgroup scanGroup) {
     if (Hallucinate(player, aiUnit, scanGroup)) {
         return;
     }
-    if (ForceField(player, aiUnit, scanGroup)) {
-        return;
-    }
+    //if (ForceField(player, aiUnit, scanGroup)) {
+    //    return;
+    //}
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -481,14 +486,6 @@ void AIThinkDisruptor (int player, unit aiUnit, unitgroup scanGroup) {
 //  *** MOTHERSHIP ***
 //--------------------------------------------------------------------------------------------------
 
-fixed MinToCastMotherShip (int player) {
-    //return AIAbilityFixed(player, c_AB_Vortex, c_fieldEnergyCost) + //  To Save enough mana for wormhole transit, swap out the commented lines.
-    //       AIAbilityFixed(player, c_AB_WormholeTransit, c_fieldEnergyCost);
-    return AIAbilityFixed(player, c_AB_Vortex, c_fieldEnergyCost);
-}
-
-const fixed c_enemyMultiplierVortex = 1.25;
-
 //--------------------------------------------------------------------------------------------------
 order Vortex (int player, unit aiUnit, unitgroup scanGroup) {
     point loc;
@@ -503,9 +500,9 @@ order Vortex (int player, unit aiUnit, unitgroup scanGroup) {
 
     loc = AIBestTargetPoint(
         vortexGroup,
-        5, // min hits
+        6, // min hits
         40, // damage base
-        4.0, // score
+        4.5, // score
         AIEffectFixed(player, c_EF_VortexArea, c_fieldAreaRadius0),
         UnitGetPosition(aiUnit),
         AIAbilityFixed(player, c_AB_Vortex, c_fieldRange0),
@@ -523,125 +520,163 @@ order Vortex (int player, unit aiUnit, unitgroup scanGroup) {
     return ord;
 }
 
-//--------------------------------------------------------------------------------------------------
-order TemporalRift (int player, unit aiUnit, unitgroup scanGroup) {
-    point loc;
-    
-    order ord = AITacticalOrder(player, aiUnit, c_AB_TemporalRift);
-    if (ord == null) {
-        return null;
-    }
+////--------------------------------------------------------------------------------------------------
+//order TemporalRift (int player, unit aiUnit, unitgroup scanGroup) {
+//    point loc;
+//    
+//    order ord = AITacticalOrder(player, aiUnit, c_AB_TemporalRift);
+//    if (ord == null) {
+//        return null;
+//    }
+//
+//    loc = AIBestTargetPoint(
+//        AIEffectGroup(player, c_EF_TemporalRiftSearchArea, scanGroup),
+//        5, // min hits
+//        40, // damage base
+//        3.85, // min score
+//        AIEffectFixed(player, c_EF_TemporalRiftSearchArea, c_fieldAreaRadius0),
+//        UnitGetPosition(aiUnit),
+//        AIAbilityFixed(player, c_AB_TemporalRift, c_fieldRange0), 
+//        c_unitAttributeNone
+//    );
+//
+//    if (loc == null) {
+//        return null;
+//    }
+//    
+//    OrderSetTargetPoint(ord, loc);
+//    if (!UnitOrderIsValid(aiUnit, ord)) {
+//        return null;
+//    }
+//    return ord;
+//}
 
-    loc = AIBestTargetPoint(
-        AIEffectGroup(player, c_EF_TemporalRiftSearchArea, scanGroup),
-        5, // min hits
-        40, // damage base
-        3.85, // min score
-        AIEffectFixed(player, c_EF_TemporalRiftSearchArea, c_fieldAreaRadius0),
-        UnitGetPosition(aiUnit),
-        AIAbilityFixed(player, c_AB_TemporalRift, c_fieldRange0), 
-        c_unitAttributeNone
-    );
-
-    if (loc == null) {
-        return null;
-    }
-    
-    OrderSetTargetPoint(ord, loc);
-    if (!UnitOrderIsValid(aiUnit, ord)) {
-        return null;
-    }
-    return ord;
-}
+//const fixed c_enemyMultiplierVortex = 1.25;
 
 //--------------------------------------------------------------------------------------------------
 void AIThinkMothership (int player, unit aiUnit, unitgroup scanGroup) {
     order ord;
-    unitfilter f;
-    fixed allyEnemyRatio;
-    aifilter filter;
-    unitgroup targetGroup;
-    
-    //  Make sure to save mana so we use both abilities.
-    //
-    if (UnitGetPropertyInt(aiUnit, c_unitPropEnergy, c_unitPropCurrent) < MinToCastMotherShip(player)) {
-        return;
-    }
-    
-    //  If a unit already has temporal rift, filter it.
-    //
-    filter = AIFilter(player);
-    AISetFilterBehaviorCount(filter, c_noBehaviorMin, c_noBehaviorMax, c_BF_TemporalBuff);
-    targetGroup = AIGetFilterGroup(filter, scanGroup);
 
-    //  Get the ratio of allies to enemies to see if we should cast vortex or temporal rift
-    //
-    f = UnitFilterStr("-;Missile,Dead,Stasis,Worker");
-    allyEnemyRatio = AIAllyEnemyRatio(player, UnitGetPosition(aiUnit), f, AIAbilityFixed(player, c_AB_Vortex, c_fieldRange0) + 3, c_noThreshold);
-
-    if (allyEnemyRatio < c_enemyMultiplierVortex) {
-        ord = Vortex(player, aiUnit, targetGroup);
-        if (ord != null) {
-            AICast(aiUnit, ord, c_noMarker, c_castRetreat);
-            return;
-        }
-    }
-
-    ord = TemporalRift(player, aiUnit, targetGroup);
+    ord = Vortex(player, aiUnit, scanGroup);
     if (ord != null) {
         AICast(aiUnit, ord, c_noMarker, c_castRetreat);
         return;
     }
+    
+    //unitfilter f;
+    //fixed allyEnemyRatio;
+    //aifilter filter;
+    //unitgroup targetGroup;
+
+    ////  If a unit already has temporal rift, filter it.
+    ////
+    //filter = AIFilter(player);
+    //AISetFilterBehaviorCount(filter, c_noBehaviorMin, c_noBehaviorMax, c_BF_TemporalBuff);
+    //targetGroup = AIGetFilterGroup(filter, scanGroup);
+
+    //  Get the ratio of allies to enemies to see if we should cast vortex or temporal rift
+    //
+    //f = UnitFilterStr("-;Missile,Dead,Stasis,Worker");
+    //allyEnemyRatio = AIAllyEnemyRatio(player, UnitGetPosition(aiUnit), f, AIAbilityFixed(player, c_AB_Vortex, c_fieldRange0) + 3, c_noThreshold);
+
+    //if (allyEnemyRatio < c_enemyMultiplierVortex) {
+    //     test vortex
+    //}
+
+    //ord = TemporalRift(player, aiUnit, targetGroup);
+    //if (ord != null) {
+    //    AICast(aiUnit, ord, c_noMarker, c_castRetreat);
+    //    return;
+    //}
 }
 
 //--------------------------------------------------------------------------------------------------
 //  *** HIGH TEMPLAR ***
 //--------------------------------------------------------------------------------------------------
 
-const int c_phaseShiftMinHealth = 425; //  carriers and above.
-const int c_phaseShiftLowVitMinHealth = 300;
+//const int c_phaseShiftMinHealth = 425; //  carriers and above.
+//const int c_phaseShiftLowVitMinHealth = 300;
+//
+//order PhaseShift (int player, unit aiUnit, unitgroup scanGroup, marker mark, bool lowVitality) {
+//    order ord;
+//    aifilter filter;
+//    bool airAllies;
+//    int minVitality;
+//    unitgroup targetGroup;
+//
+//    ord = AITacticalOrder(player, aiUnit, c_AB_PhaseShift);
+//    if (ord == null) {
+//        return null;
+//    }
+//
+//    if (lowVitality) {
+//        minVitality = c_phaseShiftLowVitMinHealth;
+//    }
+//    else {
+//        minVitality = c_phaseShiftMinHealth;
+//    }
+//
+//    //  Test to see if we have airborne allies, to determine whether to PhaseShift
+//    //  an enemy that only attacks air.
+//    airAllies = AINearbyPlaneTest(UnitGetPosition(aiUnit), player, AIAbilityFixed(player, c_AB_PhaseShift, c_fieldRange0), c_planeAir, c_unitAllianceAlly);
+//    
+//    filter = AIFilter(player);
+//    AISetFilterBits(filter, UnitFilterStr(AIAbilityStr(player, c_AB_PhaseShift, c_fieldTargetFiltersAB)));
+//    AISetFilterLife(filter, minVitality, c_noMax);
+//    AISetFilterMarker(filter, c_noMarkersMin, c_noMarkersMax, mark);
+//    AISetFilterCanAttackAlly(filter, c_groundAlliesNearby, airAllies);
+//    
+//    targetGroup = AIGetFilterGroup(filter, scanGroup);
+//    if (targetGroup == null) {
+//        return null;
+//    }
+//
+//    return AIUnitGroupGetValidOrder(targetGroup, ord, aiUnit, c_forwards);
+//}
 
-order PhaseShift (int player, unit aiUnit, unitgroup scanGroup, marker mark, bool lowVitality) {
+const int c_feedbackMinDamageNormal = 100;
+const int c_feedbackMinDamageLowVitality = 50;
+
+//---------------------------------------------------------------------------------------------
+order Feedback (int player, unit aiUnit, unitgroup scanGroup, marker mark, bool lowVitality) {
     order ord;
+    fixed damage;
     aifilter filter;
-    bool airAllies;
-    int minVitality;
+    int minEnergy;
     unitgroup targetGroup;
 
-    ord = AITacticalOrder(player, aiUnit, c_AB_PhaseShift);
-    if (ord == null) {
+    ord = AICreateOrder(player, c_AB_Feedback, 0);
+    if (!UnitOrderIsValid(aiUnit, ord)) {
         return null;
-    }
+    } 
 
     if (lowVitality) {
-        minVitality = c_phaseShiftLowVitMinHealth;
+        minEnergy = c_feedbackMinDamageLowVitality;
     }
     else {
-        minVitality = c_phaseShiftMinHealth;
+        minEnergy = c_feedbackMinDamageNormal;
     }
 
-    //  Test to see if we have airborne allies, to determine whether to PhaseShift
-    //  an enemy that only attacks air.
-    airAllies = AINearbyPlaneTest(UnitGetPosition(aiUnit), player, AIAbilityFixed(player, c_AB_PhaseShift, c_fieldRange0), c_planeAir, c_unitAllianceAlly);
-    
     filter = AIFilter(player);
-    AISetFilterBits(filter, UnitFilterStr(AIAbilityStr(player, c_AB_PhaseShift, c_fieldTargetFiltersAB)));
-    AISetFilterLife(filter, minVitality, c_noMax);
+    AISetFilterAlliance(filter, c_playerGroupEnemy);
+    AISetFilterBits(filter, UnitFilterStr(AIAbilityStr(player, c_AB_Feedback, c_fieldTargetFiltersAB)));
+    AISetFilterRange(filter, aiUnit, AIAbilityFixed(player, c_AB_Feedback, c_fieldRange0) + 1);
     AISetFilterMarker(filter, c_noMarkersMin, c_noMarkersMax, mark);
-    AISetFilterCanAttackAlly(filter, c_groundAlliesNearby, airAllies);
-    
+    AISetFilterEnergy(filter, minEnergy, c_noMax);
+
+    //  Pick a valid target, should probably sort these by highest energy
     targetGroup = AIGetFilterGroup(filter, scanGroup);
     if (targetGroup == null) {
         return null;
     }
 
-    return AIUnitGroupGetValidOrder(targetGroup, ord, aiUnit, c_forwards);
+    return AIUnitGroupGetValidOrder(targetGroup, ord, aiUnit, c_backwards);
 }
 
 //--------------------------------------------------------------------------------------------------
 const fixed c_EnemyMultiplierHighTemplar = 1.25;
 const fixed c_MinThreshold = 100.0;
-const int c_HighTemplarLowVitPerc = 50;
+const int c_HighTemplarLowVitPerc = 20;
 const int c_psiStormCooldown = c_tactTimerFirst;
 
 void UnitGroupTest (unitgroup scanGroup) {
@@ -668,32 +703,44 @@ void AIThinkHighTemplar (int player, unit aiUnit, unitgroup scanGroup) {
         }
     }
 
-    //  If we already have a psi storm order, ignore any new orders since psi storm is more important.
-    //  If we already have an PhaseShift order, ignore any new PhaseShift orders.
-    if (UnitOrderHasAbil(aiUnit, c_AB_PhaseShift) || UnitOrderHasAbil(aiUnit, c_AB_PsiStorm)) {
+    if (AIIsCampaign(player)) {
+        // not using feedback in campaign
         return;
     }
 
-    //  Low Vitality = less than 50%, then use this to escape.
+    //  If we already have a psi storm order, ignore any new orders since psi storm is more important.
+    //  If we already have an Feedback order, ignore any new Feedback orders.
+    if (UnitOrderHasAbil(aiUnit, c_AB_Feedback) || UnitOrderHasAbil(aiUnit, c_AB_PsiStorm)) {
+        return;
+    }
+    
     lowVitality = (UnitGetPropertyInt(aiUnit, c_unitPropVitalityPercent, c_unitPropCurrent) < c_HighTemplarLowVitPerc);
 
-    if (!lowVitality) {
-        //  Don't cast if the enemy only has 1 unit when we are at full health.
-        //  If we have less than 1.25 * the enemies forces.
-        f = UnitFilterStr("-;Missile,Dead,Stasis,Worker");
-        r = RegionCircle(UnitGetPosition(aiUnit), AIAbilityFixed(player, c_AB_PhaseShift, c_fieldRange0));
-        if ((UnitGroupCount(UnitGroupAlliance(player, c_unitAllianceEnemy, r, null, c_noMaxCount), c_unitCountAll) < 2) ||
-            AIAllyEnemyRatio(player, UnitGetPosition(aiUnit), f, AIAbilityFixed(player, c_AB_PhaseShift, c_fieldRange0), c_MinThreshold) > c_EnemyMultiplierHighTemplar) {
-            return;
-        }
-    }
-
-    mark = AIMarker(aiUnit, c_MK_PhaseShift);
-    ord = PhaseShift(player, aiUnit, scanGroup, mark, lowVitality);
+    mark = AIMarker(aiUnit, c_MK_Feedback);
+    ord = Feedback(player, aiUnit, scanGroup, mark, lowVitality);
     if (ord != null) {
-        AICast(aiUnit, ord, mark, c_castRetreat);
+        AICast(aiUnit, ord, mark, c_castHold);
         return;
     }
+
+    ////  Low Vitality = less than 50%, then use this to escape.
+    //if (!lowVitality) {
+    //    //  Don't cast if the enemy only has 1 unit when we are at full health.
+    //    //  If we have less than 1.25 * the enemies forces.
+    //    f = UnitFilterStr("-;Missile,Dead,Stasis,Worker");
+    //    r = RegionCircle(UnitGetPosition(aiUnit), AIAbilityFixed(player, c_AB_PhaseShift, c_fieldRange0));
+    //    if ((UnitGroupCount(UnitGroupAlliance(player, c_unitAllianceEnemy, r, null, c_noMaxCount), c_unitCountAll) < 2) ||
+    //        AIAllyEnemyRatio(player, UnitGetPosition(aiUnit), f, AIAbilityFixed(player, c_AB_PhaseShift, c_fieldRange0), c_MinThreshold) > c_EnemyMultiplierHighTemplar) {
+    //        return;
+    //    }
+    //}
+    //
+    //mark = AIMarker(aiUnit, c_MK_PhaseShift);
+    //ord = PhaseShift(player, aiUnit, scanGroup, mark, lowVitality);
+    //if (ord != null) {
+    //    AICast(aiUnit, ord, mark, c_castRetreat);
+    //    return;
+    //}
 }
 
 
@@ -801,7 +848,16 @@ void AIThinkNexus (int player, unit aiUnit, unitgroup scanGroup) {
     unitgroup prodGroup;
     aifilter filter;
 
+    // rally
+    if (AIEvalTacticalData(aiUnit, null)) {
+        return;
+    }
+
     if (AIIsCampaign(player)) {
+        return;
+    }
+    if (AITechCount(player, c_PB_Pylon, c_techCountCompleteOnly) < 1) {
+        // wait until we have a pylon to use chronoboost
         return;
     }
 

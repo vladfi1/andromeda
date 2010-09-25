@@ -8,7 +8,7 @@
 //--------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------
-order Transfusion (int player, unit aiUnit) {
+order Transfusion (int player, unit aiUnit, marker mark) {
     order ord;
     unitgroup group;
     aifilter filter;
@@ -31,6 +31,7 @@ order Transfusion (int player, unit aiUnit) {
 
     filter = AIFilter(player);
     AISetFilterAlliance(filter, c_playerGroupAlly);
+    AISetFilterMarker(filter, c_noMarkersMin, c_noMarkersMax, mark);
     AISetFilterLifeLost(filter, AIEffectFixed(player, c_EF_Transfusion, c_fieldEffectChange0), c_noMax);
     group = AIGetFilterGroup(filter, group);
     if (group == null) {
@@ -42,6 +43,7 @@ order Transfusion (int player, unit aiUnit) {
 }
 
 //--------------------------------------------------------------------------------------------------
+const int maxLarva = 16;
 order SpawnLarva (int player, unit aiUnit) {
     order ord;
     unitgroup hatcheries;
@@ -58,13 +60,10 @@ order SpawnLarva (int player, unit aiUnit) {
         return null;
     }
 
-    //  Don't cast if we already own at least 10 larva
+    //  Don't cast if we already own at least 16 larva
     //
-    larvaCount = 
-        TechTreeBehaviorCount(player, c_BF_MutantLarvaTimer, c_techCountQueuedOrBetter) * 4
-      + TechTreeUnitCount(player, c_ZU_Larva, c_techCountQueuedOrBetter)
-    ;
-    if (larvaCount >= 10) {
+    larvaCount = TechTreeUnitCount(player, c_ZU_Larva, c_techCountQueuedOrBetter);
+    if (larvaCount >= maxLarva) {
         return null;
     }
 
@@ -104,7 +103,7 @@ order CreepTumor (int player, unit aiUnit) {
     }
 
     //  Don't cast if there is no creep point set for this player.
-    p = AIGetBestCreepSpot(player, aiUnit, 8);
+    p = AIGetBestCreepSpot(player, aiUnit, 36);
     if (p == null) {
         return null;
     }
@@ -121,6 +120,7 @@ order CreepTumor (int player, unit aiUnit) {
 void AIThinkQueen (int player, unit aiUnit, unitgroup scanGroup) {
     order ord;
     unit heal;
+    marker mark;
 
     // burrow
     if (AIEvalTacticalData(aiUnit, null)) {
@@ -131,9 +131,10 @@ void AIThinkQueen (int player, unit aiUnit, unitgroup scanGroup) {
         AICast(aiUnit, ord, c_noMarker, c_castHold);
         return;
     }
-    ord = Transfusion(player, aiUnit);
+    mark = AIMarker(aiUnit, c_MK_Transfusion);
+    ord = Transfusion(player, aiUnit, mark);
     if (ord != null) {
-        AICast(aiUnit, ord, c_noMarker, c_castHold);
+        AICast(aiUnit, ord, mark, c_castHold);
         return;
     }
     ord = CreepTumor(player, aiUnit);
@@ -141,6 +142,42 @@ void AIThinkQueen (int player, unit aiUnit, unitgroup scanGroup) {
         AICast(aiUnit, ord, c_noMarker, c_castRetreat);
         return;
     }
+}
+
+//--------------------------------------------------------------------------------------------------
+//  *** CREEP TUMOR ***
+//--------------------------------------------------------------------------------------------------
+void AIThinkCreepTumor (int player, unit aiUnit, unitgroup scanGroup) {
+    order ord;
+    point p;
+
+    if (AIIsCampaign(player)) {
+        return;
+    }
+
+    //  Only cast if idle.
+    //
+    if (UnitOrder(aiUnit, 0) != null) {
+        return;
+    }
+    
+    ord = AICreateOrder(player, c_AB_CreepTumorBuild, 0);
+    if (!UnitOrderIsValid(aiUnit, ord)) {
+        return;
+    }
+
+    //  Don't cast if there is no creep point set for this player.
+    p = AIGetBestCreepSpot(player, aiUnit, 9);
+    if (p == null) {
+        return;
+    }
+
+    OrderSetTargetPlacement(ord, p, aiUnit, c_ZU_CreepTumor);
+    if (!UnitOrderIsValid(aiUnit, ord)) {
+        return;
+    }
+
+    AICast(aiUnit, ord, c_noMarker, c_castRetreat);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -259,6 +296,7 @@ order FungalGrowth (int player, unit aiUnit, marker mark, marker gameMark, unitg
     return ord;
 }
 
+
 //---------------------------------------------------------------------------------------------
 fixed MinToCastInfestedTerrans (int player) {
     return AIAbilityFixed(player, c_AB_NeuralParasite, c_fieldEnergyCost) + 
@@ -319,6 +357,60 @@ order InfestedTerrans (int player, unit aiUnit, unitgroup scanGroup, bool lowVit
     return ord;
 }
 
+//const int frenzyNormalMinVitality = 300;
+//const int frenzyUrgentMinVitality = 150;
+//
+////--------------------------------------------------------------------------------------------------
+//order Frenzy (int player, unit aiUnit, unitgroup scanGroup, marker mark, bool lowVitality) {
+//    order ord;
+//    unitgroup group;
+//    aifilter filter;
+//    int minVitality;
+//
+//    if (AIIsCampaign(player)) {
+//        return null;
+//    }
+//
+//    ord = AICreateOrder(player, c_AB_Frenzy, 0);
+//    if (!UnitOrderIsValid(aiUnit, ord)) {
+//        return null;
+//    }
+//
+//    group = AIFindUnits(player, null, UnitGetPosition(aiUnit), 
+//                        AIAbilityFixed(player, c_AB_Frenzy, c_fieldRange0) + 1,
+//                        c_noMaxCount)
+//    ;
+//    
+//    if (lowVitality) {
+//        minVitality = frenzyUrgentMinVitality;
+//    }
+//    else {
+//        minVitality = frenzyNormalMinVitality;
+//    }
+//
+//    filter = AIFilter(player);
+//    AISetFilterAlliance(filter, c_playerGroupAlly);
+//    AISetFilterLife(filter, minVitality, c_noMax);
+//    AISetFilterBehaviorCount(filter, c_noBehaviorMin, c_noBehaviorMax, c_BF_Frenzy);
+//    AISetFilterMarker(filter, c_noMarkersMin, c_noMarkersMax, mark);
+//    AISetFilterInCombat(filter, c_onlyInCombat);
+//    
+//    group = AIGetFilterGroup(filter, group);
+//    if (group == null) {
+//        return null;
+//    }
+//
+//    // fix to prevent us from cancelling our own neural parasite
+//    filter = AIFilter(player);
+//    AISetFilterBehaviorCount(filter, c_noBehaviorMin, c_noBehaviorMax, c_BF_NeuralParasite);
+//    group = AIGetFilterGroup(filter, group);
+//    if (group == null) {
+//        return null;
+//    }
+//
+//    return AIUnitGroupGetValidOrder(group, ord, aiUnit, c_forwards);
+//}
+
 //---------------------------------------------------------------------------------------------
 const int infestorLowVitalityPercent = 60;
 
@@ -354,6 +446,15 @@ void AIThinkInfestor (int player, unit aiUnit, unitgroup scanGroup) {
 
     lowVitality = (UnitGetPropertyInt(aiUnit, c_unitPropVitalityPercent, c_unitPropCurrent) < infestorLowVitalityPercent);
     
+    // neural parasite
+    mark = AIMarker(aiUnit, c_MK_NeuralParasite);
+    gameMark = AIMarker(aiUnit, c_MK_GameNeuralParasite);
+    ord = NeuralParasite(player, aiUnit, scanGroup, mark, gameMark, lowVitality);
+    if (ord != null) {
+        AICast(aiUnit, ord, mark, c_castHold);
+        return;
+    }
+    
     // infested terrans
     ord = InfestedTerrans(player, aiUnit, scanGroup, lowVitality);
     if (ord != null) {
@@ -368,14 +469,14 @@ void AIThinkInfestor (int player, unit aiUnit, unitgroup scanGroup) {
         return;
     }
 
-    // neural parasite
-    mark = AIMarker(aiUnit, c_MK_NeuralParasite);
-    gameMark = AIMarker(aiUnit, c_MK_GameNeuralParasite);
-    ord = NeuralParasite(player, aiUnit, scanGroup, mark, gameMark, lowVitality);
-    if (ord != null) {
-        AICast(aiUnit, ord, mark, c_castHold);
-        return;
-    }
+    //
+    //// frenzy
+    //mark = AIMarker(aiUnit, c_MK_Frenzy);
+    //ord = Frenzy(player, aiUnit, scanGroup, mark, lowVitality);
+    //if (ord != null) {
+    //    AICast(aiUnit, ord, mark, c_castHold);
+    //    return;
+    //}
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -385,7 +486,8 @@ void AIThinkInfestor (int player, unit aiUnit, unitgroup scanGroup) {
 //---------------------------------------------------------------------------------------------
 order SapStructure (int player, unit aiUnit, unitgroup scanGroup, marker mark) {
     order ord;
-    unitgroup enemyBuildingGroup;
+    unitgroup enemyFullBuildingGroup;
+    unitgroup enemyThreatBuildingGroup;
     unitgroup enemyUnitGroup;
     unit closestEnemy;
     point banelingPosition;
@@ -430,13 +532,21 @@ order SapStructure (int player, unit aiUnit, unitgroup scanGroup, marker mark) {
     AISetFilterRange(buildingFilter, aiUnit, distanceToEnemy);
     damage = AIEffectInt(player, c_EF_BaneBuilding, c_fieldAmount);
     AISetFilterLifePerMarker(buildingFilter, damage, mark);
+    enemyFullBuildingGroup = AIGetFilterGroup(buildingFilter, scanGroup);
+    if (enemyFullBuildingGroup == null) {
+        return null;
+    }
+
     airAllies = AINearbyPlaneTest(UnitGetPosition(aiUnit), player, AIUnitFixed(player, c_ZU_Baneling, c_fieldSightRange), c_planeAir, c_unitAllianceAlly);
     AISetFilterCanAttackAlly(buildingFilter, c_groundAlliesNearby, airAllies); //  Ground allies always true, since banelings are ground units.
-    enemyBuildingGroup = AIGetFilterGroup(buildingFilter, scanGroup);
+    enemyThreatBuildingGroup = AIGetFilterGroup(buildingFilter, enemyFullBuildingGroup);
 
-    closestEnemyBuilding = UnitGroupNearestUnit(enemyBuildingGroup, banelingPosition);
+    closestEnemyBuilding = UnitGroupNearestUnit(enemyThreatBuildingGroup, banelingPosition);
     if (closestEnemyBuilding == null) {
-        return null;
+        closestEnemyBuilding = UnitGroupNearestUnit(enemyFullBuildingGroup, banelingPosition);
+        if (closestEnemyBuilding == null) {
+            return null;
+        }
     }
 
     OrderSetTargetUnit(ord, closestEnemyBuilding);
@@ -620,15 +730,60 @@ bool MakeChangeling (int player, unit aiUnit, unitgroup scanGroup) {
     return false;
 }
 
+
+//--------------------------------------------------------------------------------------------------
+const int contaminateNormalMinVitality = 120;
+const int contaminateUrgentMinVitality = 40;
+
+order Contaminate (int player, unit aiUnit, unitgroup scanGroup, marker mark) {    
+    order ord;
+    unitgroup enemyGroup;
+    aifilter filter;
+
+    if (AIIsCampaign(player)) {
+        return null;
+    }
+
+    ord = AICreateOrder(player, c_AB_Contaminate, 0);
+    if (!UnitOrderIsValid(aiUnit, ord)) {
+        return null;
+    }
+
+    filter = AIFilter(player);
+    AISetFilterAlliance(filter, c_playerGroupEnemy);
+    AISetFilterBehaviorCount(filter, c_noBehaviorMin, c_noBehaviorMax, c_BF_Contaminate);
+    AISetFilterMarker(filter, c_noMarkersMin, c_noMarkersMax, mark);
+    AISetFilterBits(filter, UnitFilterStr(AIAbilityStr(player, c_AB_Contaminate, c_fieldTargetFiltersAB)));
+
+    enemyGroup = AIGetFilterGroup(filter, scanGroup);
+    if (enemyGroup == null) {
+        return null;
+    }
+
+    enemyGroup = AIFilterProduction(enemyGroup, c_activeOnly);
+    if (enemyGroup == null) {
+        return null;
+    }
+
+    ord = AIUnitGroupGetValidOrder(enemyGroup, ord, aiUnit, c_forwards);    
+    return ord;
+}
+
 //--------------------------------------------------------------------------------------------------
 void AIThinkOverseer (int player, unit aiUnit, unitgroup scanGroup) {
     order ord;
     marker mark;
-    marker gameMark;
 
     if (MakeChangeling(player, aiUnit, scanGroup)) {
         return;
     }
+    
+    mark = AIMarker(aiUnit, c_MK_Contaminate);
+    ord = Contaminate(player, aiUnit, scanGroup, mark);
+    if (ord != null) {
+        AICast(aiUnit, ord, mark, c_castHold);
+        return;
+    } 
 
     //ord = AcidSpores(player, aiUnit, scanGroup);
     //if (ord != null) {
@@ -642,10 +797,17 @@ void AIThinkOverseer (int player, unit aiUnit, unitgroup scanGroup) {
 //  *** CORRUPTOR ***
 //--------------------------------------------------------------------------------------------------
 
+const int corruptionNormalMinVitality = 120;
+const int corruptionUrgentMinVitality = 40;
+const int corruptorLowVitalityPercent = 30;
+
 void AIThinkCorruptor (int player, unit aiUnit, unitgroup scanGroup) {    
     order ord;
     unitgroup enemyGroup;
     aifilter filter;
+    bool lowVitality;
+    int minVitality;
+    marker mark;
 
     if (AIIsCampaign(player)) {
         if (PlayerDifficulty(player) < c_campAdvanced) {
@@ -658,22 +820,31 @@ void AIThinkCorruptor (int player, unit aiUnit, unitgroup scanGroup) {
         return;
     }
 
-    filter = AIFilter(player);
-    AISetFilterAlliance(filter, c_playerGroupEnemy);
-    AISetFilterBits(filter, UnitFilterStr(AIAbilityStr(player, c_AB_Corruption, c_fieldTargetFiltersAB)));
-    enemyGroup = AIGetFilterGroup (filter, scanGroup);
-    if (enemyGroup == null) {
-        return;
+    lowVitality = (UnitGetPropertyInt(aiUnit, c_unitPropVitalityPercent, c_unitPropCurrent) < corruptorLowVitalityPercent);
+    if (lowVitality) {
+        minVitality = corruptionUrgentMinVitality;
+    }
+    else {
+        minVitality = corruptionNormalMinVitality;
     }
 
-    enemyGroup = AIFilterProduction (enemyGroup, c_activeOnly);
+    mark = AIMarker(aiUnit, c_MK_Corruption);
+
+    filter = AIFilter(player);
+    AISetFilterAlliance(filter, c_playerGroupEnemy);
+    AISetFilterLife(filter, minVitality, c_noMax);
+    AISetFilterBehaviorCount(filter, c_noBehaviorMin, c_noBehaviorMax, c_BF_Corruption);
+    AISetFilterMarker(filter, c_noMarkersMin, c_noMarkersMax, mark);
+    AISetFilterBits(filter, UnitFilterStr(AIAbilityStr(player, c_AB_Corruption, c_fieldTargetFiltersAB)));
+
+    enemyGroup = AIGetFilterGroup (filter, scanGroup);
     if (enemyGroup == null) {
         return;
     }
 
     ord = AIUnitGroupGetValidOrder(enemyGroup, ord, aiUnit, c_forwards);    
     if (ord != null) {
-        AICast(aiUnit, ord, c_noMarker, c_castHold);
+        AICast(aiUnit, ord, mark, c_castHold);
         return;
     }
 }

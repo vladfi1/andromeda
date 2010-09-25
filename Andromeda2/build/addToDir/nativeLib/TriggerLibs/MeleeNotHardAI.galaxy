@@ -43,26 +43,30 @@ bool AIEnableStockOpen (int player, string peonType, int time, bool veryEasy, in
 //--------------------------------------------------------------------------------------------------
 //  AIGasHarvest
 //--------------------------------------------------------------------------------------------------
+static int GasHarvest (int player, int town, int onGas) {
+    int send;
+    
+    if (onGas < 1) {
+        return onGas;
+    }
+    send = AIGetHarvestableGasNumSpots(player, town) * 3;
+    if (send < 1) {
+        return onGas;
+    }
+    if (send > onGas) {
+        send = onGas;
+    }
+    AISetGasPeonCountOverride(player, town, send);
+    return onGas - send;
+}
+
 void AIGasHarvest (int player, string peonType) {
-    int onGas = PlayerGetPropertyInt(player, c_playerPropMinerals) / 100
-              - PlayerGetPropertyInt(player, c_playerPropVespene) / 100;
-    if (onGas <= 0) {
-        AISetGasPeonCountOverride(player, c_townMain, c_defaultGasPeonCount);
-        AISetGasPeonCountOverride(player, c_townTwo, c_defaultGasPeonCount);
-        return;
-    }
-    if (onGas <= 6) {
-        AISetGasPeonCountOverride(player, c_townMain, onGas);
-        AISetGasPeonCountOverride(player, c_townTwo, c_defaultGasPeonCount);
-        return;
-    }
-    AISetGasPeonCountOverride(player, c_townMain, 6);
-    if (onGas >= 12) {
-        AISetGasPeonCountOverride(player, c_townTwo, 6);
-    }
-    else {
-        AISetGasPeonCountOverride(player, c_townTwo, onGas - 6);
-    }
+    int onGas = (PlayerGetPropertyInt(player, c_playerPropMinerals)
+               - PlayerGetPropertyInt(player, c_playerPropVespene)) / 100;
+
+    AISetGasPeonCountOverride(player, c_townMain, c_defaultGasPeonCount);
+    AISetGasPeonCountOverride(player, c_townTwo, c_defaultGasPeonCount);
+    GasHarvest(player, c_townTwo, GasHarvest(player, c_townMain, onGas));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -213,7 +217,7 @@ void ZergTechUp (int player, int tier) {
         AISetStock( player, 1, c_ZB_InfestationPit );
 
         if (tier >= 3) {
-            AISetStock( player, 1, c_ZB_Spire );
+            AISetStock( player, 1, c_ZB_Spire_Alias );
 
             if (tier >= 4) {
                 AISetStock( player, 1, c_ZB_UltraliskCavern );

@@ -12,10 +12,11 @@
 
 //include "TriggerLibs/Test"
 
-const bool DEBUG                = true;
+const bool DEBUG_AI             = false;
 const bool DEBUG_MAIN_STATE     = false;
 const bool DEBUG_ATTACK_STATE   = false;
 const bool DEBUG_WAVE           = false;
+const bool DEBUG_WITH_MESSAGE   = false;
 
 const int e_flagsScouting       = 1;
 const int e_flagsDiversion      = 2;
@@ -90,21 +91,21 @@ const fixed c_evalHarassRange   = 6;
 
 // drop attack variables
 const fixed c_dropCheckRollFreq = 60.0;
-const fixed c_dropCheckAttackFreq = 240.0;
-const int c_dropAttackChance = 75;
+const fixed c_dropCheckAttackFreq = 900.0;  // since our drops are predictable, don't do two drops without a large gap in time
+const int c_dropAttackChance = 50;
 
 //--------------------------------------------------------------------------------------------------
 //  DebugAI
 //--------------------------------------------------------------------------------------------------
 void DebugAI (string s) {
-    if (DEBUG) {
+    if (DEBUG_AI) {
         TriggerDebugOutput(1, StringToText(s), true);
     }
 }
 
 //--------------------------------------------------------------------------------------------------
 void DebugAIPlayer (int player, string s) {
-    if (DEBUG) {
+    if (DEBUG_AI) {
         TriggerDebugOutput(
             1,
             StringToText("[") +
@@ -236,11 +237,13 @@ bool g_debugMeleeInit = false;
 void DebugMeleeInit () {
     trigger t;
 
-    if (!g_debugMeleeInit) {
-        t = TriggerCreate("DebugMeleeTrigger");
-        TriggerAddEventChatMessage(t, 1, "waves", false);
+    if (DEBUG_WITH_MESSAGE) {
+        if (!g_debugMeleeInit) {
+            t = TriggerCreate("DebugMeleeTrigger");
+            TriggerAddEventChatMessage(t, 1, "waves", false);
 
-        g_debugMeleeInit = true;
+            g_debugMeleeInit = true;
+        }
     }
 }
 
@@ -339,26 +342,6 @@ void ErrorMeleeScript (int player, string error) {
 }
 
 //--------------------------------------------------------------------------------------------------
-//  AISetGasPeons
-//--------------------------------------------------------------------------------------------------
-void AISetGasPeons (int player, int count, string type, string from) {
-    int sources = AITechCount(player, from, c_techCountCompleteOnly);
-    if (sources < 1
-        || AIHasRes(player, 0, 200)
-        || AITechCount(player, type, c_techCountCompleteOnly) < 8)
-    {
-        AISetGasPeonCountOverride(player, c_townMain, c_defaultGasPeonCount);
-    }
-
-    else if (sources == 1) {
-        AISetGasPeonCountOverride(player, c_townMain, 3);
-    }
-    else { // sources == 2+
-        AISetGasPeonCountOverride(player, c_townMain, count);
-    }
-}
-
-//--------------------------------------------------------------------------------------------------
 //  AISetStockAll
 //--------------------------------------------------------------------------------------------------
 void AISetStockAll (int player, string source, int max, string what) {
@@ -448,7 +431,7 @@ unit AICombatPriority (unitgroup attackers, unitgroup enemies, int maxAttackerLi
 void AIDefendWithWave (int player, wave w) {
     int eval = AIWaveEvalRatio(w, c_evalDefendRange);
     int staticPercent = AILastWaveEvalStaticRatio();
-    int neededEval = 60;
+    int neededEval = 50;
 
     if (PlayerBeaconIsSet(player, c_beaconDefend)) {
         if (AIWaveState(w) != c_waveStateDefend) {
@@ -459,10 +442,10 @@ void AIDefendWithWave (int player, wave w) {
     }
 
     if (staticPercent > 90) {
-        neededEval = 80;
+        neededEval = 70;
     }
     else if (staticPercent > 40) {
-        neededEval = 70;
+        neededEval = 60;
     }
 
     if (eval < neededEval) {
@@ -547,7 +530,7 @@ DebugAIPlayerWave(player, "divert1 set divert = idle at gather defense");//xxx
         return;
     }
 
-    if (AIWaveEvalRatio(w, c_evalHarassRange) < 100) {
+    if (AIWaveEvalRatio(w, c_evalHarassRange) < 95) {
         if (state != c_waveStateRetreat) {
 DebugAIPlayerWave(player, "divert2 set divert = retreat to harass point");//xxx
             AIWaveSetType(w, c_waveStateRetreat, AIWaveHarassRetreat(player, w, c_evalHarassRange));            
@@ -690,7 +673,7 @@ bool AIWaveNeedClearObsUnits (int player) {
     waveAtck = AIWaveGet(player, c_waveAttack);
     countAtck = AIWaveUnitCount(waveAtck);
     evalAtck = AIWaveEvalRatio(waveAtck, c_evalRange);
-    if (countAtck > 0 && evalAtck < 80) {
+    if (countAtck > 0 && evalAtck < 90) {
         return false;
     }
 
@@ -873,12 +856,7 @@ void AdvancedIdleAttackLogic (int player, wave w, int count) {
     }
     else if (AILastAttackRatio(w) >= 80) {
         // if the last attack was even (we did fight and we killed about as much as we lost)
-        // then we to attack until we've regrouped a bit
-        if (count >= 12) {
-            if (TestUseDropAttack(player,w)) {
-                return;
-            }
-        }
+        // then wait to attack until we've regrouped a bit
         if (count >= 30) {
             AISetAttackState(player, e_attackState_Attack);
         }
@@ -888,7 +866,7 @@ void AdvancedIdleAttackLogic (int player, wave w, int count) {
     }
     else { // AILastAttackRatio(w) < 80
         // if the last attack was a failure (we either retreated right away or lost more then we killed)
-        if (count >= 12) {
+        if (count >= 12 && count < 24) {
             if (TestUseDropAttack(player,w)) {
                 return;
             }
@@ -938,7 +916,7 @@ void AIWaveAttack (int player, wave w) {
             // attack was cancelled by the user
             AISetAttackState(player, e_attackState_Retreat);
         }
-        else if (eval >= 70 && eval <= 85 && time <= 3) { // when not fighting and only a little weak
+        else if (eval >= 75 && eval <= 85 && time <= 3) { // when not fighting and only a little weak
             if (AIGetFlag(player, e_flagsRunScared)) { // need to add check for ranges & max eval
                 AISetAttackState(player, e_attackState_Scared);
             }
@@ -946,7 +924,7 @@ void AIWaveAttack (int player, wave w) {
                 AISetAttackState(player, e_attackState_Retreat);
             }
         }
-        else if (eval < 70) { // need to add check for faster/retreat blocked
+        else if (eval < 75) { // need to add check for faster/retreat blocked
             AISetAttackState(player, e_attackState_Retreat);
         }
         else if (AIWaveState(w) != c_waveStateAttack) {
@@ -967,7 +945,7 @@ DebugAIPlayerWave(player, "attack1 merge main -> attack; set attack = attack vs.
             // attack was cancelled by the user
             AISetAttackState(player, e_attackState_Retreat);
         }
-        else if (eval < 80) { // need to add check for can we retreat successfully
+        else if (eval < 60) { // need to add check for can we retreat successfully
             AISetAttackState(player, e_attackState_DropRetreat);
         }
         else if (AIWaveState(w) != c_waveStateDropAttack) {
@@ -987,7 +965,7 @@ DebugAIPlayerWave(player, "attack1a In drop attack state, but not drop attack wa
             // attack was cancelled by the user
             AISetAttackState(player, e_attackState_Retreat);
         }
-        else if (eval > 95) { // turn and fight when strong
+        else if (eval > 90) { // turn and fight when strong
             AISetAttackState(player, e_attackState_Attack);
         }
         else if (eval < 70) { // retreat entirely if getting picked off
@@ -1261,14 +1239,14 @@ void AIMeleeStart (int player) {
     wavetarget targD;
     wavetarget targO;
 
-    if (DEBUG) {
+    if (DEBUG_WITH_MESSAGE) {
         DebugMeleeInit();
     }
 
 	AIStart(player, false, DifficultyAPM(PlayerDifficulty(player)));
 
     if (PlayerDifficulty(player) >= c_skirCheater) {
-        AIHarvestBonus(player, 2.0);
+        AIHarvestBonus(player, 1.5);
     }
 
     AISetDifficulty(player, c_diffNormalVision, (PlayerDifficulty(player) != c_skirCheater));
@@ -1290,12 +1268,12 @@ void AIMeleeStart (int player) {
     AISetDifficulty(player, c_diffEnableDangerMap, true);
     AISetDifficulty(player, c_diffNormalTargetPrio, true);
     AISetDifficulty(player, c_diffAllowResourceReq, true);
+    AISetDifficulty(player, c_diffUseRetreatLogic, true);
 
     AISetDifficulty(player, c_diffAutoLoadBunkers, false);
     AISetDifficulty(player, c_diffEarlyGameRepair, false);
 
-    //AISetFlag(player, e_flagsRunScared, AIDiffThreshold(player, false, c_skirVeryHard, true));
-    AISetFlag(player, e_flagsRunScared, false); // TODO fix scared and re-add this
+    AISetFlag(player, e_flagsRunScared, (PlayerDifficulty(player) >= c_skirVeryHard));
 
     AISetFlag(player, e_flagsLateScout, false);
     AISetFlag(player, e_flagsClearObs, false);
@@ -1303,8 +1281,6 @@ void AIMeleeStart (int player) {
     AIDeclareTown(player, c_townOne, PlayerStartLocation(player));
     AISetMainTown(player, c_townOne);
     AIHarvest(player, c_townOne);
-    AISetNumScouts(player, 1);
-    AIScout(player);
     AISetAllStates(player, 1);
     
     targDPoint = AIWaveTargetGatherDPoint(player, c_townMain);
@@ -1328,18 +1304,30 @@ void AIMeleeStart (int player) {
     AIWaveSetType(AIWaveGet(player, c_waveHome),     c_waveStateIdle, targD);
     AIWaveSetType(AIWaveGet(player, c_waveDefend),   c_waveStateIdle, targD);
 
-    AISetMaxBestAttackersLimit(player, AIMeleeDiffSelect(player, 1, 1, 2, 4, 6, 8));
+    AISetMaxBestAttackersLimit(player, AIMeleeDiffSelect(player, 1, 2, 4, 8, 16, 32));
 
     AITransportIgnore(player, "VikingAssault");
     AITransportSetPanic(player, 0.6);
     AITransportSetReturn(player, targDPoint);
-   
+
+    AIEarlyDefenseEnable(player, false, false);
+    if (PlayerDifficulty(player) < c_skirCheater) {
+        AIEarlyDefenseProps(player, 30, 20, 30);
+        AISetNumScouts(player, 1);
+        AIScout(player);
+    } else {
+        // let insane AI defend against further threats
+        AIEarlyDefenseProps(player, 35, 35, 45);
+        AISetNumScouts(player, 0);
+    }
+
     AISpecifiedMakers();
     AISpecifiedHealers(player);
     AISetDefaultCombatFlags(player, true);
     AIAddDetectionDangerUnits(player);
 
-    //AISetNukeConstants(player);
+    AISetNukeConstants(player);
 }
 
+include "TriggerLibs/MeleeHardAI"
 include "TriggerLibs/MeleeNotHardAI"

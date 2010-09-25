@@ -192,6 +192,7 @@ const int c_deathTypeTimeout = 13;
 const int c_deathTypeUnlink = 14;
 const int c_deathTypeUnderConstruction = 15;
 const int c_deathTypeSalvage = 16;
+const int c_deathTypeCancel = 17;
 const string c_deathTypeNormalName = "Normal";
 const string c_deathTypeRemoveName = "Remove";
 const string c_deathTypeBlastName = "Blast";
@@ -209,6 +210,7 @@ const string c_deathTypeTimeoutName = "Timeout";
 const string c_deathTypeUnlinkName = "Unlink";
 const string c_deathTypeUnderConstructionName = "UnderConstruction";
 const string c_deathTypeSalvageName = "Salvage";
+const string c_deathTypeCancelName = "Cancel";
 
 //  EResourceType
 const int c_resourceTypeMinerals = 0;
@@ -219,6 +221,66 @@ const string c_resourceTypeMineralsName = "Minerals";
 const string c_resourceTypeVespeneName = "Vespene";
 const string c_resourceTypeTerrazineName = "Terrazine";
 const string c_resourceTypeCustomName = "Custom";
+
+//  EEffectLocation
+const int c_effectLocationCasterUnit = 0;
+const int c_effectLocationCasterPoint = 1;
+const int c_effectLocationCasterUnitOrPoint = 2;
+const int c_effectLocationSourceUnit = 3;
+const int c_effectLocationSourcePoint = 4;
+const int c_effectLocationSourceUnitOrPoint = 5;
+const int c_effectLocationTargetUnit = 6;
+const int c_effectLocationTargetPoint = 7;
+const int c_effectLocationTargetUnitOrPoint = 8;
+const int c_effectLocationOuterUnit = 9;
+const int c_effectLocationOuterPoint = 10;
+const int c_effectLocationOuterUnitOrPoint = 11;
+const int c_effectLocationOriginUnit = 12;
+const int c_effectLocationOriginPoint = 13;
+const int c_effectLocationOriginUnitOrPoint = 14;
+const string c_effectLocationCasterUnitName = "CasterUnit";
+const string c_effectLocationCasterPointName = "CasterPoint";
+const string c_effectLocationCasterUnitOrPointName = "CasterUnitOrPoint";
+const string c_effectLocationSourceUnitName = "SourceUnit";
+const string c_effectLocationSourcePointName = "SourcePoint";
+const string c_effectLocationSourceUnitOrPointName = "SourceUnitOrPoint";
+const string c_effectLocationTargetUnitName = "TargetUnit";
+const string c_effectLocationTargetPointName = "TargetPoint";
+const string c_effectLocationTargetUnitOrPointName = "TargetUnitOrPoint";
+const string c_effectLocationOuterUnitName = "OuterUnit";
+const string c_effectLocationOuterPointName = "OuterPoint";
+const string c_effectLocationOuterUnitOrPointName = "OuterUnitOrPoint";
+const string c_effectLocationOriginUnitName = "OriginUnit";
+const string c_effectLocationOriginPointName = "OriginPoint";
+const string c_effectLocationOriginUnitOrPointName = "OriginUnitOrPoint";
+
+//  EEffectPlayer
+const int c_effectPlayerOrigin = 0;
+const int c_effectPlayerCaster = 1;
+const int c_effectPlayerOuter = 2;
+const int c_effectPlayerSource = 3;
+const int c_effectPlayerTarget = 4;
+const int c_effectPlayerNeutral = 5;
+const int c_effectPlayerHostile = 6;
+const string c_effectPlayerOriginName = "Origin";
+const string c_effectPlayerCasterName = "Caster";
+const string c_effectPlayerOuterName = "Outer";
+const string c_effectPlayerSourceName = "Source";
+const string c_effectPlayerTargetName = "Target";
+const string c_effectPlayerNeutralName = "Neutral";
+const string c_effectPlayerHostileName = "Hostile";
+
+//  EEffectUnit
+const int c_effectUnitCaster = 0;
+const int c_effectUnitOuter = 1;
+const int c_effectUnitSource = 2;
+const int c_effectUnitTarget = 3;
+const int c_effectUnitOrigin = 4;
+const string c_effectUnitCasterName = "Caster";
+const string c_effectUnitOuterName = "Outer";
+const string c_effectUnitSourceName = "Source";
+const string c_effectUnitTargetName = "Target";
+const string c_effectUnitOriginName = "Origin";
 
 //  ETeamColor
 const int c_teamColorDiffuse = 0;

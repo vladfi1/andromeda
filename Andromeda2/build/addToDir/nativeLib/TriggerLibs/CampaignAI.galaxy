@@ -62,6 +62,7 @@ void AICampaignStart (int player) {
     AISetDifficulty(player, c_diffAllowResourceReq, false);
 
     AISetDifficulty(player, c_diffAutoLoadBunkers, true);
+    AISetDifficulty(player, c_diffUseRetreatLogic, true);
 
     AISetMaxBestAttackersLimit(player, AICampaignDiffSelect(player, 1, 2, 4, 6));
 
