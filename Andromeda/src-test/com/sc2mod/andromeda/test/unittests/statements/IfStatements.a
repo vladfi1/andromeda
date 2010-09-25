@@ -1,0 +1,36 @@
+
+
+static{
+	bool b = true;
+	
+	//no brackets, no else
+	if(b) System.debug("1 passed");
+	
+	//no brackets, with else
+	if(!b) System.fail("wrong1");
+	else System.fail("2 passed");
+	
+	//brackets, no else
+	if(b) {
+		System.debug("3 passed");	
+	}
+	
+	//brackets, else
+	if(!b) {
+		System.fail("4 wrong");
+	} else {
+		System.debug("4 passed");
+	}
+	
+	//Dangling else
+	if(b)
+		if(!b)	System.fail("5 fail")
+		else System.debug("5 passed")
+	else System.fail("5 fail")
+	if(!b)
+		if(b)	System.fail("6 fail")
+		else System.fail("6 fail")
+	else System.debug("6 passed")
+			
+		
+}
