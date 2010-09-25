@@ -1,0 +1,402 @@
+package a.natives;
+/*
+* Enrichment for native type 'bank'
+* @author NewName
+*/
+
+public enrich bank
+{
+    /**
+    * The name of this bank (read-only).
+    */
+    public string name 
+    {
+   	 public get {
+   		 return BankName(this);
+   	 }
+    }
+
+    /**
+    * The player this bank belongs to (read-only).
+    */
+    public int player 
+    {
+   	 public get {
+   		 return BankPlayer(this);
+   	 }
+    }
+
+    /**
+    * Removes this bank from the cache. Values may no longer be written to it.
+    */
+    public void remove() 
+    {
+   	 BankRemove(this);
+    }
+
+    /**
+    * Saves this bank, allowing the values stored within to be accessed at a later date. If a map ends while the bank is in an unsaved state, then all changes will be lost.
+    */
+    public void save() 
+    {
+   	 BankSave(this);
+    }
+
+    /**
+    * The number of sections that belong to this bank.
+    * @return the number of sections.
+    */
+    public int sectionCount() 
+    {
+   	 return BankSectionCount(this);
+    }
+
+    /**
+    * Find if the specified section exists within this bank.
+    * @param name the name of the section.
+    * @return true if the section exists, false if it does not.
+    */
+    public bool sectionExists(string name) 
+    {
+   	 return BankSectionExists(this, name);
+    }
+
+    /**
+    * Find the name of a section within this bank, given its index.
+    * @param index the index of the section.
+    * @return the name of the section.
+    */
+    public string sectionName(int index) 
+    {
+   	 return BankSectionName(this, index);
+    }
+
+    /**
+    * Remove the specified section as well as its child keys from this bank.
+    * @param name the name of the section.
+    */
+    public void removeSection(string name) 
+    {
+   	 BankSectionRemove(this, name);
+    }
+
+
+    /**
+    * Find the number of keys which belong to the specified section of this bank.
+    * @param section the name of the specific section.
+    * @return the number of keys.
+    */
+    public int keyCount(string section) 
+    {
+   	 return BankKeyCount(this, section);
+    }
+
+    /**
+    * Find if a key with the specified name belongs to the specified section of this bank.
+    * @param section the name of the specific section to search for this key.
+    * @param key the name of the key to find.
+    * @return true if the key exists, false if it does not.
+    */
+    public bool keyExists(string section, string key) 
+    {
+   	 return BankKeyExists(this, section, key);
+    }
+
+    /**
+    * Find the name of a key within the specified section, given its index.
+    * @param section the name of the specific section.
+    * @param index the index of the key.
+    * @return the name of the key.
+    */
+    public string keyName(string section, int index) 
+    {
+   	 return BankKeyName(this, section, index);
+    }
+
+    /**
+    * Remove the specified key from the specified section.
+    * @param section the name of the specific section.
+    * @param key the name of the specific key.
+    */
+    public void removeKey(string section, string key)
+    {
+   	 BankKeyRemove(this, section, key);
+    }
+
+    /**
+    * Determine if the specified key within the specified section has the type 'fixed'.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the specific key to test.
+    * @return true if the key has the type 'fixed', false otherwise.
+    */
+    public bool isValueFixed(string section, string key)
+    {
+   	 return BankValueIsType(this, section, key, c_bankTypeFixed);
+    }
+
+    /**
+    * Determine if the specified key within the specified section has the type 'boolean'.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the specific key to test.
+    * @return true if the key has the type 'boolean', false otherwise.
+    */
+    public bool isValueBool(string section, string key)
+    {
+   	 return BankValueIsType(this, section, key, c_bankTypeFlag);
+    }
+
+    /**
+    * Determine if the specified key within the specified section has the type 'Int'.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the specific key to test.
+    * @return true if the key has the type 'Int', false otherwise.
+    */
+    public bool isValueInt(string section, string key)
+    {
+   	 return BankValueIsType(this, section, key, c_bankTypeInt);
+    }
+
+    /**
+    * Determine if the specified key within the specified section has the type 'String'.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the specific key to test.
+    * @return true if the key has the type 'String', false otherwise.
+    */
+    public bool isValueString(string section, string key)
+    {
+   	 return BankValueIsType(this, section, key, c_bankTypeString);
+    }
+
+    /**
+    * Determine if the specified key within the specified section has the type 'Unit'.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the specific key to test.
+    * @return true if the key has the type 'Unit', false otherwise.
+    */
+    public bool isValueUnit(string section, string key)
+    {
+   	 return BankValueIsType(this, section, key, c_bankTypeUnit);
+    }
+
+    /**
+    * Determine if the specified key within the specified section has the type 'Point'.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the specific key to test.
+    * @return true if the key has the type 'Point', false otherwise.
+    */
+    public bool isValuePoint(string section, string key)
+    {
+   	 return BankValueIsType(this, section, key, c_bankTypePoint);
+    }
+
+    /**
+    * Determine if the specified key within the specified section has the type 'Text'.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the specific key to test.
+    * @return true if the key has the type 'Text', false otherwise.
+    */
+    public bool isValueText(string section, string key)
+    {
+   	 return BankValueIsType(this, section, key, c_bankTypeText);
+    }
+
+    /**
+    * Retrieve the value from the specified key as a fixed type.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key from which the value should be retrieved from.
+    * @return the value of the key.
+    */
+    public fixed getValueAsFixed(string section, string key)
+    {
+   	 return BankValueGetAsFixed(this, section, key);
+    }
+
+    /**
+    * Store a fixed value in the specified key. The bank must be saved after storing the value, otherwise the change will not persist after the session.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key to which the value should be stored.
+    * @param value the value to store in the key.
+    */
+    public void setValue(string section, string key, fixed value)
+    {
+   	 BankValueSetFromFixed(this, section, key, value);
+    }
+
+    /**
+    * Retrieve the value from the specified key as a boolean type.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key from which the value should be retrieved from.
+    * @return the value of the key.
+    */
+    public bool getValueAsBool(string section, string key)
+    {
+   	 return BankValueGetAsFlag(this, section, key);
+    }
+
+    /**
+    * Store a boolean value in the specified key. The bank must be saved after storing the value, otherwise the change will not persist after the session.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key to which the value should be stored.
+    * @param value the value to store in the key.
+    */
+    public void setValue(string section, string key, bool value)
+    {
+   	 BankValueSetFromFlag(this, section, key, value);
+    }
+
+    /**
+    * Retrieve the value from the specified key as an integer type.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key from which the value should be retrieved from.
+    * @return the value of the key.
+    */
+    public int getValueAsInt(string section, string key)
+    {
+   	 return BankValueGetAsInt(this, section, key);
+    }
+
+    /**
+    * Store an integer value in the specified key. The bank must be saved after storing the value, otherwise the change will not persist after the session.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key to which the value should be stored.
+    * @param value the value to store in the key.
+    */
+    public void setValue(string section, string key, int value)
+    {
+   	 BankValueSetFromInt(this, section, key, value);
+    }
+
+    /**
+    * Retrieve the value from the specified key as a point type.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key from which the value should be retrieved from.
+    * @return the value of the key.
+    */
+    public point getValueAsPoint(string section, string key)
+    {
+   	 return BankValueGetAsPoint(this, section, key);
+    }
+
+    /**
+    * Store a point value in the specified key. The bank must be saved after storing the value, otherwise the change will not persist after the session.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key to which the value should be stored.
+    * @param value the value to store in the key.
+    */
+    public void setValue(string section, string key, point value)
+    {
+   	 BankValueSetFromPoint(this, section, key, value);
+    }
+
+    /**
+    * Retrieve the value from the specified key as a string type.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key from which the value should be retrieved from.
+    * @return the value of the key.
+    */
+    public string getValueAsString(string section, string key)
+    {
+   	 return BankValueGetAsString(this, section, key);
+    }
+
+    /**
+    * Store a string value in the specified key. The bank must be saved after storing the value, otherwise the change will not persist after the session.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key to which the value should be stored.
+    * @param value the value to store in the key.
+    */
+    public void setValue(string section, string key, string value)
+    {
+   	 BankValueSetFromString(this, section, key, value);
+    }
+
+    /**
+    * Retrieve the value from the specified key as a text type.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key from which the value should be retrieved from.
+    * @return the value of the key.
+    */
+    public text getValueAsText(string section, string key)
+    {
+   	 return BankValueGetAsText(this, section, key);
+    }
+
+    /**
+    * Store a text value in the specified key. The bank must be saved after storing the value, otherwise the change will not persist after the session.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key to which the value should be stored.
+    * @param value the value to store in the key.
+    */
+    public void valueSetFromText(string section, string key, text value)
+    {
+   	 BankValueSetFromText(this, section, key, value);
+    }
+
+    /**
+    * Retrieve the value from the specified key as a unit type. The unit will be created for the specified player, as the specified position, facing the specified angle.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key from which the value should be retrieved from.
+    * @param player the player which will own the newly created unit.
+    * @param position the position at which the unit will be created.
+    * @param angle the angle which the unit will face when created.
+    * @return Returns a unit.
+    */
+    public unit getValueAsUnit(string section, string key, int player, point position, fixed angle)
+    {
+   	 return BankValueGetAsUnit(this, section, key, player, position, angle);
+    }
+
+    /**
+    * Store a unit in the specified key. The bank must be saved after storing the value, otherwise the change will not persist after the session.
+    * @param section the name of the section which contains the key.
+    * @param key the name of the key to which the value should be stored.
+    * @param value the unit to store in the key.
+    */
+    public void setValue(string section, string key, unit value)
+    {
+   	 BankValueSetFromUnit(this, section, key, value);
+    }
+
+    /**
+    * Find if the specified bank exists.
+    * @param name the name of the bank.
+    * @param player the player which belongs to the bank.
+    * @return true if the bank exists, false if it does not.
+    */
+    public static bool exists(string name, int player)
+    {
+   	 return BankExists(name, player);
+    }
+
+    /**
+    * Open and return the specified bank. If the bank does not exist, then one will be created.
+    * @param name the name of the bank.
+    * @param player the player which belongs to the bank.
+    * @return the specified bank object.
+    */
+    public static bank load(string name, int player)
+    {
+   	 return BankLoad(name, player);
+    }
+
+    /**
+    * Returns the last unit that was retrieved from the bank.
+    * @return the last unit that was retrieved from the bank.
+    */
+    public static unit lastRetrievedUnit()
+    {
+   	 return BankLastRestoredUnit();
+    }
+
+    /**
+    * Returns the most recently opened bank.
+    * @return the most recently opened bank.
+    */
+    public static bank lastOpened()
+    {
+   	 // note that the name and description seem to conflict here. I took the description from the galaxy editor.
+
+   	 return BankLastCreated();
+    }
+
+}

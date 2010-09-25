@@ -1,0 +1,18 @@
+package a.util;
+
+/**
+ * Generates hash codes for objects.
+ * Should be an interface.
+ */
+public abstract class Hasher<T> {
+	/**
+	 * Generates a hash code for object.
+	 * @return The generated hash code.
+	 */
+	public abstract int hashCode(T object);
+	/**
+	 * Tests if two objects are equal.
+	 * @return Whether object1 and object2 are equal.
+	 */
+	public abstract bool equal(T object1, T object2);
+}

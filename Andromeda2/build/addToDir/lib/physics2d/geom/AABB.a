@@ -1,0 +1,38 @@
+package physics2d.geom;
+
+import a.util.Math;
+
+/**
+ * An 2-dimensional axis-aligned bounding box.
+ * @author XPilot
+ */
+public class AABB {
+	/**
+	 * Bounds of this AABB.
+	 */
+	public fixed x1, y1, x2, y2;
+	
+	public AABB() {
+		reset();
+	}
+	
+	/**
+	 * Resets the bounds of this AABB.
+	 */
+	public void reset() {
+		x1 = Math.MAX_INT;
+		y1 = Math.MAX_INT;
+		x2 = Math.MIN_INT;
+		y2 = Math.MIN_INT;
+	}
+	
+	/**
+	 * Extends this AABB so that it contains v.
+	 */
+	public void addPoint(Vec2 v) {
+		if(x1 > v.x) x1 = v.x;
+		if(y1 > v.y) y1 = v.y;
+		if(x2 < v.x) x2 = v.x;
+		if(y2 < v.x) y2 = v.y;
+	}
+}

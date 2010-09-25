@@ -1,0 +1,215 @@
+package a.util;
+
+import a.util.List;
+import a.util.Iterator;
+
+/**
+ * Implentation of a doubly linked list.
+ * @author XPilot
+ */
+public class LinkedList<E> extends List<E> {
+	
+	/**
+	 * Head of the list. Contains no data.
+	 */
+	Link<E> head;
+	/**
+	 * Current size of the list.
+	 */
+	private int size;
+	
+	/**
+	 * Creates an empty list.
+	 */
+	public LinkedList() {
+		head = new Link<E>();
+		size = 0;
+	}
+	
+	/**
+	 * Deletes all links.
+	 */
+	public ~LinkedList() {
+		clear();
+	}
+	
+	public override int size() {
+		return size;
+	}
+	
+	public override bool isEmpty() {
+		return size==0;
+	}
+	
+	public override void clear() {
+		Link<E> link = head.next;
+		for(int i = 0; i < size; i++) {
+			link = link.next;
+			delete link.previous;
+		}
+		size = 0;
+		head.next = head.previous = head;
+	}
+	
+	/**
+	 * Runs in O(size) time.
+	 * @return The link at index.
+	 */
+	private Link<E> getLink(int index) {
+		if(index < (size >> 1)) {
+			Link<E> link = head.next;
+			for(int i = 0; i < index; i++) {
+				link = link.next;
+			}
+			return link;
+		} else {
+			Link<E> link = head;
+			for(int i = size; i > index; i--) {
+				link = link.previous;
+			}
+			return link;
+		}
+	}
+	
+	/**
+	 * Adds an element to the front of this list.
+	 */
+	public void addFirst(E element) {
+		new Link<E>(element, head, head.next);
+		size++;
+	}
+	
+	/**
+	 * Adds an element to the end of this list.
+	 */
+	public void addLast(E element) {
+		new Link<E>(element, head.previous, head);
+		size++;
+	}
+	
+	public override bool addIndex(int index, E element) {
+		Link<E> link = getLink(index);
+		new Link<E>(element, link.previous, link);
+		size++;
+		return true;
+	}
+	
+	/**
+	 * @return The first element of this list.
+	 */
+	public E getFirst() {
+		return head.next.element;
+	}
+	
+	/**
+	 * @return The last element of this list.
+	 */
+	public E getLast() {
+		return head.previous.element;
+	}
+	
+	public override E getIndex(int index) {
+		return getLink(index).element;
+	}
+	
+	/**
+	 * Sets the first element of this list.
+	 */
+	public void setFirst(E element) {
+		head.next.element = element;
+	}
+	
+	/**
+	 * Sets the last element of this list.
+	 */
+	public void setLast(E element) {
+		head.previous.element = element;
+	}
+	
+	public override void setIndex(int index, E element) {
+		getLink(index).element = element;
+	}
+	
+	/**
+	 * Removes the first element of this list.
+	 * @return The element removed.
+	 */
+	public E removeFirst() {
+		Link<E> first = head.next;
+		head.next = first.next;
+		first.next.previous = head;
+		E element = first.element;
+		delete first;
+		size--;
+		return element;
+	}
+	
+	/**
+	 * Removes the last element of this list.
+	 * @return The element removed.
+	 */
+	public E removeLast() {
+		Link<E> last = head.previous;
+		head.previous = last.previous;
+		last.previous.next = head;
+		E element = last.element;
+		delete last;
+		size--;
+		return element;
+	}
+	
+	public override E removeIndex(int index) {
+		Link<E> link = getLink(index);
+		link.previous.next = link.next;
+		link.next.previous = link.previous;
+		E element = link.element;
+		delete link;
+		size--;
+		return element;
+	}
+	
+	/**
+	 * @return An iterator for this LinkedList.
+	 */
+	public Iterator<E> getIterator() {
+		return new LinkedListIterator<E>(this);
+	}
+}
+
+private class Link<E> [512] {
+	E element;
+	Link<E> next, previous;
+	
+	Link() {
+		element = null;
+		next = previous = this;
+	}
+	
+	Link(E element, Link<E> previous, Link<E> next) {
+		this.element = element;
+		this.next = next;
+		this.previous = previous;
+		next.previous = this;
+		previous.next = this;
+	}
+}
+
+/**
+ * Iterator for LinkedList.
+ */
+private class LinkedListIterator<E> extends Iterator<E> {
+	private LinkedList<E> list;
+	private Link<E> current;
+	
+	LinkedListIterator(LinkedList<E> list) {
+		this.list = list;
+		current = list.head;
+	}
+	
+	public bool hasNext() {return current.next != list.head;}
+	
+	public E next() {
+		current = current.next;
+		return current.element;
+	}
+}

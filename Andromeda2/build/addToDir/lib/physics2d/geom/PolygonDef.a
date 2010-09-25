@@ -1,0 +1,155 @@
+package physics2d.geom;
+
+import a.util.ArrayList;
+import physics2d.geom.Vec2;
+import physics2d.geom.ShapeDef;
+import physics2d.geom.ShapeType;
+
+/**
+ * Definition of a polygon shape.
+ * @author XPilot
+ */
+public class PolygonDef extends ShapeDef {
+	public fixed density;
+	private /* final */ ArrayList<Vec2> vertices;
+	
+	public PolygonDef() {
+		super(ShapeType.POLYGON_SHAPE);
+		density = 1.0;
+		vertices = new ArrayList<Vec2>();
+	}
+	
+	public ~PolygonDef() {
+		clear();
+		delete vertices;
+	}
+	
+	/**
+	 * Clears the vertices.
+	 */
+	public void clear() {
+		for(int i = 0; i < vertices.size(); i++) {
+			delete vertices.getIndex(i);
+		}
+		vertices.clear();
+	}
+
+	/**
+	 * Adds a vertex.
+	 */
+	public PolygonDef addVertex(Vec2 vertex) {
+		vertices.addLast(vertex);
+		return this;
+	}
+	
+	/**
+	 * Adds a vertex.
+	 */
+	public PolygonDef addVertex(fixed x, fixed y) {
+		addVertex(new Vec2(x, y));
+		return this;
+	}
+	
+	/**
+	 * @return Return the number of vertices.
+	 */
+	public int getVertexCount() {
+		return vertices.size();
+	}
+	
+	public Vec2 getVertex(int index) {
+		return vertices.getIndex(index);
+	}
+	
+	/**
+	 * Transforms all of the vertices using the specified transform.
+	 */
+	public PolygonDef transform(XForm xf) {
+		for(int i = 0; i < vertices.size(); i++) {
+			xf.apply(vertices.getIndex(i));
+		}
+		return this;
+	}
+	
+	/**
+	 * Translates all vertices by <x, y>.
+	 */
+	public PolygonDef translate(fixed x, fixed y) {
+		for(int i = 0; i < vertices.size(); i++) {
+			vertices.getIndex(i).add(x, y);
+		}
+		return this;
+	}
+	
+	/**
+	 * Rotates the vertices about the origin.
+	 * @param angle The angle CCW in degrees.
+	 */
+	public PolygonDef rotate(fixed angle) {
+		Mat22 m = Mat22.createRotationMatrix(angle);
+		for(int i = 0; i < vertices.size(); i++) {
+			vertices.getIndex(i);
+		}
+		delete m;
+		return this;
+	}
+	
+	/**
+	 * Build vertices to represent an axis-aligned box, centered at the origin.
+	 * @param hx the half-width.
+	 * @param hy the half-height.
+	 */
+	public PolygonDef setAsBox(fixed hx, fixed hy) {
+		clear();
+		vertices.addLast(new Vec2(-hx, -hy));
+		vertices.addLast(new Vec2(hx, -hy));
+		vertices.addLast(new Vec2(hx, hy));
+		vertices.addLast(new Vec2(-hx, hy));
+		return this;
+	}
+
+	/**
+	 * Build vertices to represent an oriented box.
+	 * @param hx The half-width.
+	 * @param hy The half-height.
+	 * @param center The center of the box in local coordinates.
+	 * @param angle The rotation of the box in local coordinates.
+	 */
+	public PolygonDef setAsBox(fixed hx, fixed hy, Vec2 center, fixed angle) {
+		setAsBox(hx, hy);
+		XForm xf = new XForm(center, angle);
+		transform(xf);
+		delete xf;
+		return this;
+	}
+	
+	/**
+	 * Build vertices to represent a regular polygon.
+	 * Centered at the origin and first vertex points in the positive X direction.
+	 */
+	public PolygonDef setAsRegularPolygon(int sides, int radius) {
+		clear();
+		vertices.ensureCapacity(sides);
+		for(int i = 0; i < sides; i++) {
+			vertices.addIndex(i, new Vec2().setPolar(radius, (i * 360.0) / sides));
+		}
+		return this;
+	}
+	
+	/**
+	 * Build vertices to represent a regular polygon.
+	 * @param sides The number of sides.
+	 * @param radius The radius.
+	 * @param center The center.
+	 * @param angle The orientation, in degrees.
+	 */
+	public PolygonDef setAsRegularPolygon(int sides, int radius, Vec2 center, fixed angle) {
+		clear();
+		vertices.ensureCapacity(sides);
+		for(int i = 0; i < sides; i++) {
+			vertices.addIndex(i, new Vec2().setPolar(radius, angle + ((i * 360.0) / sides)).add(center));
+		}
+		return this;
+	}
+
+}

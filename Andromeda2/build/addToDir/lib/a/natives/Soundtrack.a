@@ -1,0 +1,103 @@
+package a.natives;
+/**  
+*	Definition and enrichment for Soundtrack type.
+*	@author NewName
+*/
+typedef Soundtrack uses int;
+
+public enrich Soundtrack
+{
+	public static const Soundtrack
+		AMBIENCE = (Soundtrack)c_soundtrackCategoryAmbience,
+		MUSIC = (Soundtrack)c_soundtrackCategoryMusic;
+		
+	public static const int ANY_INDEX = c_soundtrackIndexAny;
+	public static const int ANY_CUE = c_soundtrackCueAny;
+
+	/**
+	*	Plays a soundtrack file for this soundtrack category. If this soundtrack is not continuous, then it will repeat after the delay time.
+	*	@param players the player group to play the sound to.
+	*	@param name the name of the soundtrack file to play.
+	*	@param index the index of the sound to play in this soundtrack.
+	*	@param cue the cue for this sound.
+	*/
+	public void play(playergroup players, string name, int index, int cue)
+	{
+		SoundtrackPlay(players, (int)this, name, cue, index, false);
+	}
+	
+	/**
+	*	Sets the pause state for this soundtrack category.
+	*	@param players the players for which the pause state should be modified.
+	*	@param paused the pause state for the category.
+	*	@param fade true if the sound should stop after a fade out, false otherwise.
+	*/
+	public void setPaused(playergroup players, bool paused, bool fade)
+	{
+		SoundtrackPause(players, (int)this, paused, fade);
+	}
+	
+	/**
+	*	Stops the currently playing soundtrack file for this category. The soundtrack will stop immediately if there is no fade.
+	*	@param players the player group to stop the sound track for.
+	*	@param fade true if the sound should stop after a fade out, false otherwise.
+	*/
+	public void stop(playergroup players, bool fade)
+	{
+		SoundtrackStop(players, (int)this, fade);
+	}
+	
+	/**
+	*	Sets the default soundtrack file for this category. The default soundtrack file will play when there are no other files being played.
+	*	@param players the players for which the default soundtrack file should be set.
+	*	@param name the name of the soundtrack file.
+	*	@param index the index of the sound to play in this soundtrack.
+	*	@param cue the cue for the sound.
+	*/
+	public void setDefault(playergroup players, string name, int index, int cue)
+	{
+		SoundtrackDefault(players, (int)this, name, cue, index);
+	}
+	
+	/**
+	*	Sets the amount of time between when one soundtrack finishes and another begins.
+	*	@param players the players for which the delay should be set.
+	*	@param delay the delay to set.
+	*/
+	public void setDelay(playergroup players, fixed delay)
+	{
+		SoundtrackSetDelay(players, (int)this, delay);
+	}
+	
+	/**
+	*	Sets a soundtrack to play once or continuously.
+	*	@param players the players for which the continuity should be set.
+	*	@param continuous the continuity of the soundtrack.
+	*/
+	public void setContinuous(playergroup players, bool continuous)
+	{
+		SoundtrackSetContinuous(players, (int)this, continuous);
+	}
+	
+	/**
+	*	Enables or disables the shuffle for cue and index for the soundtrack.
+	*	@param players the players for which the shuffle state should be set.
+	*	@param index true if index shuffling should be enabled, false otherwise.
+	*	@param cue true if cue shuffling should be enabled, false otherwise.
+	*/
+	/* This function exists int eh editor but not Andromeda. But have been recently added in a patch.
+	public void setShuffle(playergroup players, bool index, bool cue)
+	{
+		SoundtrackSetShuffle(players, (int)this, cue, index);
+	}
+	*/
+	
+	/**
+	*	Blocks execution until the specified soundtrack file has finished playing.
+	*	@param name the name of the soundtrack file.
+	*/
+	public static void wait(string name)
+	{
+		SoundtrackWait(name);
+	}
+}

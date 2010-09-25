@@ -1,0 +1,207 @@
+package physics2d.geom;
+
+import a.util.Array;
+import physics2d.geom.Shape;
+import physics2d.geom.PolygonDef;
+import physics2d.geom.Vec2;
+import physics2d.geom.Mat22;
+import physics2d.geom.XForm;
+import physics2d.geom.AABB;
+import physics2d.geom.Edge;
+
+/**
+ * A polygon shape.
+ * @author XPilot
+ */
+public class PolygonShape extends Shape {
+	
+	private fixed density;
+	private Array<Vec2> vertices;
+	private Array<Edge> edges;
+	
+	/**
+	 * Creates a new polygon shape.
+	 * Vertices should be in counter clockwise order?
+	 */
+	public PolygonShape(PolygonDef def) {
+		super(def);
+		
+		density = def.density;
+		
+		vertices = new Array<Vec2>(def.getVertexCount());
+		for(int i = 0; i < vertices.length; i++) {
+			vertices.setIndex(i, def.getVertex(i).clone());
+		}
+		
+		edges = new Array<Edge>(vertices.length);
+		for(int i = 0; i < vertices.length; i++) {
+			int next = i+1;
+			if(next == vertices.length) next = 0;
+			edges.setIndex(i, new Edge(vertices.getIndex(next), vertices.getIndex(i)));
+		}
+	}
+	
+	public ~PolygonShape() {
+		for(int i = 0; i < vertices.length; i++) {
+			delete vertices.getIndex(i);
+			delete edges.getIndex(i);
+		}
+		delete vertices;
+		delete edges;
+	}
+	
+	public int getVertexCount() {
+		return vertices.length;
+	}
+	
+	/**
+	 * Index is taken modulo the vertex count.
+	 */
+	public Vec2 getVertex(int index) {
+		if(index >= vertices.length) index -= vertices.length;
+		return vertices.getIndex(index);
+	}
+	
+	/**
+	 * Index is taken modulo the vertex count.
+	 */
+	public Edge getEdge(int index) {
+		if(index >= edges.length) index -= edges.length;
+		return edges.getIndex(index);
+	}
+	
+	public fixed getDensity() {
+		return density;
+	}
+	
+	public override fixed computeRadius(Vec2 center) {
+		fixed max = 0.0;
+		for(int i = 0; i < vertices.length; i++) {
+			fixed dist = Vec2.distance2(vertices.getIndex(i), center);
+			if(max < dist) max = dist;
+		}
+		return SquareRoot(max);
+	}
+	
+	public override void computeAABB(XForm xf, AABB result) {
+		//TODO: better implementation
+		result.reset();
+		Vec2 v = new Vec2();
+		for(int i = 0; i < vertices.length; i++) {
+			v.setVec(vertices.getIndex(i));
+			result.addPoint(xf.apply(v));
+		}
+		delete v;
+	}
+	
+	public override void computeSweptAABB(XForm xf1, XForm xf2, AABB result) {
+		//TODO: better implementation
+		result.reset();
+		Vec2 v = new Vec2();
+		for(int i = 0; i < vertices.length; i++) {
+			v.setVec(vertices.getIndex(i));
+			result.addPoint(xf1.apply(v));
+			v.setVec(vertices.getIndex(i));
+			result.addPoint(xf2.apply(v));
+		}
+		delete v;
+	}
+	
+	/*
+	public static Vec2 computeCentroid(Array<Vec2> vertices) {
+		//find a point inside the polygon
+		Vec2 ref = new Vec2();
+		for(int i = 0; i < vertices.length; i++) {
+			ref.add(vertices.getIndex(i));
+		}
+		ref.divide((fixed)vertices.length);
+		
+		fixed area = 0.0;
+		Vec2 centroid = new Vec2(), temp = new Vec2(),
+			v1 = new Vec2(), v2 = new Vec2();
+		
+		for(int i = 0; i < vertices.length; i++) {
+			v1.setVec(vertices.getIndex(i));
+			if(i < vertices.length) v2.setVec(vertices.getIndex(i));
+			else v2.setVec(vertices.getIndex(0));
+			
+			temp.setVec(ref).add(v1).add(v2);
+			
+			v1.subtract(ref);
+			v2.subtract(ref);
+			
+			fixed a = Vec2.cross(v1, v2);
+			
+			temp.multiply(a);
+			
+			centroid.add(temp);
+			area += a;
+		}
+		
+		delete ref;
+		delete temp;
+		delete v1;
+		delete v2;
+		
+		return centroid.divide(3.0 * area);
+	}
+	*/
+	
+	public override void computeMass(MassData result) {
+		computeMass(result, density);
+	}
+	
+	public void computeMass(MassData result, fixed density) {
+		Vec2 temp = new Vec2(), v1 = new Vec2(), v2 = new Vec2();
+		fixed area = 0.0;
+		result.centroid.setZero();
+		result.inertia = 0.0;
+		
+		for(int i = 0; i < vertices.length;) {
+			v1.setVec(vertices.getIndex(i));
+			i++;
+			if(i < vertices.length) v2.setVec(vertices.getIndex(i));
+			else v2.setVec(vertices.getIndex(0));
+			
+			temp.setZero().add(v1).add(v2);
+			
+			fixed a = Vec2.cross(v1, v2);
+			temp.multiply(a);
+			
+			result.centroid.add(temp);
+			area += a;
+			
+			result.inertia += a * (v1.magnitude2() + Vec2.dot(v1, v2) + v2.magnitude2());
+		}
+		
+		result.mass = density * area / 2.0;
+		result.centroid.divide(3.0 * area);
+		result.inertia = result.inertia = result.inertia * density / 12.0;
+		
+		delete temp;
+		delete v1;
+		delete v2;
+	}
+	
+	//TODO: cache results for better performance
+	public override void support(XForm xf, Vec2 v, Vec2 result) {
+		result.setVec(v);
+		xf.getRotation().multiplyTrans(result);
+		
+		Vec2 best = vertices.getIndex(0);
+		fixed dot = best.dot(result);
+		for(int i = 1; i < vertices.length; i++) {
+			Vec2 next = vertices.getIndex(i);
+			fixed dot2 = next.dot(result);
+			if(dot2 > dot) {
+				best = next;
+				dot = dot2;
+			}
+		}
+		XForm.apply(xf, best, result);
+	}
+	
+	public override void getPoint(XForm xf, Vec2 result) {
+		XForm.apply(xf, vertices.getIndex(0), result);
+	}
+}

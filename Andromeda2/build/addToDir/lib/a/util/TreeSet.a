@@ -1,0 +1,67 @@
+package a.util;
+
+import a.util.Set;
+import a.util.TreeMap;
+
+/**
+ * An ordered set implementation backed by a TreeMap. The methods add(), remove(), and contains() are 
+ * guaranteed to run in O(log n) time. The elements in the set are ordered according to the comparator 
+ * specified in the constructor.
+ * @author wangbot
+ */
+public class TreeSet<E> extends Set<E> {
+	private static Filler FILLER;
+	
+	TreeMap<E,Filler> map;
+	Set<E> mapKeySet;
+	
+	/**
+	 * Constructs an empty TreeSet whose elements will be ordered by the specified comparator.
+	 */
+	public TreeSet(Comparator<E> comp) {
+		this.map = new TreeMap<E,Filler>(comp);
+		this.mapKeySet = map.keySet();
+	}
+	
+	public bool isEmpty() {
+		return map.isEmpty();
+	}
+	
+	public int size() {
+		return map.size();
+	}
+	
+	public bool contains(E e) {
+		return map.containsKey(e);
+	}
+	
+	public bool add(E e) {
+		return map.put(e, FILLER) == null;
+	}
+	
+	public bool remove(E e) {
+		return map.remove(e) != null;
+	}
+	
+	public void clear() {
+		map.clear();
+	}
+	
+	/**
+	 * Returns an iterator over this set. The iterator will return elements in the order 
+	 * they are represented in the set.
+	 */
+	public Iterator<E> getIterator() {
+		return mapKeySet.getIterator();
+	}
+	
+	public ~TreeSet() {
+		delete map;
+	}
+	
+	static {
+		FILLER = new Filler();
+	}
+}
+
+private class Filler {}

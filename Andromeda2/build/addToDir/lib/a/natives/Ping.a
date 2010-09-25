@@ -1,0 +1,180 @@
+package a.natives;
+/**  
+*	Definition and enrichment for ping type
+*	@author NewName
+*/
+typedef Ping uses int;
+
+public enrich Ping
+{
+	/**
+	*	Utility function to create a standard ping on the minimap. This ping cannot be modified after it is created.
+	*	Use the 'create' method for a more customisable ping.
+	*	@param players the players this ping will be visible to.
+	*	@param position the location this ping draws attention to.
+	*	@param duration the duration of the ping.
+	*	@param c the colour of the ping.
+	*/
+	public static void ping(playergroup players, point position, fixed duration, color c)
+	{
+		MinimapPing (players, position, duration, c);
+	}
+	
+	public static const Ping INVALID_PING = (Ping)c_invalidPingId;
+	
+	/**
+	*	Create a ping with the specified customisations.
+	*	@param players the player this ping will be visible to.
+	*	@param modelLink the model of the ping.
+	*	@param position the location this ping should draw attention to.
+	*	@param c the tint of this ping.
+	*	@param duration the duration that this ping lasts.
+	*	@return a ping instance with the specified attributes.
+	*/
+	public static Ping create(playergroup players, string modelLink, point position, color c, fixed duration)
+	{
+		return (Ping)PingCreate (players, modelLink, position, c, duration);
+	}
+	
+	/**
+	*	Remove this ping from the game.
+	*/
+	public void destroy()
+	{
+		PingDestroy ((int)this);
+	}
+	
+	/**
+	*	Remove all pings from the game.
+	*/
+	public static void destroyAll()
+	{
+		PingDestroyAll ();
+	}
+	
+	/**
+	*	The players that can see this ping.
+	*/
+	public playergroup playerGroup
+	{
+		public get {
+			return PingGetPlayerGroup((int)this);
+		}
+		public set {
+			PingSetPlayerGroup((int)this, value);
+		}
+	}
+	
+	/**
+	*	Set the model of this ping.
+	*	@param modelLink the new model for this ping.
+	*/
+	public void setModel(string modelLink)
+	{
+		PingSetModel((int)this, modelLink);
+	}
+	
+	/**
+	*	The position that this ping draws attention to.
+	*/
+	public point position
+	{
+		public get {
+			return PingGetPosition((int)this);
+		}
+		public set {
+			PingSetPosition((int)this, value);
+		}
+	}
+	
+	/**
+	*	The size of this ping.
+	*/
+	public fixed scale
+	{
+		public get {
+			return PingGetScale((int)this);
+		}
+		public set {
+			PingSetScale((int)this, value);
+		}
+	}
+	
+	/**
+	*	The angle that this ping faces, given in degrees.
+	*/
+	public fixed rotation
+	{
+		public get {
+			return PingGetRotation((int)this);
+		}
+		public set {
+			PingSetRotation((int)this, value);
+		}
+	}
+	
+	/**
+	*	The colour of this ping.
+	*/
+	public color tint
+	{
+		public get {
+			return PingGetColor((int)this);
+		}
+		public set {
+			PingSetColor((int)this, value);
+		}
+	}
+	
+	/**
+	*	The game-time that this ping lasts for.
+	*/
+	public fixed duration
+	{
+		public get {
+			return PingGetDuration((int)this);
+		}
+		public set {
+			PingSetDuration((int)this, value);
+		}
+	}
+	
+	/**
+	*	The unit that this ping is attached to.
+	*/
+	public unit attachedUnit
+	{
+		public get {
+			return PingGetUnit((int)this);
+		}
+		public set {
+			PingSetUnit((int)this, value);
+		}
+	}
+	
+	/**
+	*	The text that is displayed when the use points at this ping with the mouse cursor.
+	*/
+	public text tooltip
+	{
+		public get {
+			return PingGetTooltip((int)this);
+		}
+		public set {
+			PingSetTooltip((int)this, value);
+		}
+	}
+	
+	/**
+	*	The visibility of this ping.
+	*/
+	public bool visible
+	{
+		public get {
+			return PingIsVisible((int)this);
+		}
+		public set {
+			PingSetVisible((int)this, value);
+		}
+	}
+}

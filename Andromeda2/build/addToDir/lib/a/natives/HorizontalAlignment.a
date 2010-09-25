@@ -1,0 +1,14 @@
+package a.natives;
+/**  
+*	Definition and enrichment for HorizontalAlignment type.
+*	@author NewName
+*/
+typedef HorizontalAlignment uses int;
+
+public enrich HorizontalAlignment
+{
+	public static const HorizontalAlignment
+		LEFT =			(HorizontalAlignment)c_alignLeft,
+		RIGHT =		(HorizontalAlignment)c_alignRight,
+		CENTER =	(HorizontalAlignment)c_alignCenter;
+}

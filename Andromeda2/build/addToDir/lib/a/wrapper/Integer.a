@@ -1,0 +1,97 @@
+package a.wrapper;
+
+import a.util.Math;
+import a.util.Comparator;
+import a.util.Hasher;
+
+/**
+ * Wrapper class for int. Immutable.
+ * @author XPilot
+ */
+public class Integer {
+	public static const int MIN_VALUE = 1 << 32;
+	public static const int MAX_VALUE = ~MIN_VALUE;
+	
+	private /* final */ int value;
+	
+	public Integer() {
+		value = 0;
+	}
+	
+	public Integer(int value) {
+		this.value = value;
+	}
+		
+	public int getValue() {
+		return value;
+	}
+	
+	public Integer clone() {
+		return new Integer(value);
+	}
+	
+	public bool equals(Integer other) {
+		return value == other.value;
+	}
+
+	public static int compare(Integer i1, Integer i2) {
+		return i1.value - i2.value;
+	}
+	
+	public int compareTo(Integer other) {
+		return compare(this, other);
+	}
+	
+	public int hashCode() {
+		return value;
+	}
+	
+	public string toString() {
+		return (string)value;
+	}
+	
+	public static Integer randomInteger(int min, int max) {
+		return new Integer(RandomInt(min, max));
+	}
+	
+	public static Integer randomInteger() {
+		return randomInteger(MIN_VALUE, MAX_VALUE);
+	}
+	
+	private static /* final */ Comparator<Integer> comparator;
+	private static /* final */ Hasher<Integer> hasher;
+	
+	static {
+		comparator = new IntegerComparator();
+		hasher = new IntegerHasher();
+	}
+	
+	/**
+	 * Uses Integer.compare(Integer, Integer)
+	 */
+	public static Comparator<Integer> getComparator() {
+		return comparator;
+	}
+	
+	/**
+	 * Uses Integer.hashCode() and Integer.equals(Integer)
+	 */
+	public static Hasher<Integer> getHasher() {
+		return hasher;
+	}
+}
+
+private class IntegerComparator extends Comparator<Integer> {
+	public override int compare(Integer i1, Integer i2) {
+		return Integer.compare(i1, i2);
+	}
+}
+
+private class IntegerHasher extends Hasher<Integer> {
+	public override int hashCode(Integer s) {
+		return s.hashCode();
+	}
+	public override bool equal(Integer i1, Integer i2) {
+		return i1.equals(i2);
+	}
+}

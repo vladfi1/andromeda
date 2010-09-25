@@ -1,0 +1,83 @@
+package a.util;
+
+import a.util.Set;
+
+/**
+ * Base class for maps.
+ * @param K The key type.
+ * @param V The value type.
+ * @author XPilot
+ */
+public abstract class Map<K, V> {
+	/**
+	 * Returns whether this Map is empty.
+	 * @return whether this Map is empty.
+	 */
+	public abstract bool isEmpty();
+	
+	/**
+	 * Returns the number of entries in this Map.
+	 * @return the number of entries in this Map.
+	 */
+	public abstract int size();
+	
+	/**
+	 * Clears all entries from this Map.
+	 */
+	public abstract void clear();
+	
+	/**
+	 * Returns whether this Map contains a key.
+	 * @param key The key.
+	 * @return whether this Map contains the key.
+	 */
+	public abstract bool containsKey(K key);
+	
+	/**
+	 * Puts an entry into this Map.
+	 * @param key The key.
+	 * @param value The value.
+	 * @return The value previously associated with the key.
+	 */
+	public abstract V put(K key, V value);
+	
+	/**
+	 * Returns the value associated with a key.
+	 * @return the value associated with a key, or null if there is no such entry.
+	 */
+	public abstract V getValue(K key);
+	
+	/**
+	 * Removes an entry from this Map.
+	 * @param key The key of the entry.
+	 * @return The value of the entry, or null if there is no such entry.
+	 */
+	public abstract V remove(K key);
+	
+	/**
+	 * Returns a set containing all the keys in this Map. The set is backed by this Map, 
+	 * meaning all changes to the Map will be reflected in the set. The set supports 
+	 * the isEmpty(), size(), contains(), remove(), clear(), and getIterator() methods but 
+	 * not the add() method.
+	 * @return a Set of the keys contained within this Map backed by this Map
+	 */
+	public abstract Set<K> keySet();
+}
+
+public class MapEntry<K,V> {
+	K key;
+	V value;
+	
+	MapEntry(K key, V value) {
+		this.key = key;
+		this.value = value;
+	}
+	
+	public K getKey() {
+		return key;
+	}
+	
+	public V getValue() {
+		return value;
+	}
+}

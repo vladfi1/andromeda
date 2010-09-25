@@ -1,0 +1,40 @@
+package physics2d.collision;
+
+import physics2d.geom.Vec2;
+
+/**
+ * Segment used to test intersections.
+ * @author XPilot
+ */
+public class Segment {
+	/**
+	 * Endpoints of segment.
+	 */
+	Vec2 p1, p2;
+	
+	public Segment() {
+		p1 = new Vec2();
+		p2 = new Vec2();
+	}
+	
+	public ~Segment() {
+		delete p1;
+		delete p2;
+	}
+	
+	public Vec2 getP1() {
+		return p1;
+	}
+	
+	public void setP1(Vec2 v) {
+		p1.setVec(v);
+	}
+	
+	public Vec2 getP2() {
+		return p2;
+	}
+	
+	public void setP2(Vec2 v) {
+		p2.setVec(v);
+	}
+}

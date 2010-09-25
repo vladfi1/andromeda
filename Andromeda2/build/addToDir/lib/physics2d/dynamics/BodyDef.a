@@ -1,0 +1,78 @@
+package physics2d.dynamics;
+
+import physics2d.geom.MassData;
+import physics2d.geom.Vec2;
+
+/**
+ * Definition of a body.
+ * @author XPilot
+ */
+public class BodyDef {
+		
+	/**
+	 * Static bodies do not move.
+	 */
+	public bool isStatic;
+	
+	/**
+	 * Whether this body can rotate.
+	 */
+	public bool isRotationFixed;
+	
+	/**
+	 * Whether this body is active to start.
+	 */
+	public bool isActive;
+	
+	/**
+	 * Mass, centroid, and moment of inertia.
+	 */
+	public /* final */ MassData massData;
+	
+	/**
+	 * Body's initial position.
+	 */
+	public /* final */ Vec2 position;
+
+	/**
+	 * Body's initial angle, in degrees.
+	 */
+	public fixed angle;
+
+	/**
+	 * Used to reduced linear velocity.
+	 */
+	public fixed linearDamping;
+	
+	/**
+	 * Used to reduce angular velocity.
+	 */
+	public fixed angularDamping;
+	
+	/**
+	 * Default body definition.
+	 * Not static or rotation fixed, active.
+	 * Empty mass data (mass = inerta = 0, centroid at origin).
+	 * Position at origin.
+	 * Angle = 0
+	 * Linear damping = angular damping = 0.
+	 */
+	public BodyDef() {
+		isStatic = false;
+		isRotationFixed = false;
+		isActive = true;
+		massData = new MassData();
+		position = new Vec2();
+		angle = 0.0;
+		linearDamping = 0.0;
+		angularDamping = 0.0;
+	}
+	
+	/**
+	 * Deletes massData and position.
+	 */
+	public ~BodyDef() {
+		delete massData;
+		delete position;
+	}
+}

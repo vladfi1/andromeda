@@ -1,0 +1,36 @@
+package a.natives;
+/*
+*	Enrichment for native type 'abilcmd'
+*	@author Still needs one!
+*/
+
+public enrich abilcmd
+{
+	/**
+	*	Description here.
+	*	@return Returns a string.
+	*/
+	public string getAbility()
+	{
+		return AbilityCommandGetAbility(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int getCommand()
+	{
+		return AbilityCommandGetCommand(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int getAction()
+	{
+		return AbilityCommandGetAction(this);
+	}
+
+}

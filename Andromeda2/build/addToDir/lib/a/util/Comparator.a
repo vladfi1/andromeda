@@ -1,0 +1,9 @@
+package a.util;
+
+/**
+ * Class that can compare objects.
+ * @author XPilot
+ */
+public abstract class Comparator<T> {
+	public abstract int compare(T t1, T t2);
+}

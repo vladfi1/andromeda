@@ -1,0 +1,346 @@
+package physics2d.geom;
+
+/**
+ * Represents a 2-dimensional vector.
+ * @author XPilot
+ */
+public class Vec2 {
+
+	/**
+	 * X and Y components.
+	 */
+	public fixed x, y;
+	
+	/**
+	 * Creates a vector at the origin.
+	 */
+	public Vec2() {
+		setZero();
+	}
+	
+	/**
+	 * Creates a vector at <x, y>
+	 */
+	public Vec2(fixed x, fixed y) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	/**
+	 * Creates a vector at v.
+	 */
+	public Vec2(Vec2 v) {
+		x = v.x;
+		y = v.y;
+	}
+	
+	/**
+	 * Clones this vector.
+	 */
+	public Vec2 clone() {
+		return new Vec2(this);
+	}
+	
+	/**
+	 * Sets this vector to <x, y>
+	 * @return This vector.
+	 */
+	public Vec2 setVec(fixed x, fixed y) {
+		this.x = x;
+		this.y = y;
+		return this;
+	}
+	
+	/**
+	 * Sets this vector to v.
+	 * @return This vector.
+	 */
+	public Vec2 setVec(Vec2 v) {
+		x = v.x;
+		y = v.y;
+		return this;
+	}
+
+	/**
+	 * Sets this vector to p.
+	 * @return This vector.
+	 */
+	public Vec2 setVec(point p) {
+		x = PointGetX(p);
+		y = PointGetY(p);
+		return this;
+	}
+	
+	/**
+	 * Sets this vector using polar coordinates.
+	 * @param r The radius.
+	 * @param theta The angle from the positive X axis.
+	 * @return This vector.
+	 */
+	public Vec2 setPolar(fixed r, fixed theta) {
+		return setVec(r * Cos(theta), r * Sin(theta));
+	}
+	
+	/**
+	 * Sets the vector to <0, 0>
+	 * @return This vector.
+	 */
+	public Vec2 setZero() {
+		x = y = 0;
+		return this;
+	}
+	
+	/**
+	 * Determines whether this vector and v have the same components.
+	 */
+	public bool equals(Vec2 v) {
+		return x == v.x && y == v.y;
+	}
+	
+	/**
+	 * Calculates and returns the sum of v1 and v2.
+	 */
+	public static Vec2 sum(Vec2 v1, Vec2 v2) {
+		return new Vec2(v1.x + v2.x, v1.y + v2.y);
+	}
+	
+	/**
+	 * Calculates the sum of v1 and v2 and stores the result in result.
+	 */
+	public static Vec2 sum(Vec2 v1, Vec2 v2, Vec2 result) {
+		return result.setVec(v1.x + v2.x, v1.y + v2.y);
+	}
+	
+	/**
+	 * Calculates and returns the difference of v1 and v2.
+	 */
+	public static Vec2 difference(Vec2 v1, Vec2 v2) {
+		return new Vec2(v1.x - v2.x, v1.y - v2.y);
+	}
+	
+	/**
+	 * Calculates the difference of v1 and v2 and stores the result in result.
+	 * @return result
+	 */
+	public static Vec2 difference(Vec2 v1, Vec2 v2, Vec2 result) {
+		return result.setVec(v1.x - v2.x, v1.y - v2.y);
+	}
+	
+	/**
+	 * @return The distance between v1 and v2.
+	 */
+	public static fixed distance(Vec2 v1, Vec2 v2) {
+		fixed dx = v2.x - v1.x;
+		fixed dy = v2.y - v1.y;
+		return SquareRoot(dx * dx + dy * dy);
+	}
+	
+	/**
+	 * @return The distance squared between v1 and v2.
+	 */
+	public static fixed distance2(Vec2 v1, Vec2 v2) {
+		fixed dx = v2.x - v1.x;
+		fixed dy = v2.y - v1.y;
+		return dx * dx + dy * dy;
+	}
+	
+	/**
+	 * Calculates and returns the dot product of v1 and v2.
+	 */
+	public static fixed dot(Vec2 v1, Vec2 v2) {
+		return v1.x * v2.x + v1.y * v2.y;
+	}
+	
+	/**
+	 * Calculates and returns the dot product of this and v.
+	 */
+	public fixed dot(Vec2 v) {
+		return x * v.x + y * v.y;
+	}
+	
+	/**
+	 * Calculates and returns the (signed) magnitude of the cross product of v1 and v2.
+	 */
+	public static fixed cross(Vec2 v1, Vec2 v2) {
+		return v1.x * v2.y - v1.y * v2.x;
+	}
+	
+	/**
+	 * Calculates and returns the (signed) magnitude of the cross product of this and v.
+	 */
+   	public fixed cross(Vec2 v) {
+		return x * v.y - y * v.x;
+	}
+	
+	/**
+	 * Adds v to this vector.
+	 * @return This vector.
+	 */
+	public Vec2 add(Vec2 v) {
+		x += v.x;
+		y += v.y;
+		return this;
+	}
+	
+	/**
+	 * Adds scale * v to this vector;
+	 * @return This vector.
+	 */
+	public Vec2 add(Vec2 v, fixed scale) {
+		x += v.x * scale;
+		y += v.y * scale;
+		return this;
+	}
+	
+	/**
+	 * Adds <x, y> to this vector.
+	 * @return This vector.
+	 */
+	public Vec2 add(fixed x, fixed y) {
+		this.x += x;
+		this.y += y;
+		return this;
+	}
+	
+	/**
+	 * Subtracts v from this vector.
+	 * @return This vector.
+	 */
+	public Vec2 subtract(Vec2 v) {
+		x -= v.x;
+		y -= v.y;
+		return this;
+	}
+	
+	/**
+	 * Subtracts scale * v from this vector;
+	 * @return This vector.
+	 */
+	public Vec2 subtract(Vec2 v, fixed scale) {
+		x -= v.x * scale;
+		y -= v.y * scale;
+		return this;
+	}
+	
+	/**
+	 * Subtracts <x, y> from this vector.
+	 * @return This vector.
+	 */
+	public Vec2 subtract(fixed x, fixed y) {
+		this.x -= x;
+		this.y -= y;
+		return this;
+	}
+	
+	/**
+	 * Multiplies this vector by a.
+	 * @return This vector.
+	 */
+	public Vec2 multiply(fixed a) {
+		x = x * a;
+		y = y * a;
+		return this;
+	}
+	
+	/**
+	 * Divides this vector by a.
+	 * @return This vector.
+	 */
+	public Vec2 divide(fixed a) {
+		x = x / a;
+		y = y / a;
+		return this;
+	}
+	
+	/**
+	 * @return The magnitude of this vector.
+	 */
+	public fixed magnitude() {
+		return SquareRoot(x * x + y * y);
+	}
+	
+	/**
+	 * @return The magnitude squared of this vector.
+	 */
+	public fixed magnitude2() {
+		return x * x + y * y;
+	}
+	
+	/**
+	 * Normalizes this vector.
+	 * @return This vector.
+	 */
+	public Vec2 normalize() {
+		fixed magnitude = magnitude();
+		if(magnitude != 0) divide(magnitude);
+		return this;
+	}
+	
+	/**
+	 * Negates this vector.
+	 * @return This vector.
+	 */
+	public Vec2 negate() {
+		x = -x;
+		y = -y;
+		return this;
+	}
+	
+	/**
+	 * Stores the minimum of v1 and v2 (component-wise) in result.
+	 * @return result
+	 */
+	public static Vec2 min(Vec2 v1, Vec2 v2, Vec2 result) {
+		return result.setVec(MinF(v1.x, v2.x), MinF(v1.y, v2.y));
+	}
+	
+	/**
+	 * Stores the maximum of v1 and v2 (component-wise) in result.
+	 * @return result
+	 */
+	public static Vec2 max(Vec2 v1, Vec2 v2, Vec2 result) {
+		return result.setVec(MaxF(v1.x, v2.x), MaxF(v1.y, v2.y));
+	}
+	
+	/**
+	 * Rotates this vector 90 degrees clockwise.
+	 */
+	public Vec2 rotClock90() {
+		fixed y1 = y;
+		y = -x;
+		x = y1;
+		return this;
+	}
+	
+	/**
+	 * Rotates this vector 90 degrees counter clockwise.
+	 */
+	public Vec2 rotCount90() {
+		fixed y1 = y;
+		y = x;
+		x = -y1;
+		return this;
+	}
+	
+	/**
+	 * Returns a string representation of this vector.
+	 */
+	public string toString() {
+		return toString(c_fixedPrecisionAny);
+	}
+	
+	/**
+	 * Returns a string representation of this vector.
+	 * @param The fixed precision.
+	 */
+	public string toString(int precision) {
+		return "<" + FixedToString(x, precision) + ", " + FixedToString(y, precision) + ">";
+	}
+	
+	/**
+	 * Returns a point with this vector's x and y components.
+	 */
+	public point toPoint() {
+		return Point(x, y);
+	}
+}

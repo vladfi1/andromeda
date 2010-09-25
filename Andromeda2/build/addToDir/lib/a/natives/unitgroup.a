@@ -1,0 +1,200 @@
+package a.natives;
+/*
+*	Enrichment for native type 'unitgroup'
+*	@author Still needs one!
+*/
+
+public enrich unitgroup
+{
+	/**
+	*	Description here.
+	*/
+	public void loopBegin()
+	{
+		UnitGroupLoopBegin(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a unitgroup.
+	*/
+	public unitgroup copy()
+	{
+		return UnitGroupCopy(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@param p4 Unknown int.
+	*	@return Returns a unitgroup.
+	*/
+	public unitgroup filterAlliance(int p2, int p3, int p4)
+	{
+		return UnitGroupFilterAlliance(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@return Returns a unitgroup.
+	*/
+	public unitgroup filterPlayer(int p2, int p3)
+	{
+		return UnitGroupFilterPlayer(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@return Returns a unitgroup.
+	*/
+	public unitgroup filterPlane(int p2, int p3)
+	{
+		return UnitGroupFilterPlane(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown region.
+	*	@param p3 Unknown int.
+	*	@return Returns a unitgroup.
+	*/
+	public unitgroup filterRegion(region p2, int p3)
+	{
+		return UnitGroupFilterRegion(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*	@param p3 Unknown string.
+	*	@param p4 Unknown int.
+	*	@return Returns a unitgroup.
+	*/
+	public unitgroup filterThreat(unit p2, string p3, int p4)
+	{
+		return UnitGroupFilterThreat(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*/
+	public void clear()
+	{
+		UnitGroupClear(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*/
+	public void add(unit p2)
+	{
+		UnitGroupAdd(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*/
+	public void remove(unit p2)
+	{
+		UnitGroupRemove(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown order.
+	*	@param p3 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool issueOrder(order p2, int p3)
+	{
+		return UnitGroupIssueOrder(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown bool.
+	*/
+	public void waitUntilIdle(int p2, bool p3)
+	{
+		UnitGroupWaitUntilIdle(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int count(int p2)
+	{
+		return UnitGroupCount(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a unit.
+	*/
+	public unit unit(int p2)
+	{
+		return UnitGroupUnit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a unit.
+	*/
+	public unit randomUnit(int p2)
+	{
+		return UnitGroupRandomUnit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*	@return Returns a bool.
+	*/
+	public bool hasUnit(unit p2)
+	{
+		return UnitGroupHasUnit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool testPlane(int p2)
+	{
+		return UnitGroupTestPlane(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown point.
+	*	@return Returns a unit.
+	*/
+	public unit nearestUnit(point p2)
+	{
+		return UnitGroupNearestUnit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown bool.
+	*/
+	public void select(int p2, bool p3)
+	{
+		UnitGroupSelect(this, p2, p3);
+	}
+
+}

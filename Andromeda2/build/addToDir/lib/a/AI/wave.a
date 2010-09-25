@@ -1,0 +1,238 @@
+package a.ai;
+/*
+*	Enrichment for native type 'wave'
+*	@author Still needs one!
+*/
+
+public enrich wave
+{
+	/**
+	*	Description here.
+	*	@return Returns a unitgroup.
+	*/
+	public unitgroup getUnits()
+	{
+		return AIWaveGetUnits(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a waveinfo.
+	*/
+	public waveinfo info()
+	{
+		return AIWaveInfo(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a string.
+	*/
+	public string toString()
+	{
+		return AIWaveToString(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a text.
+	*/
+	public text toText()
+	{
+		return AIWaveToText(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*/
+	public void addUnit(unit p2)
+	{
+		AIWaveAddUnit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*	@param p3 Unknown int.
+	*/
+	public void addUnitPriority(unit p2, int p3)
+	{
+		AIWaveAddUnitPriority(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*/
+	public void removeUnit(unit p2)
+	{
+		AIWaveRemoveUnit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int unitCount()
+	{
+		return AIWaveUnitCount(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int detectorCount()
+	{
+		return AIWaveDetectorCount(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown wavetarget.
+	*/
+	public void setType(int p2, wavetarget p3)
+	{
+		AIWaveSetType(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int state()
+	{
+		return AIWaveState(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a point.
+	*/
+	public point goal()
+	{
+		return AIWaveGoal(this);
+	}
+
+	/**
+	*	Description here.
+	*/
+	public void delete()
+	{
+		AIWaveDelete(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a wavetarget.
+	*/
+	public wavetarget targetMerge()
+	{
+		return AIWaveTargetMerge(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a wavetarget.
+	*/
+	public wavetarget getTarget()
+	{
+		return AIWaveGetTarget(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a bool.
+	*/
+	public bool isInCombat()
+	{
+		return AIWaveIsInCombat(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int getTimeInCombat()
+	{
+		return AIWaveGetTimeInCombat(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int getTimeSinceCombat()
+	{
+		return AIWaveGetTimeSinceCombat(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int getTimeSinceOrdered()
+	{
+		return AIWaveGetTimeSinceOrdered(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int getTimeSinceRetreat()
+	{
+		return AIWaveGetTimeSinceRetreat(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int eval()
+	{
+		return AIWaveEval(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown fixed.
+	*	@return Returns a int.
+	*/
+	public int evalRatio(fixed p2)
+	{
+		return AIWaveEvalRatio(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int type()
+	{
+		return AIWaveType(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void setUserData(int p2, int p3)
+	{
+		AIWaveSetUserData(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int getUserData(int p2)
+	{
+		return AIWaveGetUserData(this, p2);
+	}
+
+}

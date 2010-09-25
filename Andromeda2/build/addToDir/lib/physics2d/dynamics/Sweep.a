@@ -1,0 +1,51 @@
+package physics2d.dynamics;
+
+import physics2d.geom.Vec2;
+import physics2d.geom.Mat22;
+import physics2d.geom.XForm;
+
+/**
+ * Represents a body's motion in a time frame.
+ * @author XPilot
+ */
+class Sweep {
+	/**
+	 * Center of mass relative to local origin.
+	 */
+	/* final */ Vec2 centroid;
+	/**
+	 * Start and end world centroid positions.
+	 */
+	/* final */ Vec2 center0, center1;
+	/**
+	 * Start and end rotation angles (about the centroid), in degrees.
+	 */
+	fixed angle0, angle1;
+	
+	Sweep() {
+		center0 = new Vec2();
+		center1 = new Vec2();
+	}
+	
+	~Sweep() {
+		delete center0;
+		delete center1;
+	}
+	
+	/**
+	 * Interpolates the transform at a given time.
+	 * @param time The normalized time in the interval [0, 1].
+	 * @param result Stores the resulting XForm.
+	 */
+	public void computeXForm(fixed time, XForm result) {
+		//set the rotation matrix
+		Mat22 rotation = result.getRotation();
+		rotation.setRotationMatrix(angle0 * time + angle1 * (1.0 - time));
+		
+		//set the position vector
+		Vec2 position = result.getPosition();
+		//adjust for centroid != local origin
+		Mat22.multiply(rotation, centroid, position).negate();
+		position.add(center0, time).add(center1, 1.0 - time);
+	}
+}

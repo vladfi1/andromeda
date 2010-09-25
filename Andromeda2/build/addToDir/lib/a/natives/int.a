@@ -1,0 +1,190 @@
+package a.natives;
+
+import a.util.Math;
+
+/**  
+*        Enrichment for type fixed
+*        @author Belphegor
+*/
+public enrich int
+{
+	/**
+	* 	Returns a new int which is an absolute value of this int.
+	* 	Absolute value represents distance from the 0.
+	*	@return absolute value of this int
+	*/
+	public int abs()
+	{
+		return AbsI(this);
+	}
+	
+	/**
+	*	Returns new int with this integer as base and exp as exponent
+	*	@param exp exponent of the number
+	*	@return int that represents this to a power of exp(this^exp)
+	*/
+	public int pow(int exp)
+	{
+		fixed f_base = IntToFixed(this);
+		fixed f_exp = IntToFixed(exp);
+		fixed result;
+		
+		result = Pow(f_base, f_exp);
+		return FixedToInt(result);
+		
+		/*
+		If that isn't fast enough or precise then 
+		
+		int result;
+		int i = 0;
+		int loopLength;
+		
+		loopLength = AbsI(exp);
+		
+		if (exp < 0) return 0;
+		if (exp == 0) return 1;
+		if (exp > 0)
+		{
+			if(exp == 1) return this;
+			if(exp == 2) return this*this;
+			
+			if(exp > 2)
+			{
+				i = 1;
+				result = this;
+				while (i < loopLength)
+				{
+					i += 1;
+					result = result * this;
+				}
+			}
+		}
+		*/
+	}
+	
+	/**
+	*	Returns the higher value between this and that int. The returned value is a copy
+	* 	@param that int to which we compare for maximum value
+	*	@return maximum value
+	*/
+	public int max(int that)
+	{
+		return MaxI(this, that);
+	}
+	
+	/**
+	*	Returns the lesser value between this and that int. The returned value is a copy
+	* 	@param that int to which we compare for minimum value
+	*	@return minimum value
+	*/
+	public int min(int that)
+	{
+		return MinI(this, that);
+	}
+	
+	/**
+	*	Return if this integer is not evenly divisible by two
+	*	@return whether the integer is odd
+	*/
+	public bool isOdd()
+	{
+		return ((this%2)!=0);
+	}
+
+	/**
+	*	Return if this integer is evenly divisible by two
+	*	@return whether the integer is even
+	*/
+	public bool isEven()
+	{
+		return ((this%2)==0);
+	}	
+	
+	/**
+	*	Generates a random integer value in [min,max] range. 
+	*	Ordering of min and max doesn't affect the results. Other words random(3,6) generates 
+	*   value in same range as random(6,3).
+	* 	@param min lowest possible value to be generated
+	* 	@param max highest possible value to be generated
+	*	@return random value in [min, max] range
+	*/
+	public static int random(int min, int max)
+	{
+		return RandomInt(min,max);
+	}
+	
+	/**
+	 * Returns a random integer.
+	 * @return a random integer.
+	 */
+	public static int random() {
+		return RandomInt(Math.MIN_INT, Math.MAX_INT);
+	}
+	
+	/**
+	*	Compares this int to that int and negative, zero or a positive integer
+	* 	if this is lesser, equal or greater than that respectively:<code>
+	*         this < that  => <0
+	*         this == that => 0
+	*         this > that  => >0</code>
+	* 	@param that int to which we compare
+	* 	@return  negative, zero or a positive integer if this is lesser, equal or greater than that respectively
+	*/
+	public int compareTo(int that) {
+		return this - that;
+	}
+	
+	/**
+	*	Compares this int to that int and returns true if both are the same
+	* 	@param that int to which we compare for equality
+	*	@return true if two ints are equal, false otherwise 
+	*/
+	public bool equals(int that)
+	{
+		return this==that;
+	}
+	
+	/**
+	* 	Returns a hash code of this int
+	*	@return hash code
+	*/
+	public int hash()
+	{
+		return this; // old version it obfuscates int  return (this ^ this<<2);
+	}
+	
+	/**
+	 * Returns a hash code of this int.
+	 * @return This int.
+	 */
+	public int hashCode() {
+		return this;
+	}
+	
+	/**
+	*	Returns a string representation of this int
+	*	@return string representation of this int
+	*/
+	public string toString()
+	{
+		return (string) this;
+	}
+	
+	/**
+	*	Returns a fixed representation of this int
+	*	@return fixed representation of this int
+	*/
+	public fixed toFixed()
+	{
+		return (fixed) this;
+	}
+	
+	/**
+	*	Returns a text representation of this int
+	*	@return text representation of this int
+	*/
+	public text toText()
+	{
+		return (text) this;
+	}
+}

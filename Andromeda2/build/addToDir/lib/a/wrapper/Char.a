@@ -1,0 +1,253 @@
+package a.wrapper;
+
+import a.util.Comparator;
+import a.util.Hasher;
+
+/**
+ * Wrapper class for characters. Should be an enum.
+ * @author XPilot
+ */
+public class Char [NUM_CHARS] {
+	/**
+	 * Number of characters (not all valid).
+	 */
+	public static const int NUM_CHARS = 128;
+	
+	/**
+	 * All possible characters.
+	 */
+	private static Char[NUM_CHARS] chars;
+	
+	private /* final */ int code;
+	private /* final */ string str;
+	
+	static {
+		//chars[0] = new Char(0, "\u0000");
+		chars[1] = new Char(1, "");
+		chars[2] = new Char(2, "");
+		chars[3] = new Char(3, "");
+		chars[4] = new Char(4, "");
+		chars[5] = new Char(5, "");
+		chars[6] = new Char(6, "");
+		chars[7] = new Char(7, "");
+		chars[8] = new Char(8, "");
+		chars[9] = new Char(9, "\t");
+		chars[10] = new Char(10, "\n");
+		//chars[11] = new Char(11, "");
+		chars[12] = new Char(12, "");
+		chars[13] = new Char(13, "\r");
+		chars[14] = new Char(14, "");
+		chars[15] = new Char(15, "");
+		chars[16] = new Char(16, "");
+		chars[17] = new Char(17, "");
+		chars[18] = new Char(18, "");
+		chars[19] = new Char(19, "");
+		chars[20] = new Char(20, "");
+		chars[21] = new Char(21, "");
+		chars[22] = new Char(22, "");
+		chars[23] = new Char(23, "");
+		chars[24] = new Char(24, "");
+		chars[25] = new Char(25, "");
+		chars[26] = new Char(26, "");
+		chars[27] = new Char(27, "");
+		chars[28] = new Char(28, "");
+		chars[29] = new Char(29, "");
+		chars[30] = new Char(30, "");
+		chars[31] = new Char(31, "");
+		chars[32] = new Char(32, " ");
+		chars[33] = new Char(33, "!");
+		chars[34] = new Char(34, "\"");
+		chars[35] = new Char(35, "#");
+		chars[36] = new Char(36, "$");
+		chars[37] = new Char(37, "%");
+		chars[38] = new Char(38, "&");
+		chars[39] = new Char(39, "'");
+		chars[40] = new Char(40, "(");
+		chars[41] = new Char(41, ")");
+		chars[42] = new Char(42, "*");
+		chars[43] = new Char(43, "+");
+		chars[44] = new Char(44, ",");
+		chars[45] = new Char(45, "-");
+		chars[46] = new Char(46, ".");
+		chars[47] = new Char(47, "/");
+		chars[48] = new Char(48, "0");
+		chars[49] = new Char(49, "1");
+		chars[50] = new Char(50, "2");
+		chars[51] = new Char(51, "3");
+		chars[52] = new Char(52, "4");
+		chars[53] = new Char(53, "5");
+		chars[54] = new Char(54, "6");
+		chars[55] = new Char(55, "7");
+		chars[56] = new Char(56, "8");
+		chars[57] = new Char(57, "9");
+		chars[58] = new Char(58, ":");
+		chars[59] = new Char(59, ";");
+		chars[60] = new Char(60, "<");
+		chars[61] = new Char(61, "=");
+		chars[62] = new Char(62, ">");
+		chars[63] = new Char(63, "?");
+		chars[64] = new Char(64, "@");
+		chars[65] = new Char(65, "A");
+		chars[66] = new Char(66, "B");
+		chars[67] = new Char(67, "C");
+		chars[68] = new Char(68, "D");
+		chars[69] = new Char(69, "E");
+		chars[70] = new Char(70, "F");
+		chars[71] = new Char(71, "G");
+		chars[72] = new Char(72, "H");
+		chars[73] = new Char(73, "I");
+		chars[74] = new Char(74, "J");
+		chars[75] = new Char(75, "K");
+		chars[76] = new Char(76, "L");
+		chars[77] = new Char(77, "M");
+		chars[78] = new Char(78, "N");
+		chars[79] = new Char(79, "O");
+		chars[80] = new Char(80, "P");
+		chars[81] = new Char(81, "Q");
+		chars[82] = new Char(82, "R");
+		chars[83] = new Char(83, "S");
+		chars[84] = new Char(84, "T");
+		chars[85] = new Char(85, "U");
+		chars[86] = new Char(86, "V");
+		chars[87] = new Char(87, "W");
+		chars[88] = new Char(88, "X");
+		chars[89] = new Char(89, "Y");
+		chars[90] = new Char(90, "Z");
+		chars[91] = new Char(91, "[");
+		chars[92] = new Char(92, "\\");
+		chars[93] = new Char(93, "]");
+		chars[94] = new Char(94, "^");
+		chars[95] = new Char(95, "_");
+		chars[96] = new Char(96, "`");
+		chars[97] = new Char(97, "a");
+		chars[98] = new Char(98, "b");
+		chars[99] = new Char(99, "c");
+		chars[100] = new Char(100, "d");
+		chars[101] = new Char(101, "e");
+		chars[102] = new Char(102, "f");
+		chars[103] = new Char(103, "g");
+		chars[104] = new Char(104, "h");
+		chars[105] = new Char(105, "i");
+		chars[106] = new Char(106, "j");
+		chars[107] = new Char(107, "k");
+		chars[108] = new Char(108, "l");
+		chars[109] = new Char(109, "m");
+		chars[110] = new Char(110, "n");
+		chars[111] = new Char(111, "o");
+		chars[112] = new Char(112, "p");
+		chars[113] = new Char(113, "q");
+		chars[114] = new Char(114, "r");
+		chars[115] = new Char(115, "s");
+		chars[116] = new Char(116, "t");
+		chars[117] = new Char(117, "u");
+		chars[118] = new Char(118, "v");
+		chars[119] = new Char(119, "w");
+		chars[120] = new Char(120, "x");
+		chars[121] = new Char(121, "y");
+		chars[122] = new Char(122, "z");
+		chars[123] = new Char(123, "{");
+		chars[124] = new Char(124, "|");
+		chars[125] = new Char(125, "}");
+		chars[126] = new Char(126, "~");
+		chars[127] = new Char(127, "");
+	}
+	
+	/**
+	 * @return The Char corresponding to this string,
+	 * or null if there is no match.
+	 */
+	public static Char getChar(string str) {
+		for(int i = 0; i < NUM_CHARS; i++) {
+			if(chars[i] != null && StringEqual(str, chars[i].str, true))
+				return chars[i];
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the Char corresponding to a certain code.
+	 * @param code The character code.
+	 * @return The corresponding char.
+	 */
+	public static Char getChar(int code) {
+		return chars[code];
+	}
+	
+	private Char(int code, string str) {
+		this.code = code;
+		this.str = str;
+	}
+	
+	/**
+	 * @return The character's numerical code.
+	 */
+	public int getCode() {
+		return code;
+	}
+	
+	/**
+	 * @return The string corresponding to this Char.
+	 */
+	public string toString() {
+		return str;
+	}
+	
+	public bool equals(Char other) {
+		return code == other.code;
+	}
+	
+	/**
+	 * Lexicographic comparison.
+	 */
+	public static int compare(Char c1, Char c2) {
+		return c1.code - c2.code;
+	}
+	
+	/**
+	 * Lexicographic comparison.
+	 */
+	public int compareTo(Char other) {
+		return compare(this, other);
+	}
+	
+	public int hashCode() {
+		return code;
+	}
+	
+	private static /* final */ Comparator<Char> comparator;
+	private static /* final */ Hasher<Char> hasher;
+	
+	static {
+		comparator = new CharComparator();
+		hasher = new CharHasher();
+	}
+	
+	/**
+	 * Uses Char.compare(Char, Char)
+	 */
+	public static Comparator<Char> getComparator() {
+		return comparator;
+	}
+	
+	/**
+	 * Uses Char.hashCode() and Char.equals(Char)
+	 */
+	public static Hasher<Char> getHasher() {
+		return hasher;
+	}
+}
+
+private class CharComparator extends Comparator<Char> {
+	public override int compare(Char c1, Char c2) {
+		return Char.compare(c1, c2);
+	}
+}
+
+private class CharHasher extends Hasher<Char> {
+	public override int hashCode(Char c) {
+		return c.hashCode();
+	}
+	public override bool equal(Char c1, Char c2) {
+		return c1 == c2;
+	}
+}

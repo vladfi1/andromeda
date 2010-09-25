@@ -1,0 +1,18 @@
+package a.natives;
+/*
+*	Enrichment for native type 'unitref'
+*	@author Still needs one!
+*/
+
+public enrich unitref
+{
+	/**
+	*	Description here.
+	*	@return Returns a unit.
+	*/
+	public unit toUnit()
+	{
+		return UnitRefToUnit(this);
+	}
+
+}

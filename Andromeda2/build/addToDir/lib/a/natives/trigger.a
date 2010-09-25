@@ -1,0 +1,871 @@
+package a.natives;
+import a.natives.Player;
+import a.util.Key;
+import a.util.KeyModifierState;
+
+/*
+*	Enrichment for native type 'trigger'
+*	@author Still needs one!
+*/
+
+
+public enrich trigger
+{
+	/**
+	* Creates a new trigger
+	* @param func the function which will be executed if one of the trigger's events fires
+	*/
+	public static trigger create(string func)
+	{
+		return TriggerCreate(func);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventBattleReportPanelExit(int p2)
+	{
+		TriggerAddEventBattleReportPanelExit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventBattleReportPanelPlayMission(int p2)
+	{
+		TriggerAddEventBattleReportPanelPlayMission(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventBattleReportPanelPlayScene(int p2)
+	{
+		TriggerAddEventBattleReportPanelPlayScene(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventBattleReportPanelSelectionChanged(int p2)
+	{
+		TriggerAddEventBattleReportPanelSelectionChanged(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventCameraMove(int p2, int p3)
+	{
+		TriggerAddEventCameraMove(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@param p4 Unknown int.
+	*/
+	public void addEventConversationReplySelected(int p2, int p3, int p4)
+	{
+		TriggerAddEventConversationReplySelected(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*/
+	public void addEventConversationStateChanged(string p2)
+	{
+		TriggerAddEventConversationStateChanged(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@param p4 Unknown int.
+	*/
+	public void addEventDialogControl(int p2, int p3, int p4)
+	{
+		TriggerAddEventDialogControl(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*/
+	public void addEventMapInit()
+	{
+		TriggerAddEventMapInit(this);
+	}
+
+	/**
+	*	Description here.
+	*/
+	public void addEventSaveGame()
+	{
+		TriggerAddEventSaveGame(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown string.
+	*	@param p4 Unknown bool.
+	*/
+	public void addEventChatMessage(int p2, string p3, bool p4)
+	{
+		TriggerAddEventChatMessage(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventMercenaryPanelExit(int p2)
+	{
+		TriggerAddEventMercenaryPanelExit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventMercenaryPanelPurchase(int p2)
+	{
+		TriggerAddEventMercenaryPanelPurchase(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventMercenaryPanelSelectionChanged(int p2, int p3)
+	{
+		TriggerAddEventMercenaryPanelSelectionChanged(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventMovieStarted(int p2)
+	{
+		TriggerAddEventMovieStarted(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventMovieFinished(int p2)
+	{
+		TriggerAddEventMovieFinished(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown string.
+	*/
+	public void addEventMovieFunction(int p2, string p3)
+	{
+		TriggerAddEventMovieFunction(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventPlanetMissionLaunched(int p2)
+	{
+		TriggerAddEventPlanetMissionLaunched(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventPlanetMissionSelected(int p2, int p3)
+	{
+		TriggerAddEventPlanetMissionSelected(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventPlanetPanelCanceled(int p2)
+	{
+		TriggerAddEventPlanetPanelCanceled(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventPlanetPanelReplayPressed(int p2)
+	{
+		TriggerAddEventPlanetPanelReplayPressed(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventPlanetPanelBirthComplete(int p2)
+	{
+		TriggerAddEventPlanetPanelBirthComplete(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventPlanetPanelDeathComplete(int p2)
+	{
+		TriggerAddEventPlanetPanelDeathComplete(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventVictoryPanelExit(int p2)
+	{
+		TriggerAddEventVictoryPanelExit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventVictoryPanelPlayMissionAgain(int p2)
+	{
+		TriggerAddEventVictoryPanelPlayMissionAgain(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventRoomPanelPressedButton(int p2, int p3)
+	{
+		TriggerAddEventRoomPanelPressedButton(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventRoomPanelCanceled(int p2)
+	{
+		TriggerAddEventRoomPanelCanceled(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventRoomPanelMouseRollOver(int p2)
+	{
+		TriggerAddEventRoomPanelMouseRollOver(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventRoomPanelMouseRollOut(int p2)
+	{
+		TriggerAddEventRoomPanelMouseRollOut(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventPlayerAllianceChange(int p2)
+	{
+		TriggerAddEventPlayerAllianceChange(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventPlayerLeft(int p2, int p3)
+	{
+		TriggerAddEventPlayerLeft(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventPlayerPropChange(int p2, int p3)
+	{
+		TriggerAddEventPlayerPropChange(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventPlayerAIWave(int p2)
+	{
+		TriggerAddEventPlayerAIWave(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventPurchaseMade(int p2, int p3)
+	{
+		TriggerAddEventPurchaseMade(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventPurchaseExit(int p2)
+	{
+		TriggerAddEventPurchaseExit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventSelectedPurchaseItemChanged(int p2, int p3)
+	{
+		TriggerAddEventSelectedPurchaseItemChanged(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventSelectedPurchaseCategoryChanged(int p2, int p3)
+	{
+		TriggerAddEventSelectedPurchaseCategoryChanged(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventResearchPanelExit(int p2)
+	{
+		TriggerAddEventResearchPanelExit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventResearchPanelPurchase(int p2)
+	{
+		TriggerAddEventResearchPanelPurchase(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventResearchPanelSelectionChanged(int p2, int p3)
+	{
+		TriggerAddEventResearchPanelSelectionChanged(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown timer.
+	*/
+	public void addEventTimer(timer p2)
+	{
+		TriggerAddEventTimer(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown fixed.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventTimeElapsed(fixed p2, int p3)
+	{
+		TriggerAddEventTimeElapsed(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown fixed.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventTimePeriodic(fixed p2, int p3)
+	{
+		TriggerAddEventTimePeriodic(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*/
+	public void destroy()
+	{
+		TriggerDestroy(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown bool.
+	*/
+	public void enable(bool p2)
+	{
+		TriggerEnable(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a bool.
+	*/
+	public bool isEnabled()
+	{
+		return TriggerIsEnabled(this);
+	}
+
+	/**
+	*	Description here.
+	*/
+	public void resetCounts()
+	{
+		TriggerResetCounts(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int getEvalCount()
+	{
+		return TriggerGetEvalCount(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int getExecCount()
+	{
+		return TriggerGetExecCount(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a bool.
+	*/
+	public bool evaluate()
+	{
+		return TriggerEvaluate(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown bool.
+	*	@param p3 Unknown bool.
+	*/
+	public void execute(bool p2, bool p3)
+	{
+		TriggerExecute(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*/
+	public void stop()
+	{
+		TriggerStop(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown bool.
+	*/
+	public void waitForTrigger(bool p2)
+	{
+		TriggerWaitForTrigger(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown string.
+	*	@param p4 Unknown string.
+	*/
+	public void addEventUnitCreated(unitref p2, string p3, string p4)
+	{
+		TriggerAddEventUnitCreated(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*/
+	public void addEventUnitRemoved(unitref p2)
+	{
+		TriggerAddEventUnitRemoved(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*/
+	public void addEventUnitDied(unitref p2)
+	{
+		TriggerAddEventUnitDied(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*/
+	public void addEventUnitGainExperience(unitref p2)
+	{
+		TriggerAddEventUnitGainExperience(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*/
+	public void addEventUnitGainLevel(unitref p2)
+	{
+		TriggerAddEventUnitGainLevel(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*/
+	public void addEventUnitAcquiredTarget(unitref p2)
+	{
+		TriggerAddEventUnitAcquiredTarget(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*/
+	public void addEventUnitStartedAttack(unitref p2)
+	{
+		TriggerAddEventUnitStartedAttack(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*/
+	public void addEventUnitAttacked(unitref p2)
+	{
+		TriggerAddEventUnitAttacked(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*/
+	public void addEventUnitAttributeChange(unitref p2)
+	{
+		TriggerAddEventUnitAttributeChange(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown int.
+	*	@param p4 Unknown int.
+	*	@param p5 Unknown string.
+	*/
+	public void addEventUnitDamaged(unitref p2, int p3, int p4, string p5)
+	{
+		TriggerAddEventUnitDamaged(this, p2, p3, p4, p5);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown bool.
+	*/
+	public void addEventUnitBecomesIdle(unitref p2, bool p3)
+	{
+		TriggerAddEventUnitBecomesIdle(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventUnitProperty(unitref p2, int p3)
+	{
+		TriggerAddEventUnitProperty(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown region.
+	*	@param p4 Unknown bool.
+	*/
+	public void addEventUnitRegion(unitref p2, region p3, bool p4)
+	{
+		TriggerAddEventUnitRegion(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown unit.
+	*	@param p4 Unknown fixed.
+	*	@param p5 Unknown bool.
+	*/
+	public void addEventUnitRange(unitref p2, unit p3, fixed p4, bool p5)
+	{
+		TriggerAddEventUnitRange(this, p2, p3, p4, p5);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown point.
+	*	@param p4 Unknown fixed.
+	*	@param p5 Unknown bool.
+	*/
+	public void addEventUnitRangePoint(unitref p2, point p3, fixed p4, bool p5)
+	{
+		TriggerAddEventUnitRangePoint(this, p2, p3, p4, p5);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown bool.
+	*/
+	public void addEventUnitCargo(unitref p2, bool p3)
+	{
+		TriggerAddEventUnitCargo(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown int.
+	*	@param p4 Unknown bool.
+	*/
+	public void addEventUnitSelected(unitref p2, int p3, bool p4)
+	{
+		TriggerAddEventUnitSelected(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventUnitClick(unitref p2, int p3)
+	{
+		TriggerAddEventUnitClick(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown int.
+	*	@param p4 Unknown bool.
+	*/
+	public void addEventUnitHighlight(unitref p2, int p3, bool p4)
+	{
+		TriggerAddEventUnitHighlight(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown abilcmd.
+	*/
+	public void addEventUnitOrder(unitref p2, abilcmd p3)
+	{
+		TriggerAddEventUnitOrder(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown abilcmd.
+	*	@param p4 Unknown int.
+	*	@param p5 Unknown bool.
+	*/
+	public void addEventUnitAbility(unitref p2, abilcmd p3, int p4, bool p5)
+	{
+		TriggerAddEventUnitAbility(this, p2, p3, p4, p5);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventUnitConstructProgress(unitref p2, int p3)
+	{
+		TriggerAddEventUnitConstructProgress(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventUnitTrainProgress(unitref p2, int p3)
+	{
+		TriggerAddEventUnitTrainProgress(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventUnitResearchProgress(unitref p2, int p3)
+	{
+		TriggerAddEventUnitResearchProgress(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventUnitArmMagazineProgress(unitref p2, int p3)
+	{
+		TriggerAddEventUnitArmMagazineProgress(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventUnitSpecializeProgress(unitref p2, int p3)
+	{
+		TriggerAddEventUnitSpecializeProgress(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*/
+	public void addEventUnitPowerup(unitref p2)
+	{
+		TriggerAddEventUnitPowerup(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitref.
+	*/
+	public void addEventUnitRevive(unitref p2)
+	{
+		TriggerAddEventUnitRevive(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventAbortMission(int p2)
+	{
+		TriggerAddEventAbortMission(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventCustomDialogDismissed(int p2, int p3)
+	{
+		TriggerAddEventCustomDialogDismissed(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void addEventGameMenuItemSelected(int p2, int p3)
+	{
+		TriggerAddEventGameMenuItemSelected(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@param p4 Unknown bool.
+	*/
+	public void addEventMouseClicked(int p2, int p3, bool p4)
+	{
+		TriggerAddEventMouseClicked(this, p2, p3, p4);
+	}
+
+
+	/**
+	*	Adds an event which fires, when the player presses/releaes the key.
+	*	@param player the player whose key presses should be monitored
+	*	@param key the key which should be monitored
+	*	@param down whether to monitore for key presses (true) or releases (false)
+	*	@param shift whether the shift key has to be pressed in addition to the key
+	*	@param control whether the control key has to be pressed in addition to the key
+	*	@param alt whether the shift alt has to be pressed in addition to the key
+	*/
+	public void addEventKeyPressed(Player player, Key key, bool down, KeyModifierState shift, KeyModifierState control, KeyModifierState alt)
+	{
+		TriggerAddEventKeyPressed(this, (int)player, (int) key, down, (int)shift, (int)control, (int)alt);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown string.
+	*/
+	public void addEventButtonPressed(int p2, string p3)
+	{
+		TriggerAddEventButtonPressed(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void addEventGameCreditsFinished(int p2)
+	{
+		TriggerAddEventGameCreditsFinished(this, p2);
+	}
+
+}

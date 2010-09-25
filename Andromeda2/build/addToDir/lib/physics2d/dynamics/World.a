@@ -1,0 +1,19 @@
+package physics2d.dynamics;
+
+import physics2d.dynamics.Body;
+
+/**
+ * Physics simulation world.
+ * @author XPilot
+ */
+public class World {
+	/**
+	 * Head node of body linked list.
+	 */
+	private Body bodyList;
+	
+	public World() {
+		bodyList = new Body();
+		bodyList.prev = bodyList.next = bodyList;
+	}
+}

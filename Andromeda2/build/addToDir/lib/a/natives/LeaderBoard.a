@@ -1,0 +1,420 @@
+package a.natives;
+
+/**  
+*	Definition and enrichment for LeaderBoard type.
+*	@author NewName
+*/
+
+import a.natives.HorizontalAlignment;
+import a.natives.Player;
+
+typedef LeaderBoard uses int;
+
+public enrich LeaderBoard
+{
+	/**
+	*	Creates a leaderboard with a specified amount of rows and columns.
+	*	@param columns the number of columns for the new leaderboard.
+	*	@param rows the number of rows for the new leaderboard.
+	*	@param name the name of the new leaderboard.
+	*	@param c the colour that the new leaderboard will use.
+	*	@return the newly created leaderboard.
+	*/
+	public static LeaderBoard create(int columns, int rows, text name, color c)
+	{
+		return (LeaderBoard) BoardCreate(columns, rows, name, c);
+	}
+	
+	/**
+	*	Destroys this leaderboard, removing it from the game.
+	*/
+	public void destroy()
+	{
+		BoardDestroy ((int)this);
+	}
+	
+	/**
+	*	Shows or hides the title for this leaderboard for the given players.
+	*	@param players the playergroup for which visibility should be modified.
+	*	@param value whether this leaderboard's title should be visible.
+	*/
+	public void setTitleVisible(playergroup players, bool value)
+	{
+		// There is also a board state for title visibility, not sure what's up with that.
+		BoardTitleShow ((int)this, players, value);
+	}
+	
+	/**
+	*	Set this leaderboard's title text.
+	*	@param value the new title text.
+	*/
+	public void setTitleText(text value)
+	{
+		BoardTitleSetText ((int)this, value);
+	}
+	
+	/**
+	*	Set this leaderboard's title text colour.
+	*	@param c the new colour for the title text.
+	*/
+	public void setTitleTextColor(color c)
+	{
+		BoardTitleSetColor ((int)this, c_boardColorText, c);
+	}
+	
+	/**
+	*	Set this leaderboard's title text background colour.
+	*	@param c the new colour for the title text's background.
+	*/
+	public void setTitleTextBgColor(color c)
+	{
+		BoardTitleSetColor ((int)this, c_boardColorBackground, c);
+	}
+	
+	/**
+	*	Set this leaderboard's title icon.
+	*	@param image the file path to the icon image.
+	*/
+	public void setTitleTextIcon(string image)
+	{
+		BoardTitleSetIcon	((int)this, image);
+	}
+	
+	/**
+	*	Set this leaderboard's title alignment.
+	*	@param value the alignment for the title text.
+	*	@param iconAlignLeft whether the title icon should be on the left.
+	*/
+	public void setTitleAlignment(HorizontalAlignment value, bool iconAlignLeft)
+	{
+		if (iconAlignLeft)
+		{	
+			BoardTitleSetAlignment((int)this, (int)value, c_boardIconPosLeft);
+		} else {
+			BoardTitleSetAlignment((int)this, (int)value, c_boardIconPosRight);
+		}
+	}
+	
+	/**
+	*	No documentation available.
+	*	@param value
+	*/
+	public void setTitleClickable(bool value)
+	{
+		BoardTitleSetClickable ((int)this, value);
+	}
+	
+	/**
+	*	Sets the name for this leaderboard.
+	*	@param value the new name.
+	*	@param c the new color for the leaderboard's name.
+	*/
+	public void setName(text value, color c)
+	{
+		BoardSetName ((int)this, value, c);
+	}
+	
+	/**
+	*	Shows or hides this leaderboard for a group of players.
+	*	@param players the player group for which visibility should be modified.
+	*	@param value whether this leaderboard should be visible.
+	*/
+	public void setVisible(playergroup players, bool value)
+	{
+		BoardSetState((int)this, players, c_boardStateShowing, value);
+	}
+	
+	/**
+	*	Minimises or unminimises this leaderboard for a group of players.
+	*	@param players the player group for which this board should be modified.
+	*	@param value whether this leaderboard should be minimised.
+	*/
+	public void setMinimized(playergroup players, bool value)
+	{
+		// Also a board state for this property
+		BoardMinimizeSetState ((int)this, players, value);
+	}
+	
+	/**
+	*	Shows or hides the minimise button on this leaderboard for a group of players.
+	*	@param players the player group for which the minimise button visibility should be modified.
+	*	@param value whether the minimise button should be visible.
+	*/
+	public void setMinimizeVisible(playergroup players, bool value)
+	{
+		BoardMinimizeShow ((int)this, players, value);
+	}
+	
+	/**
+	*	Enables or disables the minimise button on this leaderboard for the group of players.
+	*	@param players the player group for which the minimise button should be modified.
+	*	@param value whether the minimise button should be enabled.
+	*/
+	public void setMinimizeEnabled(playergroup players, bool value)
+	{
+		BoardMinimizeEnable ((int)this, players, value);
+	}
+	
+	/**
+	*	Sets the colour of the minimise button on this leaderboard.
+	*	@param c the new colour for the minimise button.
+	*/
+	public void setMinimizeColor(color c)
+	{
+		BoardMinimizeSetColor ((int)this, c);
+	}
+	
+	/**
+	*	Sets the number of columns in this leaderboard.
+	*	@param value the new number of columns.
+	*/
+	public void setColumnCount(int value)
+	{
+		BoardSetColumnCount ((int)this, value);
+	}
+	
+	/**
+	*	Sets the number of rows in this leaderboard.
+	*	@param value the new number of rows.
+	*/
+	public void setRowCount(int value)
+	{
+		BoardSetRowCount ((int)this, value);
+	}
+	
+	public static fixed COLUMN_WIDTH_AUTO = c_boardWidthAuto;
+	
+	/**
+	*	Sets the width of the given column in this leaderboard. 
+	*	Use the constant COLUMN_WIDTH_AUTO to automatically size the column to fit all items.
+	*	@param column the index of the column to modify.
+	*	@param value the new width for the column.
+	*/
+	public void setColumnWidth(int column, fixed value)
+	{
+		BoardSetColumnWidth ((int)this, column, value);
+	}
+	
+	/**
+	*	Substitute this constant for a column or row value to modify all items.
+	*/
+	public static int ALL_ITEMS = c_boardItemAll;
+	/**
+	*	Substitute this constant for a row value to modify header items.
+	*/
+	public static int ROW_HEADER = c_boardRowHeader;
+	
+	/**
+	*	Sets the diaplyed text for the given item.
+	*	@param column the column coordinate of the target item.
+	*	@param row the row coordinate of the target item.
+	*	@param value the new text to display in the target item.
+	*/
+	public void setItemText(int column, int row, text value)
+	{
+		BoardItemSetText ((int)this, column, row, value);
+	}
+	
+	/**
+	*	Sets the colour of the text in the given item.
+	*	@param column the column coordinate of the target item.
+	*	@param row the row coordinate of the target item.
+	*	@param value the new colour of the item text.
+	*/
+	public void setItemTextColor(int column, int row, color value)
+	{
+		BoardItemSetTextColor ((int)this, column, row, value);
+	}
+	
+	/**
+	*	Sets the background colour of the text in the given item.
+	*	@param column the column coordinate of the target item.
+	*	@param row the row coordinate of the target item.
+	*	@param value the new background colour of the item text.
+	*/
+	public void setItemBackgroundColor(int column, int row, color value)
+	{
+		BoardItemSetBackgroundColor ((int)this, column, row, value);
+	}
+	
+	/**
+	*	Sets the icon for the given item. The icon can either be aligned to the left or the right of the text.
+	*	@param column the column coordinate of the target item.
+	*	@param row the row coordinate of the target item.
+	*	@param path the file path to the new icon.
+	*	@param alignLeft true if the icon should be aligned to the left, false if it should be aligned to the right.
+	*/
+	public void setItemIcon(int column, int row, string path, bool alignLeft)
+	{
+		BoardItemSetIcon ((int)this, column, row, path, alignLeft);
+	}
+	
+	/**
+	*	Sets the alignment for the text in the given item.
+	*	@param column the column coordinate of the target item.
+	*	@param row the row coordinate of the target item.
+	*	@param value the horizontal alignment of the text.
+	*/
+	public void setItemAlignment(int column, int row, HorizontalAlignment value)
+	{
+		BoardItemSetAlignment ((int)this, column, row, (int)value);
+	}
+	
+	/**
+	*	Sets the font size for the text in the given item. The default size is medium (24).
+	*	@param column the column coordinate of the target item.
+	*	@param row the row coordinate of the target item.
+	*	@param value the new font size for the target item.
+	*/
+	public void setItemFontSize(int column, int row, int value)
+	{
+		BoardItemSetFontSize ((int)this, column, row, value);
+	}
+	
+	/**
+	*	Sets the order that the given item will be sorted.
+	*	@param column the column coordinate of the target item.
+	*	@param row the row coordinate of the target item.
+	*	@param value the sorting order for this item.
+	*/
+	public void setSortValue(int column, int row, int value)
+	{
+		BoardItemSetSortValue ((int)this, column, row, value);
+	}
+	
+	/**
+	*	Shows or hides the display of a progress bar within the given leaderboard item.
+	*	@param column the column coordinate of the target item.
+	*	@param row the row coordinate of the target item.
+	*	@param value whether the target item should display a progress bar.
+	*/
+	public void setItemProgessBar(int column, int row, bool value)
+	{
+		BoardItemSetProgressShow ((int)this, column, row, value);
+	}
+	
+	/**
+	*	Adjusts the range of values for a progress bar within the given leaderboard item. 
+	*	The minimum value corresponds to an empty progress bar, 
+	*	and the maximum value corresponds to a full progress bar. 
+	*	The default range is 0 to 100.
+	*	@param column the column coordinate of the target item.
+	*	@param row the row coordinate of the target item.
+	*	@param minimum the new minimum value for the target item.
+	*	@param maximum the new maximum value for the target item.
+	*/
+	public void setItemProgressBarRange(int column, int row, fixed minimum, fixed maximum)
+	{
+		BoardItemSetProgressRange ((int)this, column, row, minimum, maximum);
+	}
+	
+	/**
+	*	Sets the colour for a progress bar within the specified leaderboard item.  
+	*	If colours are set for multiple step values, the colour will vary as the progress value increases, 
+	*	dividing each step equally across the full progress range.
+	*	@param column the column coordinate of the target item.
+	*	@param row the row coordinate of the target item.
+	*	@param c the new colour of the target item at the given step.
+	*	@param step the target step of the progress bar.
+	*/
+	public void setItemProgressBarColor(int column, int row, color c, int step)
+	{
+		BoardItemSetProgressColor ((int)this, column, row, c, step);
+	}
+	
+	/**
+	*	Sets the current value of a progress bar within the given leaderboard item.
+	*	@param column the column coordinate of the target item.
+	*	@param row the row coordinate of the target item.
+	*	@param value the new value that the progress bar will display.
+	*/
+	public void setItemProgressBarValue(int column, int row, fixed value)
+	{
+		BoardItemSetProgressValue ((int)this, column, row, value);
+	}
+	
+	/**
+	*	Sets the given column to sort in ascending or decending order over the sort value of the items.
+	*	When sorting the rows in the board, the column with the lowest given priority is sorted first.
+	*	If two items in this lowest priority column have the same sort value,
+	*	then the column with the next highest priority is used to sort them.
+	*	@param column the target column.
+	*	@param ascending true if the items in the target column should be sorted in ascending order, false if decending order should be used.
+	*	@param priority the sorting priority for the given column.
+	*/
+	public void setColumnSort(int column, bool ascending, int priority)
+	{
+		BoardSort ((int)this, column, ascending, priority);
+	}
+	
+	/**
+	*	Transforms the given column into an automatic player column. The player column 
+	*	will display the names of players added to the leaderboard with the 'addPlayer' method.
+	*	Once a column has been transformed into a player column, the LeaderBoard
+	*	methods that use row numbers should be passed player ordinals instead.
+	*	Eg: setItemText(3, (int)myTargetPlayer, myTargetPlayersScore.toText());
+	*	These methods will then modify the row that displays the target player's name.
+	*	@param column the column that should be transformed into an automatic player column.
+	*	@param groupByTeams whether to group the rows of this leaderboard by the player teams.
+	*/
+	public void setPlayerColumn(int column, bool groupByTeams)
+	{
+		BoardSetPlayerColumn ((int)this, column, groupByTeams);
+	}
+	
+	/**
+	*	Add a new row to this leaderboard. This row will display the given player's
+	*	name in the column that has been transformed into an automatic player column.
+	*	@param p the player to add to this leaderboard.
+	*/
+	public void addPlayer(Player p)
+	{
+		BoardPlayerAdd ((int)this, (int)p);
+	}
+	
+	/**
+	*	Removes the row that displays the given player's name from the leaderboard.
+	*	@param p the player to remove from this leaderboard.
+	*/
+	public void removePlayer(Player p)
+	{
+		BoardPlayerRemove ((int)this, (int)p);
+	}
+	
+	/**
+	*	Sets the number of groups that are accessable to this leaderboard.
+	*	@param count the new number of groups.
+	*/
+	public void setGroupCount(int count)
+	{
+		BoardSetGroupCount ((int)this, count);
+	}
+	
+	/**
+	*	Substitute this constant for a column value to address groups using
+	*	 the row parameter.
+	*/
+	public static int ADDRESS_GROUP = c_boardColGroups;
+	
+	/**
+	*	Assigns the given row to the specified group.
+	*	Once assigned, use ADDRESS_GROUP as a column parameter to address
+	*	groups using the row parameter.
+	*	@param row the row which should be assigned to a group.
+	*	@param group the group which will be assigned the given row.
+	*/
+	public void setGroup(int row, int group)
+	{
+		BoardRowSetGroup ((int)this, row, group);
+	}
+	
+	/**
+	*	Shows or hides all leaderboards for a player group.
+	*	@param players the players for which the visibility of all leaderboards should be modified.
+	*	@param value whether all leaderboards should be visible.
+	*/
+	public static void setAllVisible(playergroup players, bool value)
+	{
+		BoardShowAll (value, players);
+	}
+}

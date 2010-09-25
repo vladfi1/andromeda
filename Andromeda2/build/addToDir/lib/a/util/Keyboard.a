@@ -1,0 +1,59 @@
+package a.util;
+import a.natives.Trigger;
+import a.natives.Player;
+import a.util.Key;
+import a.util.KeyModifierState;
+
+/**
+* Helper class to determine if a player is pressing a key
+* @author tolleder
+*/
+
+public static class Keyboard
+{
+    private static const int KEY_COUNT=99;
+    private static bool[Player.MAX_PLAYERS][KEY_COUNT] keyDown;
+    private static trigger keyDownTrigger=trigger.create(onKeyDown.name);
+    private static trigger keyUpTrigger=trigger.create(onKeyUp.name);
+    private static bool onKeyDown (bool testConditions, bool runActions)
+    {
+        if (!runActions) {
+            return true;
+        }
+        
+        keyDown[EventPlayer()][EventKeyPressed()]=true;
+        return true;
+    }
+    private static bool onKeyUp (bool testConditions, bool runActions)
+    {
+        if (!runActions) {
+            return true;
+        }
+        
+        keyDown[EventPlayer()][EventKeyPressed()]=false;
+        return true;
+    }
+    static
+    {
+        for(int p=0;p<Player.MAX_PLAYERS;p++)
+        {
+            for(int k=0;k<KEY_COUNT;k++)
+            {
+                keyDown[p][k]=false;
+            }
+        }
+        keyDownTrigger.addEventKeyPressed( Player.ANY, Key.KEY_ANY, true, KeyModifierState.IGNORE, KeyModifierState.IGNORE, KeyModifierState.IGNORE);
+        keyUpTrigger.addEventKeyPressed( Player.ANY, Key.KEY_ANY, false, KeyModifierState.IGNORE, KeyModifierState.IGNORE, KeyModifierState.IGNORE);
+    }
+
+    /**
+    *       Returns whether the player is pressing the key.
+    *       @param player the player whose key status should be checked.
+    *       @param key the key to check
+    *       @returns true if the player is pressing the key, otherwise false
+    */
+    public static bool isKeyDown(Player player, Key key)
+    {
+        return keyDown[(int)player][(int)key];
+    }
+}

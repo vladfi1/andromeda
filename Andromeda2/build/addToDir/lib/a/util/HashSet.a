@@ -1,0 +1,330 @@
+package a.util;
+
+import a.util.Hasher;
+import a.util.Heap;
+import a.util.Iterator;
+import a.util.Math;
+import a.util.Set;
+
+/**
+ * HashMap implementation. Executes all typical Set operations in constant time. The 
+ * exceptions are clear() and iteration over the set, which happen in linear time.
+ *
+ * For the technical minded, this implementation uses open-addressing to handle 
+ * collisions, so keep in mind the drawbacks of open-addressed hashtables (namely, 
+ * that frequent removal of elements followed by frequent addition of elements can
+ * significantly decrease the implementation's efficiency).
+ * @author wangbot
+ */
+public class HashSet<E> extends Set<E> {
+	private static const int DEFAULT_CAPACITY = 15;
+	private static const fixed DEFAULT_LOAD = 0.75;
+	
+	private static const int NULL = 0;
+	private static const int DELETED = -1;
+	
+	private Hasher<E> hasher;
+	int table;
+	int length;
+	fixed targetLoad;
+	int size;
+	
+	int deleted;
+	
+	private int minCapacity;
+	private int lowMark;
+	private int highMark;
+	
+	/**
+	 * Creates a new HashSet with the specified hasher, capacity, and target load factor.
+	 */
+	public HashSet(Hasher<E> hasher, int capacity, fixed load) {
+		this.hasher = hasher;
+		this.targetLoad = load;
+		this.minCapacity = capacity;
+		this.table = Heap.calloc(capacity + 1);
+		this.length = capacity + 1;
+		
+		this.size = 0;
+		this.deleted = 0;
+		
+		updateBounds();
+	}
+	
+	public HashSet(Hasher<E> hasher) {
+		this(hasher, DEFAULT_CAPACITY, DEFAULT_LOAD);
+	}
+	
+	public HashSet(Hasher<E> hasher, int capacity) {
+		this(hasher, capacity, DEFAULT_LOAD);
+	}
+	
+	int getSlot(int slot) {
+		return Heap.array[table + slot];
+	}
+	
+	void setSlot(int slot, int value) {
+		Heap.array[table + slot] = value;
+	}
+	
+	/**
+	 * Checks to see if the underlying hashtable needs to be resized and
+	 * resizes accordingly.
+	 */
+	protected void checkResize() {
+		if (size < lowMark || size + deleted > highMark) {
+			resize(Math.max(size, minCapacity));
+		}
+	}
+	
+	/**
+	 * Checks to see if the underlying hashtable needs to grow and resizes 
+	 * accordingly. The difference between this method and checkResize() is 
+	 * that this method will never shrink the size of the hashtable.
+	 */
+	protected void checkGrow() {
+		if (size + deleted > highMark) {
+			resize(Math.max(size, minCapacity));
+		}
+	}
+	
+	/**
+	 * Updates the upper and lower boundaries at which the hashtable will need to be resized.
+	 */
+	protected void updateBounds() {
+		lowMark = (int)Math.max(minCapacity * targetLoad, Math.ceil(length * targetLoad / 2));
+		highMark = (int)(length * (1 + targetLoad) / 2);
+	}
+	
+	/**
+	 * Resizes the underlying hashtable to the specified capacity. Copies all undeleted entries 
+	 * from the old table into the new one (where they may be placed in different slots).
+	 */
+	protected void resize(int desiredCapacity) {
+		if (desiredCapacity == minCapacity) {
+			return;
+		}
+		int oldTable = table;
+		int oldLength = length;
+		table = Heap.calloc(desiredCapacity + 1);
+		
+		length = desiredCapacity + 1;
+		minCapacity = desiredCapacity;
+		size = 0;
+		deleted = 0;
+		updateBounds();
+		
+		for (int i = 0; i < oldLength; i++) {
+			int entry = Heap.array[oldTable + i];
+			if (entry != NULL && entry != DELETED) {
+				add((E)entry);
+			}
+		}
+		
+		Heap.free(oldTable);
+	}
+	
+	/**
+	 * Checks whether a slot is in use. A slot is defined to be in use if it is not null 
+	 * and it is not flagged as having been deleted.
+	 */
+	protected bool inUse(int slot) {
+		return getSlot(slot) != NULL && getSlot(slot) != DELETED;
+	}
+	
+	/**
+	 * Completely unnecessary method to give the iterator access to inUse()
+	 */
+	bool inUseRedirect(int slot) {
+		return inUse(slot);
+	}
+	
+	/**
+	 * Clears a slot to be eligible for insertion at a later time. This method only 
+	 * works on slots that are in use. Entries are not actually deleted from memory (
+	 * or the hashtable, for that matter); they are simply flagged as being deleted.
+	 * @return true if a slot that was in use was cleared.
+	 */
+	protected bool clearSlot(int slot) {
+		if (inUse(slot)) {
+			setSlot(slot, DELETED);
+			deleted++;
+			size--;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private static const fixed A = 0.61803;
+	
+	/**
+	 * Computes the slot reserved for the specified hashkey.
+	 */
+	protected int hash(int hashKey) {
+		fixed fraction = Math.fraction(hashKey * A);
+		int hashValue = (int)(length * fraction);
+		if (hashValue < 0) {
+			hashValue += length;
+		}
+		return hashValue;
+	}
+	
+	/**
+	 * Computes the number of slots to skip forward to find another slot 
+	 * for the specified hashkey if a slot cannot be found.
+	 */
+	protected int stepHash(int hashKey) {
+		int s = hashKey % (length / 2 - 1);
+		if (s < 0) {
+			s += (length / 2 - 1);
+		}
+		return 2 * s + 1;
+	}
+	
+	/**
+	 * Attempts to locate the element within the hashtable. If the element is 
+	 * in the hashtable, its slot index will be returned. If it is not in the 
+	 * hashtable, the slot index to which it would be assigned were it to be 
+	 * inserted at the time this method was called is returned instead.
+	 */
+	protected int locate(E target) {
+		int hashCode = hasher.hashCode(target);
+		int index = hash(hashCode);
+		int step = stepHash(hashCode);
+		int insertPosition = -1;
+		
+		while (getSlot(index) != NULL) {
+			if (getSlot(index) != DELETED) {
+				if (hasher.equal((E)getSlot(index), target)) {
+					return index;
+				}
+			} else if (insertPosition == -1) {
+				insertPosition = index;
+			}
+			index = (index + step) % length;
+		}
+		if (insertPosition == -1) {
+			insertPosition = index;
+		}
+		return insertPosition;
+	}
+	
+	/**
+	 * Returns the current capacity of this hashset. The current capacity is defined as 
+	 * the maximum number of elements the set can hold without exceeding the target load 
+	 * and without being resized.
+	 */
+	public int getCapacity() {
+		return (int)Math.floor(length * targetLoad - deleted);
+	}
+	
+	/**
+	 * Ensures that this hashset's underlying hashtable can hold the desired number of elements. 
+	 * The underlying hashtable will increase (but not decrease) its size as needed to accommodate
+	 * the new capacity.
+	 */
+	public void ensureCapacity(int desiredCapacity) {
+		minCapacity = desiredCapacity;
+		updateBounds();
+		checkGrow();
+	}
+	
+	/**
+	 * Sets the hashset's target load factor to the specified value. The underlying hashtable will
+	 * resize itself as needed to accommodate the new load factor.
+	 */
+	public void setTargetLoad(fixed load) {
+		targetLoad = load;
+		updateBounds();
+		checkResize();
+	}
+	
+	public bool isEmpty() {
+		return size == 0;
+	}
+	
+	public int size() {
+		return size;
+	}
+	
+	public void clear() {
+		for (int i = 0; i < length; i++) {
+			setSlot(i, NULL);
+		}
+		size = 0;
+		deleted = 0;
+	}
+	
+	public bool add(E e) {
+		int slot = locate(e);
+		if (!inUse(slot)) {
+			size++;
+			setSlot(slot, (int)e);
+			checkResize();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public bool contains(E e) {
+		return inUse(locate(e));
+	}
+	
+	public bool remove(E e) {
+		bool ans = clearSlot(locate(e));
+		checkResize();
+		return ans;
+	}
+	
+	/**
+	 * Returns an iterator over this set. The elements are returned by the iterator in 
+	 * no particular order.
+	 */
+	public Iterator<E> getIterator() {
+		return new HashSetIterator<E>(this);
+	}
+	
+	public ~HashSet() {
+		clear();
+		Heap.free(table);
+	}
+}
+
+private class HashSetIterator<E> extends Iterator<E> {
+	private HashSet<E> s;
+	private int slot;
+
+	public HashSetIterator(HashSet<E> s) {
+		this.s = s;
+		this.slot = -1;
+	}
+	
+	private bool advance() {
+		while (++slot < s.length) {
+			if (s.inUseRedirect(slot)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public bool hasNext() {
+		if (slot == s.length) {
+			return false;
+		}
+		
+		bool ans = advance();
+		slot--;
+		return ans;
+	}
+	
+	public E next() {
+		if (hasNext()) {
+			return (E)s.getSlot(++slot);
+		} else {
+			return null;
+		}
+	}
+}

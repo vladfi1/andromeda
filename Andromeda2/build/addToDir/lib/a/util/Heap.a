@@ -1,0 +1,365 @@
+package a.util;
+
+/**
+ * Manages the Heap, which can dynamically allocate arrays.
+ * Uses a buddy system to minimize internal fragmentation.
+ * All entries are integers (4 bytes).
+ * @author XPilot
+ */
+public static class Heap {
+
+	/**
+	 * Signifies an allocation error.
+	 */
+	public static const int ERROR = -1;
+	
+	/**
+	 * The number of levels used in this Heap.
+	 */
+	public static const int LEVEL = 14;
+	
+	/**
+	 * Size of the backing array. Has the value 2^LEVEL.
+	 */
+	public static const int HEAP_SIZE = 1 << LEVEL;
+	
+	/**
+	 * The backing array. The last 2*LEVEL indexes are for header information.
+	 */
+	public static int[HEAP_SIZE + 2 * LEVEL] array;
+	
+	/**
+	 * Head nodes of the free lists.
+	 */
+	private static int[LEVEL + 1] head;
+	
+	/**
+	 * Sizes of free lists. Mainly for debugging.
+	 */
+	private static int[LEVEL + 1] count;
+	
+	static {
+		initHeap();
+	}
+
+	/**
+	 * Initializes the Heap.
+	 */
+	private static void initHeap() {
+		for(int i = 1; i <= LEVEL; i++) {
+			initLevel(i);
+		}
+		add(LEVEL, 0);
+	}
+	
+	private static void initLevel(int level) {
+		head[level] = HEAP_SIZE + 2 * (level - 1);
+		setHeader(head[level], level, head[level], head[level]);
+		count[level] = 0;
+	}
+	
+	//methods for manipulating the block headers
+	private static const int LEVEL_BITS = 5;
+	private static const int LEVEL_MASK = (1 << LEVEL_BITS) - 1;
+	private static const int OTHER_BITS = 32 - LEVEL_BITS;
+	private static const int OTHER_MASK = (1 << OTHER_BITS) - 1;
+	
+	/**
+	 * The level of the free block.
+	 */
+	private static int level(int ptr) {
+		return (array[ptr] >> OTHER_BITS) & LEVEL_MASK;
+	}
+	
+	/**
+	 * The previous free block.
+	 */
+	private static int prev(int ptr) {
+		return array[ptr] & OTHER_MASK;
+	}
+	
+	/**
+	 * The next free block.
+	 */
+	private static int next(int ptr) {
+		return array[ptr + 1];
+	}
+	
+	/**
+	 * Sets the header for a free block.
+	 */
+	private static void setHeader(int ptr, int level, int prev, int next) {
+		array[ptr] = (level << OTHER_BITS) | prev;
+		array[ptr + 1] = next;
+	}
+	
+	/**
+	 * Sets the previous free block.
+	 */
+	private static void setPrev(int ptr, int prev) {
+		array[ptr] = (array[ptr] & ~OTHER_MASK) | prev;
+	}
+	
+	/**
+	 * Sets the next free block.
+	 */
+	private static void setNext(int ptr, int next) {
+		array[ptr + 1] = next;
+	}
+	
+	/**
+	 * Determines whether there are free blocks of a specified level.
+	 */
+	private static bool isEmpty(int level) {
+		return count[level] == 0;
+	}
+	
+	/**
+	 * Adds a block to the front of a free list.
+	 * Sets headers as appropriate.
+	 */
+	private static void add(int level, int ptr) {
+		int next = next(head[level]);
+		setNext(head[level], ptr);
+		setPrev(next, ptr);
+		setHeader(ptr, level, head[level], next);
+		count[level] = count[level] + 1;
+	}
+	
+	/**
+	 * Removes a block from the end of a free list.
+	 * Calls remove(prev), where prev is the ptr of the last block in this list.
+	 * @return prev
+	 */
+	private static int remove(int level) {
+		int prev = prev(head[level]);
+		remove(level, prev);
+		return prev;
+	}
+	
+	/**
+	 * Removes an arbitrary block from its free list.
+	 * Sets headers as appropriate.
+	 * Used when merging blocks.
+	 */
+	private static void remove(int level, int ptr) {
+		int prev = prev(ptr);
+		int next = next(ptr);
+		
+		setNext(prev, next);
+		setPrev(next, prev);
+		count[level] = count[level] - 1;
+	}
+	
+	/**
+	 * Switches the level'th bit of ptr.
+	 */
+	//static int buddy(int level, int ptr) {return ptr ^ (1 << level);}
+	private static int buddy(int level, int ptr) {
+		if((ptr & (1 << level)) == 0) return ptr | (1 << level);
+		else return ptr & ~(1 << level);
+	}
+	
+	/**
+	 * The minimum level at which size can be stored.
+	 * @return 1 + log_2(size) rounded down.
+	 */
+	public static int minLevel(int size) {
+		int level = 1;
+		while(size != 1) {
+			size = size >> 1;
+			level++;
+		}
+		return level;
+	}
+	
+	/**
+	 * The maximum size that can be stored at a level.
+	 * @return (2 ^ level) - 1
+	 */
+	public static int maxSize(int level) {
+		return (1 << level) - 1;
+	}
+	
+	/**
+	 * Rounds up to the next level.
+	 * @return maxSize(minLevel(size))
+	 */
+	public static int round(int size) {
+		return maxSize(minLevel(size));
+	}
+
+	/**
+	 * Attempts to allocate a block of the specified size.
+	 * @return A pointer to the block, or ERROR = -1 if unsuccessful.
+	 */
+	public static int malloc(int size) {
+		if(size <= 0) return ERROR;
+		
+		//the minimum level needed to hold this size
+		int level = minLevel(size);
+
+		//finds the next free block large enough
+		int i = level;
+		while(i <= LEVEL && isEmpty(i)) i++;
+		
+		//no block found
+		if(i > LEVEL) {
+			System.error("Could not allocate memory in Heap.");
+			return ERROR;
+		}
+		
+		//starts splitting blocks until until one of the right level is created
+		int ptr = remove(i);
+		while(i > level) {
+			i--;
+			int right = buddy(i, ptr);
+			add(i, right);
+		}
+		//marks the block as taken (upper LEVEL_BITS bits are 0) and stores level
+		array[ptr] = level;
+		
+		//returns the pointer
+		return ptr + 1;
+	}
+	
+	/**
+	 * Same as malloc(size), but clears all entries (sets them to 0).
+	 */
+	public static int calloc(int size) {
+		int ptr = malloc(size);
+		if(ptr != ERROR) {
+			for(int i = 0; i < size; i++) {
+				array[ptr + i] = 0;
+			}
+		}
+		return ptr;
+	}
+	
+	/**
+	 * Frees a block.
+	 * @param ptr A pointer to the block.
+	 */
+	public static void free(int ptr) {
+		ptr--;
+		int level = array[ptr];
+		
+		//attempts to merge as many free blocks as possible
+		while(level < LEVEL) {
+			//this block's buddy
+			int buddy = buddy(level, ptr);
+			
+			//tests if the buddy is free and is of the same level (taken blocks have level 0)
+			if(level(buddy) == level) {
+				remove(level, buddy);
+				//merges blocks
+				if(buddy < ptr) ptr = buddy;
+				level++;
+			} else break;
+		}
+		
+		//adds the free block to the appropriate list
+		add(level, ptr);
+	}
+	
+	/**
+	 * Tries to reallocate the given data to a block of the given size.
+	 * @return Same as malloc(size). ERROR if unsuccessful.
+	 * If unsuccessful, the original data will remain unchanged.
+	 */
+	public static int realloc(int ptr, int size) {
+		int ptr2 = malloc(size);
+		if(ptr2 != ERROR) {
+			int min = maxSize(array[ptr - 1]);
+			if(min > size) min = size;
+			for(int i = 0; i < min; i++) {
+				array[ptr2 + i] = array[ptr + i];
+			}
+			free(ptr);
+		}
+		return ptr2;
+	}
+	
+	//methods for debugging
+	
+	/**
+	 * @return The number of free blocks at given level.
+	 */
+	public static int freeBlocks(int level) {
+		return count[level];
+	}
+	
+	/**
+	 * @return The number of free blocks.
+	 */
+	public static int freeBlocks() {
+		int free = 0;
+		for(int i = 1; i <= LEVEL; i++) {
+			free += count[i];
+		}
+		return free;
+	}
+	
+	/**
+	 * @return The total number of free bytes.
+	 */
+	public static int freeBytes() {
+		int free = 0;
+		for(int i = 1; i <= LEVEL; i++) {
+			free += count[i] * (1 << i);
+		}
+		return 4 * free;
+	}
+	
+	/**
+	 * Prints Heap statistics to debug.
+	 */
+	public static void stats() {
+		int free_bytes = 0, free_blocks = 0;
+		
+		for(int i = 1; i <= LEVEL; i++) {
+			free_bytes += count[i] * (1 << i);
+			free_blocks += count[i];
+			System.debug("Level " + i + ": " + count[i] + " free blocks.");
+			stats(i);
+		}
+		
+		System.debug(IntToString(free_blocks) + " free blocks, " + (4 * free_bytes) + "/" + (4 * HEAP_SIZE) + " free bytes.");
+	}
+	
+	/**
+	 * Prints the free block pointers at a level.
+	 */
+	public static void stats(int level) {
+		for(int ptr = next(head[level]); ptr != head[level]; ptr = next(ptr))
+			System.debug(IntToString(ptr));
+	}
+	
+	/**
+	 * Swaps the values of two pointers.
+	 * @param ptr1, ptr2 The two pointers.
+	 */
+	public static void swap(int ptr1, int ptr2) {
+		int temp = array[ptr1];
+		array[ptr1] = array[ptr2];
+		array[ptr2] = temp;
+	}
+
+	/**
+	 * Copies a block of memory.
+	 * @param src The source pointer.
+	 * @param dest The destination pointer.
+	 * @param len The length of the block.
+	 */
+	public static void copy(int src, int dest, int len) {
+		if(dest > src && dest - src < len) {
+			for(int i = len - 1; i >= 0; i--) {
+				array[dest + i] = array[src + i];
+			}
+		} else {
+			for(int i = 0; i < len; i++) {
+				array[dest + i] = array[src + i];
+			}
+		}
+	}
+}

@@ -1,0 +1,32 @@
+package physics2d.geom;
+
+/**
+ * Enum of all possible shape types.
+ * @author XPilot
+ */
+public final class ShapeType [NUM_TYPES] {
+	public static const int NUM_TYPES = 2;
+
+	public static /* final */ ShapeType POLYGON_SHAPE, POINT_SHAPE;
+
+	static {
+		POLYGON_SHAPE = new ShapeType("Polygon Shape");
+		POINT_SHAPE = new ShapeType("Point Shape");
+	}
+
+	private /* final */ string name;
+
+	private ShapeType(string name) {
+		this.name = name;
+	}
+
+	//prevent deletion
+	private ~ShapeType() {}
+	
+	/**
+	 * @return The name of this shape type.
+	 */
+	public string toString() {
+		return name;
+	}
+}

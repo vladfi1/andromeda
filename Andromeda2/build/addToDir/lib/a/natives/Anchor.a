@@ -1,0 +1,20 @@
+package a.natives;
+/**  
+*	Definition and enrichment for Anchor type.
+*	@author NewName
+*/
+typedef Anchor uses int;
+
+public enrich Anchor
+{
+	public static const Anchor
+		TOP_LEFT = 			(Anchor)c_anchorTopLeft,
+		TOP = 						(Anchor)c_anchorTop,
+		TOP_RIGHT = 			(Anchor)c_anchorTopRight,
+		LEFT = 					(Anchor)c_anchorLeft,
+		CENTER = 				(Anchor)c_anchorCenter,
+		RIGHT = 					(Anchor)c_anchorRight,
+		BOTTOM_LEFT =		(Anchor)c_anchorBottomLeft,
+		BOTTOM =				(Anchor)c_anchorBottom,
+		BOTTOM_RIGHT =	(Anchor)c_anchorBottomRight;
+}

@@ -1,0 +1,814 @@
+package a.natives;
+
+import a.natives.Difficulty;
+import a.natives.color;
+
+/**  
+*	Definition and enrichment for player type.
+*	@author NewName
+*/
+typedef Player uses int;
+
+public enrich Player
+{
+	public static const Player ANY = (Player)(-1);
+
+	/**
+	*	The maximum number of players who can be in one game at the same time.
+	*	The int representation of a player is always lower than this value.
+	*/
+	public static const int MAX_PLAYERS=c_maxPlayers;
+
+	/**
+	*	The player's current credits.
+	*/
+	public int credits
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropCredits);
+		}
+		public set {
+			PlayerModifyPropertyInt((int)this, c_playerPropCredits, c_playerPropOperSetTo, value);
+		}
+	}
+
+	/**
+	*	The amount of credits the player has spent. (read-only)
+	*/
+	public int creditsSpent
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropCreditsSpent);
+		}
+	}
+
+	/**
+	*	The player's current custom resource.
+	*/
+	public int custom
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropCustom);
+		}
+		public set {
+			PlayerModifyPropertyInt((int)this, c_playerPropCustom, c_playerPropOperSetTo, value);
+		}
+	}
+
+	/**
+	*	The amount of custom resource that the player has collected. (read-only)
+	*/
+	public int customCollected
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropCustomCollected);
+		}
+	}
+
+	/**
+	*	The player's current handicap.
+	*/
+	public int handicap
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropHandicap);
+		}
+		public set {
+			PlayerModifyPropertyInt((int)this, c_playerPropHandicap, c_playerPropOperSetTo, value);
+		}
+	}
+
+	/**
+	*	The player's current minerals.
+	*/
+	public int minerals
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropMinerals);
+		}
+		public set {
+			PlayerModifyPropertyInt((int)this, c_playerPropMinerals, c_playerPropOperSetTo, value);
+		}
+	}
+
+	/**
+	*	The amount of minerals that the player has collected. (read-only)
+	*/
+	public int mineralsCollected
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropMineralsCollected);
+		}
+	}
+
+	/**
+	*	The player's current research points.
+	*/
+	public int researchPoints
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropResearchPoints);
+		}
+		public set {
+			PlayerModifyPropertyInt((int)this, c_playerPropResearchPoints, c_playerPropOperSetTo, value);
+		}
+	}
+
+	/**
+	*	The amount of research points that the player has spent. (read-only)
+	*/
+	public int researchPointsSpent
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropResearchPointsSpent);
+		}
+	}
+
+	/**
+	*	The player's current supply limit.
+	*/
+	public int supplyLimit
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropSuppliesLimit);
+		}
+		public set {
+			PlayerModifyPropertyInt((int)this, c_playerPropSuppliesLimit, c_playerPropOperSetTo, value);
+		}
+	}
+
+	/**
+	*	The amount of the supply that the player has made. (read-only)
+	*/
+	public int supplyMade
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropSuppliesMade);
+		}
+	}
+
+	/**
+	*	The amount of supply that the player has used. (read-only)
+	*/
+	public int supplyUsed
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropSuppliesUsed);
+		}
+	}
+
+	/**
+	*	The player's current terrazine gas.
+	*/
+	public int terrazine
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropTerrazine);
+		}
+		public set {
+			PlayerModifyPropertyInt((int)this, c_playerPropTerrazine, c_playerPropOperSetTo, value);
+		}
+	}
+
+	/**
+	*	The amount of terrazine gas that the player has collected. (read-only)
+	*/
+	public int terrazineCollected
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropTerrazineCollected);
+		}
+	}
+
+	/**
+	*	The player's current vespene gas.
+	*/
+	public int vespene
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropVespene);
+		}
+		public set {
+			PlayerModifyPropertyInt((int)this, c_playerPropVespene, c_playerPropOperSetTo, value);
+		}
+	}
+
+	/**
+	*	The amount of vespene gas that the player has collected. (read-only)
+	*/
+	public int vespeneCollected
+	{
+		public get {
+			return PlayerGetPropertyInt((int)this, c_playerPropVespeneCollected);
+		}
+	}
+
+	
+	/**
+	*	Checks if there is no player in this player slot.
+	*	@return true if there is no player in this slot, false otherwise.
+	*/
+	public bool isUnused()
+	{
+		return PlayerStatus((int)this) == c_playerStatusUnused;
+	}
+
+	/**
+	*	Checks if the player in this player slot is still actively playing the game.
+	*	@return true if this player is still playing, false otherwise
+	*/
+	public bool isActive()
+	{
+		return PlayerStatus((int)this) == c_playerStatusActive;
+	}
+
+	/**
+	*	Checks if the player in this player slot has left the game.
+	*	@return true if this player has left the game, false otherwise
+	*/
+	public bool isAbsent()
+	{
+		return PlayerStatus((int)this) == c_playerStatusLeft;
+	}
+
+	/**
+	*	Checks this player is computer controlled.
+	*	@return true if this player is computer controlled, false otherwise
+	*/
+	public bool isAIControlled()
+	{
+		return PlayerType((int)this) == c_playerTypeComputer;
+	}
+
+	/**
+	*	Checks this player is hostile controlled.
+	*	@return true if this player is hostile controlled, false otherwise
+	*/
+	public bool isHostileControlled()
+	{
+		return PlayerType((int)this) == c_playerTypeHostile;
+	}
+
+	/**
+	*	Checks this player is neutral controlled.
+	*	@return true if this player is neutral controlled, false otherwise
+	*/
+	public bool isNeutralControlled()
+	{
+		return PlayerType((int)this) == c_playerTypeNeutral;
+	}
+
+	/**
+	*	Checks this player is uncontrolled.
+	*	@return true if this player is uncontrolled, false otherwise
+	*/
+	public bool isUncontrolled()
+	{
+		return PlayerType((int)this) == c_playerTypeNone;
+	}
+
+	/**
+	*	Checks this player is referee controlled.
+	*	@return true if this player is referee controlled, false otherwise
+	*/
+	public bool isRefereeControlled()
+	{
+		return PlayerType((int)this) == c_playerTypeReferee;
+	}
+
+	/**
+	*	Checks this player is spectator controlled.
+	*	@return true if this player is spectator controlled, false otherwise
+	*/
+	public bool isSpectatorControlled()
+	{
+		return PlayerType((int)this) == c_playerTypeSpectator;
+	}
+
+	/**
+	*	Checks this player is user controlled.
+	*	@return true if this player is user controlled, false otherwise
+	*/
+	public bool isUserControlled()
+	{
+		return PlayerType((int)this) == c_playerTypeUser;
+	}
+
+	/**
+	*	The name of the player. (read-only)
+	*/
+	public text name
+	{
+		public get {
+			return PlayerName((int)this);
+		}
+	}
+
+	/**
+	*	The race of the player, as a string. (read-only)
+	*/
+	public string race
+	{
+		public get {
+			return PlayerRace((int)this);
+		}
+	}
+
+	/**
+	*	The difficulty level that the player has selected.
+	*/
+	public Difficulty difficultyLevel
+	{
+		public get {
+			return (Difficulty)PlayerDifficulty((int)this);
+		}
+		public set {
+			PlayerSetDifficulty((int)this, (int)value);
+		}
+	}
+
+	/**
+	*	The starting location for the player, given as a point. (read-only)
+	*/
+	public point startLocation
+	{
+		public get {
+			return PlayerStartLocation((int)this);
+		}
+	}
+	
+	/*
+	*	The current colour for this player.
+	*	@return the current colour of this player as a color object.
+	*/
+	public color getColor()
+	{
+		return color.diffuse(this.getColorIndex());
+	}
+
+	/**
+	*	The current colour for this player. 
+	*	@return the colour in an index notation, where 0 is white, 1 is red etc.
+	*/
+	public int getColorIndex()
+	{
+		return PlayerGetColorIndex((int)this, false); 
+	}
+	
+	/**
+	*	The default colour for this player. 
+	*	@return the deafult colour of this player as a color object.
+	*/
+	public color getDefaultColor()
+	{
+		return color.diffuse(this.getDefaultColorIndex());
+	}
+
+	/**
+	*	The default colour for this player. 
+	*	@return the colour in an index notation, where 0 is white, 1 is red etc.
+	*/
+	public int getDefaultColorIndex()
+	{
+		return PlayerGetColorIndex((int)this, true); 
+	}
+
+	/**
+	*	Set the colour for this player, with the option to change the player's unit's colour as well.
+	*	@param colour the new colour for the player in an index notation.
+	*	@param andUnits true if the player's unit's should also change colour, false if they should retain their colour.
+	*/
+	public void setColor(int colour, bool andUnits)
+	{
+		PlayerSetColorIndex((int)this, colour, andUnits);
+	}
+
+	/**
+	*	Allows or disallows the target player to see this player's allied chat.
+	*	@param target the player who will or will not be able to see this player's allied chat.
+	*	@param state true if allied chat should be shared, false otherwise.
+	*/
+	public void setAlliedChat(Player target, bool state)
+	{
+		PlayerSetAlliance((int)this, c_allianceIdChat, (int)target, state);
+	}
+
+	/**
+	*	Checks if the target player can see this player's allied chat.
+	*	@param target the player to check.
+	*	@return true if allied chat is shared, false otherwise.
+	*/
+	public bool getAlliedChat(Player target)
+	{
+		return PlayerGetAlliance((int)this, c_allianceIdChat, (int)target);
+	}
+
+	/**
+	*	Toggles whether this player can respond to help requests from the target player.
+	*	@param target the player seeking help.
+	*	@param state true if giving help is allowed, false otherwise.
+	*/
+	public void setGiveHelp(Player target, bool state)
+	{
+		PlayerSetAlliance((int)this, c_allianceIdGiveHelp, (int)target, state);
+	}
+
+	/**
+	*	Checks if this player can respond to help requests from the target player.
+	*	@param target the player to check.
+	*	@return true true if help can be given, false otherwise.
+	*/
+	public bool getGiveHelp(Player target)
+	{
+		return PlayerGetAlliance((int)this, c_allianceIdGiveHelp, (int)target);
+	}
+
+	/**
+	*	Toggles whether this player's units will be passive towards the target player. Passive units will not auto attack.
+	*	@param target the target player
+	*	@param state true if this player's units should be passive, false otherwise.
+	*/
+	public void setPassive(Player target, bool state)
+	{
+		PlayerSetAlliance((int)this, c_allianceIdPassive, (int)target, state);
+	}
+
+	/**
+    *	Checks if this player's units are passive towards the target player. Passive units do not auto attack.
+	*	@param target the target player to check.
+	*	@return true true if this player's units are passive, false otherwise.
+	*/
+	public bool getPassive(Player target)
+	{
+		return PlayerGetAlliance((int)this, c_allianceIdPassive, (int)target);
+	}
+
+	/**
+	*	Toggles whether this player's units can be pushed around by the target player's units.
+	*	@param target the player who will be able to push this player's units around.
+	*	@param state true if units should be pushable, false otherwise.
+	*/
+	public void setPushable(Player target, bool state)
+	{
+		PlayerSetAlliance((int)this, c_allianceIdPushable, (int)target, state);
+	}
+
+	/**
+	*	Checks if this player's units can be pushed around by the target player's units.
+	*	@param target the player to check.
+	*	@return true true if units are pushable, false otherwise.
+	*/
+	public bool getPushable(Player target)
+	{
+		return PlayerGetAlliance((int)this, c_allianceIdPushable, (int)target);
+	}
+
+	/**
+	*	Toggles whether this player can made help requests from the target player.
+	*	@param target the player to receive the help requests.
+	*	@param state true if seeking help is allowed, false otherwise.
+	*/
+	public void setSeekHelp(Player target, bool state)
+	{
+		PlayerSetAlliance((int)this, c_allianceIdSeekHelp, (int)target, state);
+	}
+
+	/**
+	*	Checks if this player can made help requests from the target player.
+	*	@param target the target player.
+	*	@return true true if help can be sought, false otherwise.
+	*/
+	public bool getSeekHelp(Player target)
+	{
+		return PlayerGetAlliance((int)this, c_allianceIdSeekHelp, (int)target);
+	}
+
+	/**
+	*	Toggles whether the target player can control this player's units.
+	*	@param target the player who can control this player's units.
+	*	@param state true if unit control should be shared, false otherwise.
+	*/
+	public void setSharedControl(Player target, bool state)
+	{
+		PlayerSetAlliance((int)this, c_allianceIdControl, (int)target, state);
+	}
+
+	/**
+	*	Checks if the target player can control this player's units.
+	*	@param target the target player.
+	*	@return true true if unit control is shared, false otherwise.
+	*/
+	public bool getSharedControl(Player target)
+	{
+		return PlayerGetAlliance((int)this, c_allianceIdControl, (int)target);
+	}
+
+	/**
+	*	Toggles whether this player will share defeat with the target player.
+	*	@param target the player to share defeat with.
+	*	@param state true if defeat should be shared, false otherwise.
+	*/
+	public void setSharedDefeat(Player target, bool state)
+	{
+		PlayerSetAlliance((int)this, c_allianceIdDefeat, (int)target, state);
+	}
+
+	/**
+	*	Checks if this player will share defeat with the target player.
+	*	@param target the target player.
+	*	@return true true if defeat is shared, false otherwise.
+	*/
+	public bool getSharedDefeat(Player target)
+	{
+		return PlayerGetAlliance((int)this, c_allianceIdDefeat, (int)target);
+	}
+
+	/**
+	*	Toggle whether this player's vision is shared with the target player. The target player will be able to see everything that this player sees.
+	*	@param target the player to share vision with.
+	*	@param state true if map vision should be shared, false otherwise.
+	*/
+	public void setSharedVision(Player target, bool state)
+	{
+		PlayerSetAlliance((int)this, c_allianceIdVision, (int)target, state);
+	}
+
+	/**
+	*	Check if this player's vision is shared with the target player.
+	*	@param target the target player.
+	*	@return true true if map vision is shared, false otherwise.
+	*/
+	public bool getSharedVision(Player target)
+	{
+		return PlayerGetAlliance((int)this, c_allianceIdVision, (int)target);
+	}
+
+	/**
+	*	Toggle whether the target player can spend this player's resources.
+	*	@param target the player who can spend this player's resources.
+	*	@param state true if spending resources should be allowed, false otherwise.
+	*/
+	public void setSpendResources(Player target, bool state)
+	{
+		PlayerSetAlliance((int)this, c_allianceIdSpend, (int)target, state);
+	}
+
+	/**
+	*	Check if the target player can spend this player's resources.
+	*	@param target the target player.
+	*	@return true true if spending resources is allowed, false otherwise.
+	*/
+	public bool getSpendResources(Player target)
+	{
+		return PlayerGetAlliance((int)this, c_allianceIdSpend, (int)target);
+	}
+
+	/**
+	*	Toggles whether this player can trade resources with the target player.
+	*	@param target the target of resource trading.
+	*	@param state true if trading resources should be allowed, false otherwise.
+	*/
+	public void setTradeResources(Player target, bool state)
+	{
+		PlayerSetAlliance((int)this, c_allianceIdTrade, (int)target, state);
+	}
+
+	/**
+	*	Check if this player can trade resources with the target player.
+	*	@param target the target player.
+	*	@return true true if trading resources is allowed, false otherwise.
+	*/
+	public bool getTradeResources(Player target)
+	{
+		return PlayerGetAlliance((int)this, c_allianceIdTrade, (int)target);
+	}
+
+	/**
+	*	The abortable flag for this player.	
+	*/
+	public bool abortEnabled
+	{
+		public get {
+			return PlayerGetState((int)this, c_playerStateAbortEnabled);
+		}
+		public set {
+			PlayerSetState((int)this, c_playerStateAbortEnabled, value);
+		}
+	}
+
+
+	/**
+	*	The continueable flag for this player.	
+	*/
+	public bool continueEnabled
+	{
+		public get {
+			return PlayerGetState((int)this, c_playerStateContinueEnabled);
+		}
+		public set {
+			PlayerSetState((int)this, c_playerStateContinueEnabled, value);
+		}
+	}
+
+	/**
+	*	Should this player be displayed in the leader panel.	
+	*/
+	public bool displayInLeaderPanel
+	{
+		public get {
+			return PlayerGetState((int)this, c_playerStateDisplayInLeaderPanel);
+		}
+		public set {
+			PlayerSetState((int)this, c_playerStateDisplayInLeaderPanel, value);
+		}
+	}
+
+	/**
+    *	Should this player be displayed in the view menu.
+	*/
+	public bool displayInViewMenu
+	{
+		public get {
+			return PlayerGetState((int)this, c_playerStateDisplayInViewMenu);
+		}
+		public set {
+			PlayerSetState((int)this, c_playerStateDisplayInViewMenu, value);
+		}
+	}
+
+	/**
+	*	Should this player accumulate experience.	
+	*/
+	public bool xpGainEnabled
+	{
+		public get {
+			return PlayerGetState((int)this, c_playerStateXPGain);
+		}
+		public set {
+			PlayerSetState((int)this, c_playerStateXPGain, value);
+		}
+	}
+
+	/**
+	*	The restartable flag for this player.
+	*/
+	public bool restartEnabled
+	{
+		public get {
+			return PlayerGetState((int)this, c_playerStateRestartEnabled);
+		}
+		public set {
+			PlayerSetState((int)this, c_playerStateRestartEnabled, value);
+		}
+	}
+
+	/**
+	*	Should the score screen be visible for this player.	
+	*/
+	public bool showScore
+	{
+		public get {
+			return PlayerGetState((int)this, c_playerStateShowScore);
+		}
+		public set {
+			PlayerSetState((int)this, c_playerStateShowScore, value);
+		}
+	}
+
+	/**
+	*	Should tooltips be visible for this player.
+	*/
+	public bool showWorldTip
+	{
+		public get {
+			return PlayerGetState((int)this, c_playerStateShowWorldTip);
+		}
+		public set {
+			PlayerSetState((int)this, c_playerStateShowWorldTip, value);
+		}
+	}
+
+	/**
+	*	Should units that belong to this player fidget.
+	*/
+	public bool unitFidgetingEnabled
+	{
+		public get {
+			return PlayerGetState((int)this, c_playerStateFidgetingEnabled);
+		}
+		public set {
+			PlayerSetState((int)this, c_playerStateFidgetingEnabled, value);
+		}
+	}
+
+	/**
+	*	Toggle whether all charges are paused for this player.
+	*	@param paused true if charges should be paused, false otherwise.
+	*/
+	public void pauseAllCharges(bool pause)
+	{
+		PlayerPauseAllCharges((int)this, pause);
+	}
+
+	/**
+	*	Toggle whether all cooldowns are paused for this player.
+	*	@param paused
+	*/
+	public void pauseAllCooldowns(bool pause)
+	{
+		PlayerPauseAllCooldowns((int)this, pause);
+	}
+
+	/**
+	*	Add the charge regen of the unit ability of this player.
+	*	@param charge
+	*	@param value
+	*/
+	public void addChargeRegen(string charge, fixed value)
+	{
+		PlayerAddChargeRegen((int)this, charge, value);
+	}
+	
+	/**
+	*	Get the unit ability charge regen for this player.
+	*	@param charge
+	*	@return 
+	*/
+	public fixed getChargeRegen(string charge)
+	{
+		return PlayerGetChargeRegen((int)this, charge);
+	}
+	
+	/**
+	*	Add the charge used of the unit ability of this player.
+	*	@param charge
+	*	@param value
+	*/
+	public void addChargeUsed(string charge, fixed value)
+	{
+		PlayerAddChargeUsed((int)this, charge, value);
+	}
+	
+	/**
+	*	Get the unit ability charge used for this player.
+	*	@param charge
+	*	@return
+	*/
+	public fixed getChargeUsed(string charge) {
+		return PlayerGetChargeUsed((int)this, charge);
+	}
+	
+	/**
+	*	Add a cooldown of the unit ability of this player.
+	*	@param cooldown
+	*	@param value
+	*/
+	public void addCooldown(string cooldown, fixed value)
+	{
+		PlayerAddCooldown((int)this, cooldown, value);
+	}
+	
+	/**
+	*	Get the unit ability cooldown for this player.
+	*	@param cooldown
+	*	@return
+	*/
+	public fixed getCooldown(string cooldown)
+	{
+		return PlayerGetCooldown((int)this, cooldown);
+	}
+	
+	/**
+	*	Create a player group containing the allies of this player.
+	*	@return a playergroup containing the allies of this player.
+	*/
+	public playergroup getAllies()
+	{
+		return PlayerGroupAlliance(c_playerGroupAlly, (int)this);
+	}
+	
+	/**
+	*	Create a player group containing the enemies of this player.
+	*	@return a playergroup containing the enemies of this player.
+	*/
+	public playergroup getEnemies()
+	{
+		return PlayerGroupAlliance(c_playerGroupEnemy, (int)this);
+	}
+	
+	/**
+	*	Create a player group that contains only this player.
+	*/
+	public playergroup toPlayerGroup()
+	{
+		return PlayerGroupSingle((int)this);
+	}
+	
+	/**
+	*	Disable the earning of achievements for this player.
+	*/
+	public void disableAchievements()
+	{
+		AchievementsDisable ((int)this);
+	}
+}

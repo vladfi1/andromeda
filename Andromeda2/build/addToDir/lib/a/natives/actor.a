@@ -1,0 +1,241 @@
+package a.natives;
+
+/**
+ *	Enrichment for native type 'actor'
+ *	@author NewName, XPilot
+ */
+public enrich actor {
+	/**
+	*	Creates an actor.  The Scope parameter can be null if you do not want to create the actor in an existing scope.  
+	*	The Content parameters are optional, and allow you to specify additional properties for the actor being created.
+	*	@param scope the scope this actor will belong to.
+	*	@param name the string ID of the actor you are creating.
+	*	@param content1 optional actor property.
+	*	@param content2 optional actor property.
+	*	@param content3 optional actor property.
+	*	@return the newly created actor object.
+	*/
+	public static actor create(actorscope scope, string name, string content1, string content2, string content3)
+	{
+		return ActorCreate (scope, name, content1, content2, content3);
+	}
+	
+	/**
+	*	Returns an actor from the specified actor reference.
+	*	@param name the reference for the sought actor.
+	*	@return the sought actor.
+	*/
+	public static actor fetch(string name)
+	{
+		return ActorFrom (name);
+	}
+	
+	/**
+	*	Returns this actor's scope.
+	*	@return this actor's scope.
+	*/
+	public actorscope getScope()
+	{
+		return ActorScopeFromActor (this);
+	}
+
+	/**
+	*	Returns the actor connected to this actor with the given name.
+	*	@param name either the actor ID or the actor reference for the sought actor, typically the actor reference.
+	*	@return the sought actor.
+	*/
+	public actor getChild(string name)
+	{
+		return ActorFromActor (this, name);
+	}
+
+	/**
+	*	Returns the debug information for this actor.
+	*	@return the debug information as a text object.
+	*/
+	public text getDebug()
+	{
+		return ActorGetText (this);
+	}
+
+	/**
+	*	No idea what this does. No documentation available.
+	*	@param refNameUnknown string.
+	*	@return Returns a actor.
+	*/
+	public actor getRef(string refName)
+	{
+		return ActorRefGet(this, refName);
+	}
+
+	/**
+	*	No idea what this does. No documentation available.
+	*	@param refName Unknown string.
+	*	@param value Unknown actor.
+	*/
+	public void setRef(string refName, actor value)
+	{
+		ActorRefSet(this, refName, value);
+	}
+
+	/**
+	*	Sends an actor message to this actor.  An actor message will perform an action and/or trigger an event on the actor it is sent to.
+	*	@param message the actor message to send.
+	*/
+	public void send(string message)
+	{
+		ActorSend(this, message);
+	}
+
+	/**
+	*	Sends an actor message to an actor that is related to this actor.  The Name parameter is used to specify a reference (such as ::Host) that will derive a secondary actor from this actor.
+	*	The message gets sent to the secondary actor.  An actor message will perform an action and/or trigger an event on the actor it is sent to.
+	*	@param refName the reference for the secondary actor relative to this actor.
+	*	@param message the actor message to send to the secondary actor.
+	*/
+	public void sendTo(string refName, string message)
+	{
+		ActorSendTo(this, refName, message);
+	}
+
+	/**
+	*	Makes this actor look at another actor.  The parameters of this action allow you more control over the look.
+	*	@param group Unknown string.
+	*	@param weight Unknown int.
+	*	@param time Unknown fixed.
+	*	@param target Unknown actor.
+	*/
+	public void lookAt(string group, int weight, fixed time, actor target)
+	{
+		ActorLookAtStart(this, group, weight, time, target);
+	}
+
+	/**
+	*	Clears the look at target for this actor.  The parameters of this action allow you more control over the look.
+	*	@param group Unknown string.
+	*	@param weight Unknown int.
+	*	@param time Unknown fixed.
+	*/
+	public void stopLooking(string group, int weight, fixed time)
+	{
+		ActorLookAtStop(this, group, weight, time);
+	}
+
+	/**
+	*	Description here.
+	*	@param type Unknown string.
+	*	@param target Unknown actor.
+	*/
+	public void lookAt(string type, actor target)
+	{
+		ActorLookAtTypeStart(this, type, target);
+	}
+
+	/**
+	*	Description here.
+	*	@param type Unknown string.
+	*/
+	public void stopLooking(string type)
+	{
+		ActorLookAtTypeStop(this, type);
+	}
+
+	/**
+	*	This will destroy all of the active particles on the map for all players.  Models that emit particles will still continue to do so, this will just kill the existing particles.
+	*/
+	public static void killAllParticles()
+	{
+		ActorWorldParticleFXDestroy ();
+	}
+	
+	/**
+	*	Applies texture props globally.  If a model's data is configured for texture swapping, and there is a texture available to the model with the global props, then that texture will be used.
+	*	@param textureProps
+	*/
+	public static void applyGlobalTextureGroup(string textureProps)
+	{
+		ActorTextureGroupApplyGlobal (textureProps);
+	}
+	
+	/**
+	*	Removes global texture props.
+	*	@param textureProps
+	*/
+	public static void removeGlobalTextureGroup(string textureProps)
+	{
+		ActorTextureGroupRemoveGlobal (textureProps);
+	}
+	
+	//*****XPilot: actor message utilities*****
+	
+	/**
+	 * Gets the last created actor.
+	 * @return The last created actor.
+	 */
+	public static actor getLastCreated() {
+		return ActorFrom("::LastCreated");
+	}
+	
+	/**
+	 * Destroys this actor.
+	 */
+	public void destroy() {
+		ActorSend(this, "Destroy");
+	}
+	
+	/**
+	 * Sets the 2D facing of this actor. 
+	 * @param facing The direction, in degrees.
+	 */
+	public void setFacing(fixed facing) {
+		ActorSend(this, "SetFacing " + facing);
+	}
+	
+	/**
+	 * Sets the 3D position of this actor.
+	 * @param x, y, z Cartesian coordinates of the position.
+	 */
+	public void setPosition(fixed x, fixed y, fixed z) {
+		ActorSend(this, "SetPosition " + x + "," + y + "," + z);
+	}
+
+	/**
+	 * Sets the 2D position of this actor. 
+	 * @param x, y Cartesian coordinates of the position.
+	 */
+	public void setPosition2D(fixed x, fixed y) {
+		ActorSend(this, "SetPosition2D " + x + "," + y);
+	}
+	
+	/**
+	 * Sets the 2D position of this actor while preserving the current height value. 
+	 * @param x, y Cartesian coordinates of the position.
+	 */
+	public void setPosition2DH(fixed x, fixed y) {
+		ActorSend(this, "SetPosition2DH " + x + "," + y);
+	}
+	
+	/**
+	 * Sets the 2-dimensional position of an actor while adjusting its height relative to the terrain.
+	 * @param x, y Cartesian coordinates of the position.
+	 * @param h The height relative to the ground.
+	 */
+	public void setPositionH(fixed x, fixed y, fixed h) {
+		ActorSend(this, "SetPositionH " + x + "," + y + " " + h);
+	}
+	
+	/**
+	 * Sets this actor at a height relative to the terrain.
+	 * @param height Height relative to the terrain.
+	 */
+	public void setHeight(fixed height) {
+		ActorSend(this, "SetHeight " + height);
+	}
+	/**
+	 * Sets the absolute height of the actor.
+	 * @param z The absolute height.
+	 */
+	public void setZ(fixed z) {
+		ActorSend(this, "SetZ " + z);
+	}
+}

@@ -1,0 +1,29 @@
+package a.natives;
+/*
+*	Enrichment for native type 'unitfilter'
+*	@author Still needs one!
+*/
+
+public enrich unitfilter
+{
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void setState(int p2, int p3)
+	{
+		UnitFilterSetState(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int getState(int p2)
+	{
+		return UnitFilterGetState(this, p2);
+	}
+
+}

@@ -1,0 +1,66 @@
+package physics2d.geom;
+
+import physics2d.geom.Shape;
+import physics2d.geom.PointDef;
+
+/**
+ * A point shape.
+ * @author XPilot
+ */
+public class PointShape extends Shape {
+	
+	private fixed mass;
+	private Vec2 position;
+	
+	public PointShape(PointDef def) {
+		super(def);
+		mass = def.mass;
+		position = new Vec2(def.position);
+	}
+	
+	public ~PointShape() {
+		delete position;
+	}
+	
+	public fixed getMass() {
+		return mass;
+	}
+	
+	public Vec2 getPosition() {
+		return position;
+	}
+	
+	public override void computeMass(MassData result) {
+		result.mass = mass;
+		result.centroid.setVec(position);
+		result.inertia = mass * position.magnitude2();
+	}
+	
+	public override fixed computeRadius(Vec2 center) {
+		return Vec2.distance(position, center);
+	}
+	
+	public override void computeAABB(XForm xf, AABB result) {
+		Vec2 v = XForm.apply(xf, position);
+		result.x1 = result.x2 = v.x;
+		result.y1 = result.x2 = v.y;
+		delete v;
+	}
+	
+	public override void computeSweptAABB(XForm xf1, XForm xf2, AABB result) {
+		Vec2 v = XForm.apply(xf1, position);
+		result.x1 = result.x2 = v.x;
+		result.y1 = result.x2 = v.y;
+		XForm.apply(xf2, position, v);
+		result.addPoint(v);
+		delete v;
+	}
+	
+	public override void support(XForm xf, Vec2 v, Vec2 result) {
+		XForm.apply(xf, position, result);
+	}
+	
+	public override void getPoint(XForm xf, Vec2 result) {
+		XForm.apply(xf, position, result);
+	}
+}

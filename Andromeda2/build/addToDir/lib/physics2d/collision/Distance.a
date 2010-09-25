@@ -1,0 +1,212 @@
+package physics2d.collision;
+
+import physics2d.geom.Vec2;
+import physics2d.geom.XForm;
+import physics2d.geom.Shape;
+
+import a.util.Array;
+
+/**
+ * Computes distances and penetrations between shapes.
+ * @author XPilot
+ */
+public static class Distance {
+	private static int maxIterations = 10;
+	
+	/**
+	 * Computes the distance between two convex shapes.
+	 * @param xf1 The transform of the first shape.
+	 * @param s1 The first shape.
+	 * @param xf2 The transform of the second shape.
+	 * @param s2 The second shape.
+	 * @param p1 Stores the closest point on the first shape.
+	 * @param p2 Stores the closest point on the second shape.
+	 * @return null If the two shapes do not intersect.
+	 */
+	public static Array<Points> computeDistance(XForm xf1, Shape s1, XForm xf2, Shape s2, Vec2 p1, Vec2 p2) {
+		bool inside = false;
+		int count = 0;
+		Points[3] simplex;
+		for(int i = 0; i < 3; i++) {
+			simplex[i] = new Points();
+		}
+		
+		Points p = new Points();
+		Vec2 temp = new Vec2(), vNeg = new Vec2();
+		
+		s1.getPoint(xf1, p.v1);
+		s2.getPoint(xf2, p.v2);
+		p.setV();
+		System.debug("Initial: " + p.v.toString());
+		
+		int iter;
+		for(iter = 0; iter < maxIterations; iter++) {
+			vNeg.setVec(p.v).negate();
+			s1.support(xf1, vNeg, simplex[count].v1);
+			s2.support(xf2, p.v, simplex[count].v2);
+			simplex[count].setV();
+			
+			System.debug("Support: " + simplex[count].v.toString());
+			count++;
+			System.debug("Count:" + count);
+			
+			if(count == 1) {
+				if(simplex[0].v.x == 0.0 && simplex[0].v.y == 0.0) {//origin found
+					inside = true;
+					break;
+				}
+				p.setPoints(simplex[0]);
+			} else if(count == 2) {
+				if(simplex[1].equals(simplex[0])) break;//same point found
+				
+				Vec2.difference(simplex[1].v, simplex[0].v, temp);
+				fixed dot10 = simplex[1].v.dot(temp);
+				
+				if(dot10 > 0) {//not in region of point 1
+					fixed dot01 = -simplex[0].v.dot(temp);
+					if(dot01 > 0) {//in segment 0-1 region
+						p.v1.setZero().add(simplex[0].v1, dot10).add(simplex[1].v1, dot01).divide(dot10 + dot01);
+						p.v2.setZero().add(simplex[0].v2, dot10).add(simplex[1].v2, dot01).divide(dot10 + dot01);
+						p.setV();
+						//p.v.setZero().add(simplex[0].v, dot10).add(simplex[1].v, dot01).divide(dot10 + dot01);
+					} else {//in region of point 0
+						//no points are closer
+						p.setPoints(simplex[0]);
+						break;
+					}
+				} else {//in region of point 1
+					p.setPoints(simplex[1]);
+					Points t = simplex[1];
+					simplex[1] = simplex[0];
+					simplex[0] = t;
+					count = 1;
+				}
+			} else if(count == 3) {
+				if(simplex[2].equals(simplex[1]) || simplex[2].equals(simplex[0])) {
+					System.debug("Duplicate point in count = 3");
+					for(int i = 0; i < 3; i++) {
+						System.debug(simplex[i].v.toString());
+					}
+					break;//same point found
+				}
+			
+				Vec2.difference(simplex[2].v, simplex[1].v, temp);
+				fixed dot21 = simplex[2].v.dot(temp);
+				
+				if(dot21 > 0) {//in segment 1-2 region
+					fixed dot12 = -simplex[1].v.dot(temp);
+					p.v1.setZero().add(simplex[1].v1, dot21).add(simplex[2].v1, dot12);
+					p.v2.setZero().add(simplex[1].v2, dot21).add(simplex[2].v2, dot12);
+					
+					Vec2.difference(p.v1, p.v2, temp);//origin to segment 1-2
+					
+					if(temp.dot(p.v) > 0) {//outside of simplex
+						p.v1.divide(dot21 + dot12);
+						p.v2.divide(dot21 + dot12);
+						p.setV();
+						
+						Points t = simplex[0];
+						simplex[0] = simplex[1];
+						simplex[1] = simplex[2];
+						simplex[2] = t;
+						count = 2;
+					} else {//inside of simplex
+						inside = true;
+						break;
+					}
+				} else {//not in segment 1-2 region
+					Vec2.difference(simplex[2].v, simplex[0].v, temp);
+					fixed dot20 = simplex[2].v.dot(temp);
+					
+					if(dot20 > 0) {//in segment 0-2 region
+						fixed dot02 = -simplex[0].v.dot(temp);
+						p.v1.setZero().add(simplex[0].v1, dot20).add(simplex[2].v1, dot02);
+						p.v2.setZero().add(simplex[0].v2, dot20).add(simplex[2].v2, dot02);
+					
+						Vec2.difference(p.v1, p.v2, temp);//origin to segment 0-2
+						
+						if(temp.dot(p.v) > 0) {//outside of simplex
+							p.v1.divide(dot20 + dot02);
+							p.v2.divide(dot20 + dot02);
+							p.setV();
+							
+							Points t = simplex[1];
+							simplex[1] = simplex[2];
+							simplex[2] = t;
+							count = 2;
+						} else {//inside of simplex
+							inside = true;
+							break;
+						}
+					} else {//in point 2 region
+						p.setPoints(simplex[2]);
+						Points t = simplex[2];
+						simplex[2] = simplex[0];
+						simplex[0] = t;
+						count = 1;
+					}
+				}
+			}
+		}
+		
+		System.debug("iterations: " + iter);
+		
+		if(inside) {
+			delete p;
+			delete temp;
+			delete vNeg;
+			
+			Array<Points> a = new Array<Points>(count);
+			for(int i = 0; i < count; i++) {
+				a.setIndex(i, simplex[i]);
+			}
+			for(int i = count; i < 3; i++) {
+				delete simplex[i];
+			}
+			
+			return a;
+		}
+		
+		p1.setVec(p.v1);
+		p2.setVec(p.v2);
+		
+		for(int i = 0; i < 3; i++) {
+			delete simplex[i];
+		}
+		delete p;
+		delete temp;
+		delete vNeg;
+		
+		return null;
+	}
+	
+	
+	public static bool intersects(XForm xf1, Shape s1, XForm xf2, Shape s2) {
+		return false;
+	}
+}
+
+public class Points {
+	Vec2 v1, v2, v;
+	Points() {
+		v1 = new Vec2();
+		v2 = new Vec2();
+		v = new Vec2();
+	}
+	~Points() {
+		delete v1;
+		delete v2;
+		delete v;
+	}
+	void setV() {
+		Vec2.difference(v1, v2, v);
+	}
+	void setPoints(Points p) {
+		v1.setVec(p.v1);
+		v2.setVec(p.v2);
+		v.setVec(p.v);
+	}
+	bool equals(Points p) {
+		return v.equals(p.v);
+	}
+}

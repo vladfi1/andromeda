@@ -1,0 +1,34 @@
+package a.natives;
+/*
+*	Enrichment for native type 'revealer'
+*	@author Still needs one!
+*/
+
+public enrich revealer
+{
+	/**
+	*	Description here.
+	*/
+	public void destroy()
+	{
+		VisRevealerDestroy(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown bool.
+	*/
+	public void enable(bool p2)
+	{
+		VisRevealerEnable(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*/
+	public void update()
+	{
+		VisRevealerUpdate(this);
+	}
+
+}

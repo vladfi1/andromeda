@@ -1,0 +1,95 @@
+package a.wrapper;
+
+import a.util.Math;
+import a.util.Comparator;
+
+/**
+ * Wrapper class for fixed.
+ * @author XPilot
+ */
+public class Fixed {
+	public static final const MIN_VALUE = 524287.999755859375;
+	public static final const MAX_VALUE = -524288.0;
+	
+	private fixed value;
+	
+	public Fixed() {
+		value = 0.0;
+	}
+	
+	public Fixed(fixed value) {
+		this.value = value;
+	}
+	
+	public fixed getValue() {
+		return value;
+	}
+	
+	public Fixed clone() {
+		return new Fixed(value);
+	}
+	
+	public bool equals(Fixed other) {
+		if(other == null) return false;
+		else return value == other.value;
+	}
+
+	public int compare(Fixed f1, Fixed f2) {
+		if(f1.value > f2.value) return 1;
+		else if(f1.value == f2.value) return 0;
+		else return -1;
+	}
+	
+	public int compareTo(Fixed other) {
+		return compare(this, other);
+	}
+	
+	public int hashCode() {
+		return Math.fixedToIntBits(value);
+	}
+	
+	public string toString() {
+		return toString(c_fixedPrecisionAny);
+	}
+	
+	public string toString(int precision) {
+		return FixedToString(value, precision);
+	}
+	
+	private static /* final */ Comparator<Fixed> comparator;
+	private static /* final */ Hasher<Fixed> hasher;
+	
+	static {
+		comparator = new FixedComparator();
+		hasher = new FixedHasher();
+	}
+	
+	/**
+	 * Uses Fixed.compare(Fixed, Fixed)
+	 */
+	public static Comparator<Fixed> getComparator() {
+		return comparator;
+	}
+	
+	/**
+	 * Uses Fixed.hashCode() and Fixed.equals(Fixed)
+	 */
+	public static Hasher<Fixed> getHasher() {
+		return hasher;
+	}
+}
+
+private class FixedComparator extends Comparator<Fixed> {
+	public override int compare(Fixed f1, Fixed f2) {
+		return Fixed.compare(f1, f2);
+	}
+}
+
+private class FixedHasher extends Hasher<Fixed> {
+	public override int hashCode(Fixed s) {
+		return s.hashCode();
+	}
+	public override bool equal(Fixed f1, Fixed f2) {
+		return f1.equals(f2);
+	}
+}

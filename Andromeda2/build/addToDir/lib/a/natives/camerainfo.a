@@ -1,0 +1,218 @@
+package a.natives;
+/*
+*	Enrichment for native type 'camerainfo'
+*	@author NewName
+*/
+
+public enrich camerainfo
+{
+	/**
+	*	The field of view.
+	*/
+	public fixed fieldOfView
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueFieldOfView);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueFieldOfView, value);
+		}
+	}
+
+	/**
+	*	The distance of the clipping plane which will clip visuals in front of it.
+	*/
+	public fixed nearClip
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueNearClip);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueNearClip, value);
+		}
+	}
+
+	/**
+	*	The distance of the clipping plane which will clip visuals behind it.
+	*/
+	public fixed farClip
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueFarClip);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueFarClip, value);
+		}
+	}
+
+	/**
+	*	The clipping plane for shadows.
+	*/
+	public fixed shadowClip
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueShadowClip);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueShadowClip, value);
+		}
+	}
+
+	/**
+	*	The distance of the camera from the target.
+	*/
+	public fixed distance
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueDistance);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueDistance, value);
+		}
+	}
+
+	/**
+	*	The pitch of the camera.
+	*/
+	public fixed pitch
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValuePitch);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValuePitch, value);
+		}
+	}
+
+	/**
+	*	The yaw of the camera.
+	*/
+	public fixed yaw
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueYaw);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueYaw, value);
+		}
+	}
+
+	/**
+	*	The roll of the camera.
+	*/
+	public fixed roll
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueRoll);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueRoll, value);
+		}
+	}
+
+	/**
+	*	The height offset of the camera.
+	*/
+	public fixed heightOffset
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueHeightOffset);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueHeightOffset, value);
+		}
+	}
+
+	/**
+	*	The depth of field for the camera.
+	*/
+	public fixed depthOfField
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueDepthOfField);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueDepthOfField, value);
+		}
+	}
+
+	/**
+	*	The focal depth of the camera.
+	*/
+	public fixed focalDepth
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueFocalDepth);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueFocalDepth, value);
+		}
+	}
+
+	/**
+	*	The start of the fall off value for the camera.
+	*/
+	public fixed fallOffStart
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueFalloffStart);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueFalloffStart, value);
+		}
+	}
+
+	/**
+	*	The end of the fall off value for the camera.
+	*/
+	public fixed fallOffEnd
+	{
+		public get 
+		{
+			return CameraInfoGetValue(this, c_cameraValueFalloffEnd);
+		}
+		public set
+		{
+			CameraInfoSetValue(this, c_cameraValueFalloffEnd, value);
+		}
+	}
+
+	/**
+	*	The target of the camera.
+	*/
+	public point target
+	{
+		public get 
+		{
+			return CameraInfoGetTarget(this);
+		}
+		public set
+		{
+			CameraInfoSetTarget(this, value);
+		}
+	}
+}

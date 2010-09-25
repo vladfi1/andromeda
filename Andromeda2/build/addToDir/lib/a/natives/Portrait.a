@@ -1,0 +1,299 @@
+package a.natives;
+/**  
+*	Definition and enrichment for Portrait type.
+*	@author NewName
+*/
+
+import a.natives.Anchor;
+import a.natives.Player;
+
+typedef Portrait uses int;
+
+public enrich Portrait
+{
+	/**
+	*	Creates a portrait on the screen.
+	*	@param offsetX horizontal offset of the portrait from the anchor.
+	*	@param offsetY vertical offset of the portrait from the anchor.
+	*	@param anchor the anchor position for the offsets.
+	*	@param width the width of the portrait.
+	*	@param height the height of the portrait.
+	*	@param modelLink the model to show in the portrait.
+	*	@param cameraLink the camera to display the portrait from.
+	*	@param animProps the animation to play.
+	*	@param visible the inital visibility of the portrait.
+	*	@param wait block execution until the potrait is fully loaded.
+	*	@return the newly crated portrait.
+	*/
+	public static Portrait create(int offsetX, int offsetY, Anchor anchor, int width, int height, string modelLink, string cameraLink, string animProps, bool visible, bool wait)
+	{
+		return (Portrait)PortraitCreate (offsetX, offsetY, (int)anchor, width, height, modelLink, cameraLink, animProps, visible, wait);
+	}
+	
+	/**
+	*	Destroys this portait.
+	*/
+	public void destroy()
+	{
+		PortraitDestroy ((int)this);
+	}
+	
+	/**
+	*	Destroys all portraits.
+	*/
+	public static void destroyAll()
+	{
+		PortraitDestroyAll ();
+	}
+	
+	/**
+	*	Blocks execution until this portait has finished loading. This may be necessary before some operations may be applied to the portrait.
+	*/
+	public void wait()
+	{
+		PortraitWaitForLoad ((int)this);
+	}
+
+	/**
+	*	Returns this portrait's actorscope.
+	*	@return the actorscope.
+	*/
+	public actorscope getScope()
+	{
+		return ActorScopeFromPortrait ((int)this);
+	}
+	
+	/**
+	*	Returns this portrait's actor.
+	*	@return the actor.
+	*/
+	public actor getActor()
+	{
+		return ActorFromPortrait ((int)this);
+	}
+	
+	/**
+	*	Sets the model for this portrait.
+	*	@param modelLink the new model for this portait.
+	*	@param wait whether to block execution until this portrait is fully loaded.
+	*/
+	public void setModel(string modelLink, bool wait)
+	{
+		PortraitSetModel ((int)this, modelLink, wait);
+	}
+	
+	/**
+	*	Tells a portrait to play an animation.
+	*	@param anim the new animation for this portrait.
+	*/
+	public void setAnim(string anim)
+	{
+		PortraitSetAnim ((int)this, anim);
+	}
+	
+	/**
+	*	Sets the portrait camera using string values.
+	*	@param name the name of the new camera for this portait.
+	*/
+	public void setCamera(string name)
+	{
+		PortraitSetCamera ((int)this, name);
+	}
+	
+	/**
+	*	Sets the width and height for this portait.
+	*	@param width the new width for this portrait.
+	*	@param height the new height for this portrait.
+	*/
+	public void setSize(int width, int height)
+	{
+		PortraitSetSize ((int)this, width, height);
+	}
+	
+	/**
+	*	Sets the position of this portrait on the screen.
+	*	@param offsetX the new horizontal offset for this portait from the anchor.
+	*	@param offsetY the new vertical offset for this portait from the anchor.
+	*	@param anchor the anchor position for the offset values.
+	*/
+	public void setPosition(int offsetX, int offsetY, Anchor anchor)
+	{
+		PortraitSetPosition ((int)this, (int)anchor, offsetX, offsetY);
+	}
+	
+	/**
+	*	Turns this portrait to or from fullscreen.
+	*	@param value whether this portrait should be fullscreen.
+	*/
+	public void setFullscreen(bool value)
+	{
+		PortraitSetFullscreen ((int)this, value);
+	}
+	
+	/**
+	*	Sets whether or not this portrait is rendered offscreen.
+	*	@param value whether this portait is rendered offscreen.
+	*/
+	public void setOffscreen(bool value)
+	{
+		PortraitSetOffscreen ((int)this, value);
+	}
+	
+	/**
+	*	Show or hide this portait from the given players.
+	*	@param players the player group for which the portait visibility should be modified.
+	*	@param visible whether this portait should be visible to the given players.
+	*	@param forceVisible
+	*/
+	public void setVisible(playergroup players, bool visible, bool forceVisible)
+	{
+		PortraitSetVisible ((int)this, players, visible, forceVisible);
+	}
+	
+	/**
+	*	Turns this portrait's border on or off.
+	*	@param value whether the border should be visible.
+	*/
+	public void setBorderVisible(bool value)
+	{
+		PortraitSetBorderVisible ((int)this, value);
+	}
+	
+	/**
+	*	Sets the border texture for this portrait.
+	*	@param texture the file path for the new texture.
+	*/
+	public void setBorderTexture(string texture)
+	{
+		PortraitSetBorderTexture ((int)this, texture);
+	}
+	
+	/**
+	*	Turns this portrait's background on or off.
+	*	@param value whether the background should be visible.
+	*/
+	public void setBackgroundVisible(bool value)
+	{
+		PortraitSetBackgroundVisible ((int)this, value);
+	}
+	
+	/**
+	*	Sets the render-to-texture channel for this portrait, which determines where the portrait textures can appear in the game.
+	*	@param channel the new channel for this portrait.
+	*/
+	public void setChannel(int channel)
+	{
+		PortraitSetChannel ((int)this, channel);
+	}
+	
+	/**
+	*	No idea what this does, it isn't even accessable in the galaxy editor.
+	*	@param dest assuming this is a portrait index
+	*	@param channel
+	*/
+	public void setChannelPortrait(Portrait dest, int channel)
+	{
+		PortraitSetChannelPortrait ((int)this, (int)dest, channel);
+	}
+	
+	/**
+	*	Turns this portrait's transition to on or off.
+	*	@param value whether or not this portrait's transitions should be used.
+	*/
+	public void setTransitions(bool value)
+	{
+		PortraitUseTransition ((int)this, value);
+	}
+	
+	/**
+	*	Sets this portrait to use HDR rendering.
+	*	@param value true if HDR rendering should be used, false if LDR rendering should be used.
+	*/
+	public void setRenderHDR(bool value)
+	{
+		PortraitSetRenderType ((int)this, value ? c_portraitRenderTypeHDR : c_portraitRenderTypeLDR);
+	}
+	
+	/**
+	*	Turns mute on or off for this portrait.
+	*	@param value true if the portrait should be muted, false otherwise.
+	*/
+	public void setMuted(bool value)
+	{
+		PortraitSetMuted ((int)this, value);
+	}
+	
+	/**
+	*	Forces the transition model of this portrait to on or off.  Forcing it on will cause it to render until it is no longer forced on.
+	*	@param value true will cause this portrait to render until it is set to false.
+	*	@param instant if set to false, the transition will play it's birth (on) or death (off) animation.
+	*/
+	public void forceTransition(bool value, bool instant)
+	{
+		PortraitForceTransition ((int)this, value, instant);
+	}
+	
+	/**
+	*	Pauses or unpauses the animation in this portrait.
+	*	@param value whether this portrait is paused.
+	*/
+	public void setPaused(bool value)
+	{
+		PortraitSetPaused ((int)this, value);
+	}
+	
+	/**
+	*	Set the tint color of this portrait.
+	*	@param tint the new tint of this portrait.
+	*/
+	public void setTint(color tint)
+	{
+		PortraitSetTintColor ((int)this, tint);
+	}
+	
+	/**
+	*	Sets the light for this portrait.
+	*	@param lightLink
+	*/
+	public void setLight(string lightLink)
+	{
+		PortraitSetLight ((int)this, lightLink);
+	}
+	
+	/**
+	*	Sets this portrait's transistion model.
+	*	@param modelLink the new transition model for this portrait.
+	*/
+	public void setTransitionModel(string modelLink)
+	{
+		PortraitSetTransitionModel ((int)this, modelLink);
+	}
+	
+	/**
+	*	Returns true if this portrait is visible for the specified player.
+	*	@param player the player to test visibility for.
+	*	@return true if this portrait is visible, false otherwise.
+	*/
+	public bool isVisible(Player player)
+	{
+		return PortraitVisible((int)this, (int)player);
+	}
+	
+	/**
+	*	Returns the game portrait.
+	*	@return the game portrait.
+	*/
+	public static Portrait getGame()
+	{
+		return (Portrait) PortraitGetGame ();
+	}
+	
+	/**
+	*	Returns the planet panel portrait.
+	*	@return the planet panel portrait.
+	*/
+	public static Portrait getPlanetPanel()
+	{
+		return (Portrait) PortraitGetPlanetPanel ();
+	}
+}

@@ -1,0 +1,85 @@
+package a.natives;
+/*
+*	Enrichment for native type 'marker'
+*	@author Still needs one!
+*/
+
+public enrich marker
+{
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void setCastingPlayer(int p2)
+	{
+		MarkerSetCastingPlayer(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int getCastingPlayer()
+	{
+		return MarkerGetCastingPlayer(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*/
+	public void setCastingUnit(unit p2)
+	{
+		MarkerSetCastingUnit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a unit.
+	*/
+	public unit getCastingUnit()
+	{
+		return MarkerGetCastingUnit(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown bool.
+	*/
+	public void setMatchFlag(int p2, bool p3)
+	{
+		MarkerSetMatchFlag(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool getMatchFlag(int p2)
+	{
+		return MarkerGetMatchFlag(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown bool.
+	*/
+	public void setMismatchFlag(int p2, bool p3)
+	{
+		MarkerSetMismatchFlag(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool getMismatchFlag(int p2)
+	{
+		return MarkerGetMismatchFlag(this, p2);
+	}
+
+}

@@ -1,0 +1,62 @@
+package physics2d.geom;
+
+import physics2d.geom.Vec2;
+import a.natives.fixed;
+
+/**
+ * Holds the mass data for a 2-dimensional shape.
+ * @author XPilot
+ */
+public class MassData {
+	/**
+	 * The mass of the shape.
+	 */
+    public fixed mass;
+    /**
+	 * The center of mass of the shape relative to the shape's local origin.
+	 */
+    public /* final */ Vec2 centroid;
+    /**
+	 * The rotational inertia of the shape.
+	 */
+    public fixed inertia;
+
+    /**
+     * Blank mass data.
+	 * mass = inertia = 0
+	 * centroid = origin
+     */
+    public MassData() {
+        mass = inertia = 0.0;
+        centroid = new Vec2();
+    }
+
+	public ~MassData() {
+		delete centroid;
+	}
+	
+    /**
+     * Copies the given mass data.
+     */
+    public MassData(MassData m) {
+    	mass = m.mass;
+    	inertia = m.inertia;
+    	centroid = m.centroid.clone();
+    }
+    
+	/**
+	 * @return A copy of this mass data.
+	 */
+    public MassData clone() {
+    	return new MassData(this);
+    }
+	
+	/**
+	 * Prints data to debug window.
+	 */
+	public void debug() {
+		System.debug("mass = " + mass.toString());
+		System.debug("centroid = " + centroid.toString());
+		System.debug("inertia = " + inertia.toString());
+	}
+}

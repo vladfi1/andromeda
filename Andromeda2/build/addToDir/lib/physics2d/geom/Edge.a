@@ -1,0 +1,52 @@
+package physics2d.geom.Edge;
+
+import physics2d.geom.Vec2;
+
+/**
+ * Edge of a polygon.
+ * @author XPilot
+ */
+public class Edge {
+	Vec2 tangent;
+	Vec2 normal;
+	fixed length;
+	
+	public Edge(Vec2 v1, Vec2 v2) {
+		tangent = Vec2.difference(v2, v1);
+		normal = new Vec2(tangent).rotClock90();
+		length = tangent.magnitude();
+	}
+	
+	private Edge() {}
+	
+	public ~Edge() {
+		delete tangent;
+		delete normal;
+	}
+	
+	public Edge clone() {
+		Edge edge = new Edge();
+		edge.tangent = tangent.clone();
+		edge.normal = normal.clone();
+		edge.length = length;
+		return edge;
+	}
+	
+	public Vec2 getTangent() {
+		return tangent;
+	}
+	
+	public Vec2 getNormal() {
+		return normal;
+	}
+	
+	public fixed getLength() {
+		return length;
+	}
+	
+	public Edge negate() {
+		tangent.negate();
+		normal.negate();
+		return this;
+	}
+}
