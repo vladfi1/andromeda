@@ -7,7 +7,7 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.compilerGen;
+package com.sc2mod.buildUtils;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;

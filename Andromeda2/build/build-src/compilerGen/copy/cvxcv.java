@@ -7,7 +7,7 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.compilerGen;
+package compilerGen.copy;
 
 public class cvxcv {
 

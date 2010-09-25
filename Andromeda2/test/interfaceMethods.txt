@@ -1,2 +1,0 @@
-in der interface klasse:
-fuer jede implementierende klasse ein eintrag f fuer jede methode									

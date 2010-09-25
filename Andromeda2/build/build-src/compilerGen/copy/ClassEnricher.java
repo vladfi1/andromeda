@@ -7,7 +7,7 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.compilerGen;
+package compilerGen.copy;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

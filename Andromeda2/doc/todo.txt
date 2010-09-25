@@ -1,6 +1,6 @@
 -check if enrichments can have methods without body atm -> throw error
 -want Remove bei Problem implementieren
-
+-Concatenate cast bei klassen
 -test accessors
 -test native override
 -test foreach
