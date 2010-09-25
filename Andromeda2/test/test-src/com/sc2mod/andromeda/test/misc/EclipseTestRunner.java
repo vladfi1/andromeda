@@ -16,9 +16,29 @@ import com.sc2mod.andromeda.program.Program;
 
 public class EclipseTestRunner {
 
+	/**
+	 * Checks the command line parameters for a conf entry.
+	 * If none is found it inserts the conf entry such that it points to the test
+	 * config: test/andromeda.conf
+	 * @return
+	 */
+	private static String[] addTestConfig(String[] args){
+		for(String s: args){
+			//a run config was specified, so do nothing
+			if(s.startsWith("-r")) return args;
+		}
+		
+		//no run config. Add one
+		String[] args2 = new String[args.length+1];
+		System.arraycopy(args, 0, args2, 1, args.length);
+		args2[0]="-rtest/andromeda.conf";
+		return args2;
+	}
+	
 	
 	public static void main(String args[]) throws URISyntaxException{
 		Program.appDirectory = new File(".");
+		args = addTestConfig(args);
 		Program.main(args);
 	}
 }
