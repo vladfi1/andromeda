@@ -1,0 +1,17 @@
+-check if enrichments can have methods without body atm -> throw error
+-want Remove bei Problem implementieren
+
+-test accessors
+-test native override
+-test foreach
+-spec foreach
+-
+
+-virtual call table: parameter in die calls
+-allocation: statt id echte class übergeben, oder doch nicht?
+
+
+-typecheck beim explicit class casting
+-override globals (testen, vielleicht gehts schon)
+-accessor visibility checks
+-accessor checks if acccessor exists

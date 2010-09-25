@@ -1,0 +1,1087 @@
+JAVA PROFILE 1.0.1, created Thu Sep 23 13:56:14 2010
+
+Header for -agentlib:hprof (or -Xrunhprof) ASCII Output (JDK 5.0 JVMTI based)
+
+@(#)jvm.hprof.txt	1.5 06/01/28
+
+ Copyright (c) 2006 Sun Microsystems, Inc. All  Rights Reserved.
+
+WARNING!  This file format is under development, and is subject to
+change without notice.
+
+This file contains the following types of records:
+
+THREAD START
+THREAD END      mark the lifetime of Java threads
+
+TRACE           represents a Java stack trace.  Each trace consists
+                of a series of stack frames.  Other records refer to
+                TRACEs to identify (1) where object allocations have
+                taken place, (2) the frames in which GC roots were
+                found, and (3) frequently executed methods.
+
+HEAP DUMP       is a complete snapshot of all live objects in the Java
+                heap.  Following distinctions are made:
+
+                ROOT    root set as determined by GC
+                CLS     classes 
+                OBJ     instances
+                ARR     arrays
+
+SITES           is a sorted list of allocation sites.  This identifies
+                the most heavily allocated object types, and the TRACE
+                at which those allocations occurred.
+
+CPU SAMPLES     is a statistical profile of program execution.  The VM
+                periodically samples all running threads, and assigns
+                a quantum to active TRACEs in those threads.  Entries
+                in this record are TRACEs ranked by the percentage of
+                total quanta they consumed; top-ranked TRACEs are
+                typically hot spots in the program.
+
+CPU TIME        is a profile of program execution obtained by measuring
+                the time spent in individual methods (excluding the time
+                spent in callees), as well as by counting the number of
+                times each method is called. Entries in this record are
+                TRACEs ranked by the percentage of total CPU time. The
+                "count" field indicates the number of times each TRACE 
+                is invoked.
+
+MONITOR TIME    is a profile of monitor contention obtained by measuring
+                the time spent by a thread waiting to enter a monitor.
+                Entries in this record are TRACEs ranked by the percentage
+                of total monitor contention time and a brief description
+                of the monitor.  The "count" field indicates the number of 
+                times the monitor was contended at that TRACE.
+
+MONITOR DUMP    is a complete snapshot of all the monitors and threads in 
+                the System.
+
+HEAP DUMP, SITES, CPU SAMPLES|TIME and MONITOR DUMP|TIME records are generated 
+at program exit.  They can also be obtained during program execution by typing 
+Ctrl-\ (on Solaris) or by typing Ctrl-Break (on Win32).
+
+--------
+
+THREAD START (obj=50000142, id = 200002, name="HPROF gc_finish watcher", group="system")
+THREAD START (obj=50000142, id = 200001, name="main", group="main")
+THREAD END (id = 200001)
+TRACE 308312:
+	java.lang.Object.wait(Object.java:Unknown line)
+	java.lang.ref.Reference$ReferenceHandler.run(Reference.java:Unknown line)
+TRACE 308323:
+	java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:Unknown line)
+	java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:Unknown line)
+	java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:Unknown line)
+TRACE 308078:
+	com.sc2mod.andromeda.parsing.SymbolStack.elementAt(SymbolStack.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308082:
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308627:
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.phases.ParsePhase.parseFile(ParsePhase.java:Unknown line)
+TRACE 308077:
+	com.sc2mod.andromeda.parsing.SymbolStack.elementAt(SymbolStack.java:Unknown line)
+	com.sc2mod.andromeda.parsing.SymbolStack.elementAt(SymbolStack.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308075:
+	com.sc2mod.andromeda.parsing.SymbolStack.peek(SymbolStack.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308120:
+	com.sc2mod.andromeda.parsing.SymbolStack.pop(SymbolStack.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308073:
+	com.sc2mod.andromeda.parsing.SymbolStack.push(SymbolStack.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308083:
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308080:
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308081:
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 306804:
+	sun.nio.cs.SingleByteDecoder.decodeArrayLoop(SingleByteDecoder.java:Unknown line)
+	sun.nio.cs.SingleByteDecoder.decodeLoop(SingleByteDecoder.java:Unknown line)
+	java.nio.charset.CharsetDecoder.decode(CharsetDecoder.java:Unknown line)
+	sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:Unknown line)
+TRACE 308074:
+	com.sc2mod.andromeda.parsing.SymbolStack.peek(SymbolStack.java:Unknown line)
+	com.sc2mod.andromeda.parsing.SymbolStack.peek(SymbolStack.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 306807:
+	sun.nio.cs.SingleByteDecoder.decode(SingleByteDecoder.java:Unknown line)
+	sun.nio.cs.SingleByteDecoder.decodeArrayLoop(SingleByteDecoder.java:Unknown line)
+	sun.nio.cs.SingleByteDecoder.decodeLoop(SingleByteDecoder.java:Unknown line)
+	java.nio.charset.CharsetDecoder.decode(CharsetDecoder.java:Unknown line)
+TRACE 308119:
+	com.sc2mod.andromeda.parsing.SymbolStack.pop(SymbolStack.java:Unknown line)
+	com.sc2mod.andromeda.parsing.SymbolStack.pop(SymbolStack.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308076:
+	java_cup.runtime.lr_parser.get_action(lr_parser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308072:
+	com.sc2mod.andromeda.parsing.SymbolStack.push(SymbolStack.java:Unknown line)
+	com.sc2mod.andromeda.parsing.SymbolStack.push(SymbolStack.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308084:
+	java_cup.runtime.lr_parser.get_reduce(lr_parser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308079:
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308068:
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308067:
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308117:
+	com.sc2mod.andromeda.parser.AndromedaScanner.symbol(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308137:
+	com.sc2mod.andromeda.parser.AndromedaScanner.symbol(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308116:
+	com.sc2mod.andromeda.parsing.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.symbol(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+TRACE 308113:
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parsing.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parsing.Symbol.<init>(Symbol.java:Unknown line)
+TRACE 308114:
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parsing.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parsing.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.symbol(<Unknown Source>:Unknown line)
+TRACE 308130:
+	com.sc2mod.andromeda.syntaxNodes.SyntaxNode.setPos(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308115:
+	com.sc2mod.andromeda.parsing.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parsing.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.symbol(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+TRACE 308062:
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parsing.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.symbol(<Unknown Source>:Unknown line)
+TRACE 308132:
+	java.lang.String.<init>(String.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.yytext(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+TRACE 308136:
+	com.sc2mod.andromeda.parsing.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.symbol(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+TRACE 308061:
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parsing.Symbol.<init>(Symbol.java:Unknown line)
+TRACE 307899:
+	java_cup.runtime.lr_parser.getScanner(lr_parser.java:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 307688:
+	java_cup.runtime.lr_parser.unpackFromStrings(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.<clinit>(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.Andromeda.createParser(Andromeda.java:Unknown line)
+	com.sc2mod.andromeda.parsing.phases.ParsePhase.execute(ParsePhase.java:Unknown line)
+TRACE 308133:
+	com.sc2mod.andromeda.parser.AndromedaScanner.yytext(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308135:
+	java_cup.runtime.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parsing.Symbol.<init>(Symbol.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.symbol(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+TRACE 308206:
+	com.sc2mod.andromeda.parsing.ParserHelper.getExpressionType(ParserHelper.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308131:
+	java.util.Arrays.copyOfRange(Arrays.java:Unknown line)
+	java.lang.String.<init>(String.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.yytext(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+TRACE 307687:
+	java.lang.StringBuffer.charAt(StringBuffer.java:Unknown line)
+	java_cup.runtime.lr_parser.unpackFromStrings(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.<clinit>(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.Andromeda.createParser(Andromeda.java:Unknown line)
+TRACE 308112:
+	com.sc2mod.andromeda.parser.AndromedaScanner.yylength(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.symbol(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+TRACE 304736:
+	java.math.BigInteger.montReduce(BigInteger.java:Unknown line)
+	java.math.BigInteger.oddModPow(BigInteger.java:Unknown line)
+	java.math.BigInteger.modPow(BigInteger.java:Unknown line)
+	sun.security.provider.DSA.generateV(DSA.java:Unknown line)
+TRACE 305742:
+	java.lang.ClassLoader.defineClassCond(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.defineClass(ClassLoader.java:Unknown line)
+	java.security.SecureClassLoader.defineClass(SecureClassLoader.java:Unknown line)
+	java.net.URLClassLoader.defineClass(URLClassLoader.java:Unknown line)
+TRACE 300337:
+	java.util.AbstractList.<init>(AbstractList.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+TRACE 308197:
+	com.sc2mod.andromeda.syntaxNodes.FieldAccess.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 304732:
+	java.math.BigInteger.squareToLen(BigInteger.java:Unknown line)
+	java.math.BigInteger.oddModPow(BigInteger.java:Unknown line)
+	java.math.BigInteger.modPow(BigInteger.java:Unknown line)
+	sun.security.provider.DSA.generateV(DSA.java:Unknown line)
+TRACE 308261:
+	com.sc2mod.andromeda.syntaxNodes.Parameter.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308196:
+	com.sc2mod.andromeda.syntaxNodes.Expression.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.FieldAccess.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308183:
+	com.sc2mod.andromeda.syntaxNodes.FieldDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308152:
+	java.lang.Integer.parseInt(Integer.java:Unknown line)
+	java.lang.Integer.<init>(Integer.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+TRACE 308193:
+	com.sc2mod.andromeda.syntaxNodes.FileContent.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308122:
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>(<Unknown Source>:Unknown line)
+TRACE 308146:
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308202:
+	com.sc2mod.andromeda.syntaxNodes.SimpleType.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parsing.ParserHelper.getExpressionType(ParserHelper.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308167:
+	com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 300784:
+	java.util.HashMap.get(HashMap.java:Unknown line)
+	sun.misc.JarIndex.get(JarIndex.java:Unknown line)
+	sun.misc.URLClassPath$JarLoader.getResource(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath$JarLoader.getResource(URLClassPath.java:Unknown line)
+TRACE 308129:
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308143:
+	com.sc2mod.andromeda.syntaxNodes.Type.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.BasicType.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308364:
+	com.sc2mod.andromeda.syntaxNodes.ExpressionList.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308331:
+	java.lang.ref.Finalizer.runFinalizer(Finalizer.java:Unknown line)
+	java.lang.ref.Finalizer.access$100(Finalizer.java:Unknown line)
+	java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:Unknown line)
+TRACE 308134:
+	com.sc2mod.andromeda.parser.AndromedaScanner.yylength(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.symbol(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+TRACE 307952:
+	java.util.regex.Pattern$CharProperty.match(Pattern.java:Unknown line)
+	java.util.regex.Pattern$Curly.match0(Pattern.java:Unknown line)
+	java.util.regex.Pattern$Curly.match(Pattern.java:Unknown line)
+	java.util.regex.Pattern$GroupHead.match(Pattern.java:Unknown line)
+TRACE 308162:
+	com.sc2mod.andromeda.syntaxNodes.LiteralExpression.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 300336:
+	java.util.AbstractCollection.<init>(AbstractCollection.java:Unknown line)
+	java.util.AbstractList.<init>(AbstractList.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+TRACE 308125:
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308192:
+	java.util.Vector.addElement(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.FileContent.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308158:
+	com.sc2mod.andromeda.syntaxNodes.Literal.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 304733:
+	java.math.BigInteger.mulAdd(BigInteger.java:Unknown line)
+	java.math.BigInteger.montReduce(BigInteger.java:Unknown line)
+	java.math.BigInteger.oddModPow(BigInteger.java:Unknown line)
+	java.math.BigInteger.modPow(BigInteger.java:Unknown line)
+TRACE 304730:
+	java.math.BigInteger.addOne(BigInteger.java:Unknown line)
+	java.math.BigInteger.squareToLen(BigInteger.java:Unknown line)
+	java.math.BigInteger.oddModPow(BigInteger.java:Unknown line)
+	java.math.BigInteger.modPow(BigInteger.java:Unknown line)
+TRACE 308169:
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.<init>(<Unknown Source>:Unknown line)
+TRACE 308172:
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308127:
+	java.util.Vector.addElement(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308360:
+	com.sc2mod.andromeda.syntaxNodes.ExpressionList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 300770:
+	sun.misc.URLClassPath.getLoader(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath.getResource(URLClassPath.java:Unknown line)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:Unknown line)
+	java.net.URLClassLoader.findClass(URLClassLoader.java:Unknown line)
+TRACE 308124:
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308370:
+	com.sc2mod.andromeda.syntaxNodes.MethodInvocation.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 300722:
+	java.net.URLStreamHandler.parseURL(URLStreamHandler.java:Unknown line)
+	sun.net.www.protocol.file.Handler.parseURL(Handler.java:Unknown line)
+	java.net.URL.<init>(URL.java:Unknown line)
+	java.net.URL.<init>(URL.java:Unknown line)
+TRACE 308729:
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 308188:
+	com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308177:
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 304729:
+	java.math.BigInteger.mulAdd(BigInteger.java:Unknown line)
+	java.math.BigInteger.squareToLen(BigInteger.java:Unknown line)
+	java.math.BigInteger.oddModPow(BigInteger.java:Unknown line)
+	java.math.BigInteger.modPow(BigInteger.java:Unknown line)
+TRACE 308153:
+	java.lang.Integer.<init>(Integer.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308734:
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+	com.sc2mod.andromeda.parsing.phases.ParsePhase.parseFile(ParsePhase.java:Unknown line)
+	com.sc2mod.andromeda.parsing.phases.ParsePhase.parseFilesOfType(ParsePhase.java:Unknown line)
+TRACE 307871:
+	com.sc2mod.andromeda.parser.AndromedaScanner.zzUnpackTrans(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.zzUnpackTrans(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.<clinit>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parsing.andromeda.AndromedaParser.parse(AndromedaParser.java:Unknown line)
+TRACE 302179:
+	java.lang.CharacterDataLatin1.toLowerCase(CharacterDataLatin1.java:Unknown line)
+	java.lang.Character.toLowerCase(Character.java:Unknown line)
+	java.lang.String.toLowerCase(String.java:Unknown line)
+	java.security.Provider.parseLegacyPut(Provider.java:Unknown line)
+TRACE 308359:
+	com.sc2mod.andromeda.syntaxNodes.ExpressionList.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ExpressionList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308274:
+	java.util.Vector.addElement(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ParameterList.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 300285:
+	sun.nio.cs.UTF_8$Encoder.encodeArrayLoop(UTF_8.java:Unknown line)
+	sun.nio.cs.UTF_8$Encoder.encodeLoop(UTF_8.java:Unknown line)
+	java.nio.charset.CharsetEncoder.encode(CharsetEncoder.java:Unknown line)
+	java.lang.StringCoding$StringEncoder.encode(StringCoding.java:Unknown line)
+TRACE 308301:
+	com.sc2mod.andromeda.syntaxNodes.BinaryExpression.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308355:
+	com.sc2mod.andromeda.syntaxNodes.ExpressionList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ExpressionList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308151:
+	java.lang.Character.digit(Character.java:Unknown line)
+	java.lang.Integer.parseInt(Integer.java:Unknown line)
+	java.lang.Integer.<init>(Integer.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+TRACE 308363:
+	java.util.Vector.addElement(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ExpressionList.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308195:
+	com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Expression.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.FieldAccess.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 300792:
+	sun.misc.URLClassPath$JarLoader.getResource(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath.getResource(URLClassPath.java:Unknown line)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:Unknown line)
+	java.net.URLClassLoader.findClass(URLClassLoader.java:Unknown line)
+TRACE 308260:
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId.setParent(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Parameter.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308144:
+	com.sc2mod.andromeda.syntaxNodes.BasicType.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308285:
+	com.sc2mod.andromeda.syntaxNodes.MethodHeader.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308368:
+	com.sc2mod.andromeda.syntaxNodes.Expression.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.MethodInvocation.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308293:
+	com.sc2mod.andromeda.syntaxNodes.FunctionDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308270:
+	com.sc2mod.andromeda.syntaxNodes.ParameterList.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ParameterList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308149:
+	java.lang.String.charAt(String.java:Unknown line)
+	java.lang.Integer.parseInt(Integer.java:Unknown line)
+	java.lang.Integer.<init>(Integer.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+TRACE 308160:
+	com.sc2mod.andromeda.syntaxNodes.Expression.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.LiteralExpression.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308199:
+	com.sc2mod.andromeda.syntaxNodes.FieldAccess.getName(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parsing.ParserHelper.getExpressionType(ParserHelper.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308161:
+	com.sc2mod.andromeda.syntaxNodes.Literal.setParent(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.LiteralExpression.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 300772:
+	java.util.zip.ZipFile.getEntry(ZipFile.java:Unknown line)
+	java.util.jar.JarFile.getEntry(JarFile.java:Unknown line)
+	java.util.jar.JarFile.getJarEntry(JarFile.java:Unknown line)
+	sun.misc.URLClassPath$JarLoader.getResource(URLClassPath.java:Unknown line)
+TRACE 308179:
+	com.sc2mod.andromeda.syntaxNodes.ClassMemberDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.FieldDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308266:
+	com.sc2mod.andromeda.syntaxNodes.ParameterList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ParameterList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308176:
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 305195:
+	sun.misc.URLClassPath.getResource(URLClassPath.java:Unknown line)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:Unknown line)
+	java.net.URLClassLoader.findClass(URLClassLoader.java:Unknown line)
+	sun.misc.Launcher$ExtClassLoader.findClass(Launcher.java:Unknown line)
+TRACE 302180:
+	java.lang.Character.toLowerCase(Character.java:Unknown line)
+	java.lang.String.toLowerCase(String.java:Unknown line)
+	java.security.Provider.parseLegacyPut(Provider.java:Unknown line)
+	java.security.Provider.ensureLegacyParsed(Provider.java:Unknown line)
+TRACE 308128:
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 300790:
+	sun.misc.JarIndex.get(JarIndex.java:Unknown line)
+	sun.misc.URLClassPath$JarLoader.getResource(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath$JarLoader.getResource(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath.getResource(URLClassPath.java:Unknown line)
+TRACE 308275:
+	com.sc2mod.andromeda.syntaxNodes.ParameterList.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 300360:
+	java.util.zip.ZipFile.<init>(ZipFile.java:Unknown line)
+	java.util.jar.JarFile.<init>(JarFile.java:Unknown line)
+	java.util.jar.JarFile.<init>(JarFile.java:Unknown line)
+	sun.misc.URLClassPath$JarLoader.getJarFile(URLClassPath.java:Unknown line)
+TRACE 308352:
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ExpressionList.<init>(<Unknown Source>:Unknown line)
+TRACE 308533:
+	com.sc2mod.andromeda.syntaxNodes.StatementList.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308184:
+	com.sc2mod.andromeda.syntaxNodes.SyntaxNode.setPos(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 305401:
+	java.lang.StringCoding$StringEncoder.encode(StringCoding.java:Unknown line)
+	java.lang.StringCoding.encode(StringCoding.java:Unknown line)
+	java.lang.String.getBytes(String.java:Unknown line)
+	java.io.File.length(File.java:Unknown line)
+TRACE 308145:
+	com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308289:
+	com.sc2mod.andromeda.syntaxNodes.MethodDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308123:
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>(<Unknown Source>:Unknown line)
+TRACE 304734:
+	java.math.BigInteger.addOne(BigInteger.java:Unknown line)
+	java.math.BigInteger.montReduce(BigInteger.java:Unknown line)
+	java.math.BigInteger.oddModPow(BigInteger.java:Unknown line)
+	java.math.BigInteger.modPow(BigInteger.java:Unknown line)
+TRACE 308265:
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ParameterList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ParameterList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 300284:
+	sun.nio.cs.UTF_8.updatePositions(UTF_8.java:Unknown line)
+	sun.nio.cs.UTF_8$Encoder.encodeArrayLoop(UTF_8.java:Unknown line)
+	sun.nio.cs.UTF_8$Encoder.encodeLoop(UTF_8.java:Unknown line)
+	java.nio.charset.CharsetEncoder.encode(CharsetEncoder.java:Unknown line)
+TRACE 308532:
+	java.util.Vector.addElement(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.StatementList.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308388:
+	com.sc2mod.andromeda.syntaxNodes.BlockStatement.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 300290:
+	java.nio.charset.CharsetEncoder.encode(CharsetEncoder.java:Unknown line)
+	java.lang.StringCoding$StringEncoder.encode(StringCoding.java:Unknown line)
+	java.lang.StringCoding.encode(StringCoding.java:Unknown line)
+	java.lang.String.getBytes(String.java:Unknown line)
+TRACE 308271:
+	com.sc2mod.andromeda.syntaxNodes.ParameterList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308269:
+	java.util.Vector.addElement(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ParameterList.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ParameterList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 305301:
+	java.io.UnixFileSystem.normalize(UnixFileSystem.java:Unknown line)
+	java.io.File.<init>(File.java:Unknown line)
+	sun.misc.URLClassPath$FileLoader.getResource(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath.getResource(URLClassPath.java:Unknown line)
+TRACE 302182:
+	java.lang.String.toLowerCase(String.java:Unknown line)
+	java.security.Provider.parseLegacyPut(Provider.java:Unknown line)
+	java.security.Provider.ensureLegacyParsed(Provider.java:Unknown line)
+	java.security.Provider.getService(Provider.java:Unknown line)
+TRACE 308288:
+	com.sc2mod.andromeda.syntaxNodes.MethodHeader.setParent(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.MethodDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308142:
+	com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Type.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.BasicType.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308354:
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ExpressionList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ExpressionList.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 300192:
+	sun.net.www.ParseUtil.decode(ParseUtil.java:Unknown line)
+	sun.misc.URLClassPath$JarLoader.<init>(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath$3.run(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath.getLoader(URLClassPath.java:Unknown line)
+TRACE 308159:
+	com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Expression.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.LiteralExpression.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308171:
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 305411:
+	sun.misc.Resource.getBytes(Resource.java:Unknown line)
+	java.net.URLClassLoader.defineClass(URLClassLoader.java:Unknown line)
+	java.net.URLClassLoader.access$000(URLClassLoader.java:Unknown line)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:Unknown line)
+TRACE 308118:
+	java.lang.Integer.valueOf(Integer.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308570:
+	com.sc2mod.andromeda.syntaxNodes.ExpressionStatement.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 300769:
+	java.util.ArrayList.get(ArrayList.java:Unknown line)
+	sun.misc.URLClassPath.getLoader(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath.getResource(URLClassPath.java:Unknown line)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:Unknown line)
+TRACE 308258:
+	com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Parameter.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 307870:
+	java.lang.String.charAt(String.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.zzUnpackTrans(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.zzUnpackTrans(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.<clinit>(<Unknown Source>:Unknown line)
+TRACE 307049:
+	java.lang.CharacterDataLatin1.digit(CharacterDataLatin1.java:Unknown line)
+	java.lang.Character.digit(Character.java:Unknown line)
+	java.lang.Character.digit(Character.java:Unknown line)
+	java.lang.Integer.parseInt(Integer.java:Unknown line)
+TRACE 308198:
+	com.sc2mod.andromeda.syntaxNodes.FieldAccess.getLeftExpression(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parsing.ParserHelper.getExpressionType(ParserHelper.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308190:
+	com.sc2mod.andromeda.syntaxNodes.GlobalStructure.setParent(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.FileContent.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 301294:
+	java.lang.CharacterDataLatin1.getProperties(CharacterDataLatin1.java:Unknown line)
+	java.lang.CharacterDataLatin1.toLowerCase(CharacterDataLatin1.java:Unknown line)
+	java.lang.Character.toLowerCase(Character.java:Unknown line)
+	java.lang.String.toLowerCase(String.java:Unknown line)
+TRACE 307948:
+	java.lang.Character.codePointAt(Character.java:Unknown line)
+	java.util.regex.Pattern$CharProperty.match(Pattern.java:Unknown line)
+	java.util.regex.Pattern$Curly.match0(Pattern.java:Unknown line)
+	java.util.regex.Pattern$Curly.match(Pattern.java:Unknown line)
+TRACE 308287:
+	com.sc2mod.andromeda.syntaxNodes.ClassMemberDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.MethodDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308216:
+	java.lang.StringBuffer.toString(StringBuffer.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+	java_cup.runtime.lr_parser.scan(lr_parser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 300773:
+	java.util.jar.JarFile.getEntry(JarFile.java:Unknown line)
+	java.util.jar.JarFile.getJarEntry(JarFile.java:Unknown line)
+	sun.misc.URLClassPath$JarLoader.getResource(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath.getResource(URLClassPath.java:Unknown line)
+TRACE 308214:
+	java.util.Arrays.copyOfRange(Arrays.java:Unknown line)
+	java.lang.String.<init>(String.java:Unknown line)
+	java.lang.StringBuffer.toString(StringBuffer.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.next_token(<Unknown Source>:Unknown line)
+TRACE 308201:
+	com.sc2mod.andromeda.syntaxNodes.Type.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.SimpleType.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parsing.ParserHelper.getExpressionType(ParserHelper.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 300779:
+	java.util.HashMap.<init>(HashMap.java:Unknown line)
+	java.util.HashSet.<init>(HashSet.java:Unknown line)
+	sun.misc.URLClassPath$JarLoader.getResource(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath.getResource(URLClassPath.java:Unknown line)
+TRACE 308376:
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	java.util.Vector.<init>(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.StatementList.<init>(<Unknown Source>:Unknown line)
+TRACE 307907:
+	java.lang.Math.min(Math.java:Unknown line)
+	java.util.Arrays.copyOfRange(Arrays.java:Unknown line)
+	java.lang.String.<init>(String.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaScanner.yytext(<Unknown Source>:Unknown line)
+TRACE 300145:
+	java.util.Arrays.copyOf(Arrays.java:Unknown line)
+	java.lang.AbstractStringBuilder.expandCapacity(AbstractStringBuilder.java:Unknown line)
+	java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:Unknown line)
+	java.lang.StringBuilder.append(StringBuilder.java:Unknown line)
+TRACE 308278:
+	com.sc2mod.andromeda.syntaxNodes.MethodDeclarator.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 300705:
+	java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:Unknown line)
+	java.lang.StringBuilder.append(StringBuilder.java:Unknown line)
+	java.net.URLStreamHandler.parseURL(URLStreamHandler.java:Unknown line)
+	sun.net.www.protocol.file.Handler.parseURL(Handler.java:Unknown line)
+TRACE 305279:
+	java.net.URL.<init>(URL.java:Unknown line)
+	java.net.URL.<init>(URL.java:Unknown line)
+	sun.misc.URLClassPath$FileLoader.getResource(URLClassPath.java:Unknown line)
+	sun.misc.URLClassPath.getResource(URLClassPath.java:Unknown line)
+TRACE 308150:
+	java.lang.Character.digit(Character.java:Unknown line)
+	java.lang.Character.digit(Character.java:Unknown line)
+	java.lang.Integer.parseInt(Integer.java:Unknown line)
+	java.lang.Integer.<init>(Integer.java:Unknown line)
+TRACE 308157:
+	com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.Literal.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308164:
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclarator.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 300229:
+	java.lang.StringBuilder.append(StringBuilder.java:Unknown line)
+	sun.net.www.ParseUtil.decode(ParseUtil.java:Unknown line)
+	sun.misc.FileURLMapper.getPath(FileURLMapper.java:Unknown line)
+	sun.misc.FileURLMapper.exists(FileURLMapper.java:Unknown line)
+TRACE 308568:
+	com.sc2mod.andromeda.syntaxNodes.Statement.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ExpressionStatement.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308175:
+	java.util.Vector.addElement(Vector.java:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.append(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308178:
+	com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.ClassMemberDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.FieldDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308186:
+	com.sc2mod.andromeda.syntaxNodes.GlobalStructure.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclaration.<init>(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+TRACE 308218:
+	com.sc2mod.andromeda.vm.data.StringObject.<init>(StringObject.java:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+TRACE 308189:
+	com.sc2mod.andromeda.syntaxNodes.SyntaxNode.getLeftPos(<Unknown Source>:Unknown line)
+	com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action(AndromedaGenParser.java:Unknown line)
+	com.sc2mod.andromeda.parser.AndromedaGenParser.do_action(AndromedaGenParser.java:Unknown line)
+	java_cup.runtime.lr_parser.parse(lr_parser.java:Unknown line)
+CPU TIME (ms) BEGIN (total = 67939) Thu Sep 23 13:56:53 2010
+rank   self  accum   count trace method
+   1 20.87% 20.87%       2 308312 java.lang.Object.wait
+   2 20.86% 41.73%     266 308323 java.lang.ref.ReferenceQueue.remove
+   3  8.94% 50.67% 2703731 308078 com.sc2mod.andromeda.parsing.SymbolStack.elementAt
+   4  8.06% 58.73%  499673 308082 com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action
+   5  7.71% 66.45%       1 308627 java_cup.runtime.lr_parser.parse
+   6  3.68% 70.12% 2703731 308077 com.sc2mod.andromeda.parsing.SymbolStack.elementAt
+   7  3.55% 73.68% 1094486 308075 com.sc2mod.andromeda.parsing.SymbolStack.peek
+   8  2.01% 75.68%  594812 308120 com.sc2mod.andromeda.parsing.SymbolStack.pop
+   9  1.95% 77.64%  594814 308073 com.sc2mod.andromeda.parsing.SymbolStack.push
+  10  1.85% 79.49%  499673 308083 com.sc2mod.andromeda.parser.AndromedaGenParser.do_action
+  11  1.75% 81.24%  500857 308080 java_cup.runtime.Symbol.<init>
+  12  1.64% 82.89%  500857 308081 java_cup.runtime.Symbol.<init>
+  13  1.52% 84.41%     338 306804 sun.nio.cs.SingleByteDecoder.decodeArrayLoop
+  14  1.48% 85.89% 1094486 308074 com.sc2mod.andromeda.parsing.SymbolStack.peek
+  15  1.17% 87.06%  818312 306807 sun.nio.cs.SingleByteDecoder.decode
+  16  0.89% 87.95%  594812 308119 com.sc2mod.andromeda.parsing.SymbolStack.pop
+  17  0.88% 88.82%  594813 308076 java_cup.runtime.lr_parser.get_action
+  18  0.87% 89.70%  594814 308072 com.sc2mod.andromeda.parsing.SymbolStack.push
+  19  0.75% 90.44%  499673 308084 java_cup.runtime.lr_parser.get_reduce
+  20  0.70% 91.14%  500857 308079 java_cup.runtime.Symbol.<init>
+  21  0.49% 91.64%   95141 308068 java_cup.runtime.lr_parser.scan
+  22  0.45% 92.08%   95141 308067 com.sc2mod.andromeda.parser.AndromedaScanner.next_token
+  23  0.32% 92.40%   59227 308117 com.sc2mod.andromeda.parser.AndromedaScanner.symbol
+  24  0.24% 92.64%   36200 308137 com.sc2mod.andromeda.parser.AndromedaScanner.symbol
+  25  0.20% 92.84%   59227 308116 com.sc2mod.andromeda.parsing.Symbol.<init>
+  26  0.19% 93.03%   59227 308113 java_cup.runtime.Symbol.<init>
+  27  0.18% 93.21%   59227 308114 java_cup.runtime.Symbol.<init>
+  28  0.18% 93.39%  119603 308130 com.sc2mod.andromeda.syntaxNodes.SyntaxNode.setPos
+  29  0.16% 93.55%   59227 308115 com.sc2mod.andromeda.parsing.Symbol.<init>
+  30  0.14% 93.69%   36266 308062 java_cup.runtime.Symbol.<init>
+  31  0.14% 93.82%   35588 308132 java.lang.String.<init>
+  32  0.14% 93.96%   36200 308136 com.sc2mod.andromeda.parsing.Symbol.<init>
+  33  0.13% 94.08%   95493 308061 java_cup.runtime.Symbol.<init>
+  34  0.13% 94.21%   95141 307899 java_cup.runtime.lr_parser.getScanner
+  35  0.13% 94.34%       3 307688 java_cup.runtime.lr_parser.unpackFromStrings
+  36  0.13% 94.47%   35588 308133 com.sc2mod.andromeda.parser.AndromedaScanner.yytext
+  37  0.11% 94.58%   36200 308135 java_cup.runtime.Symbol.<init>
+  38  0.09% 94.66%    5685 308206 com.sc2mod.andromeda.parsing.ParserHelper.getExpressionType
+  39  0.08% 94.75%   35588 308131 java.util.Arrays.copyOfRange
+  40  0.08% 94.82%   45564 307687 java.lang.StringBuffer.charAt
+  41  0.08% 94.90%   59227 308112 com.sc2mod.andromeda.parser.AndromedaScanner.yylength
+  42  0.08% 94.98%     392 304736 java.math.BigInteger.montReduce
+  43  0.07% 95.05%     173 305742 java.lang.ClassLoader.defineClassCond
+  44  0.07% 95.12%   19527 300337 java.util.AbstractList.<init>
+  45  0.06% 95.18%   16727 308197 com.sc2mod.andromeda.syntaxNodes.FieldAccess.<init>
+  46  0.06% 95.24%     315 304732 java.math.BigInteger.squareToLen
+  47  0.06% 95.30%    5890 308261 com.sc2mod.andromeda.syntaxNodes.Parameter.<init>
+  48  0.05% 95.35%   16727 308196 com.sc2mod.andromeda.syntaxNodes.Expression.<init>
+  49  0.05% 95.40%    3980 308183 com.sc2mod.andromeda.syntaxNodes.FieldDeclaration.<init>
+  50  0.05% 95.45%    3191 308152 java.lang.Integer.parseInt
+  51  0.05% 95.50%    6798 308193 com.sc2mod.andromeda.syntaxNodes.FileContent.append
+  52  0.05% 95.55%    6746 308122 java.util.Vector.<init>
+  53  0.05% 95.59%   10446 308146 com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId.<init>
+  54  0.04% 95.63%    5685 308202 com.sc2mod.andromeda.syntaxNodes.SimpleType.<init>
+  55  0.04% 95.67%    3975 308167 com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl.<init>
+  56  0.04% 95.71%    3114 300784 java.util.HashMap.get
+  57  0.04% 95.75%    5747 308129 com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>
+  58  0.04% 95.78%    7845 308143 com.sc2mod.andromeda.syntaxNodes.Type.<init>
+  59  0.03% 95.82%    4057 308364 com.sc2mod.andromeda.syntaxNodes.ExpressionList.append
+  60  0.03% 95.85%     266 308331 java.lang.ref.Finalizer.runFinalizer
+  61  0.03% 95.88%   36200 308134 com.sc2mod.andromeda.parser.AndromedaScanner.yylength
+  62  0.03% 95.92%    2314 307952 java.util.regex.Pattern$CharProperty.match
+  63  0.03% 95.95%    6519 308162 com.sc2mod.andromeda.syntaxNodes.LiteralExpression.<init>
+  64  0.03% 95.98%   19571 300336 java.util.AbstractCollection.<init>
+  65  0.03% 96.01%    5747 308125 com.sc2mod.andromeda.syntaxNodes.Modifiers.<init>
+  66  0.03% 96.04%    6798 308192 java.util.Vector.addElement
+  67  0.03% 96.07%    6519 308158 com.sc2mod.andromeda.syntaxNodes.Literal.<init>
+  68  0.03% 96.10%   12544 304733 java.math.BigInteger.mulAdd
+  69  0.03% 96.12%   10080 304730 java.math.BigInteger.addOne
+  70  0.03% 96.15%    4556 308169 java.util.Vector.<init>
+  71  0.03% 96.17%    4556 308172 com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.<init>
+  72  0.03% 96.20%    5747 308127 java.util.Vector.addElement
+  73  0.03% 96.23%    3258 308360 com.sc2mod.andromeda.syntaxNodes.ExpressionList.<init>
+  74  0.03% 96.25%    3114 300770 sun.misc.URLClassPath.getLoader
+  75  0.03% 96.28%    5747 308124 java.util.Vector.<init>
+  76  0.03% 96.30%    3266 308370 com.sc2mod.andromeda.syntaxNodes.MethodInvocation.<init>
+  77  0.03% 96.33%     356 300722 java.net.URLStreamHandler.parseURL
+  78  0.03% 96.35%    1184 308729 com.sc2mod.andromeda.parser.CUP$AndromedaGenParser$actions.CUP$AndromedaGenParser$do_action
+  79  0.02% 96.37%    3975 308188 com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclaration.<init>
+  80  0.02% 96.40%    4556 308177 com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.<init>
+  81  0.02% 96.42%   10080 304729 java.math.BigInteger.mulAdd
+  82  0.02% 96.45%    3191 308153 java.lang.Integer.<init>
+  83  0.02% 96.47%       2 308734 java_cup.runtime.lr_parser.parse
+  84  0.02% 96.49%       1 307871 com.sc2mod.andromeda.parser.AndromedaScanner.zzUnpackTrans
+  85  0.02% 96.51%    4142 302179 java.lang.CharacterDataLatin1.toLowerCase
+  86  0.02% 96.53%    3258 308359 com.sc2mod.andromeda.syntaxNodes.ExpressionList.append
+  87  0.02% 96.56%    3369 308274 java.util.Vector.addElement
+  88  0.02% 96.58%     849 300285 sun.nio.cs.UTF_8$Encoder.encodeArrayLoop
+  89  0.02% 96.60%    1485 308301 com.sc2mod.andromeda.syntaxNodes.BinaryExpression.<init>
+  90  0.02% 96.62%    3258 308355 com.sc2mod.andromeda.syntaxNodes.ExpressionList.<init>
+  91  0.02% 96.64%    4576 308151 java.lang.Character.digit
+  92  0.02% 96.66%    4057 308363 java.util.Vector.addElement
+  93  0.02% 96.68%   16727 308195 com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>
+  94  0.02% 96.70%    2768 300792 sun.misc.URLClassPath$JarLoader.getResource
+  95  0.02% 96.71%    5890 308260 com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId.setParent
+  96  0.02% 96.73%    7845 308144 com.sc2mod.andromeda.syntaxNodes.BasicType.<init>
+  97  0.02% 96.75%    2756 308285 com.sc2mod.andromeda.syntaxNodes.MethodHeader.<init>
+  98  0.02% 96.77%    3266 308368 com.sc2mod.andromeda.syntaxNodes.Expression.<init>
+  99  0.02% 96.79%    2749 308293 com.sc2mod.andromeda.syntaxNodes.FunctionDeclaration.<init>
+ 100  0.02% 96.80%    2521 308270 com.sc2mod.andromeda.syntaxNodes.ParameterList.append
+ 101  0.02% 96.82%    7767 308149 java.lang.String.charAt
+ 102  0.02% 96.84%    6519 308160 com.sc2mod.andromeda.syntaxNodes.Expression.<init>
+ 103  0.02% 96.85%    5685 308199 com.sc2mod.andromeda.syntaxNodes.FieldAccess.getName
+ 104  0.02% 96.87%    6519 308161 com.sc2mod.andromeda.syntaxNodes.Literal.setParent
+ 105  0.02% 96.89%    2769 300772 java.util.zip.ZipFile.getEntry
+ 106  0.02% 96.90%    3980 308179 com.sc2mod.andromeda.syntaxNodes.ClassMemberDeclaration.<init>
+ 107  0.02% 96.92%    2521 308266 com.sc2mod.andromeda.syntaxNodes.ParameterList.<init>
+ 108  0.02% 96.93%    4556 308176 com.sc2mod.andromeda.syntaxNodes.VariableDeclarators.append
+ 109  0.02% 96.95%     173 305195 sun.misc.URLClassPath.getResource
+ 110  0.02% 96.97%    4142 302180 java.lang.Character.toLowerCase
+ 111  0.02% 96.98%    5747 308128 com.sc2mod.andromeda.syntaxNodes.Modifiers.append
+ 112  0.02% 97.00%    1557 300790 sun.misc.JarIndex.get
+ 113  0.02% 97.01%    3369 308275 com.sc2mod.andromeda.syntaxNodes.ParameterList.append
+ 114  0.02% 97.03%      23 300360 java.util.zip.ZipFile.<init>
+ 115  0.02% 97.05%    3646 308352 java.util.Vector.<init>
+ 116  0.01% 97.06%    2895 308533 com.sc2mod.andromeda.syntaxNodes.StatementList.append
+ 117  0.01% 97.08%    6733 308184 com.sc2mod.andromeda.syntaxNodes.SyntaxNode.setPos
+ 118  0.01% 97.09%     242 305401 java.lang.StringCoding$StringEncoder.encode
+ 119  0.01% 97.11%   10446 308145 com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>
+ 120  0.01% 97.12%    2756 308289 com.sc2mod.andromeda.syntaxNodes.MethodDeclaration.<init>
+ 121  0.01% 97.14%    5747 308123 java.util.Vector.<init>
+ 122  0.01% 97.15%   12544 304734 java.math.BigInteger.addOne
+ 123  0.01% 97.17%    2521 308265 java.util.Vector.<init>
+ 124  0.01% 97.18%     849 300284 sun.nio.cs.UTF_8.updatePositions
+ 125  0.01% 97.19%    2895 308532 java.util.Vector.addElement
+ 126  0.01% 97.21%    1708 308388 com.sc2mod.andromeda.syntaxNodes.BlockStatement.<init>
+ 127  0.01% 97.22%     849 300290 java.nio.charset.CharsetEncoder.encode
+ 128  0.01% 97.24%    2521 308271 com.sc2mod.andromeda.syntaxNodes.ParameterList.<init>
+ 129  0.01% 97.25%    2521 308269 java.util.Vector.addElement
+ 130  0.01% 97.26%     173 305301 java.io.UnixFileSystem.normalize
+ 131  0.01% 97.28%     138 302182 java.lang.String.toLowerCase
+ 132  0.01% 97.29%    2756 308288 com.sc2mod.andromeda.syntaxNodes.MethodHeader.setParent
+ 133  0.01% 97.30%    7845 308142 com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>
+ 134  0.01% 97.32%    3258 308354 java.util.Vector.<init>
+ 135  0.01% 97.33%      24 300192 sun.net.www.ParseUtil.decode
+ 136  0.01% 97.34%    6519 308159 com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>
+ 137  0.01% 97.35%    4556 308171 java.util.Vector.<init>
+ 138  0.01% 97.37%     173 305411 sun.misc.Resource.getBytes
+ 139  0.01% 97.38%    6933 308118 java.lang.Integer.valueOf
+ 140  0.01% 97.39%    2377 308570 com.sc2mod.andromeda.syntaxNodes.ExpressionStatement.<init>
+ 141  0.01% 97.40%    2941 300769 java.util.ArrayList.get
+ 142  0.01% 97.42%    5890 308258 com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>
+ 143  0.01% 97.43%    8602 307870 java.lang.String.charAt
+ 144  0.01% 97.44%    4577 307049 java.lang.CharacterDataLatin1.digit
+ 145  0.01% 97.45%    5685 308198 com.sc2mod.andromeda.syntaxNodes.FieldAccess.getLeftExpression
+ 146  0.01% 97.46%    6798 308190 com.sc2mod.andromeda.syntaxNodes.GlobalStructure.setParent
+ 147  0.01% 97.47%    5582 301294 java.lang.CharacterDataLatin1.getProperties
+ 148  0.01% 97.49%    2248 307948 java.lang.Character.codePointAt
+ 149  0.01% 97.50%    2756 308287 com.sc2mod.andromeda.syntaxNodes.ClassMemberDeclaration.<init>
+ 150  0.01% 97.51%    2195 308216 java.lang.StringBuffer.toString
+ 151  0.01% 97.52%    2769 300773 java.util.jar.JarFile.getEntry
+ 152  0.01% 97.53%    2195 308214 java.util.Arrays.copyOfRange
+ 153  0.01% 97.54%    5685 308201 com.sc2mod.andromeda.syntaxNodes.Type.<init>
+ 154  0.01% 97.55%    1557 300779 java.util.HashMap.<init>
+ 155  0.01% 97.56%    1708 308376 java.util.Vector.<init>
+ 156  0.01% 97.57%    7090 307907 java.lang.Math.min
+ 157  0.01% 97.58%    1327 300145 java.util.Arrays.copyOf
+ 158  0.01% 97.59%    2753 308278 com.sc2mod.andromeda.syntaxNodes.MethodDeclarator.<init>
+ 159  0.01% 97.60%    1065 300705 java.lang.AbstractStringBuilder.append
+ 160  0.01% 97.61%     346 305279 java.net.URL.<init>
+ 161  0.01% 97.62%    4576 308150 java.lang.Character.digit
+ 162  0.01% 97.63%    6519 308157 com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>
+ 163  0.01% 97.64%    3975 308164 com.sc2mod.andromeda.syntaxNodes.VariableDeclarator.<init>
+ 164  0.01% 97.65%    1388 300229 java.lang.StringBuilder.append
+ 165  0.01% 97.66%    2377 308568 com.sc2mod.andromeda.syntaxNodes.Statement.<init>
+ 166  0.01% 97.67%    4556 308175 java.util.Vector.addElement
+ 167  0.01% 97.68%    3980 308178 com.sc2mod.andromeda.syntaxNodes.SyntaxNode.<init>
+ 168  0.01% 97.69%    3975 308186 com.sc2mod.andromeda.syntaxNodes.GlobalStructure.<init>
+ 169  0.01% 97.71%    2195 308218 com.sc2mod.andromeda.vm.data.StringObject.<init>
+ 170  0.01% 97.72%    9477 308189 com.sc2mod.andromeda.syntaxNodes.SyntaxNode.getLeftPos
+CPU TIME (ms) END

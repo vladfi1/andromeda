@@ -1,0 +1,25 @@
+-Build Syntax Tree
+-Structure Analysis
+	=> Create semantics for global structures (Types, functions, globals)
+	=> Set scope for global structures
+-Resolve non-local Var-types
+	=> Resolve class and interface inheritance
+	=> Check class hierarchy (circles and stuff)
+	=> Resolve class members, global functions and variable types/signatures
+		=> Check for duplicate functions / methods / globals
+		=> Check for forward-declarations without definition
+-Expression analysis
+	=> Add {}-blocks to loops and ifs if they have none
+	=> Create statement tree and check for dead code / missing returns
+	=> Infer expression types (also set expected types if necessary)
+	=> Check that continue/break only in loops
+	=> Check that initializers of fields and globals are type-ok
+	=> Resolve function calls and field accesses
+		=> Semantics for those are created
+	=> Check for trivial overriding locals and create local variable set for functions
+	=> Check if local variable definitions are on top of the function (for initing them right away)
+	=> Check if return expressions return the declared return type
+	=> Check if explicit casts are possible
+	=> Check that ++, -- and assignment are not used on constants
+	=> Infer which expressions are constant
+	=> Check that constant variables are initialized upon declaration (and only with constant values)

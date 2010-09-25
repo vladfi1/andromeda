@@ -1,0 +1,111 @@
+<project name="Compiler" default="compile" basedir="..">
+  <property name="cl" location="lang"/>
+  <property name="cup" location="lang"/>
+  <property name="flex" location="lang"/>
+	<property name="src" location="src" />
+	<property name="guiSrc" location="gui" />
+	<property name="genSrc" location="generated" />
+	<property name="mopaqSrc" location="../MoPaQLib/src" />
+  <property name="java" location="generated"/>
+  <property name="classes" location="bin"/>
+  <property name="dist" location="dist"/>
+  <property name="lib" location="lib"/>
+  <property name="skeleton" location="lang/skeleton"/>	
+  <property name="bin" location="build/temp/bin"/>
+  <property name="customAnt" location="build/customAnt"/>
+  <property environment="env"/>
+
+  <!-- We rely on CUP-10k-TUM, JFlex 1.3.5 and Classgen 1.5pre -->
+  <!-- residing in our directory ``bin'' -->
+  <path id="binaries">
+    <pathelement location="${bin}"/>
+    <fileset dir="${bin}">
+      <include name="**/*.jar"/>
+      <include name="**/*.zip"/>
+    </fileset>
+    <!-- When the user installed CCK, we use these tool directories -->
+    <fileset dir="lib" includes="**/*.jar"/>
+    <pathelement path="${java.class.path}"/>
+    <pathelement path="${customAnt}"/>
+  </path>
+
+  <path id="libraries">
+    <pathelement location="${lib}"/>
+    <fileset dir="${lib}">
+      <include name="**/*.jar"/>
+      <include name="**/*.zip"/>
+    </fileset>
+    <!-- When the user installed CCK, we use these lib directories -->
+    <fileset dir="lib" includes="**/*.jar"/>
+    <pathelement path="${java.class.path}"/>
+  </path>
+
+  <taskdef name="jflex" classname="JFlex.anttask.JFlexTask" classpathref="binaries"/>
+  <taskdef name="classgen" classname="classgen.AntTask" classpathref="binaries"/>
+  <taskdef name="cup" classname="java_cup.anttask.CUPTask" classpath="${lib}/java-cup-gex.jar" />
+  <taskdef name="cupOld" classname="java_cup.anttask.CUPTask" classpathref="binaries"/>
+  <taskdef name="gexEnrich" classname="com.sc2mod.compilerGen.ClassEnricherAntTask" classpathref="binaries"/>
+
+  <target name="init">
+    <mkdir dir="${classes}"/>
+    <mkdir dir="${java}"/>
+  </target>
+
+  <target name="classgen" depends="init">
+    <classgen file="${cl}/andromeda.cl" destdir="${java}" visitor="true"/>
+  </target>
+	
+  <target name="enrich" depends="classgen">
+    <gexEnrich path="${java}/com/sc2mod/andromeda/syntaxNodes" scanner="${java}/com/sc2mod/andromeda/parser/AndromedaScanner.java"/>
+  	<gexEnrich scanner="${java}/com/sc2mod/andromeda/parser/GalaxyScanner.java"/>
+  </target>
+
+  <target name="cup" depends="classgen">
+  	 <cup srcfile="${cup}/andromeda.cup" destdir="${java}" interface="true" parser="AndromedaGenParser"/>
+ 	 <cup srcfile="${cup}/galaxy.cup" destdir="${java}" interface="true" parser="GalaxyGenParser"/>
+  </target>
+
+  <target name="jflex" depends="cup">
+  	<jflex file="${flex}/unicode.flex" destdir="${java}"/>
+    <jflex file="${flex}/andromeda.flex" destdir="${java}" skeleton="${skeleton}/flex/skeleton.nested"/>
+    <jflex file="${flex}/galaxy.flex" destdir="${java}" skeleton="${skeleton}/flex/skeleton.nested"/>
+  </target>
+
+  <target name="copy_src" depends="jflex,classgen,enrich">
+  <delete file="${java}/com/sc2mod/andromeda/syntaxNodes/SyntaxNode.java"/>
+   <copy todir="${java}">
+     <fileset dir="${skeleton}/java" includes="**/**.java"/>
+   </copy>
+  </target>
+
+  <target name="compile" depends="copy_src">
+	<javac destdir="${classes}">
+		<classpath refid="libraries" />
+		<src path="${src}" />
+		<src path="${genSrc}" />
+		<src path="${mopaqSrc}" />
+		<src path="${guiSrc}" />
+	</javac>
+  </target>
+
+  <target name="dist" depends="compile">
+    <jar jarfile="${dist}/Compiler.jar" basedir="${classes}">
+     <manifest>
+       <attribute name="Main-Class" value="Parser"/>
+       <attribute name="Class-Path" value="java-cup-10k-b2-runtime-TUM.jar"/>
+     </manifest>
+    </jar>
+  </target>
+
+  <target name="run" depends="dist">
+    <java classname="Parser" fork="true">
+      <arg value="input.test"/>
+      <classpath refid="binaries"/>
+    </java>
+  </target>
+
+  <target name="clean">
+    <delete dir="${java}"/>
+    <delete dir="${classes}"/>
+  </target>
+</project>

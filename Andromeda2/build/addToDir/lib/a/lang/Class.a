@@ -1,0 +1,22 @@
+package a.lang;
+
+public final class Class{
+	private int id;
+	private string name;
+	
+	/**
+	*	Classes are only instanced by Andromeda itself
+	*/
+	private Class(int id, string name){
+		this.id = id;
+		this.name = name;
+	}
+	
+	public string getName(){
+		return name;
+	}	
+
+	public int getId(){
+		return id;
+	}		
+}

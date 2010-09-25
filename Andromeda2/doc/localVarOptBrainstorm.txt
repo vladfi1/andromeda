@@ -1,0 +1,47 @@
+-reaching definitions analysis
+-reaching usage analysis
+	=> from bottom to top
+	=> On usage, add def
+	=> On def, delete def
+-intersect usage and definitions
+=> DU Paths
+-from top to bottom, do:
+	=> On def, set index according to active defs at this label
+--> LIFELINESS ANALYSIS
+dann von oben durch gehen, bei def nach typisiertem stack vergeben
+
+
+STEPs:
+-INLINING
+-Quick virtual call resolving (if no overrider present)
+-early constant if-branch kill
+-Construct CFG
+-lifeliness analysis
+-->remove unused assignments (need to redo the CFG?)
+-->assign variables to used definitions
+-def use (dataflow) analysis
+-->constant propagation
+-->remove uncalled if-branches
+--->redo analysis since this might remove dev use pairs
+--->expensive try to kill constant ifs before
+-->resolve virtual calls, if type is known
+----> then check inlining or ease by checking the function and its returned value
+-->calls on surely null classes (warning, error)
+
+
+WHICH DATA DOES THIS ANALYSIS PROVIDER ABOUT A FUNCTION RETURN VALUE:
+-Constant value
+-Exact type
+-Subtype
+-null? (= const)
+
+later:
+--> unused subclass virtual call resolving
+--> recheck method after resolving (this sux, because it will reconstruct the CFG, overhead)
+---> only as option, only if the method can be inlined or this reveals new information about the return value
+
+	
+
+	
+
+	

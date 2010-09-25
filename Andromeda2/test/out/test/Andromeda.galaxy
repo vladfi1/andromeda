@@ -1,0 +1,156 @@
+//Andromeda generated code @ Tue Aug 24 18:44:14 CEST 2010
+
+struct Class{
+	int Class____id;
+	int Class____type;
+	int Class__id;
+	string Class__name;
+};
+
+struct Object{
+	int Object____id;
+	int Object____type;
+};
+
+
+//Allocator for class Class
+int alloc___Class(int A__class);
+//Deallocator for class Class
+void dealloc___Class(int this);
+//Allocator for class Object
+int alloc___Object(int A__class);
+//Deallocator for class Object
+void dealloc___Object(int this);
+//Constructor for class Class
+int new__Class(int A__class,int id,string name);
+string Class__getName(int this);
+int Class__getId(int this);
+void s_System__error(string message);
+void s_System__debug(string message);
+void s_System__debug__1(string message,bool showIngame);
+void s_System__print(string message);
+
+int Class___allocPtr=1;
+int Class___freePtr;
+Class[4] Class___memory;
+int[4] Class___freeStack;
+int MC___Class;
+int Object___allocPtr=1;
+int Object___freePtr;
+Object[2] Object___memory;
+int[2] Object___freeStack;
+int MC___Object;
+int MC___System;
+
+playergroup s_System__ALL_PLAYERS = PlayerGroupAll();
+
+void A__classInit(){
+	int A__class;
+	A__class=new__Class(1,1,"Class");
+	MC___Class=A__class;
+	A__class=new__Class(2,2,"Object");
+	MC___Object=A__class;
+	A__class=new__Class(3,3,"System");
+	MC___System=A__class;
+}
+
+
+//Allocator for class Class
+int alloc___Class(int A__class){
+	int this;
+	if(Class___freePtr>0){
+		Class___freePtr-=1;
+		this=Class___freeStack[Class___freePtr];
+	}else if(Class___allocPtr<4){
+		this=Class___allocPtr;
+		Class___allocPtr+=1;
+	}else{
+		s_System__error("Instance limit reached for class Class. Allocation failed!");
+		return 0;
+	}
+	Class___memory[this].Class____type=A__class;
+	Class___memory[this].Class____id=(A__class<<24)|this;
+	return this;
+}
+
+//Deallocator for class Class
+void dealloc___Class(int this){
+	if(Class___memory[this].Class____id==0){
+		s_System__error("Double free of class Class");
+		return;
+	}
+	Class___memory[this].Class____id=0;
+	Class___memory[this].Class____type=0;
+	Class___freeStack[Class___freePtr]=this;
+	Class___freePtr+=1;
+}
+
+//Allocator for class Object
+int alloc___Object(int A__class){
+	int this;
+	if(Object___freePtr>0){
+		Object___freePtr-=1;
+		this=Object___freeStack[Object___freePtr];
+	}else if(Object___allocPtr<2){
+		this=Object___allocPtr;
+		Object___allocPtr+=1;
+	}else{
+		s_System__error("Instance limit reached for class Object. Allocation failed!");
+		return 0;
+	}
+	Object___memory[this].Object____type=A__class;
+	Object___memory[this].Object____id=(A__class<<24)|this;
+	return this;
+}
+
+//Deallocator for class Object
+void dealloc___Object(int this){
+	if(Object___memory[this].Object____id==0){
+		s_System__error("Double free of class Object");
+		return;
+	}
+	Object___memory[this].Object____id=0;
+	Object___memory[this].Object____type=0;
+	Object___freeStack[Object___freePtr]=this;
+	Object___freePtr+=1;
+}
+
+//Constructor for class Class
+int new__Class(int A__class,int id,string name){
+	int this=alloc___Class(A__class);
+	Class___memory[this].Class__id = id;
+	Class___memory[this].Class__name = name;
+	return this;
+}
+
+string Class__getName(int this){
+	return Class___memory[this].Class__name;
+}
+
+int Class__getId(int this){
+	return Class___memory[this].Class__id;
+}
+
+void s_System__error(string message){
+	TriggerDebugOutput(1, StringToText("ERROR: " + message), false);
+	UIDisplayMessage(s_System__ALL_PLAYERS, 4, StringToText("ERROR: " + message));
+}
+
+void s_System__debug(string message){
+	TriggerDebugOutput(1, StringToText(message), true);
+}
+
+void s_System__debug__1(string message,bool showIngame){
+	TriggerDebugOutput(1, StringToText(message), showIngame);
+}
+
+void s_System__print(string message){
+	UIDisplayMessage(s_System__ALL_PLAYERS, 7, StringToText(message));
+}
+
+void initAndromeda(){
+	trigger t;
+	A__classInit();
+}
+
+

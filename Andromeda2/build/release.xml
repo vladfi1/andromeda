@@ -1,0 +1,145 @@
+<project name="Andromeda Release" default="dist" basedir="..">
+	<property name="src" location="src" />
+	<property name="guiSrc" location="gui" />
+	<property name="genSrc" location="generated" />
+	<property name="mopaqSrc" location="../MoPaQ/src" />
+	<property name="addToDir" location="build/addToDir" />
+	<property name="addToJar" location="build/addToJar" />
+	<property name="classes" location="build/temp/bin" />
+	<property name="dist" location="dist/program" />
+	<property name="distZip" location="dist/zip" />
+	<property name="lib" location="lib" />
+	<property name="doc" location="doc" />
+	<property name="bin" location="build/temp/bin" />
+	<property environment="env" />
+	<loadproperties srcFile="build/version.num"/>
+
+	<path id="binaries">
+		<pathelement location="${bin}" />
+		<fileset dir="${bin}">
+			<include name="**/*.jar" />
+			<include name="**/*.zip" />
+		</fileset>
+		<!-- When the user installed CCK, we use these tool directories -->
+		<fileset dir="lib" includes="**/*.jar" />
+		<pathelement path="${java.class.path}" />
+		<pathelement path="${classes}" />
+	</path>
+
+	<path id="libraries">
+		<pathelement location="${lib}" />
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+			<include name="**/*.zip" />
+		</fileset>
+		<!-- When the user installed CCK, we use these lib directories -->
+		<fileset dir="lib" includes="**/*.jar" />
+		<pathelement path="${java.class.path}" />
+	</path>
+
+	<target name="init">
+		<mkdir dir="${classes}" />
+		<mkdir dir="${dist}" />
+		<mkdir dir="${distZip}" />
+	</target>
+
+
+	<target name="compile" depends="init">
+		<javac destdir="${classes}">
+			<classpath refid="libraries" />
+			<src path="${src}" />
+			<src path="${genSrc}" />
+			<src path="${mopaqSrc}" />
+			<src path="${guiSrc}" />
+			<src path="${externalSrc}" />
+						
+			<exclude name="**/*Test*.java" />
+			<exclude name="**/*test*.java" />
+		</javac>
+	</target>
+
+	<target name="compileDebug" depends="init">
+		<javac destdir="${classes}" debug="on" debuglevel="lines,vars,source">
+			<classpath refid="libraries" />
+			<src path="${src}" />
+			<src path="${genSrc}" />
+			<src path="${mopaqSrc}" />
+			<src path="${guiSrc}" />
+			<exclude name="**/*Test*.java" />
+		</javac>
+	</target>
+	
+
+
+
+	<target name="distDebug" depends="compileDebug">
+
+		<buildnumber file="build/build.num" />
+		<tstamp>
+			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+		</tstamp>
+
+		<copy todir="${dist}">
+			<fileset dir="${addToDir}" />
+			<fileset file="${doc}/changelog.txt" />
+		</copy>
+		<jar jarfile="${dist}/Andromeda.jar">
+			<fileset dir="${classes}" />
+			<fileset dir="${addToJar}" />
+			<manifest>
+				<attribute name="Main-Class"
+					value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader" />
+				<attribute name="Rsrc-Main-Class" value="com.sc2mod.andromeda.program.Program" />
+				<attribute name="Class-Path" value="." />
+				<attribute name="Rsrc-Class-Path" value="./ java-cup-10k-TUM-runtime.jar" />
+				<attribute name="Built-Date" value="${TODAY}" />
+			    <attribute name="Implementation-Version" value="${version.num}.${build.number}"/> 
+			</manifest>
+		</jar>
+		<zip destfile="${distZip}/Andromeda_v${version.num}.${build.number}-DEBUG.zip">
+			<fileset dir="${dist}" />
+		</zip>
+	</target>
+
+
+	<target name="dist" depends="compile">
+
+		<buildnumber file="build/build.num" />
+		<tstamp>
+			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+		</tstamp>
+
+		<copy todir="${dist}">
+			<fileset dir="${addToDir}" />
+			<fileset file="${doc}/changelog.txt" />
+		</copy>
+		<jar jarfile="${dist}/Andromeda.jar">
+			<fileset dir="${classes}" />
+			<fileset dir="${addToJar}" />
+			<manifest>
+				<attribute name="Main-Class"
+					value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader" />
+				<attribute name="Rsrc-Main-Class" value="com.sc2mod.andromeda.program.Program" />
+				<attribute name="Class-Path" value="." />
+				<attribute name="Rsrc-Class-Path" value="./ java-cup-10k-TUM-runtime.jar bzip2.jar" />
+				<attribute name="Built-Date" value="${TODAY}" />
+			    <attribute name="Implementation-Version" value="${version.num}.${build.number}"/> 
+			</manifest>
+		</jar>
+		<zip destfile="${distZip}/Andromeda_v${version.num}.${build.number}.zip">
+			<fileset dir="${dist}" />
+		</zip>
+	</target>
+
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${classes}" includes="**/*" />
+		</delete>
+		<delete includeemptydirs="true">
+			<fileset dir="${dist}" includes="**/*" />
+		</delete>
+	</target>
+	
+
+
+</project>
