@@ -15,30 +15,30 @@ import java.util.HashSet;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.Annotation;
-import com.sc2mod.andromeda.syntaxNodes.AnnotationList;
-import com.sc2mod.andromeda.syntaxNodes.ModifierType;
-import com.sc2mod.andromeda.syntaxNodes.Modifiers;
+import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
+import com.sc2mod.andromeda.syntaxNodes.AnnotationListNode;
+import com.sc2mod.andromeda.syntaxNodes.ModifierTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 
 public final class Util {
 
 	private Util(){}
 	
-	public static void processAnnotations(IAnnotatable annotatable, AnnotationList al){
+	public static void processAnnotations(IAnnotatable annotatable, AnnotationListNode al){
 		if(al==null) return;
-		HashMap<String, Annotation> annotations = new HashMap<String, Annotation>();
+		HashMap<String, AnnotationNode> annotations = new HashMap<String, AnnotationNode>();
 		HashSet<String> allowedAnnotations = annotatable.getAllowedAnnotations();
 		annotatable.setAnnotationTable(annotations);
 		int size = al.size();
 		for(int i=0; i<size; i++){
-			Annotation a = al.elementAt(i);
+			AnnotationNode a = al.elementAt(i);
 			String name = a.getName();
 			if(!allowedAnnotations.contains(name)){
 				throw Problem.ofType(ProblemId.UNKNOWN_ANNOTATION).at(a)
 						.details(name,annotatable.getDescription())
 						.raiseUnrecoverable();
 			}
-			Annotation old = annotations.put(name, a);
+			AnnotationNode old = annotations.put(name, a);
 			if(old != null){
 				throw Problem.ofType(ProblemId.UNKNOWN_ANNOTATION).at(a)
 				.details(name,annotatable.getDescription())
@@ -48,12 +48,12 @@ public final class Util {
 		annotatable.afterAnnotationsProcessed();
 	}
 	
-	public static void processModifiers(IModifiable m, Modifiers mods){
+	public static void processModifiers(IModifiable m, ModifierListNode mods){
 		if(mods==null) return;
 		int size = mods.size();
 		for(int i=0;i<size;i++){
 			switch(mods.elementAt(i)){
-			case ModifierType.ABSTRACT:
+			case ModifierTypeSE.ABSTRACT:
 				if(m.isAbstract()) 
 					Problem.ofType(ProblemId.DUPLICATE_MODIFIER).at(mods)
 							.details("abstract")
@@ -61,7 +61,7 @@ public final class Util {
 				else
 					m.setAbstract();
 				break;
-			case ModifierType.FINAL:
+			case ModifierTypeSE.FINAL:
 				if(m.isFinal()) 
 					Problem.ofType(ProblemId.DUPLICATE_MODIFIER).at(mods)
 							.details("final")
@@ -69,7 +69,7 @@ public final class Util {
 				else
 					m.setFinal();
 				break;
-			case ModifierType.STATIC:
+			case ModifierTypeSE.STATIC:
 				if(m.isStatic()) 
 					Problem.ofType(ProblemId.DUPLICATE_MODIFIER).at(mods)
 							.details("static")
@@ -77,7 +77,7 @@ public final class Util {
 				else
 					m.setStatic();
 				break;
-			case ModifierType.CONST:
+			case ModifierTypeSE.CONST:
 				if(m.isConst()) 
 					Problem.ofType(ProblemId.DUPLICATE_MODIFIER).at(mods)
 							.details("const")
@@ -85,7 +85,7 @@ public final class Util {
 				else
 					m.setConst();
 				break;
-			case ModifierType.OVERRIDE:
+			case ModifierTypeSE.OVERRIDE:
 				if(m.isOverride()) 
 					Problem.ofType(ProblemId.DUPLICATE_MODIFIER).at(mods)
 							.details("override")
@@ -93,28 +93,28 @@ public final class Util {
 				else
 					m.setOverride();
 				break;
-			case ModifierType.PRIVATE:
+			case ModifierTypeSE.PRIVATE:
 				if(m.getVisibility()!=Visibility.DEFAULT)
 					Problem.ofType(ProblemId.DUPLICATE_VISIBILITY_MODIFIER).at(mods)
 							.raise();
 				else
 					m.setVisibility(Visibility.PRIVATE);
 				break;
-			case ModifierType.PROTECTED:
+			case ModifierTypeSE.PROTECTED:
 				if(m.getVisibility()!=Visibility.DEFAULT)
 					Problem.ofType(ProblemId.DUPLICATE_VISIBILITY_MODIFIER).at(mods)
 							.raise();
 				else
 					m.setVisibility(Visibility.PROTECTED);
 				break;
-			case ModifierType.PUBLIC:
+			case ModifierTypeSE.PUBLIC:
 				if(m.getVisibility()!=Visibility.DEFAULT)
 					Problem.ofType(ProblemId.DUPLICATE_VISIBILITY_MODIFIER).at(mods)
 							.raise();
 				else 
 					m.setVisibility(Visibility.PUBLIC);
 				break;				
-			case ModifierType.NATIVE:
+			case ModifierTypeSE.NATIVE:
 				if(m.isNative()) 
 					Problem.ofType(ProblemId.DUPLICATE_MODIFIER).at(mods)
 							.details("native")

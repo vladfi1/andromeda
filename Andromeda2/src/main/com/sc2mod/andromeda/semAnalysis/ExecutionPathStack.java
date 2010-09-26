@@ -9,11 +9,11 @@
  */
 package com.sc2mod.andromeda.semAnalysis;
 
-import com.sc2mod.andromeda.syntaxNodes.Statement;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 
 public class ExecutionPathStack {
 
-	private Statement[] stmts = new Statement[512];
+	private StmtNode[] stmts = new StmtNode[512];
 	private int[] frames = new int[128];
 	private int curFrame = 0;
 	private int curStmt = 0;
@@ -25,12 +25,12 @@ public class ExecutionPathStack {
 		//System.out.println(StrUtil.space(curFrame) + "Frame pushed" + curFrame);
 	}
 	
-	public void pushSingleStatementFrame(Statement s){
+	public void pushSingleStatementFrame(StmtNode s){
 		pushFrame();
 		pushStatement(s);
 	}
 	
-	public void pushStatement(Statement s){
+	public void pushStatement(StmtNode s){
 
 		stmts[curStmt] = s;
 		curStmt++;
@@ -38,7 +38,7 @@ public class ExecutionPathStack {
 		//System.out.println(StrUtil.space(curFrame) + "Statement pushed : " + s);
 	}
 	
-	public void popFrameAndConnect(Statement connectTo){
+	public void popFrameAndConnect(StmtNode connectTo){
 		int to = frames[--curFrame];
 		while(curStmt>to){
 			curStmt--;

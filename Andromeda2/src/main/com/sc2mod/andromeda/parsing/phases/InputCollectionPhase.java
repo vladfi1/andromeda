@@ -22,7 +22,7 @@ import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.program.FileCollector;
 import com.sc2mod.andromeda.program.Program;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.util.StopWatch;
 import com.sc2mod.andromeda.util.logging.Log;
 import com.sc2mod.andromeda.util.logging.LogLevel;
@@ -39,7 +39,7 @@ public class InputCollectionPhase extends Phase {
 	@Override
 	public void execute(CompilationEnvironment env,
 			Workflow workflow) {
-		SourceFile af = null;
+		SourceFileNode af = null;
 		Configuration cfg = env.getConfig();
 		File mapIn = cfg.getParamFile(Parameter.FILES_MAP_IN);
 		File triggersIn = cfg.getParamFile(Parameter.FILES_MAP_TRIGGERS_IN);

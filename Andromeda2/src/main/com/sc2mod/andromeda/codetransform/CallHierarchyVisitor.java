@@ -17,14 +17,14 @@ import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.semAnalysis.ForeachSemantics;
 import com.sc2mod.andromeda.semAnalysis.NameResolver;
-import com.sc2mod.andromeda.syntaxNodes.DeleteStatement;
-import com.sc2mod.andromeda.syntaxNodes.ExplicitConstructorInvocationStatement;
-import com.sc2mod.andromeda.syntaxNodes.ForEachStatement;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl;
+import com.sc2mod.andromeda.syntaxNodes.DeleteStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ExplicitConsCallStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ForEachStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarAssignDeclNode;
 
 public class CallHierarchyVisitor extends TransformationVisitor {
 	
@@ -49,7 +49,7 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	
 	//*********** GLOBAL CONSTRUCTS (just loop through) **********
 	@Override
-	public void visit(SourceFile andromedaFile) {
+	public void visit(SourceFileNode andromedaFile) {
 		InclusionType inclType = andromedaFile.getFileInfo().getInclusionType();
 		if(inclType == InclusionType.NATIVE || inclType == InclusionType.LANGUAGE) {
 			//Natives and libraries do not get parsed (only if they are called)
@@ -66,7 +66,7 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 
 	//*********** Methods **********
 	@Override
-	public void visit(VariableAssignDecl vad) {
+	public void visit(VarAssignDeclNode vad) {
 		//Marked? do nothing
 		VarDecl vd = (VarDecl) vad.getName().getSemantics();
 		if(vd.isMarked()) {
@@ -84,9 +84,9 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	
 	//Xpilot: added
 	@Override
-	public void visit(StaticInitDeclaration s) {
+	public void visit(StaticInitDeclNode s) {
 		//Get the function body
-		Statement body = s.getBody();
+		StmtNode body = s.getBody();
 		
 		//Set current function
 		Function f = (Function)s.getSemantics();
@@ -107,14 +107,14 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	}
 	
 	@Override
-	public void visit(MethodDeclaration methodDeclaration) {
+	public void visit(MethodDeclNode methodDeclaration) {
 		//Set current function
 		Function f = (Function)methodDeclaration.getSemantics();
 		
 		//Function already marked? Return
 		if(f.isMarked()) return;
 		
-		Statement body = methodDeclaration.getBody();
+		StmtNode body = methodDeclaration.getBody();
 		
 		if(body != null) {
 			//Now check the body for calls
@@ -131,7 +131,7 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	//************** STATEMENTS (just loop through and replace expressions if necessary) ********
 	
 	@Override
-	public void visit(DeleteStatement deleteStatement) {
+	public void visit(DeleteStmtNode deleteStatement) {
 		//Visit children
 		super.visit(deleteStatement);
 		
@@ -140,7 +140,7 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	}
 	
 	@Override
-	public void visit(ForEachStatement forEachStatement) {
+	public void visit(ForEachStmtNode forEachStatement) {
 		ForeachSemantics semantics = (ForeachSemantics) forEachStatement.getSemantics();
 		
 		//The hasNext next and getIterator methods are invoked
@@ -154,7 +154,7 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	
 	//XPilot: added
 	@Override
-	public void visit(ExplicitConstructorInvocationStatement explicitConstructorInvocationStatement) {
+	public void visit(ExplicitConsCallStmtNode explicitConstructorInvocationStatement) {
 		//Visit children
 		super.visit(explicitConstructorInvocationStatement);
 		

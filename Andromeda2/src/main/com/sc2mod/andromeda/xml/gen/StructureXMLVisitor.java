@@ -24,16 +24,16 @@ import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.CompilationFileManager;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.FunctionDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.IncludedFile;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.StructDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.VisitorAdaptor;
 import com.sc2mod.andromeda.environment.Function;
@@ -59,7 +59,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 		this.options = options;
 	}
 	
-	public void genXml(CompilationFileManager env, File xmlFile, SourceFile code) throws XMLStreamException, IOException{
+	public void genXml(CompilationFileManager env, File xmlFile, SourceFileNode code) throws XMLStreamException, IOException{
 		writer = new XMLWriter(xmlFile);
 		this.env = env;
 		inRecord = false;
@@ -82,7 +82,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(SourceFile andromedaFile) {
+	public void visit(SourceFileNode andromedaFile) {
 		XMLWriter writer = this.writer;
 		SourceFileInfo info = andromedaFile.getFileInfo();
 		InclusionType inclusionType = info.getInclusionType();
@@ -105,23 +105,23 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(IncludedFile includedFile) {
+	public void visit(IncludeNode includedFile) {
 		includedFile.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(FunctionDeclaration functionDeclaration) {
+	public void visit(GlobalFuncDeclNode functionDeclaration) {
 		functionDeclaration.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(GlobalVarDeclaration globalVarDeclaration) {
+	public void visit(GlobalVarDeclNode globalVarDeclaration) {
 		globalVarDeclaration.childrenAccept(this);
 	}
 	
 	
 	@Override
-	public void visit(ClassDeclaration classDeclaration) {
+	public void visit(ClassDeclNode classDeclaration) {
 		XMLWriter writer = this.writer;
 		writer.writeStartElement("class");
 		
@@ -150,7 +150,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(StructDeclaration structDeclaration) {
+	public void visit(StructDeclNode structDeclaration) {
 		XMLWriter writer = this.writer;
 		writer.writeStartElement("struct");
 		writer.writeAttribute("name", structDeclaration.getName());
@@ -167,7 +167,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 
 
 	@Override
-	public void visit(EnrichDeclaration enrichDeclaration) {
+	public void visit(EnrichDeclNode enrichDeclaration) {
 		XMLWriter writer = this.writer;
 		writer.writeStartElement("enrich");
 		
@@ -185,7 +185,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(MethodDeclaration methodDeclaration) {
+	public void visit(MethodDeclNode methodDeclaration) {
 		XMLWriter writer = this.writer;
 		Function f = (Function) methodDeclaration.getSemantics();
 		if(f.isForwardDeclaration()) return;
@@ -251,7 +251,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(FieldDeclaration fieldDeclaration) {
+	public void visit(FieldDeclNode fieldDeclaration) {
 		XMLWriter writer = this.writer;
 		int size = fieldDeclaration.getDeclaredVariables().size();
 		for(int i = 0; i < size; i++){
@@ -280,7 +280,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(AccessorDeclaration accessorDeclaration) {
+	public void visit(AccessorDeclNode accessorDeclaration) {
 		XMLWriter writer = this.writer;
 		writer.writeStartElement("accessor");
 		

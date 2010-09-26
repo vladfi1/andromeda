@@ -15,10 +15,10 @@ import java.util.List;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.syntaxNodes.Modifiers;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
+import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarator;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
 public class GenericVarProxy extends VarDecl {
@@ -47,7 +47,7 @@ public class GenericVarProxy extends VarDecl {
 	}
 
 	@Override
-	public void addInitCode(Collection<Statement> initCode) {
+	public void addInitCode(Collection<StmtNode> initCode) {
 		wrappedDecl.addInitCode(initCode);
 	}
 
@@ -62,7 +62,7 @@ public class GenericVarProxy extends VarDecl {
 	}
 
 	@Override
-	public VariableDeclarator getDeclarator() {
+	public VarDeclNode getDeclarator() {
 		return wrappedDecl.getDeclarator();
 	}
 
@@ -82,12 +82,12 @@ public class GenericVarProxy extends VarDecl {
 	}
 
 	@Override
-	public List<Statement> getInitCode() {
+	public List<StmtNode> getInitCode() {
 		return wrappedDecl.getInitCode();
 	}
 
 	@Override
-	public Modifiers getModifiers() {
+	public ModifierListNode getModifiers() {
 		return wrappedDecl.getModifiers();
 	}
 

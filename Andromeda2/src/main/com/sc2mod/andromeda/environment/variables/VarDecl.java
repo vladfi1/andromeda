@@ -23,11 +23,11 @@ import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.Modifiers;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
+import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarator;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNameNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
 /**
@@ -49,12 +49,12 @@ public abstract class VarDecl extends SemanticsElement implements IIdentifiable,
 	public static final int TYPE_FUNCTION_POINTER = 9;
 	public static final int TYPE_IMPLICIT = 10;
 	
-	private VariableDeclaratorId declaration;
-	private com.sc2mod.andromeda.syntaxNodes.Type syntaxType;
+	private VarDeclNameNode declaration;
+	private com.sc2mod.andromeda.syntaxNodes.TypeNode syntaxType;
 	protected Type type;
 	private String generatedName;
 	private String name;
-	private Modifiers mods;
+	private ModifierListNode mods;
 	private DataObject value;
 	protected LocalVarDecl overrides;
 	private int numReads;
@@ -62,18 +62,18 @@ public abstract class VarDecl extends SemanticsElement implements IIdentifiable,
 	private int numInlines;
 	private boolean marked;
 	private boolean createCode = true;
-	private List<Statement> initCode;
+	private List<StmtNode> initCode;
 	
 	
 	
 	
-	public List<Statement> getInitCode() {
+	public List<StmtNode> getInitCode() {
 		return initCode;
 	}
 
-	public void addInitCode(Collection<Statement> initCode) {
+	public void addInitCode(Collection<StmtNode> initCode) {
 		if(this.initCode==null){
-			this.initCode = new ArrayList<Statement>(initCode.size());
+			this.initCode = new ArrayList<StmtNode>(initCode.size());
 		}
 		this.initCode.addAll(initCode);
 	}
@@ -93,7 +93,7 @@ public abstract class VarDecl extends SemanticsElement implements IIdentifiable,
 		declaration.setInferedType(this.type);
 	}
 	
-	public Modifiers getModifiers(){
+	public ModifierListNode getModifiers(){
 		return mods;
 	}
 
@@ -105,7 +105,7 @@ public abstract class VarDecl extends SemanticsElement implements IIdentifiable,
 		this.generatedName = generatedName;
 	}
 	
-	public VarDecl(Modifiers mods,Type type,VariableDeclaratorId def) {
+	public VarDecl(ModifierListNode mods,Type type,VarDeclNameNode def) {
 		this.declaration = def;
 		this.name = def.getName();
 		this.mods = mods;
@@ -115,7 +115,7 @@ public abstract class VarDecl extends SemanticsElement implements IIdentifiable,
 		Util.processModifiers(this, mods);
 	}
 	
-	public VarDecl(Modifiers mods,com.sc2mod.andromeda.syntaxNodes.Type type,VariableDeclaratorId def) {
+	public VarDecl(ModifierListNode mods,com.sc2mod.andromeda.syntaxNodes.TypeNode type,VarDeclNameNode def) {
 		this.declaration = def;
 		this.name = def.getName();
 		this.mods = mods;
@@ -276,7 +276,7 @@ public abstract class VarDecl extends SemanticsElement implements IIdentifiable,
 	
 	public abstract boolean isInitDecl();
 
-	public VariableDeclarator getDeclarator() {
+	public VarDeclNode getDeclarator() {
 		return null;
 	}
 

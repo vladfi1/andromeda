@@ -9,8 +9,8 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
-import com.sc2mod.andromeda.syntaxNodes.AssignmentOperatorType;
-import com.sc2mod.andromeda.syntaxNodes.BinaryOperator;
+import com.sc2mod.andromeda.syntaxNodes.AssignOpTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.BinOpTypeSE;
 
 /**
  * Utility class for code transformations
@@ -27,18 +27,18 @@ public final class TransformUtil {
 	
 	public static int getOpFromAssignOp(int operator){
 		switch(operator){
-		case AssignmentOperatorType.EQ:	return -1;
-		case AssignmentOperatorType.ANDEQ: return BinaryOperator.AND;
-		case AssignmentOperatorType.DIVEQ: return BinaryOperator.DIV;
-		case AssignmentOperatorType.LSHIFTEQ: return BinaryOperator.LSHIFT;
-		case AssignmentOperatorType.MINUSEQ: return BinaryOperator.MINUS;
-		case AssignmentOperatorType.MODEQ: return BinaryOperator.MOD;
-		case AssignmentOperatorType.MULTEQ: return BinaryOperator.MULT;
-		case AssignmentOperatorType.OREQ: return BinaryOperator.OR;
-		case AssignmentOperatorType.PLUSEQ: return BinaryOperator.PLUS;
-		case AssignmentOperatorType.RSHIFTEQ: return BinaryOperator.RSHIFT;
-		case AssignmentOperatorType.URSHIFTEQ: return BinaryOperator.URSHIFT;
-		case AssignmentOperatorType.XOREQ: return BinaryOperator.XOR;
+		case AssignOpTypeSE.EQ:	return -1;
+		case AssignOpTypeSE.ANDEQ: return BinOpTypeSE.AND;
+		case AssignOpTypeSE.DIVEQ: return BinOpTypeSE.DIV;
+		case AssignOpTypeSE.LSHIFTEQ: return BinOpTypeSE.LSHIFT;
+		case AssignOpTypeSE.MINUSEQ: return BinOpTypeSE.MINUS;
+		case AssignOpTypeSE.MODEQ: return BinOpTypeSE.MOD;
+		case AssignOpTypeSE.MULTEQ: return BinOpTypeSE.MULT;
+		case AssignOpTypeSE.OREQ: return BinOpTypeSE.OR;
+		case AssignOpTypeSE.PLUSEQ: return BinOpTypeSE.PLUS;
+		case AssignOpTypeSE.RSHIFTEQ: return BinOpTypeSE.RSHIFT;
+		case AssignOpTypeSE.URSHIFTEQ: return BinOpTypeSE.URSHIFT;
+		case AssignOpTypeSE.XOREQ: return BinOpTypeSE.XOR;
 		default : throw new Error("Unknown op type");
 		}
 	}

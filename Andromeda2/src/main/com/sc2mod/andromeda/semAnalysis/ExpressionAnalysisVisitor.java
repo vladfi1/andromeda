@@ -37,66 +37,66 @@ import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.program.Program;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
-import com.sc2mod.andromeda.syntaxNodes.ArrayAccess;
-import com.sc2mod.andromeda.syntaxNodes.ArrayCreationExpression;
-import com.sc2mod.andromeda.syntaxNodes.ArrayInitializer;
-import com.sc2mod.andromeda.syntaxNodes.ArrayType;
-import com.sc2mod.andromeda.syntaxNodes.Assignment;
-import com.sc2mod.andromeda.syntaxNodes.BinaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.BlockStatement;
-import com.sc2mod.andromeda.syntaxNodes.BreakStatement;
-import com.sc2mod.andromeda.syntaxNodes.CastExpression;
-import com.sc2mod.andromeda.syntaxNodes.ClassBody;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.ClassInstanceCreationExpression;
-import com.sc2mod.andromeda.syntaxNodes.ConditionalExpression;
-import com.sc2mod.andromeda.syntaxNodes.ContinueStatement;
-import com.sc2mod.andromeda.syntaxNodes.DeleteStatement;
-import com.sc2mod.andromeda.syntaxNodes.DoWhileStatement;
-import com.sc2mod.andromeda.syntaxNodes.EmptyStatement;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.ExplicitConstructorInvocationStatement;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionStatement;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.FileContent;
-import com.sc2mod.andromeda.syntaxNodes.ForEachStatement;
-import com.sc2mod.andromeda.syntaxNodes.ForStatement;
-import com.sc2mod.andromeda.syntaxNodes.FunctionDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.GlobalInitDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.IfThenElseStatement;
-import com.sc2mod.andromeda.syntaxNodes.IncludedFile;
-import com.sc2mod.andromeda.syntaxNodes.InstanceLimitSetter;
-import com.sc2mod.andromeda.syntaxNodes.InstanceofExpression;
-import com.sc2mod.andromeda.syntaxNodes.KeyOfExpression;
-import com.sc2mod.andromeda.syntaxNodes.Literal;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
-import com.sc2mod.andromeda.syntaxNodes.LiteralType;
-import com.sc2mod.andromeda.syntaxNodes.LocalTypeDeclarationStatement;
-import com.sc2mod.andromeda.syntaxNodes.LocalVariableDeclarationStatement;
-import com.sc2mod.andromeda.syntaxNodes.MetaClassExpression;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.MethodInvocation;
-import com.sc2mod.andromeda.syntaxNodes.ParenthesisExpression;
-import com.sc2mod.andromeda.syntaxNodes.ReturnStatement;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
-import com.sc2mod.andromeda.syntaxNodes.StatementList;
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ArrayCreationExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ArrayInitNode;
+import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
+import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
+import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.BreakStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.CastExprNode;
+import com.sc2mod.andromeda.syntaxNodes.MemberDeclListNode;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.NewExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ConditionalExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ContinueStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.DeleteStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.DoWhileStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.EmptyStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.ExplicitConsCallStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureListNode;
+import com.sc2mod.andromeda.syntaxNodes.ForEachStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ForStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStaticInitDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.IfStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
+import com.sc2mod.andromeda.syntaxNodes.InstanceLimitSetterNode;
+import com.sc2mod.andromeda.syntaxNodes.InstanceofExprNode;
+import com.sc2mod.andromeda.syntaxNodes.KeyOfExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.LocalTypeDeclStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.LocalVarDeclStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.MetaClassExprNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.ThisExpression;
-import com.sc2mod.andromeda.syntaxNodes.ThrowStatement;
-import com.sc2mod.andromeda.syntaxNodes.UnaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl;
-import com.sc2mod.andromeda.syntaxNodes.VariableDecl;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarator;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarators;
+import com.sc2mod.andromeda.syntaxNodes.ThisExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ThrowStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.VarAssignDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.UninitedVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.VisitorAdaptor;
-import com.sc2mod.andromeda.syntaxNodes.WhileStatement;
+import com.sc2mod.andromeda.syntaxNodes.WhileStmtNode;
 import com.sc2mod.andromeda.vm.data.BoolObject;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
@@ -145,7 +145,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	 * resolving invocations and field accesses.
 	 */
 	@Override
-	public void visit(ClassDeclaration classDeclaration) {
+	public void visit(ClassDeclNode classDeclaration) {
 		//Remember old type (in case we have nested classes)
 		RecordType recordTypeBefore = curRecordType;
 		Type typeBefore = curType;
@@ -155,7 +155,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		curType = curRecordType;
 		
 		//Instancelimit
-		Expression instanceLimit = classDeclaration.getInstanceLimit();
+		ExprNode instanceLimit = classDeclaration.getInstanceLimit();
 		if(instanceLimit!=null){
 			if(curRecordType.isStatic())
 				throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_INSTANCELIMIT).at(instanceLimit)
@@ -190,29 +190,29 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ClassBody classBody) {
+	public void visit(MemberDeclListNode classBody) {
 		
 		//Visit all class members
 		classBody.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(FunctionDeclaration functionDeclaration) {
+	public void visit(GlobalFuncDeclNode functionDeclaration) {
 		functionDeclaration.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(GlobalVarDeclaration globalVarDeclaration) {
+	public void visit(GlobalVarDeclNode globalVarDeclaration) {
 		globalVarDeclaration.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(GlobalInitDeclaration globalInitDeclaration) {
+	public void visit(GlobalStaticInitDeclNode globalInitDeclaration) {
 		globalInitDeclaration.getInitDecl().accept(this);
 	}
 	
 	
-	public void visit(StaticInitDeclaration d) {
+	public void visit(StaticInitDeclNode d) {
 		//Remember old function (in case we have nested functions or local classes inside a function)
 		Function functionBefore = curFunction;
 		LoopSemantics loopBefore = curLoop;
@@ -225,7 +225,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		
 		//Set current function
 		curFunction = (Function)d.getSemantics();
-		Statement body = d.getBody();
+		StmtNode body = d.getBody();
 		
 		//Analyze the body
 		body.accept(this);
@@ -249,7 +249,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	
 	
 	@Override
-	public void visit(EnrichDeclaration enrichDeclaration) {
+	public void visit(EnrichDeclNode enrichDeclaration) {
 		//Remember old type (in case we have nested classes)
 		RecordType recordTypeBefore = curRecordType;
 		Type typeBefore = curType;
@@ -267,9 +267,9 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(FieldDeclaration fieldDeclaration) {
+	public void visit(FieldDeclNode fieldDeclaration) {
 
-		VariableDeclarators v = fieldDeclaration.getDeclaredVariables();
+		VarDeclListNode v = fieldDeclaration.getDeclaredVariables();
 		boolean inGlobalVarBefore = inGlobalVarDecl;
 		boolean inMemberBefore = inMember;
 		VarDecl vd0 = ((VarDecl) v.elementAt(0).getSemantics());
@@ -278,7 +278,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		
 		int size = v.size();
 		for(int i=0;i<size;i++){
-			VariableDeclarator vd = v.elementAt(i);
+			VarDeclNode vd = v.elementAt(i);
 			VarDecl decl = (VarDecl) vd.getName().getSemantics();
 			varDeclIndex = decl.getIndex();
 			vd.accept(this);
@@ -288,7 +288,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(VariableDecl variableDecl) {
+	public void visit(UninitedVarDeclNode variableDecl) {
 		VarDecl decl = (VarDecl)variableDecl.getName().getSemantics();
 		
 		//Constants must be defined at declaration
@@ -302,9 +302,9 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 
 	@Override
-	public void visit(VariableAssignDecl variableAssignDecl) {
+	public void visit(VarAssignDeclNode variableAssignDecl) {
 		variableAssignDecl.getInitializer().accept(this);
-		Expression init = variableAssignDecl.getInitializer();
+		ExprNode init = variableAssignDecl.getInitializer();
 		
 		Type t = init.getInferedType();
 		VarDecl decl = (VarDecl)variableAssignDecl.getName().getSemantics();
@@ -341,7 +341,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	
 	
 	@Override
-	public void visit(SourceFile andromedaFile) {
+	public void visit(SourceFileNode andromedaFile) {
 		//An included file brings a new scope
 		Scope scopeBefore = curScope;
 		curScope = andromedaFile.getScope();
@@ -352,17 +352,17 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(FileContent fileContent) {
+	public void visit(GlobalStructureListNode fileContent) {
 		fileContent.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(IncludedFile includedFile) {		
+	public void visit(IncludeNode includedFile) {		
 		includedFile.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(InstanceLimitSetter instanceLimitSetter) {
+	public void visit(InstanceLimitSetterNode instanceLimitSetter) {
 		instanceLimitSetter.getInstanceLimit().accept(this);
 	}
 	
@@ -436,14 +436,14 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		
 	}
 	
-	private void checkConstructor(Constructor c, Statement body){
+	private void checkConstructor(Constructor c, StmtNode body){
 		Class clazz = (Class) c.getContainingType();
 		Class superClass = clazz.getSuperClass();
 		
-		StatementList stmts = body.getStatements();
+		StmtListNode stmts = body.getStatements();
 			
 		
-		if(stmts.isEmpty()||!(stmts.elementAt(0) instanceof ExplicitConstructorInvocationStatement)){
+		if(stmts.isEmpty()||!(stmts.elementAt(0) instanceof ExplicitConsCallStmtNode)){
 			//No explicit constructor invocation
 			
 			if(superClass!=null){
@@ -454,7 +454,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 
 		} else {
 			//Explicit constructor invocation
-			ExplicitConstructorInvocationStatement explicitInvocation = (ExplicitConstructorInvocationStatement) stmts.elementAt(0);
+			ExplicitConsCallStmtNode explicitInvocation = (ExplicitConsCallStmtNode) stmts.elementAt(0);
 			explicitInvocation.childrenAccept(this);
 			boolean useSuper = explicitInvocation.getUseSuper();
 			if(useSuper&&superClass==null)
@@ -470,10 +470,10 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(MethodDeclaration functionDeclaration) {
+	public void visit(MethodDeclNode functionDeclaration) {
 		
 		//Get function body, if this function has none (abstract/inteface) we don't have to do anything
-		Statement body = functionDeclaration.getBody();
+		StmtNode body = functionDeclaration.getBody();
 		if(body == null||(!options.getParamBool(Parameter.TEST_CHECK_NATIVE_FUNCTION_BODIES)&&curScope.getInclusionType()==InclusionType.NATIVE)) return;
 		
 		//Remember old function (in case we have nested functions or local classes inside a function)
@@ -541,20 +541,20 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	
 	//************** MISC STRUCTURES **************
 	@Override
-	public void visit(ExpressionList expressionList) {
+	public void visit(ExprListNode expressionList) {
 		expressionList.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(ArrayInitializer arrayInitializer) {
+	public void visit(ArrayInitNode arrayInitializer) {
 		throw new InternalProgramError(arrayInitializer,"Array initializers not yet supported!");
 	}
 	
 	//************** STATEMENTS (walk through, check blocks, return types, ...) **************
 	@Override
-	public void visit(StatementList statementList) {
+	public void visit(StmtListNode statementList) {
 		int size = statementList.size();
-		Statement stmt = null;
+		StmtNode stmt = null;
 		boolean deadCode = false;
 		boolean remove = false;
 		for(int i=0;i<size;i++){
@@ -573,7 +573,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 			
 			//Check if on top
 			if(isOnTop){
-				if(!(stmt instanceof LocalVariableDeclarationStatement)){
+				if(!(stmt instanceof LocalVarDeclStmtNode)){
 					isOnTop = false;
 				}
 			} 
@@ -596,7 +596,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 
 	
 	@Override
-	public void visit(BlockStatement blockStatement) {
+	public void visit(BlockStmtNode blockStatement) {
 		//Block statements create local variable scopes
 		nameResolver.pushLocalBlock();
 		
@@ -610,7 +610,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(BreakStatement breakStatement) {
+	public void visit(BreakStmtNode breakStatement) {
 		//Pushes an empty frame, since the following statement will have no predecessor!
 		execPathStack.pushFrame();
 		
@@ -624,7 +624,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ContinueStatement continueStatement) {
+	public void visit(ContinueStmtNode continueStatement) {
 		//Pushes an empty frame, since the following statement will have no predecessor!
 		execPathStack.pushFrame();
 		
@@ -638,11 +638,11 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(DoWhileStatement doWhileStatement) {
-		Statement thenStmt = doWhileStatement.getThenStatement();
+	public void visit(DoWhileStmtNode doWhileStatement) {
+		StmtNode thenStmt = doWhileStatement.getThenStatement();
 		//Do not allow a non block statement as body
-		if(!(thenStmt instanceof BlockStatement)){
-			doWhileStatement.setThenStatement(new BlockStatement(new StatementList(thenStmt)));
+		if(!(thenStmt instanceof BlockStmtNode)){
+			doWhileStatement.setThenStatement(new BlockStmtNode(new StmtListNode(thenStmt)));
 		}
 		
 		LoopSemantics loopBefore = curLoop;
@@ -659,9 +659,9 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		//Push the eol Statement on the stack that it will be linked to later elements
 		execPathStack.pushSingleStatementFrame(eolStmt);
 		//All continue statements go to the eolStmt
-		for(Statement s: curLoop.getContinues()) s.setSuccessor(eolStmt);
+		for(StmtNode s: curLoop.getContinues()) s.setSuccessor(eolStmt);
 		//All break statements are added onto the stack, so they get bound to the next stmt
-		for(Statement s: curLoop.getBreaks()) execPathStack.pushStatement(s);
+		for(StmtNode s: curLoop.getBreaks()) execPathStack.pushStatement(s);
 		
 		
 		if(!doWhileStatement.getCondition().getInferedType().canImplicitCastTo(BasicType.BOOL))
@@ -673,11 +673,11 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 }
 	
 	@Override
-	public void visit(WhileStatement whileStatement) {
-		Statement thenStmt = whileStatement.getThenStatement();
+	public void visit(WhileStmtNode whileStatement) {
+		StmtNode thenStmt = whileStatement.getThenStatement();
 		//Do not allow a non block statment as body
-		if(!(thenStmt instanceof BlockStatement)){
-			whileStatement.setThenStatement(new BlockStatement(new StatementList(thenStmt)));
+		if(!(thenStmt instanceof BlockStmtNode)){
+			whileStatement.setThenStatement(new BlockStmtNode(new StmtListNode(thenStmt)));
 		}
 		
 		//Body
@@ -693,9 +693,9 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		//Also add the body to it as a seconds successor
 		SuccessorList.addAdditionalSuccessor(whileStatement,thenStmt);	
 		//All continue statements go to the while Statement
-		for(Statement s: curLoop.getContinues()) s.setSuccessor(whileStatement);
+		for(StmtNode s: curLoop.getContinues()) s.setSuccessor(whileStatement);
 		//All break statements are added onto the stack, so they get bound to the next stmt
-		for(Statement s: curLoop.getBreaks()) execPathStack.pushStatement(s);
+		for(StmtNode s: curLoop.getBreaks()) execPathStack.pushStatement(s);
 
 		//Check condition type
 		if(!whileStatement.getCondition().getInferedType().canImplicitCastTo(BasicType.BOOL))
@@ -707,17 +707,17 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ExplicitConstructorInvocationStatement e) {
+	public void visit(ExplicitConsCallStmtNode e) {
 		e.childrenAccept(this);
 		execPathStack.pushSingleStatementFrame(e);
 	}
 	
 	@Override
-	public void visit(ForEachStatement forEachStmt) {
-		Statement thenStmt = forEachStmt.getThenStatement();
+	public void visit(ForEachStmtNode forEachStmt) {
+		StmtNode thenStmt = forEachStmt.getThenStatement();
 		//Do not allow a non block statement as body
-		if(!(thenStmt instanceof BlockStatement)){
-			forEachStmt.setThenStatement(new BlockStatement(new StatementList(thenStmt)));
+		if(!(thenStmt instanceof BlockStmtNode)){
+			forEachStmt.setThenStatement(new BlockStmtNode(new StmtListNode(thenStmt)));
 		}
 		
 		//Body
@@ -728,7 +728,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		nameResolver.pushLocalBlock();		
 		
 		//Check init expression
-		Expression iteree = forEachStmt.getExpression();
+		ExprNode iteree = forEachStmt.getExpression();
 		iteree.accept(this);
 		
 		//Register local var for iterator
@@ -751,9 +751,9 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		//Also add the body to it as a seconds successor
 		SuccessorList.addAdditionalSuccessor(forEachStmt,thenStmt);	
 		//All continue statements go to the foreach Statement
-		for(Statement s: curLoop.getContinues()) s.setSuccessor(forEachStmt);
+		for(StmtNode s: curLoop.getContinues()) s.setSuccessor(forEachStmt);
 		//All break statements are added onto the stack, so they get bound to the next stmt
-		for(Statement s: curLoop.getBreaks()) execPathStack.pushStatement(s);
+		for(StmtNode s: curLoop.getBreaks()) execPathStack.pushStatement(s);
 
 
 		
@@ -838,11 +838,11 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ForStatement forStatement) {
-		Statement thenStmt = forStatement.getThenStatement();
+	public void visit(ForStmtNode forStatement) {
+		StmtNode thenStmt = forStatement.getThenStatement();
 		//Do not allow a non block statement as body
-		if(!(thenStmt instanceof BlockStatement)){
-			forStatement.setThenStatement(new BlockStatement(new StatementList(thenStmt)));
+		if(!(thenStmt instanceof BlockStmtNode)){
+			forStatement.setThenStatement(new BlockStmtNode(new StmtListNode(thenStmt)));
 		}
 		
 		//Body
@@ -853,14 +853,14 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		
 		//Since the init can contain statements, we have to cut those statements from the execution path
 		int execPathFrame = execPathStack.getCurFrame();
-		Statement s = forStatement.getForInit();
+		StmtNode s = forStatement.getForInit();
 		if(s!=null) s.accept(this);
 		execPathStack.cutToFrame(execPathFrame);
 		//The rest can be processed normally
-		Expression e = forStatement.getCondition();
+		ExprNode e = forStatement.getCondition();
 		if(e!=null) e.accept(this);
 		thenStmt.accept(this);
-		Statement el = forStatement.getForUpdate();
+		StmtNode el = forStatement.getForUpdate();
 		if(el!=null){ 
 			el.accept(this);
 			execPathStack.popFrameAndDiscard();
@@ -877,14 +877,14 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		//Push the eol Statement on the stack that it will be linked to later elements
 		execPathStack.pushSingleStatementFrame(forStatement);
 		//All continue statements go to the eolStmt
-		for(Statement ss: curLoop.getContinues()) ss.setSuccessor(eolStmt);
+		for(StmtNode ss: curLoop.getContinues()) ss.setSuccessor(eolStmt);
 		//All break statements are added onto the stack, so they get bound to the next stmt
-		for(Statement ss: curLoop.getBreaks()) execPathStack.pushStatement(ss);
+		for(StmtNode ss: curLoop.getBreaks()) execPathStack.pushStatement(ss);
 			
 		//Check condition type
-		Expression cond = forStatement.getCondition();
+		ExprNode cond = forStatement.getCondition();
 		if(cond == null){
-			forStatement.setCondition(cond = new LiteralExpression(new Literal(BoolObject.getBool(true), LiteralType.BOOL)));
+			forStatement.setCondition(cond = new LiteralExprNode(new LiteralNode(BoolObject.getBool(true), LiteralTypeSE.BOOL)));
 			cond.setInferedType(BasicType.BOOL);
 		}
 		if(!cond.getInferedType().canImplicitCastTo(BasicType.BOOL))
@@ -896,19 +896,19 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	
 
 	@Override
-	public void visit(ExpressionStatement expressionStatement) {
+	public void visit(ExprStmtNode expressionStatement) {
 		expressionStatement.childrenAccept(this);
 		execPathStack.pushSingleStatementFrame(expressionStatement);
 	}
 	
 	@Override
-	public void visit(EmptyStatement emptyStatement) {
+	public void visit(EmptyStmtNode emptyStatement) {
 		execPathStack.pushSingleStatementFrame(emptyStatement);
 	}
 	
 	@Override
-	public void visit(DeleteStatement deleteStatement) {
-		Expression expr = deleteStatement.getExpression();
+	public void visit(DeleteStmtNode deleteStatement) {
+		ExprNode expr = deleteStatement.getExpression();
 		expr.accept(this);
 		Type type = expr.getInferedType();
 		//made generic class delete-able
@@ -928,16 +928,16 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(IfThenElseStatement ifThenElseStatement) {
+	public void visit(IfStmtNode ifThenElseStatement) {
 		//Do not allow a non block statement as body, (in the else case possible if an ifthenelse follows)
-		Statement thenStmt = ifThenElseStatement.getThenStatement();
-		if(!(thenStmt instanceof BlockStatement)){
-			ifThenElseStatement.setThenStatement(new BlockStatement(new StatementList(thenStmt)));
+		StmtNode thenStmt = ifThenElseStatement.getThenStatement();
+		if(!(thenStmt instanceof BlockStmtNode)){
+			ifThenElseStatement.setThenStatement(new BlockStmtNode(new StmtListNode(thenStmt)));
 		}
-		Statement elseStmt = ifThenElseStatement.getElseStatement();
+		StmtNode elseStmt = ifThenElseStatement.getElseStatement();
 		if(elseStmt != null){
-			if(!(elseStmt instanceof BlockStatement)&&!(elseStmt instanceof IfThenElseStatement)){
-				ifThenElseStatement.setElseStatement(new BlockStatement(new StatementList(elseStmt)));
+			if(!(elseStmt instanceof BlockStmtNode)&&!(elseStmt instanceof IfStmtNode)){
+				ifThenElseStatement.setElseStatement(new BlockStmtNode(new StmtListNode(elseStmt)));
 			}				
 		}
 		
@@ -972,25 +972,25 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	
 	@Override
 	public void visit(
-			LocalTypeDeclarationStatement localTypeDeclarationStatement) {
+			LocalTypeDeclStmtNode localTypeDeclarationStatement) {
 		execPathStack.pushSingleStatementFrame(localTypeDeclarationStatement);
 		throw new InternalProgramError(localTypeDeclarationStatement,"Local type declarations not yet supported!");
 	}
 	
 	@Override
-	public void visit(LocalVariableDeclarationStatement l) {
+	public void visit(LocalVarDeclStmtNode l) {
 		execPathStack.pushSingleStatementFrame(l);
 		
 		//Get and resolve local var type
 		l.getVarDeclaration().getType().accept(this);
 		
-		VariableDeclarators decls = l.getVarDeclaration().getDeclarators();
+		VarDeclListNode decls = l.getVarDeclaration().getDeclarators();
 		Type t = typeProvider.resolveType(l.getVarDeclaration().getType());
 		
 		//Register and init all variables in the correct order
 		int size = decls.size();
 		for(int i=0;i<size;i++){
-			VariableDeclarator decl = decls.elementAt(i);
+			VarDeclNode decl = decls.elementAt(i);
 			
 			//Register the local var
 			nameResolver.registerLocalVar(new LocalVarDecl(l.getVarDeclaration().getModifiers(),t, decl, isOnTop));
@@ -1003,7 +1003,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ReturnStatement returnStatement) {
+	public void visit(ReturnStmtNode returnStatement) {
 		//Pushes an empty frame, since the following statement will have no predecessor!
 		execPathStack.pushFrame();
 		
@@ -1013,7 +1013,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 		//For later use, we set the function as semantics of this return stmt
 		returnStatement.setSemantics(curFunction);
 		
-		Expression result = returnStatement.getResult();
+		ExprNode result = returnStatement.getResult();
 		
 		if(result!=null){
 			//Evaluate the expression
@@ -1042,7 +1042,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ThrowStatement throwStatement) {
+	public void visit(ThrowStmtNode throwStatement) {
 		throw new InternalProgramError(throwStatement, "throw not (yet?) supported!");
 	}
 	
@@ -1052,17 +1052,17 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	
 	
 	@Override
-	public void visit(ArrayType arrayType) {
+	public void visit(ArrayTypeNode arrayType) {
 		arrayType.getDimensions().accept(this);
 	}
 	
 	@Override
-	public void visit(Assignment assignment) {	
+	public void visit(AssignmentExprNode assignment) {	
 			
 		//Visit left side as lValue
-		Expression lExpr = assignment.getLeftExpression();
+		ExprNode lExpr = assignment.getLeftExpression();
 		lExpr.accept(this);
-		Expression rExpr = assignment.getRightExpression();
+		ExprNode rExpr = assignment.getRightExpression();
 		rExpr.accept(this);
 		
 		//Is the assignment type valid?
@@ -1082,13 +1082,13 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(UnaryExpression unaryExpression){
+	public void visit(UnOpExprNode unaryExpression){
 		unaryExpression.childrenAccept(this);
 		exprResolver.analyze(unaryExpression);	
 	}
 	
 	@Override
-	public void visit(BinaryExpression binaryExpression) {
+	public void visit(BinOpExprNode binaryExpression) {
 		//Visit children
 		binaryExpression.childrenAccept(this);
 
@@ -1096,34 +1096,34 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(LiteralExpression le){
+	public void visit(LiteralExprNode le){
 		le.setSimple(true);
-		Literal l = le.getLiteral();
+		LiteralNode l = le.getLiteral();
 		int type = l.getType();
 		
 		//Literals are constant
 		le.setConstant(true);
 		
 		switch(type){
-		case LiteralType.BOOL:
+		case LiteralTypeSE.BOOL:
 			le.setInferedType(BasicType.BOOL);
 			break;
-		case LiteralType.STRING:
+		case LiteralTypeSE.STRING:
 			le.setInferedType(BasicType.STRING);
 			break;
-		case LiteralType.INT:
+		case LiteralTypeSE.INT:
 			le.setInferedType(BasicType.INT);
 			break;
-		case LiteralType.CHAR:
+		case LiteralTypeSE.CHAR:
 			le.setInferedType(BasicType.CHAR);
 			break;
-		case LiteralType.FLOAT:
+		case LiteralTypeSE.FLOAT:
 			le.setInferedType(BasicType.FLOAT);
 			break;
-		case LiteralType.NULL:
+		case LiteralTypeSE.NULL:
 			le.setInferedType(SpecialType.NULL);
 			break;
-		case LiteralType.TEXT:
+		case LiteralTypeSE.TEXT:
 			le.setInferedType(BasicType.TEXT);
 			break;
 		default:
@@ -1135,7 +1135,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(CastExpression castExpression) {
+	public void visit(CastExprNode castExpression) {
 		//Get the type to cast to
 		Type type = typeProvider.resolveType(castExpression.getType());
 		
@@ -1161,7 +1161,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ArrayAccess arrayAccess) {
+	public void visit(ArrayAccessExprNode arrayAccess) {
 		arrayAccess.childrenAccept(this);
 		//Check if an array access is possible
 		Type t = arrayAccess.getLeftExpression().getInferedType();
@@ -1180,12 +1180,12 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ArrayCreationExpression arrayCreationExpression) {
+	public void visit(ArrayCreationExprNode arrayCreationExpression) {
 		throw new InternalProgramError(arrayCreationExpression,"Array creation is not yet possible!");
 	}
 	
 	@Override
-	public void visit(ClassInstanceCreationExpression c) {
+	public void visit(NewExprNode c) {
 		c.childrenAccept(this);
 		Type t;
 		c.setInferedType(t = typeProvider.resolveType(c.getType()));
@@ -1216,7 +1216,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ConditionalExpression conditionalExpression) {
+	public void visit(ConditionalExprNode conditionalExpression) {
 		//Infere subexpression types
 		conditionalExpression.childrenAccept(this);
 		
@@ -1237,7 +1237,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(FieldAccess fieldAccess) {
+	public void visit(FieldAccessExprNode fieldAccess) {
 		fieldAccess.childrenAccept(this);
 		
 		VarDecl va = nameResolver.resolveVariable(curScope,curRecordType,fieldAccess, inMember);
@@ -1267,7 +1267,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(KeyOfExpression keyOfExpression) {
+	public void visit(KeyOfExprNode keyOfExpression) {
 		Type t = typeProvider.resolveType(keyOfExpression.getType());
 		keyOfExpression.setInferedType(t);
 		keyOfExpression.setConstant(true);
@@ -1275,22 +1275,22 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(AccessorDeclaration accessorDeclaration) {
+	public void visit(AccessorDeclNode accessorDeclaration) {
 		accessorDeclaration.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(InstanceofExpression instanceofExpression) {
+	public void visit(InstanceofExprNode instanceofExpression) {
 		throw new InternalProgramError(instanceofExpression,"Instanceof not implemented yet!");
 	}
 	
 	@Override
-	public void visit(MetaClassExpression metaClassExpression) {
+	public void visit(MetaClassExprNode metaClassExpression) {
 		throw new InternalProgramError(metaClassExpression,".class not implemented yet!");
 	}
 	
 	@Override
-	public void visit(MethodInvocation methodInvocation) {
+	public void visit(MethodInvocationExprNode methodInvocation) {
 		
 		methodInvocation.childrenAccept(this);
 		Invocation in = nameResolver.resolveFunctionCall(curScope,curRecordType,methodInvocation,inMember);
@@ -1300,7 +1300,7 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ThisExpression thisExpression) {
+	public void visit(ThisExprNode thisExpression) {
 		if(curType==null) 
 			throw Problem.ofType(ProblemId.THIS_OUTSIDE_CLASS_OR_ENRICHMENT).at(thisExpression)
 					.raiseUnrecoverable();
@@ -1312,8 +1312,8 @@ public class ExpressionAnalysisVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ParenthesisExpression parenthesisExpression) {
-		Expression e = parenthesisExpression.getExpression();
+	public void visit(ParenthesisExprNode parenthesisExpression) {
+		ExprNode e = parenthesisExpression.getExpression();
 		e.accept(this);
 		parenthesisExpression.setInferedType(e.getInferedType());
 		

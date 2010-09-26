@@ -12,7 +12,7 @@ package com.sc2mod.andromeda.environment.types;
 //XPilot: what is this? :)
 //import javax.management.relation.RoleUnresolved;
 
-import com.sc2mod.andromeda.syntaxNodes.TypeParam;
+import com.sc2mod.andromeda.syntaxNodes.TypeParamNode;
 
 /**
  * A generic type parameter.
@@ -21,11 +21,11 @@ import com.sc2mod.andromeda.syntaxNodes.TypeParam;
  */
 public class TypeParameter extends Type {
 
-	private TypeParam decl;
+	private TypeParamNode decl;
 	private String name;
 	private Class forClass;
 	
-	public TypeParameter(Class forClass, TypeParam elementAt) {
+	public TypeParameter(Class forClass, TypeParamNode elementAt) {
 		decl = elementAt;
 		this.forClass = forClass;
 		name = elementAt.getName();

@@ -17,13 +17,13 @@ import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.CompilationFileManager;
-import com.sc2mod.andromeda.syntaxNodes.StructDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 
 public class Struct extends RecordType {
 
-	private StructDeclaration declaration;
+	private StructDeclNode declaration;
 
-	public Struct(StructDeclaration declaration, Scope scope) {
+	public Struct(StructDeclNode declaration, Scope scope) {
 		super(declaration, scope);
 		this.declaration = declaration;
 	}

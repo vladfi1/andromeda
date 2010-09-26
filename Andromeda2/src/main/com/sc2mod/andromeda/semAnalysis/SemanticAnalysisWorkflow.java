@@ -10,25 +10,28 @@
 package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.Environment;
+import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 
 /**
  * Handles the workflow of the semantic analysis.
  * @author J. 'gex' Finis
  *
  */
-public class SemanticAnalysis {
+public class SemanticAnalysisWorkflow {
 
 
-	public static Environment analyze(SourceFile a, Configuration o){
+	public static Environment analyze(CompilationEnvironment compEnv){
 		Environment env = new Environment();
+		compEnv.setSemanticEnvironment(env);
+		SourceFileNode syntax = compEnv.getSyntaxTree();
 		
 		ConstantResolveVisitor constResolve = new ConstantResolveVisitor();
 		
 		//Analyze and register structure
-		StructureAnalysisVisitor typeAnalysisVisitor = new StructureAnalysisVisitor(env);
-		a.accept(typeAnalysisVisitor);
+		TypeFinderTreeScanner typeAnalysisVisitor = new TypeFinderTreeScanner(env);
+		syntax.accept(typeAnalysisVisitor);
 		
 		//Resolve class hierarchy (if there are any classes)
 		if(!env.typeProvider.getClasses().isEmpty()){
@@ -39,14 +42,14 @@ public class SemanticAnalysis {
 		NameResolver r = new NameResolver(new ArrayLocalVarStack(), env);
 		ExpressionAnalyzer exprAnalyzer = new ExpressionAnalyzer(constResolve,env.typeProvider);
 		ConstEarlyAnalysisVisitor constResolver = new ConstEarlyAnalysisVisitor(exprAnalyzer,r, constResolve, env);
-		a.accept(constResolver);
+		syntax.accept(constResolver);
 		
 		//Determine signatures and non-local non-constant variable types
 		env.resolveTypes();
 		
 		//Infer expression types, resolve function calls and field accesses
-		ExpressionAnalysisVisitor expressionAnalysisVisitor = new ExpressionAnalysisVisitor(exprAnalyzer,r,constResolve,env,o);
-		a.accept(expressionAnalysisVisitor);	
+		ExpressionAnalysisVisitor expressionAnalysisVisitor = new ExpressionAnalysisVisitor(exprAnalyzer,r,constResolve,env,compEnv.getConfig());
+		syntax.accept(expressionAnalysisVisitor);	
 		
 		//Resolve remaining constants
 		expressionAnalysisVisitor.constResolve.resolveRemainingExprs();

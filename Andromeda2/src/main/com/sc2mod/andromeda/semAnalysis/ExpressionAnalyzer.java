@@ -18,11 +18,11 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.BinaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.BinaryOperator;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.UnaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.UnaryOperator;
+import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.BinOpTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpTypeSE;
 
 public class ExpressionAnalyzer {
 
@@ -34,12 +34,12 @@ public class ExpressionAnalyzer {
 		constResolve = constResolver;
 	}
 	
-	public void analyze(BinaryExpression binaryExpression){
+	public void analyze(BinOpExprNode binaryExpression){
 		
 		//The type of a binop is related to the operator
 		int op = binaryExpression.getOperator();
-		Expression lExpr = binaryExpression.getLeftExpression();
-		Expression rExpr = binaryExpression.getRightExpression();
+		ExprNode lExpr = binaryExpression.getLeftExpression();
+		ExprNode rExpr = binaryExpression.getRightExpression();
 		//System.out.println(binaryExpression);
 		
 		Type left = lExpr.getInferedType();
@@ -66,8 +66,8 @@ public class ExpressionAnalyzer {
 		
 		
 		switch (op) {
-		case BinaryOperator.OROR:
-		case BinaryOperator.ANDAND:
+		case BinOpTypeSE.OROR:
+		case BinOpTypeSE.ANDAND:
 			//Bool op: both operands must be bool
 			if(lBase != BasicType.BOOL) 
 				throw Problem.ofType(ProblemId.TYPE_ERROR_BINOP_OPERAND_TYPE).at(lExpr)
@@ -82,7 +82,7 @@ public class ExpressionAnalyzer {
 			binaryExpression.setLeftExpectedType(BasicType.BOOL);
 			binaryExpression.setRightExpectedType(BasicType.BOOL);
 			break;
-		case BinaryOperator.XOR:
+		case BinOpTypeSE.XOR:
 			//XOR can be bool op and int op
 			//Bool op: both operands must be bool
 			if(lBase == BasicType.BOOL){
@@ -106,7 +106,7 @@ public class ExpressionAnalyzer {
 			}
 			binaryExpression.setInferedType(left.getCommonSupertype(right));
 			break;
-		case BinaryOperator.PLUS:
+		case BinOpTypeSE.PLUS:
 			//Plus can be string concat or text concat
 			if(lBase == BasicType.TEXT || rBase == BasicType.TEXT){
 				if(lBase ==BasicType.TEXT && rBase == BasicType.TEXT){
@@ -152,10 +152,10 @@ public class ExpressionAnalyzer {
 				binaryExpression.setRightExpectedType(BasicType.STRING);
 				break;				
 			}
-		case BinaryOperator.MINUS:
-		case BinaryOperator.DIV:
-		case BinaryOperator.MULT:
-		case BinaryOperator.MOD:
+		case BinOpTypeSE.MINUS:
+		case BinOpTypeSE.DIV:
+		case BinOpTypeSE.MULT:
+		case BinOpTypeSE.MOD:
 			//Numeric operations
 			if(!lBase.isIntegerType() && lBase != BasicType.FLOAT) 
 				 if(rBase != BasicType.BOOL) 
@@ -178,8 +178,8 @@ public class ExpressionAnalyzer {
 			}
 			binaryExpression.setInferedType(left.getCommonSupertype(right));
 			break;
-		case BinaryOperator.EQEQ:
-		case BinaryOperator.NOTEQ:
+		case BinOpTypeSE.EQEQ:
+		case BinOpTypeSE.NOTEQ:
 			boolean error = false;
 			binaryExpression.setInferedType(BasicType.BOOL);
 			
@@ -220,10 +220,10 @@ public class ExpressionAnalyzer {
 				.details(left,right)
 				.raiseUnrecoverable();
 			break;
-		case BinaryOperator.LT:
-		case BinaryOperator.GT:
-		case BinaryOperator.LTEQ:
-		case BinaryOperator.GTEQ:
+		case BinOpTypeSE.LT:
+		case BinOpTypeSE.GT:
+		case BinOpTypeSE.LTEQ:
+		case BinOpTypeSE.GTEQ:
 			//Numeric compare
 			if(!lBase.isIntegerType()&&lBase != BasicType.FLOAT) 
 				 throw Problem.ofType(ProblemId.TYPE_ERROR_BINOP_OPERAND_TYPE).at(lExpr)
@@ -235,10 +235,10 @@ public class ExpressionAnalyzer {
 					.raiseUnrecoverable();
 			binaryExpression.setInferedType(BasicType.BOOL);
 			break;
-		case BinaryOperator.AND:
-		case BinaryOperator.OR:
-		case BinaryOperator.LSHIFT:
-		case BinaryOperator.RSHIFT:
+		case BinOpTypeSE.AND:
+		case BinOpTypeSE.OR:
+		case BinOpTypeSE.LSHIFT:
+		case BinOpTypeSE.RSHIFT:
 			//Bitwise stuff
 			//(No boolean and and or implemented yet!)
 			if(!lBase.isIntegerType())
@@ -251,7 +251,7 @@ public class ExpressionAnalyzer {
 					.raiseUnrecoverable();
 			binaryExpression.setInferedType(left.getCommonSupertype(right));
 			break;
-		case BinaryOperator.URSHIFT:
+		case BinOpTypeSE.URSHIFT:
 			throw new InternalProgramError(binaryExpression,"Unsigned rightshift is not possible in galaxy :(");
 		default:
 			throw new InternalProgramError(binaryExpression,"Unknown binary operator!");
@@ -264,10 +264,10 @@ public class ExpressionAnalyzer {
 		}
 	}
 
-	public void analyze(UnaryExpression unaryExpression) {
+	public void analyze(UnOpExprNode unaryExpression) {
 		Type type = unaryExpression.getExpression().getInferedType();
 		int op = unaryExpression.getOperator();
-		Expression expr = unaryExpression.getExpression();
+		ExprNode expr = unaryExpression.getExpression();
 		if(type == SpecialType.VOID) 
 			throw Problem.ofType(ProblemId.UNOP_ON_VOID).at(unaryExpression)
 				.raiseUnrecoverable();
@@ -275,10 +275,10 @@ public class ExpressionAnalyzer {
 		Type base = type.getBaseType();
 		
 		switch (op) {
-		case UnaryOperator.POSTMINUSMINUS:
-		case UnaryOperator.PREMINUSMINUS:
-		case UnaryOperator.POSTPLUSPLUS:
-		case UnaryOperator.PREPLUSPLUS:
+		case UnOpTypeSE.POSTMINUSMINUS:
+		case UnOpTypeSE.PREMINUSMINUS:
+		case UnOpTypeSE.POSTPLUSPLUS:
+		case UnOpTypeSE.PREPLUSPLUS:
 			if(!expr.getLValue()){
 				throw Problem.ofType(ProblemId.INCDEC_ON_NONLVALUE).at(unaryExpression)
 						.raiseUnrecoverable();
@@ -287,7 +287,7 @@ public class ExpressionAnalyzer {
 				throw Problem.ofType(ProblemId.INCDEC_ON_CONST).at(unaryExpression)
 						.raiseUnrecoverable();
 			}
-		case UnaryOperator.MINUS:
+		case UnOpTypeSE.MINUS:
 			if(base == BasicType.INT){
 				unaryExpression.setInferedType(type);
 				break;
@@ -299,7 +299,7 @@ public class ExpressionAnalyzer {
 			throw Problem.ofType(ProblemId.TYPE_ERROR_UNOP_OPERAND_TYPE).at(unaryExpression)
 					.details("negation","a numeric type",type)
 					.raiseUnrecoverable();
-		case UnaryOperator.COMP:			
+		case UnOpTypeSE.COMP:			
 			if(base == BasicType.INT){
 				unaryExpression.setInferedType(type);
 				break;
@@ -307,7 +307,7 @@ public class ExpressionAnalyzer {
 			throw Problem.ofType(ProblemId.TYPE_ERROR_UNOP_OPERAND_TYPE).at(unaryExpression)
 					.details("bitwise complement","an integer type",type)
 					.raiseUnrecoverable();
-		case UnaryOperator.NOT:
+		case UnOpTypeSE.NOT:
 			//Not can be a boolean not or a test for "not null"
 			if(base == BasicType.BOOL|| type.canBeNull()){
 				if(base == BasicType.BOOL)
@@ -319,7 +319,7 @@ public class ExpressionAnalyzer {
 			throw Problem.ofType(ProblemId.TYPE_ERROR_UNOP_OPERAND_TYPE).at(unaryExpression)
 				.details("boolean negation","an integer type",type)
 				.raiseUnrecoverable();
-		case UnaryOperator.DEREFERENCE:
+		case UnOpTypeSE.DEREFERENCE:
 			if(type.getCategory() != Type.POINTER) 
 				throw Problem.ofType(ProblemId.TYPE_ERROR_UNOP_OPERAND_TYPE).at(unaryExpression)
 					.details("dereference operator","a pointer type",type)
@@ -327,7 +327,7 @@ public class ExpressionAnalyzer {
 			unaryExpression.setInferedType(((PointerType)type).pointsTo());
 			unaryExpression.setSimple(expr.getSimple());
 			break;
-		case UnaryOperator.ADDRESSOF:
+		case UnOpTypeSE.ADDRESSOF:
 			if(!expr.getLValue()) 
 				throw Problem.ofType(ProblemId.TYPE_ERROR_UNOP_OPERAND_TYPE).at(unaryExpression)
 					.details("address-of operator","a valid lValue",type)

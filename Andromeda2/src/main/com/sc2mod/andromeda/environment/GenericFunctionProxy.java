@@ -20,9 +20,9 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
-import com.sc2mod.andromeda.syntaxNodes.Annotation;
-import com.sc2mod.andromeda.syntaxNodes.ReturnStatement;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
+import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
+import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 //XPilot: added signature to GenericFunctionProxy
@@ -59,7 +59,7 @@ public class GenericFunctionProxy extends AbstractFunction {
 	}
 
 	@Override
-	public void addReturnStmt(ReturnStatement r) {
+	public void addReturnStmt(ReturnStmtNode r) {
 		function.addReturnStmt(r);
 	}
 
@@ -285,7 +285,7 @@ public class GenericFunctionProxy extends AbstractFunction {
 	}
 
 	@Override
-	public Statement getBody() {
+	public StmtNode getBody() {
 		return function.getBody();
 	}
 	
@@ -363,7 +363,7 @@ public class GenericFunctionProxy extends AbstractFunction {
 
 
 	@Override
-	public void setAnnotationTable(HashMap<String, Annotation> annotations) {
+	public void setAnnotationTable(HashMap<String, AnnotationNode> annotations) {
 		function.setAnnotationTable(annotations);
 	}
 

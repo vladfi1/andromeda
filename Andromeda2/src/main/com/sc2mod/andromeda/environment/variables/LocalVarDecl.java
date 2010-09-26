@@ -10,16 +10,16 @@
 package com.sc2mod.andromeda.environment.variables;
 
 import com.sc2mod.andromeda.environment.types.Type;
-import com.sc2mod.andromeda.syntaxNodes.Modifiers;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarator;
+import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 
 public class LocalVarDecl extends NonParamDecl {
 	
 
 	private boolean isOnTop;
 	
-	public LocalVarDecl(Modifiers mods,Type type, VariableDeclarator decl,  boolean isOnTop){
+	public LocalVarDecl(ModifierListNode mods,Type type, VarDeclNode decl,  boolean isOnTop){
 		super(mods,type,decl);
 		this.isOnTop = isOnTop;
 	}

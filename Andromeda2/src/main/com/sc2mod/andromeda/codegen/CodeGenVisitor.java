@@ -42,43 +42,43 @@ import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.OutputStats;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.semAnalysis.ForeachSemantics;
-import com.sc2mod.andromeda.syntaxNodes.AccessType;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
-import com.sc2mod.andromeda.syntaxNodes.BlockStatement;
-import com.sc2mod.andromeda.syntaxNodes.BreakStatement;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.ContinueStatement;
-import com.sc2mod.andromeda.syntaxNodes.DeleteStatement;
-import com.sc2mod.andromeda.syntaxNodes.DoWhileStatement;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.ExplicitConstructorInvocationStatement;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionStatement;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.FileContent;
-import com.sc2mod.andromeda.syntaxNodes.ForEachStatement;
-import com.sc2mod.andromeda.syntaxNodes.ForStatement;
-import com.sc2mod.andromeda.syntaxNodes.FunctionDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.GlobalInitDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.IfThenElseStatement;
-import com.sc2mod.andromeda.syntaxNodes.IncludedFile;
-import com.sc2mod.andromeda.syntaxNodes.LocalVariableDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.LocalVariableDeclarationStatement;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.ReturnStatement;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
-import com.sc2mod.andromeda.syntaxNodes.StatementList;
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.StructDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.AccessTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.BreakStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.ContinueStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.DeleteStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.DoWhileStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.ExplicitConsCallStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureListNode;
+import com.sc2mod.andromeda.syntaxNodes.ForEachStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ForStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStaticInitDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.IfStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
+import com.sc2mod.andromeda.syntaxNodes.LocalVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.LocalVarDeclStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.VariableDecl;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarator;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarators;
-import com.sc2mod.andromeda.syntaxNodes.WhileStatement;
+import com.sc2mod.andromeda.syntaxNodes.UninitedVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
+import com.sc2mod.andromeda.syntaxNodes.WhileStmtNode;
 
 public class CodeGenVisitor extends CodeGenerator {
 
@@ -118,7 +118,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		invokeRValueVisitor(toVisit, flushBuffers, false);
 	}
 	
-	public void invokeExprSurroundCast(Expression toVisit, Type castTo, boolean flushBuffers){
+	public void invokeExprSurroundCast(ExprNode toVisit, Type castTo, boolean flushBuffers){
 		expressionVisitor.surroundTypeCastIfNecessary(toVisit,castTo);
 		if (flushBuffers) {
 			if (!expressionVisitor.curExprBuffer.isEmpty()) {
@@ -147,7 +147,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		return bytesOut;
 	}
 
-	public void generateCode(NameGenerationVisitor ngv, SourceFile af) {
+	public void generateCode(NameGenerationVisitor ngv, SourceFileNode af) {
 
 		ngv.writeTypedefs(typedefBuffer);
 		typedefBuffer.flushTo(fileBuffer.typedefs, true);
@@ -157,7 +157,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	// *********** GLOBAL STRUCTURES **************
 
 	@Override
-	public void visit(SourceFile andromedaFile) {
+	public void visit(SourceFileNode andromedaFile) {
 		SourceFileInfo afi = andromedaFile.getFileInfo();
 		// No names are generated for native libs
 		InclusionType inclType = afi.getInclusionType();
@@ -171,33 +171,33 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(FileContent fileContent) {
+	public void visit(GlobalStructureListNode fileContent) {
 		fileContent.childrenAccept(this);
 	}
 
 	@Override
-	public void visit(IncludedFile includedFile) {
+	public void visit(IncludeNode includedFile) {
 		includedFile.getIncludedContent().accept(this);
 	}
 
 	@Override
-	public void visit(FunctionDeclaration functionDeclaration) {
+	public void visit(GlobalFuncDeclNode functionDeclaration) {
 		functionDeclaration.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(GlobalInitDeclaration globalInitDeclaration) {
+	public void visit(GlobalStaticInitDeclNode globalInitDeclaration) {
 		globalInitDeclaration.getInitDecl().accept(this);
 	}
 
 	@Override
-	public void visit(EnrichDeclaration enrichDeclaration) {
+	public void visit(EnrichDeclNode enrichDeclaration) {
 		enrichDeclaration.getBody().childrenAccept(this);
 	}
 
 	@Override
-	public void visit(AccessorDeclaration a) {
-		MethodDeclaration m = a.getGetMethod();
+	public void visit(AccessorDeclNode a) {
+		MethodDeclNode m = a.getGetMethod();
 		if (m != null)
 			m.accept(this);
 		m = a.getSetMethod();
@@ -206,8 +206,8 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(ExplicitConstructorInvocationStatement e) {
-		ExpressionList arguments = e.getArguments();
+	public void visit(ExplicitConsCallStmtNode e) {
+		ExprListNode arguments = e.getArguments();
 		ConstructorInvocation c = (ConstructorInvocation) e.getSemantics();
 
 		curBuffer.append(c.getClassToAlloc().getGeneratedName()).append(" ")
@@ -217,7 +217,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(ClassDeclaration classDeclaration) {
+	public void visit(ClassDeclNode classDeclaration) {
 		RecordType typeBefore = curType;
 		curType = (Class) classDeclaration.getSemantics();
 		classDeclaration.getBody().childrenAccept(this);
@@ -225,7 +225,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(StructDeclaration structDeclaration) {
+	public void visit(StructDeclNode structDeclaration) {
 		Struct struct = (Struct) structDeclaration.getSemantics();
 		Configuration options = this.options;
 		int curIndent = this.curIndent;
@@ -264,7 +264,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	
-	private void generateFunctionBody(Function m, Statement body, boolean isConstructor){
+	private void generateFunctionBody(Function m, StmtNode body, boolean isConstructor){
 	
 		// Do a forward declaration
 		functionBuffer.appendTo(fileBuffer.forwardDeclarations, true);
@@ -302,7 +302,7 @@ public class CodeGenVisitor extends CodeGenerator {
 			// If so, we init it here. (Otherwise it is inited where it was
 			// actually defined)
 			if (local.isOnTop()) {
-				VariableDeclarator decl = local.getDeclarator();
+				VarDeclNode decl = local.getDeclarator();
 				
 				// Has this variable before-statements? If so, we must stop initialization here
 				if(local.getInitCode()!=null) skipInit = true;
@@ -310,7 +310,7 @@ public class CodeGenVisitor extends CodeGenerator {
 				if(skipInit){
 					//Since we have to skip init, this variable is no longer considered on top
 					local.setOnTop(false);
-				} else if (!(decl instanceof VariableDecl)) {
+				} else if (!(decl instanceof UninitedVarDeclNode)) {
 					// Initialization, if this decl has one
 					invokeRValueVisitor(decl, true);
 				}
@@ -363,7 +363,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	
 	
 	@Override
-	public void visit(StaticInitDeclaration initDecl) {
+	public void visit(StaticInitDeclNode initDecl) {
 		StaticInit init = (StaticInit) initDecl.getSemantics();
 
 		curFunction = init;
@@ -400,7 +400,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(MethodDeclaration methodDeclaration) {
+	public void visit(MethodDeclNode methodDeclaration) {
 		Function m = (Function) methodDeclaration.getSemantics();
 
 		// Forward declarations are not written since all functions are forward
@@ -436,7 +436,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		writeFuncHeader(m, functionBuffer, comment);
 
 		// Only for functions with body
-		Statement body = methodDeclaration.getBody();
+		StmtNode body = methodDeclaration.getBody();
 		if (body != null) {
 			generateFunctionBody(m, body, Function.TYPE_CONSTRUCTOR == functionType);
 		} else
@@ -456,7 +456,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 	
 	private String generateGlobalInitFunction(NonParamDecl g) {
-		List<Statement> initCode = g.getInitCode();
+		List<StmtNode> initCode = g.getInitCode();
 		boolean newLines = this.newLines;
 		curBuffer = functionBuffer;
 		
@@ -478,7 +478,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		if(useIndent)curIndent++;
 
 		//Generate init code
-		for(Statement s: initCode){
+		for(StmtNode s: initCode){
 			if(newLines){
 				curBuffer.newLine(curIndent);
 			}
@@ -526,7 +526,7 @@ public class CodeGenVisitor extends CodeGenerator {
 
 			curBuffer = globalVarBuffer;
 			invokeRValueVisitor(g.getDeclarator(), true, true);
-			if (g.getDeclarator() instanceof VariableDecl)
+			if (g.getDeclarator() instanceof UninitedVarDeclNode)
 				curBuffer.append(";");
 	
 		}
@@ -542,7 +542,7 @@ public class CodeGenVisitor extends CodeGenerator {
 
 		//Explicit init side effects?
 		if(f.getInitCode() != null){
-			for(Statement s: f.getInitCode()){
+			for(StmtNode s: f.getInitCode()){
 				s.accept(this);
 			}
 		}
@@ -556,8 +556,8 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(GlobalVarDeclaration gvd) {
-		VariableDeclarators f = gvd.getFieldDecl().getDeclaredVariables();
+	public void visit(GlobalVarDeclNode gvd) {
+		VarDeclListNode f = gvd.getFieldDecl().getDeclaredVariables();
 		int size = f.size();
 		for (int i = 0; i < size; i++) {
 			NonParamDecl field = (NonParamDecl) f.elementAt(i).getSemantics();
@@ -569,8 +569,8 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(FieldDeclaration fieldDeclaration) {
-		VariableDeclarators f = fieldDeclaration.getDeclaredVariables();
+	public void visit(FieldDeclNode fieldDeclaration) {
+		VarDeclListNode f = fieldDeclaration.getDeclaredVariables();
 		int size = f.size();
 		for (int i = 0; i < size; i++) {
 			FieldDecl field = (FieldDecl) f.elementAt(i).getSemantics();
@@ -589,7 +589,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	// ******************* STATEMENTS *****************
-	public void visitExt(BlockStatement blockStatement,
+	public void visitExt(BlockStmtNode blockStatement,
 			SimpleBuffer codeBefore, SimpleBuffer codeAfter, boolean doBraces) {
 		SimpleBuffer curBuffer = this.curBuffer;
 		if(doBraces){
@@ -620,12 +620,12 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(BlockStatement blockStatement) {
+	public void visit(BlockStmtNode blockStatement) {
 		visitExt(blockStatement, null, null,false);
 	}
 
 	@Override
-	public void visit(StatementList statementList) {
+	public void visit(StmtListNode statementList) {
 		int size = statementList.size();
 
 		// Remember if code was generated
@@ -647,13 +647,13 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(ExpressionStatement expressionStatement) {
+	public void visit(ExprStmtNode expressionStatement) {
 		invokeRValueVisitor(expressionStatement.getExpression(), true, 
 				true);
 	}
 
 	@Override
-	public void visit(IfThenElseStatement ifThenElseStatement) {
+	public void visit(IfStmtNode ifThenElseStatement) {
 		SimpleBuffer curBuffer = this.curBuffer;
 
 		// if / condition
@@ -664,10 +664,10 @@ public class CodeGenVisitor extends CodeGenerator {
 		curBuffer.append(")");
 
 		// then statement
-		Statement stmt = ifThenElseStatement.getThenStatement();
+		StmtNode stmt = ifThenElseStatement.getThenStatement();
 		if (ownLineForOpenBraces)
 			curBuffer.newLine(curIndent);
-		visitExt((BlockStatement) stmt, null, null, true);
+		visitExt((BlockStmtNode) stmt, null, null, true);
 		
 //		if (newLines && !(stmt instanceof BlockStatement)) {
 //			curBuffer.newLine(curIndent + 1);
@@ -695,8 +695,8 @@ public class CodeGenVisitor extends CodeGenerator {
 			else
 				curBuffer.append("else ");
 			
-			if(stmt instanceof BlockStatement){
-				visitExt((BlockStatement) stmt, null, null, true);
+			if(stmt instanceof BlockStmtNode){
+				visitExt((BlockStmtNode) stmt, null, null, true);
 			} else {
 				stmt.accept(this);
 			}
@@ -705,11 +705,11 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	
 	@Override
-	public void visit(ForEachStatement forEachStatement) {
+	public void visit(ForEachStmtNode forEachStatement) {
 		SimpleBuffer curBuffer = this.curBuffer;
 
 		ForeachSemantics semantics = (ForeachSemantics) forEachStatement.getSemantics();
-		FieldAccess iter = semantics.getIterator();
+		FieldAccessExprNode iter = semantics.getIterator();
 		
 		
 		//Comment
@@ -720,14 +720,14 @@ public class CodeGenVisitor extends CodeGenerator {
 		
 		//Init (iterator = leftside.getIterator();)
 		curBuffer.append(((VarDecl)iter.getSemantics()).getGeneratedName()).append("=");		
-		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getGetIterator(), AccessType.EXPRESSION, forEachStatement.getExpression(), SyntaxGenerator.EMPTY_EXPRESSIONS);
+		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getGetIterator(), AccessTypeSE.EXPRESSION, forEachStatement.getExpression(), SyntaxGenerator.EMPTY_EXPRESSIONS);
 		curBuffer.append(";");
 		
 		if(newLines) curBuffer.newLine(curIndent);
 		
 		//Condition: (while(iterator.hasNext()))
 		curBuffer.append("while(");
-		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getHasNext(), AccessType.EXPRESSION, iter, SyntaxGenerator.EMPTY_EXPRESSIONS);
+		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getHasNext(), AccessTypeSE.EXPRESSION, iter, SyntaxGenerator.EMPTY_EXPRESSIONS);
 		curBuffer.append("){");
 		
 		if(newLines){
@@ -738,11 +738,11 @@ public class CodeGenVisitor extends CodeGenerator {
 		//Update: itervar = iterator.next();
 		LocalVarDecl iterVarDecl = semantics.getIterVarDecl();
 		curBuffer.append(iterVarDecl.getGeneratedName()).append("=");
-		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getNext(), AccessType.EXPRESSION, iter, SyntaxGenerator.EMPTY_EXPRESSIONS);
+		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getNext(), AccessTypeSE.EXPRESSION, iter, SyntaxGenerator.EMPTY_EXPRESSIONS);
 		curBuffer.append(";").newLine(curIndent);		
 
 		// loop body
-		BlockStatement stmt = (BlockStatement) forEachStatement.getThenStatement();
+		BlockStmtNode stmt = (BlockStmtNode) forEachStatement.getThenStatement();
 		visitExt(stmt, null, null,false);
 		
 		// loop end and delete afterwards, if desired
@@ -763,7 +763,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 	
 	@Override
-	public void visit(WhileStatement whileStatement) {
+	public void visit(WhileStmtNode whileStatement) {
 		SimpleBuffer curBuffer = this.curBuffer;
 
 		curIndent++;
@@ -776,14 +776,14 @@ public class CodeGenVisitor extends CodeGenerator {
 
 
 		// loop body
-		BlockStatement stmt = (BlockStatement) whileStatement
+		BlockStmtNode stmt = (BlockStmtNode) whileStatement
 				.getThenStatement();
 		visitExt(stmt, null, null,true);
 
 	}
 
 	@Override
-	public void visit(DoWhileStatement doWhileStatement) {
+	public void visit(DoWhileStmtNode doWhileStatement) {
 		SimpleBuffer curBuffer = this.curBuffer;
 		Configuration options = this.options;
 
@@ -791,7 +791,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		curBuffer.append("do");
 
 		// loop body
-		BlockStatement stmt = (BlockStatement) doWhileStatement.getThenStatement();
+		BlockStmtNode stmt = (BlockStmtNode) doWhileStatement.getThenStatement();
 		if (newLines) {
 			if (ownLineForOpenBraces)
 				curBuffer.newLine(curIndent);
@@ -807,7 +807,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		}
 
 		// while
-		Expression cond = doWhileStatement.getCondition();
+		ExprNode cond = doWhileStatement.getCondition();
 		if (useIndent)
 			curIndent++;
 		invokeRValueVisitor(cond, false, false);
@@ -830,7 +830,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(ForStatement forStatement) {
+	public void visit(ForStmtNode forStatement) {
 		SimpleBuffer curBuffer = this.curBuffer;
 		Configuration options = this.options;
 
@@ -841,7 +841,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		}
 
 		// init
-		Statement s = forStatement.getForInit();
+		StmtNode s = forStatement.getForInit();
 		s.accept(this);
 
 		// for
@@ -856,7 +856,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		curBuffer.append(")");
 
 		// loop body
-		Statement stmt = forStatement.getThenStatement();
+		StmtNode stmt = forStatement.getThenStatement();
 		if (newLines) {
 			if (ownLineForOpenBraces)
 				curBuffer.newLine(curIndent);
@@ -889,7 +889,7 @@ public class CodeGenVisitor extends CodeGenerator {
 
 
 	@Override
-	public void visit(ExpressionList el) {
+	public void visit(ExprListNode el) {
 		SimpleBuffer curBuffer = this.curBuffer;
 		Configuration options = this.options;
 
@@ -902,16 +902,16 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(LocalVariableDeclarationStatement l) {
+	public void visit(LocalVarDeclStmtNode l) {
 		SimpleBuffer curBuffer = this.curBuffer;
 
-		LocalVariableDeclaration def = l.getVarDeclaration();
-		VariableDeclarators decls = def.getDeclarators();
+		LocalVarDeclNode def = l.getVarDeclaration();
+		VarDeclListNode decls = def.getDeclarators();
 		int size = decls.size();
 
 		int numGenerated = 0;
 		for (int i = 0; i < size; i++) {
-			VariableDeclarator decl = decls.elementAt(i);
+			VarDeclNode decl = decls.elementAt(i);
 
 			// Get semantics
 			LocalVarDecl v = (LocalVarDecl) decl.getName().getSemantics();
@@ -923,7 +923,7 @@ public class CodeGenVisitor extends CodeGenerator {
 			// Is this just a declaration without init?
 			// Skip if the variable was not overridden, otherwise
 			// make a default init
-			boolean isOnlyDecl = decl instanceof VariableDecl;
+			boolean isOnlyDecl = decl instanceof UninitedVarDeclNode;
 			if (isOnlyDecl && !v.doesOverride()) {
 				continue;
 			}
@@ -940,9 +940,9 @@ public class CodeGenVisitor extends CodeGenerator {
 				v = v.getOverride();
 			
 			//Does this local var have explicit init code? If so, generate it!
-			List<Statement> initCode = v.getInitCode();
+			List<StmtNode> initCode = v.getInitCode();
 			if(initCode != null){
-				for(Statement s: initCode){
+				for(StmtNode s: initCode){
 					s.accept(this);
 				}
 			}
@@ -969,18 +969,18 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(BreakStatement breakStatement) {
+	public void visit(BreakStmtNode breakStatement) {
 		curBuffer.append("break;");
 	}
 
 	@Override
-	public void visit(ContinueStatement continueStatement) {
+	public void visit(ContinueStmtNode continueStatement) {
 		curBuffer.append("continue;");
 	}
 
 	@Override
-	public void visit(ReturnStatement returnStatement) {
-		Expression result = returnStatement.getResult();
+	public void visit(ReturnStmtNode returnStatement) {
+		ExprNode result = returnStatement.getResult();
 		if (result == null) {
 			switch(curFunction.getFunctionType()){
 			case Function.TYPE_CONSTRUCTOR:
@@ -1009,8 +1009,8 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(DeleteStatement deleteStatement) {
-		Expression e = deleteStatement.getExpression();
+	public void visit(DeleteStmtNode deleteStatement) {
+		ExprNode e = deleteStatement.getExpression();
 //		Class c = (Class) e.getInferedType();
 //		c = c.getTopClass();
 //		

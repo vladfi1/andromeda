@@ -11,9 +11,9 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
-import com.sc2mod.andromeda.syntaxNodes.Annotation;
-import com.sc2mod.andromeda.syntaxNodes.ReturnStatement;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
+import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
+import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 /**
@@ -225,7 +225,7 @@ public class GenericMethodProxy extends Method {
 	}
 
 	@Override
-	public void addReturnStmt(ReturnStatement r) {
+	public void addReturnStmt(ReturnStmtNode r) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
@@ -249,7 +249,7 @@ public class GenericMethodProxy extends Method {
 	}
 
 	@Override
-	public Statement getBody() {
+	public StmtNode getBody() {
 		return method.getBody();
 	}
 
@@ -388,7 +388,7 @@ public class GenericMethodProxy extends Method {
 	}
 
 	@Override
-	public void setAnnotationTable(HashMap<String, Annotation> annotations) {
+	public void setAnnotationTable(HashMap<String, AnnotationNode> annotations) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}

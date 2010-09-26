@@ -18,39 +18,39 @@ import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.CompilationFileManager;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.semAnalysis.NameResolver;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
-import com.sc2mod.andromeda.syntaxNodes.BlockStatement;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.ContinueStatement;
-import com.sc2mod.andromeda.syntaxNodes.DoWhileStatement;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.ExplicitConstructorInvocationStatement;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionStatement;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.FileContent;
-import com.sc2mod.andromeda.syntaxNodes.ForEachStatement;
-import com.sc2mod.andromeda.syntaxNodes.ForStatement;
-import com.sc2mod.andromeda.syntaxNodes.FunctionDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.GlobalInitDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.IfThenElseStatement;
-import com.sc2mod.andromeda.syntaxNodes.IncludedFile;
-import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.LocalVariableDeclarationStatement;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.ReturnStatement;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
-import com.sc2mod.andromeda.syntaxNodes.StatementList;
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.ContinueStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.DoWhileStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.ExplicitConsCallStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureListNode;
+import com.sc2mod.andromeda.syntaxNodes.ForEachStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ForStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStaticInitDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.IfStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
+import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.LocalVarDeclStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarator;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarators;
+import com.sc2mod.andromeda.syntaxNodes.VarAssignDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.VisitorAdaptor;
-import com.sc2mod.andromeda.syntaxNodes.WhileStatement;
+import com.sc2mod.andromeda.syntaxNodes.WhileStmtNode;
 
 /**
  * General superclass for all visitors that can do transformations to the syntax tree.
@@ -59,18 +59,18 @@ import com.sc2mod.andromeda.syntaxNodes.WhileStatement;
  */
 public abstract class TransformationVisitor extends VisitorAdaptor {
 
-	protected static ArrayList<Statement> EMPTY_LIST = new ArrayList<Statement>(0);
-	private ArrayList<Statement> insertBeforeStmts = new ArrayList<Statement>();
-	private ArrayList<ArrayList<Statement>> insertBeforeContinue = new ArrayList<ArrayList<Statement>>();
+	protected static ArrayList<StmtNode> EMPTY_LIST = new ArrayList<StmtNode>(0);
+	private ArrayList<StmtNode> insertBeforeStmts = new ArrayList<StmtNode>();
+	private ArrayList<ArrayList<StmtNode>> insertBeforeContinue = new ArrayList<ArrayList<StmtNode>>();
 
-	protected void pushBeforeContinue(ArrayList<Statement> insertBeforeStmts2) {
-		ArrayList<Statement> al = new ArrayList<Statement>(insertBeforeStmts2.size());
+	protected void pushBeforeContinue(ArrayList<StmtNode> insertBeforeStmts2) {
+		ArrayList<StmtNode> al = new ArrayList<StmtNode>(insertBeforeStmts2.size());
 		al.addAll(insertBeforeStmts2);
 		insertBeforeContinue.add(al);
 	}
 	
-	protected void pushBeforeContinue(Statement s){
-		ArrayList<Statement> al = new ArrayList<Statement>(1);
+	protected void pushBeforeContinue(StmtNode s){
+		ArrayList<StmtNode> al = new ArrayList<StmtNode>(1);
 		al.add(s);
 		insertBeforeContinue.add(al);
 	}
@@ -85,11 +85,11 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	
 
 	
-	public void addStatementBefore(Statement statement) {
+	public void addStatementBefore(StmtNode statement) {
 		insertBeforeStmts.add(statement);
 	}
 
-	Expression replaceExpression;
+	ExprNode replaceExpression;
 	SyntaxGenerator syntaxGenerator;
 	ImplicitLocalVarProvider varProvider = new ImplicitLocalVarProvider();
 	protected ExpressionTransformationVisitor exprVisitor;
@@ -106,7 +106,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		insertBeforeContinue.add(EMPTY_LIST);
 	}
 	
-	protected void invokeExprVisitor(Expression expression, boolean inExpr){
+	protected void invokeExprVisitor(ExprNode expression, boolean inExpr){
 		if(inExpr){
 			exprVisitor.invokeSelf(expression);
 		} else {
@@ -115,13 +115,13 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		if(flushAfterExpression)varProvider.flushInUseLocals();
 	}
 	
-	protected void invokeExprVisitor(Expression expression){
+	protected void invokeExprVisitor(ExprNode expression){
 		invokeExprVisitor(expression,false);
 	}
 	
-	protected int insertStatementsAt(StatementList where, int index){
+	protected int insertStatementsAt(StmtListNode where, int index){
 		int size = where.size();
-		for(Statement insert: insertBeforeStmts){
+		for(StmtNode insert: insertBeforeStmts){
 			where.insertElementAt(insert,index++);
 			size++;
 		}
@@ -131,7 +131,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	
 	//*********** GLOBAL CONSTRUCTS (just loop through) **********
 	@Override
-	public void visit(SourceFile andromedaFile) {
+	public void visit(SourceFileNode andromedaFile) {
 		SourceFileInfo fi = andromedaFile.getFileInfo();
 		
 		//Natives are not transformed
@@ -140,58 +140,58 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(FileContent fileContent) {
+	public void visit(GlobalStructureListNode fileContent) {
 		fileContent.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(IncludedFile includedFile) {		
+	public void visit(IncludeNode includedFile) {		
 		includedFile.childrenAccept(this);
 	}
 	@Override
-	public void visit(ClassDeclaration classDeclaration) {
+	public void visit(ClassDeclNode classDeclaration) {
 		classDeclaration.getBody().childrenAccept(this);
 	}	
 	@Override
-	public void visit(InterfaceDeclaration interfaceDeclaration) {
+	public void visit(InterfaceDeclNode interfaceDeclaration) {
 		interfaceDeclaration.getBody().accept(this);
 	}	
 	@Override
-	public void visit(FunctionDeclaration functionDeclaration) {
+	public void visit(GlobalFuncDeclNode functionDeclaration) {
 		functionDeclaration.childrenAccept(this);
 	}
 	@Override
-	public void visit(GlobalVarDeclaration globalVarDeclaration) {
+	public void visit(GlobalVarDeclNode globalVarDeclaration) {
 		globalVarDeclaration.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(GlobalInitDeclaration g) {
+	public void visit(GlobalStaticInitDeclNode g) {
 		g.getInitDecl().accept(this);
 	}
 	
 	@Override
-	public void visit(EnrichDeclaration enrichDeclaration) {
+	public void visit(EnrichDeclNode enrichDeclaration) {
 		enrichDeclaration.getBody().childrenAccept(this);
 	}
 	@Override
-	public void visit(FieldDeclaration fieldDeclaration) {
-		VariableDeclarators v = fieldDeclaration.getDeclaredVariables();
+	public void visit(FieldDeclNode fieldDeclaration) {
+		VarDeclListNode v = fieldDeclaration.getDeclaredVariables();
 		v.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(LocalVariableDeclarationStatement l) {
-		VariableDeclarators vds = l.getVarDeclaration().getDeclarators();
+	public void visit(LocalVarDeclStmtNode l) {
+		VarDeclListNode vds = l.getVarDeclaration().getDeclarators();
 		int size = vds.size();
 		for(int i=0;i<size;i++){
-			VariableDeclarator vd = vds.elementAt(i);
+			VarDeclNode vd = vds.elementAt(i);
 			vd.accept(this);
 		}
 	}
 	
 	@Override
-	public void visit(VariableAssignDecl variableAssignDecl) {
+	public void visit(VarAssignDeclNode variableAssignDecl) {
 		invokeExprVisitor(variableAssignDecl.getInitializer(),true);
 		
 		if(replaceExpression!=null){
@@ -208,12 +208,12 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(AccessorDeclaration accessorDeclaration) {
+	public void visit(AccessorDeclNode accessorDeclaration) {
 		accessorDeclaration.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(StaticInitDeclaration s){
+	public void visit(StaticInitDeclNode s){
 		s.childrenAccept(this);
 		
 		//flush implicit locals
@@ -221,9 +221,9 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(MethodDeclaration methodDeclaration) {		
+	public void visit(MethodDeclNode methodDeclaration) {		
 		//Get function body, if this function has none (abstract/interface) we don't have to do anything
-		Statement body = methodDeclaration.getBody();
+		StmtNode body = methodDeclaration.getBody();
 		if(body == null) return;
 		
 		methodDeclaration.childrenAccept(this);
@@ -233,9 +233,9 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(WhileStatement whileStatement) {
+	public void visit(WhileStmtNode whileStatement) {
 		//Do condition
-		Expression cond = whileStatement.getCondition();
+		ExprNode cond = whileStatement.getCondition();
 		invokeExprVisitor(cond);
 		if(replaceExpression!=null){
 			whileStatement.setCondition(replaceExpression);
@@ -260,25 +260,25 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		pushBeforeContinue();
 		
 		//Do body
-		Statement s = whileStatement.getThenStatement();
+		StmtNode s = whileStatement.getThenStatement();
 		s.accept(this);
 		
 		popBeforeContinue();
 	}
 	
 	@Override
-	public void visit(ForEachStatement forEachStatement) {
+	public void visit(ForEachStmtNode forEachStatement) {
 	
 		
 		//Nothing has to be inserted before a continue
 		pushBeforeContinue();
 		
 		//Do body
-		Statement s = forEachStatement.getThenStatement();
+		StmtNode s = forEachStatement.getThenStatement();
 		s.accept(this);
 		
 		//Do the init expression, we do it after the body so generated statements get prepended to the top statement list
-		Expression cond = forEachStatement.getExpression();
+		ExprNode cond = forEachStatement.getExpression();
 		invokeExprVisitor(cond);
 		if(replaceExpression!=null){
 			forEachStatement.setCondition(replaceExpression);
@@ -289,16 +289,16 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(IfThenElseStatement s) {
+	public void visit(IfStmtNode s) {
 		
 		//then and else
-		Statement b = s.getThenStatement();
+		StmtNode b = s.getThenStatement();
 		b.accept(this);
 		b = s.getElseStatement();
 		if(b != null) b.accept(this);
 
 		//Do condition
-		Expression cond = s.getCondition();
+		ExprNode cond = s.getCondition();
 		invokeExprVisitor(cond);
 		if(replaceExpression!=null){
 			s.setCondition(replaceExpression);
@@ -311,9 +311,9 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(DoWhileStatement doWhileStatement) {
+	public void visit(DoWhileStmtNode doWhileStatement) {
 		//Do condition
-		Expression cond = doWhileStatement.getCondition();
+		ExprNode cond = doWhileStatement.getCondition();
 		invokeExprVisitor(cond);
 		if(replaceExpression!=null){
 			doWhileStatement.setCondition(replaceExpression);
@@ -327,7 +327,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 			pushBeforeContinue(insertBeforeStmts);
 			
 			//Insert the additional statements at the end of the body
-			StatementList body = doWhileStatement.getThenStatement().getStatements();
+			StmtListNode body = doWhileStatement.getThenStatement().getStatements();
 			insertStatementsAt(body,body.size());
 						
 		} else {
@@ -336,15 +336,15 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		}
 		
 		//Do body
-		Statement s = doWhileStatement.getThenStatement();
+		StmtNode s = doWhileStatement.getThenStatement();
 		s.accept(this);
 		popBeforeContinue();
 	}
 
 	@Override
-	public void visit(ForStatement forStatement) {
+	public void visit(ForStmtNode forStatement) {
 		//Do condition
-		Expression cond = forStatement.getCondition();
+		ExprNode cond = forStatement.getCondition();
 		invokeExprVisitor(cond);
 		if(replaceExpression!=null){
 			forStatement.setCondition(replaceExpression);
@@ -365,7 +365,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 		}
 		
 		//Init
-		Statement s = forStatement.getForInit();
+		StmtNode s = forStatement.getForInit();
 		
 		//Update
 		if(s != null) s.accept(this);
@@ -384,18 +384,18 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(BlockStatement blockStatement) {
+	public void visit(BlockStmtNode blockStatement) {
 		blockStatement.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(StatementList statementList) {
+	public void visit(StmtListNode statementList) {
 		int size = statementList.size();
 		for(int i=0;i<size;i++){
-			Statement s = statementList.elementAt(i);
+			StmtNode s = statementList.elementAt(i);
 			s.accept(this);
 			if(!insertBeforeStmts.isEmpty()){
-				for(Statement insert: insertBeforeStmts){
+				for(StmtNode insert: insertBeforeStmts){
 					statementList.insertElementAt(insert,i++);
 					size++;
 				}
@@ -405,14 +405,14 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ContinueStatement continueStatement) {
+	public void visit(ContinueStmtNode continueStatement) {
 		//Add statements from the stack before this continue statement
 		insertBeforeStmts.addAll(insertBeforeContinue.get(insertBeforeContinue.size()-1));
 	}
 	
 	@Override
-	public void visit(ReturnStatement returnStatement) {
-		Expression result = returnStatement.getResult();
+	public void visit(ReturnStmtNode returnStatement) {
+		ExprNode result = returnStatement.getResult();
 		if(result != null){
 			invokeExprVisitor(result);
 			if(replaceExpression!=null){
@@ -423,7 +423,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ExpressionStatement e){
+	public void visit(ExprStmtNode e){
 		invokeExprVisitor(e.getExpression());
 		if(replaceExpression!=null){
 			e.setExpression(replaceExpression);
@@ -433,7 +433,7 @@ public abstract class TransformationVisitor extends VisitorAdaptor {
 
 	//XPilot: added
 	@Override
-	public void visit(ExplicitConstructorInvocationStatement explicitConstructorInvocationStatement) {
+	public void visit(ExplicitConsCallStmtNode explicitConstructorInvocationStatement) {
 		//invokeExprVisitor(explicitConstructorInvocationStatement.getExpression());
 		exprVisitor.invokeSelf(explicitConstructorInvocationStatement.getExpression());
 		exprVisitor.invokeSelf(explicitConstructorInvocationStatement.getArguments());

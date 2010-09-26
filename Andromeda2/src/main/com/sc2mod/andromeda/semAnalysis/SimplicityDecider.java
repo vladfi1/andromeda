@@ -11,9 +11,9 @@ package com.sc2mod.andromeda.semAnalysis;
 
 
 import com.sc2mod.andromeda.environment.variables.VarDecl;
-import com.sc2mod.andromeda.syntaxNodes.AccessType;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
+import com.sc2mod.andromeda.syntaxNodes.AccessTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
 
 /**
  * Decides if a field access is simple
@@ -22,7 +22,7 @@ import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
  */
 public class SimplicityDecider {
 	
-	public static boolean isSimple(FieldAccess field){
+	public static boolean isSimple(FieldAccessExprNode field){
 		VarDecl vd = (VarDecl) field.getSemantics();
 		//Accessors are not simple!
 		if(vd.isAccessor()){
@@ -30,12 +30,12 @@ public class SimplicityDecider {
 		}
 		int accessType = field.getAccessType();
 		switch(accessType){
-		case AccessType.NAMED_SUPER:
-		case AccessType.SUPER:
-		case AccessType.SIMPLE:
+		case AccessTypeSE.NAMED_SUPER:
+		case AccessTypeSE.SUPER:
+		case AccessTypeSE.SIMPLE:
 			return true;
-		case AccessType.POINTER:
-		case AccessType.EXPRESSION:
+		case AccessTypeSE.POINTER:
+		case AccessTypeSE.EXPRESSION:
 			//Expression left = field.getLeftExpression();
 			return vd.isStatic();
 		default:

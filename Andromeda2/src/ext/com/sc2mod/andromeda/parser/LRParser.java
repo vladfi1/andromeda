@@ -127,7 +127,8 @@ public abstract class LRParser {
      * Constructor that sets the default scanner. [CSA/davidm] 
      */
     public LRParser(Scanner s) {
-        this(s,s.getSymbolFactory()); // TUM 20060327 old cup v10 Symbols as default
+        this(s,s.
+actory()); // TUM 20060327 old cup v10 Symbols as default
     }
     /** 
      * Constructor that sets the default scanner and a SymbolFactory
@@ -348,7 +349,7 @@ public abstract class LRParser {
    *  scan() should return a fresh object.
    */
   public Symbol scan() throws java.lang.Exception {
-    Symbol sym = getScanner().next_token();
+    Symbol sym = getScanner().nextToken();
     return (sym!=null) ? sym : getSymbolFactory().newSymbol("END_OF_FILE",EOF_sym());
   }
 
@@ -966,7 +967,7 @@ public abstract class LRParser {
 	}
 
       /* build and shift a special error Symbol */
-      error_token = getSymbolFactory().newSymbol("ERROR",error_sym(), left, right);
+      error_token = getSymbolFactory().newSymbol(error_sym(), left, right);
       error_token.parse_state = act-1;
       error_token.used_by_parser = true;
       stack.push(error_token);

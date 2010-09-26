@@ -9,11 +9,11 @@
  */
 package com.sc2mod.andromeda.environment;
 
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 
 public class StaticInit extends Function {
 
-	public StaticInit(StaticInitDeclaration functionDeclaration, Scope scope) {
+	public StaticInit(StaticInitDeclNode functionDeclaration, Scope scope) {
 		super(functionDeclaration, scope);
 	}
 	

@@ -19,11 +19,11 @@ import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.syntaxNodes.ClassMemberType;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.VariableDecl;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarators;
+import com.sc2mod.andromeda.syntaxNodes.MemberTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.UninitedVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNameNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 
 /**
  * Calculates which field a class hierarchy needs.

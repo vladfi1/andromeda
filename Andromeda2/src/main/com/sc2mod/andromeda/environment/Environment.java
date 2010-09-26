@@ -19,12 +19,12 @@ import com.sc2mod.andromeda.environment.variables.GlobalVarSet;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.semAnalysis.NameResolver;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.FunctionDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.InstanceLimitSetter;
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.InstanceLimitSetterNode;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
 
@@ -43,10 +43,10 @@ public final class Environment {
 	public TypeProvider typeProvider = new TypeProvider();
 	private ArrayList<Invocation> virtualInvocations = new ArrayList<Invocation>(128);
 	private ArrayList<StaticInit> globalInitializers = new ArrayList<StaticInit>();
-	private ArrayList<InstanceLimitSetter> instanceLimits = new ArrayList<InstanceLimitSetter>();
+	private ArrayList<InstanceLimitSetterNode> instanceLimits = new ArrayList<InstanceLimitSetterNode>();
 	
 
-	public void registerInstanceLimitSetter(InstanceLimitSetter ils) {
+	public void registerInstanceLimitSetter(InstanceLimitSetterNode ils) {
 		instanceLimits.add(ils);
 	}
 	
@@ -75,15 +75,15 @@ public final class Environment {
 		return functions;
 	}
 
-	public void registerFunction(FunctionDeclaration functionDeclaration, Scope scope) {
+	public void registerFunction(GlobalFuncDeclNode functionDeclaration, Scope scope) {
 		functionsTrans.add(new Function(functionDeclaration,scope));
 	}
 
-	public void registerGlobalVar(GlobalVarDeclaration globalVarDeclaration, Scope scope) {
+	public void registerGlobalVar(GlobalVarDeclNode globalVarDeclaration, Scope scope) {
 		globals.add(globalVarDeclaration,scope);
 	}
 	
-	public void registerGlobalInit(StaticInitDeclaration staticInit, Scope scope) {
+	public void registerGlobalInit(StaticInitDeclNode staticInit, Scope scope) {
 		globalInitializers.add(new StaticInit(staticInit,scope));
 	}
 	
@@ -141,7 +141,7 @@ public final class Environment {
 		typeProvider.generateMethodIndex();
 	}
 
-	public void registerEnrichment(EnrichDeclaration enrichDeclaration, Scope scope) {
+	public void registerEnrichment(EnrichDeclNode enrichDeclaration, Scope scope) {
 		typeProvider.addEnrichment(enrichDeclaration, scope);
 	}
 	
@@ -161,10 +161,10 @@ public final class Environment {
 
 	public void adjustClassInstanceLimit() {
 		//HashSet<Type> instanceLimits = new HashSet<Type>();
-		for(InstanceLimitSetter ils: this.instanceLimits) {
-			com.sc2mod.andromeda.syntaxNodes.Type tSyntax = ils.getEnrichedType();
+		for(InstanceLimitSetterNode ils: this.instanceLimits) {
+			com.sc2mod.andromeda.syntaxNodes.TypeNode tSyntax = ils.getEnrichedType();
 			Type t = typeProvider.resolveType(ils.getEnrichedType());
-			Expression instanceLimitExpr = ils.getInstanceLimit();
+			ExprNode instanceLimitExpr = ils.getInstanceLimit();
 			DataObject instanceLimit = ils.getInstanceLimit().getValue();
 			Type instanceLimitType = ils.getInstanceLimit().getInferedType();
 			if(t.getCategory() != Type.CLASS) {

@@ -4,22 +4,24 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 
 public class CompilationEnvironment {
 
 	private final Configuration config;
 	private final CompilationFileManager fileManager;
 	private final CompilationResult result;
-	private SourceFile syntaxTree;
+	private Environment semanticEnvironment;
+	private SourceFileNode syntaxTree;
 	private final EnumMap<InclusionType,List<Source>> parserInput = new EnumMap<InclusionType, List<Source>>(InclusionType.class);
 	
-	public SourceFile getSyntaxTree() {
+	public SourceFileNode getSyntaxTree() {
 		return syntaxTree;
 	}
 
-	public void setSyntaxTree(SourceFile syntaxTree) {
+	public void setSyntaxTree(SourceFileNode syntaxTree) {
 		this.syntaxTree = syntaxTree;
 	}
 	
@@ -66,5 +68,13 @@ public class CompilationEnvironment {
 		this.config = config;
 		fileManager = new CompilationFileManager(config);
 		result = new CompilationResult();
+	}
+
+	public void setSemanticEnvironment(Environment semanticEnvironment) {
+		this.semanticEnvironment = semanticEnvironment;
+	}
+
+	public Environment getSemanticEnvironment() {
+		return semanticEnvironment;
 	}
 }

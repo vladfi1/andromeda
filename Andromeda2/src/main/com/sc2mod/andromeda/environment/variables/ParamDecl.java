@@ -10,12 +10,12 @@
 package com.sc2mod.andromeda.environment.variables;
 
 import com.sc2mod.andromeda.environment.types.Type;
-import com.sc2mod.andromeda.syntaxNodes.Modifiers;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId;
+import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNameNode;
 
 public class ParamDecl extends VarDecl{
 
-	public ParamDecl(Modifiers mods, Type type, VariableDeclaratorId def) {
+	public ParamDecl(ModifierListNode mods, Type type, VarDeclNameNode def) {
 		super(mods, type, def);
 	}
 

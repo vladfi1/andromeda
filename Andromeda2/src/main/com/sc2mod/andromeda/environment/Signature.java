@@ -12,11 +12,11 @@ package com.sc2mod.andromeda.environment;
 import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.environment.types.TypeParamMapping;
 import com.sc2mod.andromeda.environment.types.TypeParameter;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 
 public class Signature {
 
-	public static final Signature EMPTY_SIGNATURE = new Signature(new ExpressionList());
+	public static final Signature EMPTY_SIGNATURE = new Signature(new ExprListNode());
 	
 	private Type[] sig;
 	private int hashCode;
@@ -34,7 +34,7 @@ public class Signature {
 		calcHashcode();
 	}
 	
-	public Signature(ExpressionList e){
+	public Signature(ExprListNode e){
 		int size = e.size();
 		sig = new Type[size];
 		for(int i=size-1;i>=0;i--){

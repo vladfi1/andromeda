@@ -12,8 +12,8 @@ package com.sc2mod.andromeda.vm.data;
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.Type;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.LiteralType;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
 
 /**
  * XPilot: modified to use Fixed type.
@@ -72,8 +72,8 @@ public class FixedObject extends DataObject {
 	}
 	
 	@Override
-	public Expression getExpression() {
-		return getLiteralExpr(LiteralType.FLOAT);
+	public ExprNode getExpression() {
+		return getLiteralExpr(LiteralTypeSE.FLOAT);
 	}
 	
 	@Override

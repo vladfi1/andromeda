@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.Scope;
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 
 /**
  * A generic class.
@@ -31,7 +31,7 @@ public class GenericClass extends Class{
 	 * @param declaration
 	 * @param scope
 	 */
-	public GenericClass(ClassDeclaration declaration, Scope scope) {
+	public GenericClass(ClassDeclNode declaration, Scope scope) {
 		super(declaration, scope);
 		genericInstances = new HashMap<Signature, GenericClassInstance>();
 		sig = new Signature(typeParams);

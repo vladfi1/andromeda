@@ -3,6 +3,7 @@ package com.sc2mod.andromeda.parsing.options;
 import static com.sc2mod.andromeda.parsing.options.ParamType.*;
 
 import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.util.Files;
 
 /**
  * This enumeration represents command line options which are not added
@@ -15,7 +16,9 @@ import com.sc2mod.andromeda.notifications.InternalProgramError;
  */
 public enum CLOption implements ICLOption {
 
-	DISPLAY_HELP(FLAG,false,"--help");
+	DISPLAY_HELP(FLAG,false,"--help"),
+	
+	SET_CONFIG(APP_FILE,Files.getAppFile("andromeda.conf"),"-c");
 
 	private String clParam;
 	private ParamType type;

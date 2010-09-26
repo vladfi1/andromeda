@@ -13,34 +13,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sc2mod.andromeda.environment.SemanticsElement;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 
 public class LoopSemantics extends SemanticsElement{
 
-	private List<Statement> continues;
-	private List<Statement> breaks;
-	private static List<Statement> empty = new ArrayList<Statement>();
+	private List<StmtNode> continues;
+	private List<StmtNode> breaks;
+	private static List<StmtNode> empty = new ArrayList<StmtNode>();
 	
-	public void addContinue(Statement s){
+	public void addContinue(StmtNode s){
 		if(continues == null){
-			continues = new ArrayList<Statement>(2);
+			continues = new ArrayList<StmtNode>(2);
 		}
 		continues.add(s);
 	}
 
-	public void addBreak(Statement s){
+	public void addBreak(StmtNode s){
 		if(breaks == null){
-			breaks = new ArrayList<Statement>(2);
+			breaks = new ArrayList<StmtNode>(2);
 		}
 		breaks.add(s);
 	}
 	
-	public List<Statement> getContinues(){
+	public List<StmtNode> getContinues(){
 		if(continues == null) return empty;
 		return continues;
 	}
 	
-	public List<Statement> getBreaks(){
+	public List<StmtNode> getBreaks(){
 		if(breaks == null) return empty;
 		return breaks;
 	}

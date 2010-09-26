@@ -18,8 +18,8 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
-import com.sc2mod.andromeda.syntaxNodes.ReturnStatement;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
+import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 
 public abstract class AbstractFunction extends SemanticsElement implements IIdentifiable, IModifiable, IDefined, IGlobal, IAnnotatable {
 
@@ -37,7 +37,7 @@ public abstract class AbstractFunction extends SemanticsElement implements IIden
 	
 	public abstract void addInvocation();
 	
-	public abstract void addReturnStmt(ReturnStatement r);
+	public abstract void addReturnStmt(ReturnStmtNode r);
 
 	public abstract boolean flowReachesEnd();
 	
@@ -112,7 +112,7 @@ public abstract class AbstractFunction extends SemanticsElement implements IIden
 	
 	public abstract boolean isMember();
 	
-	public abstract Statement getBody();
+	public abstract StmtNode getBody();
 
 	public abstract FuncPointerDecl getPointerDecl(TypeProvider tp);
 	

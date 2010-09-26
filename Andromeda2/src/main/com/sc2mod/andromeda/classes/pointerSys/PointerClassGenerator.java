@@ -29,7 +29,7 @@ import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 
 /**
  * Generates class code (allocators, constructors, deallocators, class init, class structs,...)
@@ -438,7 +438,7 @@ public class PointerClassGenerator extends ClassGenerator {
 		
 	}
 	
-	public void generateConstructorInvocation(ConstructorInvocation inv, ExpressionList arguments,Class forClass){
+	public void generateConstructorInvocation(ConstructorInvocation inv, ExprListNode arguments,Class forClass){
 		SimpleBuffer buffer = codeGenVisitor.curBuffer;
 		
 		

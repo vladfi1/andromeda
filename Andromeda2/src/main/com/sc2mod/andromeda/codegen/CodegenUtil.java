@@ -14,9 +14,9 @@ import java.util.HashMap;
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.syntaxNodes.AssignmentOperatorType;
-import com.sc2mod.andromeda.syntaxNodes.BinaryOperator;
-import com.sc2mod.andromeda.syntaxNodes.UnaryOperator;
+import com.sc2mod.andromeda.syntaxNodes.AssignOpTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.BinOpTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.UnOpTypeSE;
 
 public final class CodegenUtil {
 
@@ -73,34 +73,34 @@ public final class CodegenUtil {
 	public static String getAssignOp(int type, boolean whitespaces){
 		if(whitespaces){
 			switch(type){
-			case AssignmentOperatorType.EQ: return " = ";
-			case AssignmentOperatorType.MULTEQ: return " *= ";
-			case AssignmentOperatorType.DIVEQ: return " /= ";
-			case AssignmentOperatorType.MODEQ: return " %= ";
-			case AssignmentOperatorType.PLUSEQ: return " += ";
-			case AssignmentOperatorType.MINUSEQ: return " -= ";
-			case AssignmentOperatorType.LSHIFTEQ: return " <<= ";
-			case AssignmentOperatorType.RSHIFTEQ: return " >>= ";
-			case AssignmentOperatorType.URSHIFTEQ: return " >>>= ";
-			case AssignmentOperatorType.ANDEQ: return " &= ";
-			case AssignmentOperatorType.XOREQ: return " ^= ";
-			case AssignmentOperatorType.OREQ: return " |= ";		
+			case AssignOpTypeSE.EQ: return " = ";
+			case AssignOpTypeSE.MULTEQ: return " *= ";
+			case AssignOpTypeSE.DIVEQ: return " /= ";
+			case AssignOpTypeSE.MODEQ: return " %= ";
+			case AssignOpTypeSE.PLUSEQ: return " += ";
+			case AssignOpTypeSE.MINUSEQ: return " -= ";
+			case AssignOpTypeSE.LSHIFTEQ: return " <<= ";
+			case AssignOpTypeSE.RSHIFTEQ: return " >>= ";
+			case AssignOpTypeSE.URSHIFTEQ: return " >>>= ";
+			case AssignOpTypeSE.ANDEQ: return " &= ";
+			case AssignOpTypeSE.XOREQ: return " ^= ";
+			case AssignOpTypeSE.OREQ: return " |= ";		
 			default: throw new InternalProgramError("Unkonwn assignment operator type: " + type);
 			}
 		}
 		switch(type){
-		case AssignmentOperatorType.EQ: return "=";
-		case AssignmentOperatorType.MULTEQ: return "*=";
-		case AssignmentOperatorType.DIVEQ: return "/=";
-		case AssignmentOperatorType.MODEQ: return "%=";
-		case AssignmentOperatorType.PLUSEQ: return "+=";
-		case AssignmentOperatorType.MINUSEQ: return "-=";
-		case AssignmentOperatorType.LSHIFTEQ: return "<<=";
-		case AssignmentOperatorType.RSHIFTEQ: return ">>=";
-		case AssignmentOperatorType.URSHIFTEQ: return ">>>=";
-		case AssignmentOperatorType.ANDEQ: return "&=";
-		case AssignmentOperatorType.XOREQ: return "^=";
-		case AssignmentOperatorType.OREQ: return "|=";
+		case AssignOpTypeSE.EQ: return "=";
+		case AssignOpTypeSE.MULTEQ: return "*=";
+		case AssignOpTypeSE.DIVEQ: return "/=";
+		case AssignOpTypeSE.MODEQ: return "%=";
+		case AssignOpTypeSE.PLUSEQ: return "+=";
+		case AssignOpTypeSE.MINUSEQ: return "-=";
+		case AssignOpTypeSE.LSHIFTEQ: return "<<=";
+		case AssignOpTypeSE.RSHIFTEQ: return ">>=";
+		case AssignOpTypeSE.URSHIFTEQ: return ">>>=";
+		case AssignOpTypeSE.ANDEQ: return "&=";
+		case AssignOpTypeSE.XOREQ: return "^=";
+		case AssignOpTypeSE.OREQ: return "|=";
 		default: throw new InternalProgramError("Unkonwn assignment operator type: " + type);
 		}	
 	}
@@ -110,49 +110,49 @@ public final class CodegenUtil {
 	public static String getBinaryOp(int type, boolean whitespaces){
 		if(whitespaces){
 			switch(type){
-			case BinaryOperator.OROR: return " || ";
-			case BinaryOperator.ANDAND: return " && ";
-			case BinaryOperator.OR: return " | ";
-			case BinaryOperator.AND: return " & ";
-			case BinaryOperator.XOR: return " ^ ";
-			case BinaryOperator.EQEQ: return " == ";
-			case BinaryOperator.NOTEQ: return " != ";
-			case BinaryOperator.GT: return " > ";
-			case BinaryOperator.LT: return " < ";
-			case BinaryOperator.GTEQ: return " >= ";
-			case BinaryOperator.LTEQ: return " <= ";
-			case BinaryOperator.LSHIFT: return " << ";
-			case BinaryOperator.RSHIFT: return " >> ";
-			case BinaryOperator.URSHIFT: return " >>> ";
-			case BinaryOperator.PLUS: return " + ";
-			case BinaryOperator.MINUS: return " - ";
-			case BinaryOperator.MULT: return " * ";
-			case BinaryOperator.DIV: return " / ";
-			case BinaryOperator.MOD: return " % ";	
+			case BinOpTypeSE.OROR: return " || ";
+			case BinOpTypeSE.ANDAND: return " && ";
+			case BinOpTypeSE.OR: return " | ";
+			case BinOpTypeSE.AND: return " & ";
+			case BinOpTypeSE.XOR: return " ^ ";
+			case BinOpTypeSE.EQEQ: return " == ";
+			case BinOpTypeSE.NOTEQ: return " != ";
+			case BinOpTypeSE.GT: return " > ";
+			case BinOpTypeSE.LT: return " < ";
+			case BinOpTypeSE.GTEQ: return " >= ";
+			case BinOpTypeSE.LTEQ: return " <= ";
+			case BinOpTypeSE.LSHIFT: return " << ";
+			case BinOpTypeSE.RSHIFT: return " >> ";
+			case BinOpTypeSE.URSHIFT: return " >>> ";
+			case BinOpTypeSE.PLUS: return " + ";
+			case BinOpTypeSE.MINUS: return " - ";
+			case BinOpTypeSE.MULT: return " * ";
+			case BinOpTypeSE.DIV: return " / ";
+			case BinOpTypeSE.MOD: return " % ";	
 			default: throw new InternalProgramError("Unkonwn binary operator type: " + type);
 			}
 		}
 	
 		switch(type){
-		case BinaryOperator.OROR: return "||";
-		case BinaryOperator.ANDAND: return "&&";
-		case BinaryOperator.OR: return "|";
-		case BinaryOperator.AND: return "&";
-		case BinaryOperator.XOR: return "^";
-		case BinaryOperator.EQEQ: return "==";
-		case BinaryOperator.NOTEQ: return "!=";
-		case BinaryOperator.GT: return ">";
-		case BinaryOperator.LT: return "<";
-		case BinaryOperator.GTEQ: return ">=";
-		case BinaryOperator.LTEQ: return "<=";
-		case BinaryOperator.LSHIFT: return "<<";
-		case BinaryOperator.RSHIFT: return ">>";
-		case BinaryOperator.URSHIFT: return ">>>";
-		case BinaryOperator.PLUS: return "+";
-		case BinaryOperator.MINUS: return "-";
-		case BinaryOperator.MULT: return "*";
-		case BinaryOperator.DIV: return "/";
-		case BinaryOperator.MOD: return "%";	
+		case BinOpTypeSE.OROR: return "||";
+		case BinOpTypeSE.ANDAND: return "&&";
+		case BinOpTypeSE.OR: return "|";
+		case BinOpTypeSE.AND: return "&";
+		case BinOpTypeSE.XOR: return "^";
+		case BinOpTypeSE.EQEQ: return "==";
+		case BinOpTypeSE.NOTEQ: return "!=";
+		case BinOpTypeSE.GT: return ">";
+		case BinOpTypeSE.LT: return "<";
+		case BinOpTypeSE.GTEQ: return ">=";
+		case BinOpTypeSE.LTEQ: return "<=";
+		case BinOpTypeSE.LSHIFT: return "<<";
+		case BinOpTypeSE.RSHIFT: return ">>";
+		case BinOpTypeSE.URSHIFT: return ">>>";
+		case BinOpTypeSE.PLUS: return "+";
+		case BinOpTypeSE.MINUS: return "-";
+		case BinOpTypeSE.MULT: return "*";
+		case BinOpTypeSE.DIV: return "/";
+		case BinOpTypeSE.MOD: return "%";	
 		default: throw new InternalProgramError("Unkonwn binary operator type: " + type);
 		}
 	}
@@ -161,15 +161,15 @@ public final class CodegenUtil {
 	
 	public static String getUnaryOp(int type){
 		switch(type){
-		case UnaryOperator.COMP: return "~";
-		case UnaryOperator.MINUS: return "-";
-		case UnaryOperator.NOT: return "!";
-		case UnaryOperator.PREPLUSPLUS: return "++";
-		case UnaryOperator.PREMINUSMINUS: return "--";
-		case UnaryOperator.POSTPLUSPLUS: return "++";
-		case UnaryOperator.POSTMINUSMINUS: return "--";
-		case UnaryOperator.ADDRESSOF: return "&";
-		case UnaryOperator.DEREFERENCE: return "*";
+		case UnOpTypeSE.COMP: return "~";
+		case UnOpTypeSE.MINUS: return "-";
+		case UnOpTypeSE.NOT: return "!";
+		case UnOpTypeSE.PREPLUSPLUS: return "++";
+		case UnOpTypeSE.PREMINUSMINUS: return "--";
+		case UnOpTypeSE.POSTPLUSPLUS: return "++";
+		case UnOpTypeSE.POSTMINUSMINUS: return "--";
+		case UnOpTypeSE.ADDRESSOF: return "&";
+		case UnOpTypeSE.DEREFERENCE: return "*";
 		default: throw new InternalProgramError("Unknown unary operator type: " + type);
 		}
 

@@ -12,7 +12,7 @@ package com.sc2mod.andromeda.environment.types;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.TypeExtension;
+import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
 import com.sc2mod.andromeda.vm.data.StringObject;
@@ -22,7 +22,7 @@ public class Extension extends BasicType{
 	
 	
 
-	private TypeExtension definition;
+	private TypeExtensionDeclNode definition;
 	private Type extendedType;
 	private BasicType extendedBaseType;
 	private boolean isDistinct;
@@ -65,7 +65,7 @@ public class Extension extends BasicType{
 	}
 	 
 	
-	public Extension(TypeExtension def, Type extendedType) {
+	public Extension(TypeExtensionDeclNode def, Type extendedType) {
 		super(def.getName());
 		isDistinct = def.getDisjoint();
 		switch(extendedType.getCategory()){

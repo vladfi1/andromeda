@@ -23,15 +23,15 @@ import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.Annotation;
-import com.sc2mod.andromeda.syntaxNodes.ClassMemberDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.FunctionDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.MethodHeader;
-import com.sc2mod.andromeda.syntaxNodes.Parameter;
-import com.sc2mod.andromeda.syntaxNodes.ReturnStatement;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
+import com.sc2mod.andromeda.syntaxNodes.MemberDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodHeaderNode;
+import com.sc2mod.andromeda.syntaxNodes.ParameterNode;
+import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class Function extends AbstractFunction {
@@ -45,16 +45,16 @@ public class Function extends AbstractFunction {
 	public static final int TYPE_STATIC_INIT = 6;
 	public static final int TYPE_NATIVE = 7;
 	
-	protected Statement body;
-	protected ClassMemberDeclaration declaration;
-	protected MethodHeader header;
+	protected StmtNode body;
+	protected MemberDeclNode declaration;
+	protected MethodHeaderNode header;
 	private boolean createCode = true;
 	private boolean flowReachesEnd;
 	private String generatedName;
 	private int index;
 	private int inlineCount;
 	private int invocationCount;
-	private HashMap<String, Annotation> annotations;
+	private HashMap<String, AnnotationNode> annotations;
 	
 	private boolean isFinal;
 	private boolean isInline;
@@ -65,7 +65,7 @@ public class Function extends AbstractFunction {
 	private boolean marked;
 	private String name;
 	protected ParamDecl[] params;
-	private List<ReturnStatement> returnStmts = new ArrayList<ReturnStatement>(4);
+	private List<ReturnStmtNode> returnStmts = new ArrayList<ReturnStmtNode>(4);
 	private Type returnType;
 	
 	private FuncPointerDecl pointerDecl;
@@ -75,12 +75,12 @@ public class Function extends AbstractFunction {
 	private Signature signature;
 
 	private int visibility;
-	private HashMap<String, Annotation> annotationTable;
+	private HashMap<String, AnnotationNode> annotationTable;
 
-	public Function(FunctionDeclaration functionDeclaration, Scope scope) {
+	public Function(GlobalFuncDeclNode functionDeclaration, Scope scope) {
 		this(functionDeclaration.getFuncDecl(),scope);
 	}
-	protected Function(MethodDeclaration decl, Scope scope){
+	protected Function(MethodDeclNode decl, Scope scope){
 		this.declaration = decl;
 		this.header = decl.getHeader();
 		this.name = header.getName();
@@ -101,7 +101,7 @@ public class Function extends AbstractFunction {
 	//XPilot: for function proxies
 	protected Function() {}
 	
-	protected Function(StaticInitDeclaration decl, Scope scope){
+	protected Function(StaticInitDeclNode decl, Scope scope){
 		this.declaration = decl;
 		this.name = "static init";
 		this.body = decl.getBody();
@@ -126,7 +126,7 @@ public class Function extends AbstractFunction {
 		invocationCount++;
 	}
 	
-	public void addReturnStmt(ReturnStatement r){
+	public void addReturnStmt(ReturnStmtNode r){
 		returnStmts.add(r);
 	}
 
@@ -295,7 +295,7 @@ public class Function extends AbstractFunction {
 			params[i] = implParam;
 		}
 		for(int i=implicitSize;i<size;i++){
-			Parameter param = header.getParameters().elementAt(i-implicitSize);
+			ParameterNode param = header.getParameters().elementAt(i-implicitSize);
 			Type type = t.resolveType(param.getType());
 			if(!type.isValidAsParameter()) 
 				throw Problem.ofType(ProblemId.ARRAY_OR_STRUCT_AS_PARAMETER).at(param)
@@ -398,7 +398,7 @@ public class Function extends AbstractFunction {
 		return false;
 	}
 	@Override
-	public Statement getBody() {
+	public StmtNode getBody() {
 		return body;
 	}
 	
@@ -417,7 +417,7 @@ public class Function extends AbstractFunction {
 		return annotationTable.containsKey(name);
 	}
 	@Override
-	public void setAnnotationTable(HashMap<String, Annotation> annotations) {
+	public void setAnnotationTable(HashMap<String, AnnotationNode> annotations) {
 		annotationTable = annotations;
 	}
 	@Override

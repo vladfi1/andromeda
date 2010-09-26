@@ -18,16 +18,16 @@ import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.VisitorErrorAdapater;
-import com.sc2mod.andromeda.syntaxNodes.BinaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.BinaryOperator;
-import com.sc2mod.andromeda.syntaxNodes.CastExpression;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.KeyOfExpression;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
-import com.sc2mod.andromeda.syntaxNodes.UnaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.UnaryOperator;
-import com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl;
+import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.BinOpTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.CastExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.KeyOfExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.VarAssignDeclNode;
 import com.sc2mod.andromeda.vm.data.BoolObject;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.Fixed;
@@ -44,14 +44,14 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 	private int resolveCount = 0;
 	private boolean resolveRemaining;
 	
-	private LinkedList<Expression> expressionsToResolve = new LinkedList<Expression>();
-	private LinkedList<VariableAssignDecl> declsToResolve = new LinkedList<VariableAssignDecl>();
-	private void addToResolveList(Expression e) {
+	private LinkedList<ExprNode> expressionsToResolve = new LinkedList<ExprNode>();
+	private LinkedList<VarAssignDeclNode> declsToResolve = new LinkedList<VarAssignDeclNode>();
+	private void addToResolveList(ExprNode e) {
 		if(resolveRemaining) return;
 		expressionsToResolve.add(e);		
 	}
 
-	private void addToResolveList(VariableAssignDecl vd) {
+	private void addToResolveList(VarAssignDeclNode vd) {
 		if(resolveRemaining) return;
 		declsToResolve.add(vd);
 	}
@@ -65,9 +65,9 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 		while(resolveCountBefore < resolveCount){
 			resolveCountBefore = resolveCount;
 			
-			ListIterator<Expression> li = expressionsToResolve.listIterator();
+			ListIterator<ExprNode> li = expressionsToResolve.listIterator();
 			while(li.hasNext()){
-				Expression e = li.next();
+				ExprNode e = li.next();
 				e.accept(this);
 				
 				//Resolve successful!
@@ -77,9 +77,9 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 				}
 			}
 			
-			ListIterator<VariableAssignDecl> li2 = declsToResolve.listIterator();
+			ListIterator<VarAssignDeclNode> li2 = declsToResolve.listIterator();
 			while(li2.hasNext()){
-				VariableAssignDecl e = li2.next();
+				VarAssignDeclNode e = li2.next();
 				e.accept(this);
 				
 				//Resolve successful!
@@ -93,13 +93,13 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 
 	
 	@Override
-	public void visit(LiteralExpression literalExpression) {
+	public void visit(LiteralExprNode literalExpression) {
 		literalExpression.setValue(literalExpression.getLiteral().getValue());
 		resolveCount++;
 	}
 	
 	@Override
-	public void visit(KeyOfExpression keyOfExpression) {
+	public void visit(KeyOfExprNode keyOfExpression) {
 		Type t = keyOfExpression.getInferedType();
 		if(!t.isKeyType()){
 			throw Problem.ofType(ProblemId.KEYOF_USED_ON_NONKEY).at(keyOfExpression).details(t.getFullName())
@@ -111,10 +111,10 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 	}
 	
 	@Override
-	public void visit(UnaryExpression unaryExpression) {	
+	public void visit(UnOpExprNode unaryExpression) {	
 		Type type = unaryExpression.getExpression().getInferedType();
 		int op = unaryExpression.getOperator();
-		Expression expr = unaryExpression.getExpression();
+		ExprNode expr = unaryExpression.getExpression();
 		DataObject val = expr.getValue();
 		if(val == null){
 			addToResolveList(unaryExpression);
@@ -123,12 +123,12 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 		resolveCount++;
 				
 		switch (op) {
-		case UnaryOperator.POSTMINUSMINUS:
-		case UnaryOperator.PREMINUSMINUS:
-		case UnaryOperator.POSTPLUSPLUS:
-		case UnaryOperator.PREPLUSPLUS:
+		case UnOpTypeSE.POSTMINUSMINUS:
+		case UnOpTypeSE.PREMINUSMINUS:
+		case UnOpTypeSE.POSTPLUSPLUS:
+		case UnOpTypeSE.PREPLUSPLUS:
 			break;
-		case UnaryOperator.MINUS:
+		case UnOpTypeSE.MINUS:
 			if(type == BasicType.INT){
 				int i = val.getIntValue();
 				unaryExpression.setValue(new IntObject(-i));
@@ -140,13 +140,13 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 				break;
 			}
 			throw new Error("!");
-		case UnaryOperator.COMP:	
+		case UnOpTypeSE.COMP:	
 		{
 			int i = val.getIntValue();
 			unaryExpression.setValue(new IntObject(~i));
 			break;				
 		}	
-		case UnaryOperator.NOT:
+		case UnOpTypeSE.NOT:
 			//Not can be a boolean not or a test for "not null"
 			if(type == BasicType.BOOL){
 				boolean i = val.getBoolValue();
@@ -166,7 +166,7 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 	}
 	
 	@Override
-	public void visit(FieldAccess nameExpression) {
+	public void visit(FieldAccessExprNode nameExpression) {
 		VarDecl v = (VarDecl) nameExpression.getSemantics();
 		DataObject d = v.getValue();
 		if(d == null){
@@ -178,7 +178,7 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 	}
 	
 	@Override
-	public void visit(VariableAssignDecl variableAssignDecl) {
+	public void visit(VarAssignDeclNode variableAssignDecl) {
 		VarDecl vd = (VarDecl) variableAssignDecl.getSemantics();
 		DataObject d = variableAssignDecl.getInitializer().getValue();
 		if(d == null){
@@ -190,7 +190,7 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 	}
 	
 	@Override
-	public void visit(CastExpression castExpression) {
+	public void visit(CastExprNode castExpression) {
 		DataObject val = castExpression.getRightExpression().getValue();
 		if(val == null){
 			addToResolveList(castExpression);
@@ -201,14 +201,14 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 	}
 
 	@Override
-	public void visit(BinaryExpression binaryExpression) {
+	public void visit(BinOpExprNode binaryExpression) {
 		
 		Type resultType = binaryExpression.getInferedType();
 		
 		//The type of a binop is related to the operator
 		int op = binaryExpression.getOperator();
-		Expression lExpr = binaryExpression.getLeftExpression();
-		Expression rExpr = binaryExpression.getRightExpression();
+		ExprNode lExpr = binaryExpression.getLeftExpression();
+		ExprNode rExpr = binaryExpression.getRightExpression();
 		Type left = lExpr.getInferedType().getBaseType();
 		Type right = rExpr.getInferedType().getBaseType();
 		DataObject lVal = lExpr.getValue();
@@ -222,21 +222,21 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 		resolveCount++;
 		
 		switch (op) {
-		case BinaryOperator.OROR:
-		case BinaryOperator.ANDAND:
+		case BinOpTypeSE.OROR:
+		case BinOpTypeSE.ANDAND:
 		{
 			boolean b1 = lVal.getBoolValue();
 			boolean b2 = rVal.getBoolValue();
 			boolean result;
 			switch (op) {
-			case BinaryOperator.OROR:	result = b1 || b2; break;
-			case BinaryOperator.ANDAND:	result = b1 && b2; break;
+			case BinOpTypeSE.OROR:	result = b1 || b2; break;
+			case BinOpTypeSE.ANDAND:	result = b1 && b2; break;
 			default:					throw new Error("!");
 			}
 			binaryExpression.setValue(BoolObject.getBool(result));
 			break;
 		}
-		case BinaryOperator.XOR: 
+		case BinOpTypeSE.XOR: 
 		{
 			if(left == BasicType.BOOL){
 				boolean b1 = lVal.getBoolValue();
@@ -255,7 +255,7 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 			}
 		
 		}
-		case BinaryOperator.PLUS:
+		case BinOpTypeSE.PLUS:
 		{
 			if(resultType == BasicType.TEXT|| resultType == BasicType.STRING){
 				//XPilot: replaced getStringValue() with toString()
@@ -265,10 +265,10 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 				break;
 			}
 		}
-		case BinaryOperator.MINUS:
-		case BinaryOperator.DIV:
-		case BinaryOperator.MULT:
-		case BinaryOperator.MOD:
+		case BinOpTypeSE.MINUS:
+		case BinOpTypeSE.DIV:
+		case BinOpTypeSE.MULT:
+		case BinOpTypeSE.MOD:
 		{
 			//If one of both operands is float, then the result is float, else int
 			if(resultType == BasicType.FLOAT){
@@ -276,11 +276,11 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 				Fixed f2 = rVal.getFixedValue();
 				Fixed result;
 				switch(op){
-				case BinaryOperator.PLUS:	result = Fixed.sum(f1, f2); break;
-				case BinaryOperator.MINUS:	result = Fixed.difference(f1, f2); break;
-				case BinaryOperator.DIV:	result = Fixed.quotient(f1, f2); break;
-				case BinaryOperator.MULT:	result = Fixed.product(f1, f2); break;
-				case BinaryOperator.MOD:	result = Fixed.modulus(f1, f2); break;
+				case BinOpTypeSE.PLUS:	result = Fixed.sum(f1, f2); break;
+				case BinOpTypeSE.MINUS:	result = Fixed.difference(f1, f2); break;
+				case BinOpTypeSE.DIV:	result = Fixed.quotient(f1, f2); break;
+				case BinOpTypeSE.MULT:	result = Fixed.product(f1, f2); break;
+				case BinOpTypeSE.MOD:	result = Fixed.modulus(f1, f2); break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(new FixedObject(result));
@@ -289,46 +289,46 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 				int i2 = rVal.getIntValue();
 				int result;
 				switch(op){
-				case BinaryOperator.PLUS:	result = i1 + i2; break;
-				case BinaryOperator.MINUS:	result = i1 - i2; break;
-				case BinaryOperator.DIV:	result = i1 / i2; break;
-				case BinaryOperator.MULT:	result = i1 * i2; break;
-				case BinaryOperator.MOD:	result = i1 % i2; break;
+				case BinOpTypeSE.PLUS:	result = i1 + i2; break;
+				case BinOpTypeSE.MINUS:	result = i1 - i2; break;
+				case BinOpTypeSE.DIV:	result = i1 / i2; break;
+				case BinOpTypeSE.MULT:	result = i1 * i2; break;
+				case BinOpTypeSE.MOD:	result = i1 % i2; break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(new IntObject(result));	
 			}
 			break;
 		}
-		case BinaryOperator.EQEQ:
-		case BinaryOperator.NOTEQ:
+		case BinOpTypeSE.EQEQ:
+		case BinOpTypeSE.NOTEQ:
 			if(left == BasicType.BOOL&&right == BasicType.BOOL){
 				boolean b1 = lVal.getBoolValue();
 				boolean f2 = rVal.getBoolValue();
 				boolean result;
 				switch(op){
-				case BinaryOperator.EQEQ:	result = b1 == f2; break;
-				case BinaryOperator.NOTEQ:	result = b1 != f2; break;
+				case BinOpTypeSE.EQEQ:	result = b1 == f2; break;
+				case BinOpTypeSE.NOTEQ:	result = b1 != f2; break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(BoolObject.getBool(result));
 				break;
 			}
-		case BinaryOperator.LT:
-		case BinaryOperator.GT:
-		case BinaryOperator.LTEQ:
-		case BinaryOperator.GTEQ:
+		case BinOpTypeSE.LT:
+		case BinOpTypeSE.GT:
+		case BinOpTypeSE.LTEQ:
+		case BinOpTypeSE.GTEQ:
 			if(left == BasicType.FLOAT||right == BasicType.FLOAT){
 				Fixed f1 = lVal.getFixedValue();
 				Fixed f2 = rVal.getFixedValue();
 				boolean result;
 				switch(op){
-				case BinaryOperator.EQEQ:	result = Fixed.equal(f1, f2); break;
-				case BinaryOperator.NOTEQ:	result = Fixed.notEqual(f1, f2); break;
-				case BinaryOperator.LT:		result = Fixed.lessThan(f1, f2); break;
-				case BinaryOperator.GT:		result = Fixed.greaterThan(f1, f2); break;
-				case BinaryOperator.LTEQ:	result = Fixed.lessThanOrEqualTo(f1, f2); break;
-				case BinaryOperator.GTEQ:	result = Fixed.greaterThanOrEqualTo(f1, f2); break;
+				case BinOpTypeSE.EQEQ:	result = Fixed.equal(f1, f2); break;
+				case BinOpTypeSE.NOTEQ:	result = Fixed.notEqual(f1, f2); break;
+				case BinOpTypeSE.LT:		result = Fixed.lessThan(f1, f2); break;
+				case BinOpTypeSE.GT:		result = Fixed.greaterThan(f1, f2); break;
+				case BinOpTypeSE.LTEQ:	result = Fixed.lessThanOrEqualTo(f1, f2); break;
+				case BinOpTypeSE.GTEQ:	result = Fixed.greaterThanOrEqualTo(f1, f2); break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(BoolObject.getBool(result));
@@ -337,32 +337,32 @@ public class ConstantResolveVisitor extends VisitorErrorAdapater{
 				int i2 = rVal.getIntValue();
 				boolean result;
 				switch(op){
-				case BinaryOperator.EQEQ:	result = i1 == i2; break;
-				case BinaryOperator.NOTEQ:	result = i1 != i2; break;
-				case BinaryOperator.LT:		result = i1 < i2; break;
-				case BinaryOperator.GT:		result = i1 > i2; break;
-				case BinaryOperator.LTEQ:	result = i1 <= i2; break;
-				case BinaryOperator.GTEQ:	result = i1 >= i2; break;
+				case BinOpTypeSE.EQEQ:	result = i1 == i2; break;
+				case BinOpTypeSE.NOTEQ:	result = i1 != i2; break;
+				case BinOpTypeSE.LT:		result = i1 < i2; break;
+				case BinOpTypeSE.GT:		result = i1 > i2; break;
+				case BinOpTypeSE.LTEQ:	result = i1 <= i2; break;
+				case BinOpTypeSE.GTEQ:	result = i1 >= i2; break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(BoolObject.getBool(result));
 			}
 			break;
-		case BinaryOperator.AND:
-		case BinaryOperator.OR:
-		case BinaryOperator.LSHIFT:
-		case BinaryOperator.RSHIFT:
-		case BinaryOperator.URSHIFT:
+		case BinOpTypeSE.AND:
+		case BinOpTypeSE.OR:
+		case BinOpTypeSE.LSHIFT:
+		case BinOpTypeSE.RSHIFT:
+		case BinOpTypeSE.URSHIFT:
 			{
 				int i1 = lVal.getIntValue();
 				int i2 = rVal.getIntValue();
 				int result;
 				switch(op){
-				case BinaryOperator.AND:	result = i1 & i2; break;
-				case BinaryOperator.OR:		result = i1 | i2; break;
-				case BinaryOperator.LSHIFT:	result = i1 << i2; break;
-				case BinaryOperator.RSHIFT:	result = i1 >> i2; break;
-				case BinaryOperator.URSHIFT:result = i1 >>> i2; break;
+				case BinOpTypeSE.AND:	result = i1 & i2; break;
+				case BinOpTypeSE.OR:		result = i1 | i2; break;
+				case BinOpTypeSE.LSHIFT:	result = i1 << i2; break;
+				case BinOpTypeSE.RSHIFT:	result = i1 >> i2; break;
+				case BinOpTypeSE.URSHIFT:result = i1 >>> i2; break;
 				default:					throw new Error("!");
 				}
 				binaryExpression.setValue(new IntObject(result));

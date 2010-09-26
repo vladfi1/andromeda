@@ -20,8 +20,8 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNameNode;
 
 public class Constructor extends Method {
 
@@ -30,7 +30,7 @@ public class Constructor extends Method {
 	public static final List<ParamDecl> IMPLICIT_CONSTRUCTOR_PARAMS = new LinkedList<ParamDecl>();
 	
 	static{
-		IMPLICIT_CONSTRUCTOR_PARAMS.add(new ParamDecl(null, BasicType.INT, new VariableDeclaratorId("A__cid", null)));
+		IMPLICIT_CONSTRUCTOR_PARAMS.add(new ParamDecl(null, BasicType.INT, new VarDeclNameNode("A__cid", null)));
 	}
 	
 	public ConstructorInvocation getInvokedConstructor() {
@@ -41,7 +41,7 @@ public class Constructor extends Method {
 		this.invokedConstructor = invokedConstructor;
 	}
 
-	public Constructor(MethodDeclaration functionDeclaration, Class clazz, Scope scope) {
+	public Constructor(MethodDeclNode functionDeclaration, Class clazz, Scope scope) {
 		super(functionDeclaration,clazz, scope);
 	}
 	

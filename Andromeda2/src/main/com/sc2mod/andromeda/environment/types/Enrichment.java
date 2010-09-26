@@ -16,7 +16,7 @@ import java.util.HashSet;
 import com.sc2mod.andromeda.environment.Scope;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
 
 /**
  * Enrichments are no real type, but they nevertheless extend
@@ -28,8 +28,8 @@ import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
 public class Enrichment extends RecordType {
 
 	private Type enrichedType;
-	private EnrichDeclaration decl;
-	public Enrichment(EnrichDeclaration decl, Scope scope) {
+	private EnrichDeclNode decl;
+	public Enrichment(EnrichDeclNode decl, Scope scope) {
 		super(decl,scope);
 		this.decl = decl;
 		fields = new EnrichmentFieldSet();

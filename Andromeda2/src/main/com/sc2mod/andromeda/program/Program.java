@@ -22,9 +22,9 @@ import java.util.jar.Manifest;
 
 import com.sc2mod.andromeda.gui.jobs.JobHandler;
 import com.sc2mod.andromeda.gui.misc.GUIController;
-import com.sc2mod.andromeda.parsing.CompilationResult;
-import com.sc2mod.andromeda.parsing.ParserFactory;
+import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Language;
+import com.sc2mod.andromeda.parsing.ParserFactory;
 import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.options.CLOption;
 import com.sc2mod.andromeda.parsing.options.CommandLineOptions;
@@ -32,8 +32,14 @@ import com.sc2mod.andromeda.parsing.options.ConfigFile;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.InvalidParameterException;
 import com.sc2mod.andromeda.parsing.options.Parameter;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
+import com.sc2mod.andromeda.syntaxNodes.util.Visitor;
+import com.sc2mod.andromeda.syntaxNodes.util.VisitorAdapter;
+import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
 import com.sc2mod.andromeda.test.misc.PerfTest;
 import com.sc2mod.andromeda.util.Files;
+import com.sc2mod.andromeda.util.StopWatch;
 import com.sc2mod.andromeda.util.logging.ConsoleLog;
 import com.sc2mod.andromeda.util.logging.Logger;
 
@@ -100,7 +106,7 @@ public class Program {
 		
 		//Load config
 		try {			
-			config = new ConfigFile(new File(appDirectory,"andromeda.conf"), true);
+			config = new ConfigFile((File)clOptions.getParam(CLOption.SET_CONFIG), true);
 		} catch (FileNotFoundException e) {
 			throw new InitializationError("Config file (andromeda.conf) not found!");
 		} catch (IOException e) {
@@ -119,8 +125,8 @@ public class Program {
 	 * @param args
 	 * @throws InitializationError 
 	 */
-	public static CompilationResult invokeWorkflow(List<Source> sources, Configuration options, Language language) {
-		return new ParserFactory(language).createWorkflow(sources,options).execute().getResult();
+	public static CompilationEnvironment invokeWorkflow(List<Source> sources, Configuration options, Language language) {
+		return new ParserFactory(language).createWorkflow(sources,options).execute();
 	}
 
 	public static void main(String[] args) throws URISyntaxException {
@@ -163,12 +169,32 @@ public class Program {
 		} 
 		
 		
-		if(invokeWorkflow(files, o, Language.ANDROMEDA).isSuccessful()){
+		if(invokeWorkflow(files, o, Language.ANDROMEDA).getResult().isSuccessful()){
 			System.out.println("");
 			System.out.println(PerfTest.symbols + " sym");
 			System.out.println(PerfTest.syntaxNodes + " syn");
-			invokeWorkflow(files, o, Language.ANDROMEDA).isSuccessful();
-
+			CompilationEnvironment cr = invokeWorkflow(files, o, Language.ANDROMEDA);
+			SourceFileNode st = cr.getSyntaxTree();
+			VisitorAdapter<String,Visitor.Nothing> va = new VisitorAdapter<String,Visitor.Nothing>() {
+			int x;
+				@Override
+	
+			public Nothing visitDefault(SyntaxNode sn, String in) {
+					sn.childrenAccept(this,in);
+					x++;
+					return NOTHING;
+			}
+				@Override
+					public String toString() {
+					return x + "";
+				}
+			};
+			StopWatch sw = new StopWatch();
+			for(int i = 0;i < 1000;i++){
+				st.accept(va,"blub");
+			}
+			System.out.println(va.toString());
+			sw.printTime("TIME: ");
 			System.exit(0);
 		} else {
 			System.exit(-1);

@@ -22,7 +22,7 @@ import com.sc2mod.andromeda.environment.Function;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
 import com.sc2mod.andromeda.environment.types.Class;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 
 /**
  * Generates class code (allocators, constructors, deallocators, class init, class structs,...)
@@ -93,7 +93,7 @@ public abstract class ClassGenerator {
 	 * @param arguments the argument list
 	 * @param forClass the class for which the constructor was called
 	 */
-	public abstract void generateConstructorInvocation(ConstructorInvocation inv, ExpressionList arguments,Class forClass);
+	public abstract void generateConstructorInvocation(ConstructorInvocation inv, ExprListNode arguments,Class forClass);
 
 	public void generateImplicitCidParam(AbstractFunction m, int indexOffset) {		
 		//Generate the implicit parameter

@@ -16,8 +16,9 @@ import com.sc2mod.andromeda.parsing.Symbol;
 
 %public
 %class AndromedaScanner
-%implements sym
+%implements sym, Scanner
 %unicode
+%function nextToken
 
 %char
 

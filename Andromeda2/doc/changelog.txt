@@ -1,3 +1,15 @@
+v0.2.0
+-Rewrote and refactored most parts of the program to get a better maintainable architecture
+ This might cause some bugs (hopefully not :)
+-You can now specify the config file to be used with the -c parameter
+-Change for all parameters and config options where files are used:
+ There are some options where the program wants a file relative to the directory of andromeda and some
+ where the program wants a file relative to the current working directory. You can have full control 
+ by prefixing your file paths with $ or & in the config or in command line options.
+ $ will treat the following relative path as relative to the andromeda dir
+ & will treat the following relative path as relative to the current working directory
+-Altered the parser generator to make the parser perform better. On my machine it is now around 20-30% faster than before
+
 v0.1.6
 -Fixed certain fixed-point arithmetic bugs
 -Floating-point literals are now replaced by their closest fixed value (before they were rounded down)

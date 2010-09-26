@@ -24,26 +24,26 @@ import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.syntaxNodes.AccessType;
-import com.sc2mod.andromeda.syntaxNodes.ArrayAccess;
-import com.sc2mod.andromeda.syntaxNodes.Assignment;
-import com.sc2mod.andromeda.syntaxNodes.BinaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.CastExpression;
-import com.sc2mod.andromeda.syntaxNodes.ClassInstanceCreationExpression;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.Literal;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
-import com.sc2mod.andromeda.syntaxNodes.LiteralType;
-import com.sc2mod.andromeda.syntaxNodes.MethodInvocation;
-import com.sc2mod.andromeda.syntaxNodes.ParenthesisExpression;
-import com.sc2mod.andromeda.syntaxNodes.ReturnStatement;
+import com.sc2mod.andromeda.syntaxNodes.AccessTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
+import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.CastExprNode;
+import com.sc2mod.andromeda.syntaxNodes.NewExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.ThisExpression;
-import com.sc2mod.andromeda.syntaxNodes.UnaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.UnaryOperator;
-import com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl;
+import com.sc2mod.andromeda.syntaxNodes.ThisExprNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.VarAssignDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.VisitorAdaptor;
 
 public class CodeGenExpressionVisitor extends CodeGenerator {
@@ -66,7 +66,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		s.accept(this);
 	}
 	
-	public void surroundTypeCastIfNecessary(Expression exp, Type to){
+	public void surroundTypeCastIfNecessary(ExprNode exp, Type to){
 		Type from = exp.getInferedType();
 		if(to==null||from==to){
 			invokeSelf(exp);
@@ -75,7 +75,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 
 		
 		//Special case for int to fixed if the value to be cast is a literal
-		if(exp instanceof LiteralExpression){
+		if(exp instanceof LiteralExprNode){
 			if(from==BasicType.INT && to==BasicType.FLOAT){
 				invokeSelf(exp);
 				curExprBuffer.append(".0");
@@ -117,30 +117,30 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	
 	
 	@Override
-	public void visit(LiteralExpression literalExpression) {
+	public void visit(LiteralExprNode literalExpression) {
 		SimpleBuffer curBuffer = curExprBuffer;
-		Literal l = literalExpression.getLiteral();
+		LiteralNode l = literalExpression.getLiteral();
 		switch(l.getType()){
-		case LiteralType.FLOAT:
-		case LiteralType.BOOL:
-		case LiteralType.INT:
+		case LiteralTypeSE.FLOAT:
+		case LiteralTypeSE.BOOL:
+		case LiteralTypeSE.INT:
 			curBuffer.append(String.valueOf(l.getValue()));
 			break;
-		case LiteralType.STRING:
+		case LiteralTypeSE.STRING:
 			String s = reEscape(String.valueOf(l.getValue()));
 			curBuffer.appendStringLiteral(s, parent);
 			break;
-		case LiteralType.TEXT:
+		case LiteralTypeSE.TEXT:
 			curBuffer.append("StringToText(\"");
 			curBuffer.append(reEscape(String.valueOf(l.getValue())));
 			curBuffer.append("\")");
 			break; 
-		case LiteralType.CHAR:
+		case LiteralTypeSE.CHAR:
 			curBuffer.append("'");
 			curBuffer.append(String.valueOf(l.getValue()));
 			curBuffer.append("'");
 			break;
-		case LiteralType.NULL:
+		case LiteralTypeSE.NULL:
 			curBuffer.append(literalExpression.getInferedType().getDefaultValueStr());
 			break;
 		default:
@@ -176,7 +176,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(Assignment assignment) {
+	public void visit(AssignmentExprNode assignment) {
 
 		//This is a statement expression.
 		invokeSelf(assignment.getLeftExpression());
@@ -186,7 +186,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	}
 	
 	@Override
-	public void visit(BinaryExpression binaryExpression) {
+	public void visit(BinOpExprNode binaryExpression) {
 
 		surroundTypeCastIfNecessary(
 				binaryExpression.getLeftExpression(),binaryExpression.getLeftExpectedType());
@@ -201,12 +201,12 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 
 	
 	@Override
-	public void visit(ThisExpression thisExpression) {
+	public void visit(ThisExprNode thisExpression) {
 		curExprBuffer.append(classGen.getThisName());
 	}
 	
 	@Override
-	public void visit(FieldAccess fieldAccess) {
+	public void visit(FieldAccessExprNode fieldAccess) {
 
 		int accessType = fieldAccess.getAccessType();
 		VarDecl decl = (VarDecl)fieldAccess.getSemantics();
@@ -218,7 +218,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		//	fieldAccess.childrenAccept(this);
 		
 		switch(accessType){
-		case AccessType.SIMPLE:
+		case AccessTypeSE.SIMPLE:
 			if(decl.getDeclType()==VarDecl.TYPE_FIELD){
 				Class c = (Class) decl.getContainingType();
 				classGen.generateFieldAccessPrefix(curExprBuffer,c);
@@ -232,7 +232,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 				e.printStackTrace();
 			}
 			break;
-		case AccessType.EXPRESSION:
+		case AccessTypeSE.EXPRESSION:
 			if(notStatic){
 				Type t = fieldAccess.getLeftExpression().getInferedType();
 				if(t.isClass()){
@@ -247,11 +247,11 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 			}
 			curExprBuffer.append(decl.getGeneratedName());
 			break;
-		case AccessType.POINTER:
+		case AccessTypeSE.POINTER:
 			curExprBuffer.append("->");
 			curExprBuffer.append(decl.getGeneratedName());
 			break;
-		case AccessType.SUPER:
+		case AccessTypeSE.SUPER:
 			if(notStatic)
 				curExprBuffer.append("this->");
 			curExprBuffer.append(decl.getGeneratedName());
@@ -263,34 +263,34 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	
 	
 	@Override
-	public void visit(UnaryExpression unaryExpression) {
+	public void visit(UnOpExprNode unaryExpression) {
 		int op = unaryExpression.getOperator();
 		String opStr = CodegenUtil.getUnaryOp(op);
 		switch(op){
-		case UnaryOperator.COMP:
-		case UnaryOperator.MINUS:
-		case UnaryOperator.NOT:
-		case UnaryOperator.ADDRESSOF:
-		case UnaryOperator.DEREFERENCE:
+		case UnOpTypeSE.COMP:
+		case UnOpTypeSE.MINUS:
+		case UnOpTypeSE.NOT:
+		case UnOpTypeSE.ADDRESSOF:
+		case UnOpTypeSE.DEREFERENCE:
 			curExprBuffer.append(opStr);
 			invokeSelf(unaryExpression.getExpression());
 			break;
-		case UnaryOperator.PREPLUSPLUS:
-		case UnaryOperator.PREMINUSMINUS:
-		case UnaryOperator.POSTPLUSPLUS:
-		case UnaryOperator.POSTMINUSMINUS:
+		case UnOpTypeSE.PREPLUSPLUS:
+		case UnOpTypeSE.PREMINUSMINUS:
+		case UnOpTypeSE.POSTPLUSPLUS:
+		case UnOpTypeSE.POSTMINUSMINUS:
 		default: throw new InternalProgramError(unaryExpression,"Unkonwn unary operator type: " + op);
 		}
 	}
 	
 	@Override
-	public void visit(ParenthesisExpression parenthesisExpression) {
+	public void visit(ParenthesisExprNode parenthesisExpression) {
 		curExprBuffer.append("(");
 		invokeSelf(parenthesisExpression.getExpression());
 		curExprBuffer.append(")");
 	}
 	
-	public void generateMethodInvocation(SimpleBuffer curBuffer, Invocation i, int invocationType, Expression prefix, ExpressionList arguments){
+	public void generateMethodInvocation(SimpleBuffer curBuffer, Invocation i, int invocationType, ExprNode prefix, ExprListNode arguments){
 		
 		SimpleBuffer curExprBufferBefore = curExprBuffer;
 		curExprBuffer = curBuffer;
@@ -310,12 +310,12 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		case Invocation.TYPE_METHOD:
 			//Method call, add first parameter
 			switch(invocationType){
-				case AccessType.SUPER:
-				case AccessType.SIMPLE:
+				case AccessTypeSE.SUPER:
+				case AccessTypeSE.SIMPLE:
 					curBuffer.append(classGen.getThisName());
 					if(hasArguments)curBuffer.append(",");
 					break;
-				case AccessType.EXPRESSION:
+				case AccessTypeSE.EXPRESSION:
 					invokeSelf(prefix);
 					if(hasArguments)curBuffer.append(",");
 					break;
@@ -337,7 +337,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(MethodInvocation methodInvocation) {
+	public void visit(MethodInvocationExprNode methodInvocation) {
 		Invocation i = (Invocation)methodInvocation.getSemantics();
 		
 		generateMethodInvocation(curExprBuffer, i, methodInvocation.getInvocationType(),methodInvocation.getPrefix(), methodInvocation.getArguments());
@@ -346,24 +346,24 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	}
 	
 	@Override
-	public void visit(CastExpression castExpression) {
+	public void visit(CastExprNode castExpression) {
 		Type t = castExpression.getInferedType();
 		
-		Expression e = castExpression.getRightExpression();
+		ExprNode e = castExpression.getRightExpression();
 		Type et = e.getInferedType();
 		if(t!=et){
 			//If this is a cast to byte, check if we actually need it or if a cast to int is sufficient
 			if(t.getBaseType()==BasicType.BYTE){
 				SyntaxNode sn = castExpression.getParent();
-				if(sn instanceof Assignment){
-					if(((Assignment)sn).getInferedType().getBaseType()==BasicType.BYTE){
+				if(sn instanceof AssignmentExprNode){
+					if(((AssignmentExprNode)sn).getInferedType().getBaseType()==BasicType.BYTE){
 						t = BasicType.INT;
 					}
-				} else if(sn instanceof VariableAssignDecl){
-					if(((VariableAssignDecl)sn).getInferedType().getBaseType()==BasicType.BYTE){
+				} else if(sn instanceof VarAssignDeclNode){
+					if(((VarAssignDeclNode)sn).getInferedType().getBaseType()==BasicType.BYTE){
 						t = BasicType.INT;
 					}
-				} else if(sn instanceof ReturnStatement){
+				} else if(sn instanceof ReturnStmtNode){
 					if(((AbstractFunction)sn.getSemantics()).getReturnType().getBaseType()==BasicType.BYTE){
 						t = BasicType.INT;
 					}
@@ -375,7 +375,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 			//If the argument of the cast is in parenthesis, we don't need these
 			//since the cast adds parenthesis.
 			StringPair op = CodegenUtil.getCastOp(et, t);
-			if(op != null && e instanceof ParenthesisExpression){
+			if(op != null && e instanceof ParenthesisExprNode){
 				e = e.getExpression();
 			}
 			surround(curExprBuffer,e,op);
@@ -386,14 +386,14 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	
 	
 	@Override
-	public void visit(ExpressionList expressionList) {
+	public void visit(ExprListNode expressionList) {
 		if(desiredSignature == null) throw new Error("No desired signature set!");
 		int size = expressionList.size();
 		SimpleBuffer curBuffer = curExprBuffer;
 		Configuration options = this.options;
 		
 		for(int i=0;i<size;){
-			Expression e = expressionList.elementAt(i);
+			ExprNode e = expressionList.elementAt(i);
 			surroundTypeCastIfNecessary(e, desiredSignature.get(i));
 			if(++i<size){
 				if(whitespaceInExprs){
@@ -406,7 +406,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	}
 	
 	@Override
-	public void visit(VariableAssignDecl variableAssignDecl) {
+	public void visit(VarAssignDeclNode variableAssignDecl) {
 		SimpleBuffer buffer = curExprBuffer;
 		if(whitespaceInExprs){
 			buffer.append(" = ");
@@ -418,7 +418,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	}
 	
 	@Override
-	public void visit(ArrayAccess arrayAccess) {
+	public void visit(ArrayAccessExprNode arrayAccess) {
 		invokeSelf(arrayAccess.getLeftExpression());
 		curExprBuffer.append("[");
 		invokeSelf(arrayAccess.getRightExpression());
@@ -426,7 +426,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	}
 	
 	@Override
-	public void visit(ClassInstanceCreationExpression c) {
+	public void visit(NewExprNode c) {
 		ConstructorInvocation ci = (ConstructorInvocation) c.getSemantics();
 		Class clazz = (Class)c.getInferedType();
 		SimpleBuffer bufferBefore = parent.curBuffer;

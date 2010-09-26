@@ -37,9 +37,8 @@ public class Andromeda extends LanguageImpl{
 		List<Source> filesIn = env.getParserInput().get(InclusionType.MAIN);
 		
 		//Create parser
-		StopWatch sw = new StopWatch();
 		AndromedaParser p = new AndromedaParser(fileManager);
-		sw.printTime("sdfsdf");
+		
 		//Assemble lookup paths
 		
 		if(mapIn != null){

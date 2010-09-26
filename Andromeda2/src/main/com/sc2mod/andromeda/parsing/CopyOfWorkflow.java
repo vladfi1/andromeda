@@ -31,8 +31,8 @@ import com.sc2mod.andromeda.program.MapFormatException;
 import com.sc2mod.andromeda.program.MapRunner;
 import com.sc2mod.andromeda.program.Program;
 import com.sc2mod.andromeda.program.ScriptInjector;
-import com.sc2mod.andromeda.semAnalysis.SemanticAnalysis;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
+import com.sc2mod.andromeda.semAnalysis.SemanticAnalysisWorkflow;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.xml.gen.ResultXMLWriter;
 import com.sc2mod.andromeda.xml.gen.StructureXMLVisitor;
 
@@ -66,8 +66,8 @@ public abstract class CopyOfWorkflow {
 	
 	protected abstract List<Source> getLanguageFiles();
 	
-	protected SourceFile parseAllFiles(IParser p) throws Exception{
-		SourceFile af = null;
+	protected SourceFileNode parseAllFiles(IParser p) throws Exception{
+		SourceFileNode af = null;
 		
 		//Assemble file lists
 		List<Source> natives = FileCollector.getFilesFromList(options.nativeLibFolder,options.nativeList);
@@ -193,12 +193,12 @@ public abstract class CopyOfWorkflow {
 			p = createParser();
 			
 			//*** Do the parsing ***
-			SourceFile af = parseAllFiles(p);
+			SourceFileNode af = parseAllFiles(p);
 			
 
 			//Do semantics analysis
 			System.out.print("No syntax errors. Checking semantics...");
-			Environment env = SemanticAnalysis.analyze(af,options);
+			Environment env = SemanticAnalysisWorkflow.analyze(af,options);
 
 			System.out.println(" DONE (" + getTime() + " ms)");
 			

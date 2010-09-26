@@ -14,15 +14,15 @@ import com.sc2mod.andromeda.environment.variables.AccessorDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
-import com.sc2mod.andromeda.syntaxNodes.Assignment;
-import com.sc2mod.andromeda.syntaxNodes.BinaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.CastExpression;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.KeyOfExpression;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
-import com.sc2mod.andromeda.syntaxNodes.ParenthesisExpression;
-import com.sc2mod.andromeda.syntaxNodes.UnaryExpression;
+import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
+import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.CastExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.KeyOfExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
 public class CodeExpressionTransformationVisitor extends ExpressionTransformationVisitor {
@@ -45,7 +45,7 @@ public class CodeExpressionTransformationVisitor extends ExpressionTransformatio
 	}
 	
 
-	protected boolean replaceByConst(Expression e, boolean isFieldAccess) {
+	protected boolean replaceByConst(ExprNode e, boolean isFieldAccess) {
 		if(!e.getConstant()) return false;
 		if(!resolveConst) return false;
 		DataObject val = e.getValue();
@@ -62,13 +62,13 @@ public class CodeExpressionTransformationVisitor extends ExpressionTransformatio
 	}
 	
 
-	protected boolean replaceByConst(Expression e) {
+	protected boolean replaceByConst(ExprNode e) {
 		return replaceByConst(e, false);
 	}
 
 
 	@Override
-	public void visit(FieldAccess fieldAccess) {
+	public void visit(FieldAccessExprNode fieldAccess) {
 		if(replaceByConst(fieldAccess,true)) return;		
 
 		//System.out.println(fieldAccess.getName());
@@ -87,34 +87,34 @@ public class CodeExpressionTransformationVisitor extends ExpressionTransformatio
 	}
 	
 	@Override
-	public void visit(BinaryExpression a) {
+	public void visit(BinOpExprNode a) {
 		if(replaceByConst(a)) return;		
 		
 		super.visit(a);
 	}
 	
 	@Override
-	public void visit(ParenthesisExpression a) {
+	public void visit(ParenthesisExprNode a) {
 		if(replaceByConst(a)) return;		
 		
 		super.visit(a);
 	}
 	
 	@Override
-	public void visit(CastExpression castExpression) {
+	public void visit(CastExprNode castExpression) {
 		if(replaceByConst(castExpression)) return;
 		
 		super.visit(castExpression);
 	}
 	
 	@Override
-	public void visit(KeyOfExpression keyOfExpression) {
+	public void visit(KeyOfExprNode keyOfExpression) {
 		parent.replaceExpression = keyOfExpression.getValue().getExpression();
 	}
 	
 	
 	@Override
-	public void visit(UnaryExpression unaryExpression) {
+	public void visit(UnOpExprNode unaryExpression) {
 		if(replaceByConst(unaryExpression)) return;	
 		
 		super.visit(unaryExpression);
@@ -124,7 +124,7 @@ public class CodeExpressionTransformationVisitor extends ExpressionTransformatio
 	
 	
 	@Override
-	public void visit(Assignment a) {
+	public void visit(AssignmentExprNode a) {
 		super.visit(a);
 		parent.replaceExpression = exprTransformer.transform(a, isInsideExpression);		
 	}

@@ -34,11 +34,11 @@ import com.sc2mod.andromeda.environment.variables.implicit.FuncPointerNameDecl;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.AccessType;
-import com.sc2mod.andromeda.syntaxNodes.DeleteStatement;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.MethodInvocation;
+import com.sc2mod.andromeda.syntaxNodes.AccessTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.DeleteStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 /**
@@ -76,7 +76,7 @@ public class NameResolver {
 		this.globalVars = env.getGlobalVariables();
 	}
 	
-	private VarDecl resolveFieldAccess(String uid, Scope scope, RecordType curClass,Expression leftSide, Type leftType, SyntaxNode syntax, boolean usesSuper){
+	private VarDecl resolveFieldAccess(String uid, Scope scope, RecordType curClass,ExprNode leftSide, Type leftType, SyntaxNode syntax, boolean usesSuper){
 		//Is the type correct?
 		RecordType r;
 		VarDecl field;
@@ -196,24 +196,24 @@ public class NameResolver {
 	
 
 	
-	public VarDecl resolveVariable(Scope scope,RecordType curClass,FieldAccess fieldAccess, boolean inMember){
+	public VarDecl resolveVariable(Scope scope,RecordType curClass,FieldAccessExprNode fieldAccess, boolean inMember){
 		int accessType = fieldAccess.getAccessType();
-		Expression leftSide = fieldAccess.getLeftExpression();
+		ExprNode leftSide = fieldAccess.getLeftExpression();
 		String uid = fieldAccess.getName();
 		Type leftType;
 		boolean usesSuper = false;
 		switch(accessType){
-		case AccessType.EXPRESSION:
+		case AccessTypeSE.EXPRESSION:
 			leftType = leftSide.getInferedType();
 			break;
-		case AccessType.POINTER:
+		case AccessTypeSE.POINTER:
 			throw new InternalError("Pointers currently not supported.");
 //			leftType = leftSide.getInferedType();
 //			if(!(leftType instanceof PointerType)) 
 //				throw new CompilationError(fieldAccess,"The -> operator can only be used if the left side is a pointer, but it is '" + leftType.getUid() + "'");
 //			leftType = ((PointerType)leftType).pointsTo();
 //			break;
-		case AccessType.SUPER:
+		case AccessTypeSE.SUPER:
 			if(curClass == null  || curClass.getCategory()!= Type.CLASS)
 				throw Problem.ofType(ProblemId.SUPER_OUTSIDE_OF_CLASS).at(fieldAccess)
 					.raiseUnrecoverable();
@@ -224,7 +224,7 @@ public class NameResolver {
 			leftType = curClass;
 			usesSuper = true;
 			break;
-		case AccessType.SIMPLE:
+		case AccessTypeSE.SIMPLE:
 			return resolveSimpleVariable(scope,curClass,fieldAccess,inMember);
 		default:
 			throw new InternalError("Field access type " + accessType + " not supported.");
@@ -239,7 +239,7 @@ public class NameResolver {
 		return vd;
 	}	
 	
-	private VarDecl resolveSimpleVariable(Scope scope,RecordType curClass,FieldAccess name, boolean inMember){
+	private VarDecl resolveSimpleVariable(Scope scope,RecordType curClass,FieldAccessExprNode name, boolean inMember){
 		String uid = name.getName();
 		VarDecl v;
 		
@@ -401,7 +401,7 @@ public class NameResolver {
 	}
 	
 	
-	public Invocation resolveFunctionCall(Scope scope,RecordType curClass,MethodInvocation methodInvocation, boolean inMember){
+	public Invocation resolveFunctionCall(Scope scope,RecordType curClass,MethodInvocationExprNode methodInvocation, boolean inMember){
 		//Assemble call signature
 		Signature s = new Signature(methodInvocation.getArguments());
 		String name = methodInvocation.getFuncName();
@@ -411,9 +411,9 @@ public class NameResolver {
 		boolean canBeFunction = true;
 		boolean virtualAllowed = true;
 		switch(invocationType){
-		case AccessType.SIMPLE:
+		case AccessTypeSE.SIMPLE:
 			break;
-		case AccessType.EXPRESSION:
+		case AccessTypeSE.EXPRESSION:
 			boolean isStatic;
 			if(methodInvocation.getPrefix().getSemantics()==staticDecl){
 				isStatic = true;
@@ -421,8 +421,8 @@ public class NameResolver {
 				isStatic = false;
 			}
 			return resolvePrefixedFunctionCall(scope, curClass, methodInvocation, methodInvocation.getPrefix().getInferedType(), s, name,isStatic);
-		case AccessType.NAMED_SUPER:
-		case AccessType.SUPER:
+		case AccessTypeSE.NAMED_SUPER:
+		case AccessTypeSE.SUPER:
 			if(curClass == null  || !curClass.isClass())
 				throw Problem.ofType(ProblemId.SUPER_OUTSIDE_OF_CLASS).at(methodInvocation)
 					.raiseUnrecoverable();
@@ -435,7 +435,7 @@ public class NameResolver {
 			//Super calls are never virtual
 			virtualAllowed = false;
 			break;
-		case AccessType.NATIVE:
+		case AccessTypeSE.NATIVE:
 			canBeMethod = false;
 			break;
 		default: 
@@ -463,7 +463,7 @@ public class NameResolver {
 		
 		//Function call?
 		if(canBeFunction){
-			Function f = functions.resolveInvocation(scope,methodInvocation,name,s,invocationType==AccessType.NATIVE);
+			Function f = functions.resolveInvocation(scope,methodInvocation,name,s,invocationType==AccessTypeSE.NATIVE);
 			if(f != null){
 				if(f.isNative())
 					return new Invocation(f, Invocation.TYPE_NATIVE);
@@ -494,7 +494,7 @@ public class NameResolver {
 		return localVars.methodFinished(numParams);
 	}
 
-	public Invocation registerDelete(Class class1, DeleteStatement deleteStatement) {
+	public Invocation registerDelete(Class class1, DeleteStmtNode deleteStatement) {
 		Destructor destructor = class1.getDestructor();
 		if(destructor.isOverridden())
 			return Invocation.createVirtualInvocation(destructor, env);

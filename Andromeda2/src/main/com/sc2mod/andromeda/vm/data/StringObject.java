@@ -12,10 +12,10 @@ package com.sc2mod.andromeda.vm.data;
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.Type;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.Literal;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
-import com.sc2mod.andromeda.syntaxNodes.LiteralType;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
 
 public class StringObject extends DataObject{
 
@@ -38,8 +38,8 @@ public class StringObject extends DataObject{
 
 	
 	@Override
-	public Expression getExpression() {
-		return getLiteralExpr(LiteralType.STRING);
+	public ExprNode getExpression() {
+		return getLiteralExpr(LiteralTypeSE.STRING);
 	}
 	
 

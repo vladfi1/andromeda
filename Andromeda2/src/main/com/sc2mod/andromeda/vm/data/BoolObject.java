@@ -12,17 +12,17 @@ package com.sc2mod.andromeda.vm.data;
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.Type;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.Literal;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
-import com.sc2mod.andromeda.syntaxNodes.LiteralType;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
 
 public class BoolObject extends DataObject{
 	
 	private static final BoolObject TRUE = new BoolObject(true);
 	private static final BoolObject FALSE = new BoolObject(false);
-	private static LiteralExpression TRUE_LITERAL = TRUE.getLiteralExpr(LiteralType.BOOL);
-	private static LiteralExpression FALSE_LITERAL = FALSE.getLiteralExpr(LiteralType.BOOL);
+	private static LiteralExprNode TRUE_LITERAL = TRUE.getLiteralExpr(LiteralTypeSE.BOOL);
+	private static LiteralExprNode FALSE_LITERAL = FALSE.getLiteralExpr(LiteralTypeSE.BOOL);
 	
 	public static BoolObject getBool(boolean val)
 	{
@@ -43,7 +43,7 @@ public class BoolObject extends DataObject{
 	}
 	
 	@Override
-	public Expression getExpression() {
+	public ExprNode getExpression() {
 		if(val) return TRUE_LITERAL;
 		return FALSE_LITERAL;
 	}

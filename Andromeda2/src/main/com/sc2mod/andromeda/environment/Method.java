@@ -15,7 +15,7 @@ import com.sc2mod.andromeda.environment.types.Interface;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 
 public class Method extends Function {
 
@@ -145,7 +145,7 @@ public class Method extends Function {
 		return containingType;
 	}
 	
-	public Method(MethodDeclaration functionDeclaration, RecordType containingType, Scope scope) {
+	public Method(MethodDeclNode functionDeclaration, RecordType containingType, Scope scope) {
 		super(functionDeclaration,scope);
 		this.containingType = containingType;
 		if(body==null) {

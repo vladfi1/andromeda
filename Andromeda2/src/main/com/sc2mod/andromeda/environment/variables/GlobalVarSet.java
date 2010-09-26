@@ -16,15 +16,15 @@ import com.sc2mod.andromeda.environment.Scope;
 import com.sc2mod.andromeda.environment.Visibility;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarators;
+import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 
 public class GlobalVarSet {
 
 	private LinkedHashMap<String, ArrayList<GlobalVarDecl>> variables = new LinkedHashMap<String, ArrayList<GlobalVarDecl>>();
 
-	public void add(GlobalVarDeclaration globalVarDeclaration, Scope scope) {
-		VariableDeclarators vars = globalVarDeclaration.getFieldDecl().getDeclaredVariables();
+	public void add(GlobalVarDeclNode globalVarDeclaration, Scope scope) {
+		VarDeclListNode vars = globalVarDeclaration.getFieldDecl().getDeclaredVariables();
 		int size = vars.size();
 		for(int i=0;i<size;i++){
 			GlobalVarDecl v = new GlobalVarDecl(globalVarDeclaration.getFieldDecl(),i,scope);

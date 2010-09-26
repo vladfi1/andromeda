@@ -9,10 +9,10 @@
  */
 package com.sc2mod.andromeda.semAnalysis;
 
-import com.sc2mod.andromeda.syntaxNodes.Statement;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.Visitor;
 
-public class IntermediateLoopStatement extends Statement {
+public class IntermediateLoopStatement extends StmtNode {
 	
 	private SuccessorList successors = new SuccessorList();
 	

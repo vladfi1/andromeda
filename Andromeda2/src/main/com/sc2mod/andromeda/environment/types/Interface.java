@@ -18,12 +18,12 @@ import com.sc2mod.andromeda.environment.Scope;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.CompilationFileManager;
-import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.TypeList;
+import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeListNode;
 
 public class Interface extends RecordType {
 
-	private InterfaceDeclaration declaration;
+	private InterfaceDeclNode declaration;
 
 	private HashMap<String,Interface> interfaces = new HashMap<String,Interface>();
 	
@@ -49,7 +49,7 @@ public class Interface extends RecordType {
 		return tableIndex;
 	}
 
-	public Interface(InterfaceDeclaration declaration, Scope scope) {
+	public Interface(InterfaceDeclNode declaration, Scope scope) {
 		super(declaration,scope);
 		super.setAbstract();
 		this.declaration = declaration;
@@ -63,7 +63,7 @@ public class Interface extends RecordType {
 
 
 	protected void resolveExtends(TypeProvider t) {
-		TypeList tl = declaration.getInterfaces();
+		TypeListNode tl = declaration.getInterfaces();
 		int size = tl.size();
 		for(int i=0;i<size;i++){
 			Type in = t.resolveType(tl.elementAt(i));

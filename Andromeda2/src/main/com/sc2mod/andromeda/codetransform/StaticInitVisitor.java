@@ -1,13 +1,13 @@
 package com.sc2mod.andromeda.codetransform;
 
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
-import com.sc2mod.andromeda.syntaxNodes.ClassBody;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.FileContent;
-import com.sc2mod.andromeda.syntaxNodes.IncludedFile;
-import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.MemberDeclListNode;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureListNode;
+import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
+import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.Visitor;
 import com.sc2mod.andromeda.syntaxNodes.VisitorAdaptor;
 
@@ -25,42 +25,42 @@ public class StaticInitVisitor extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(StaticInitDeclaration staticInitDeclaration) {
+	public void visit(StaticInitDeclNode staticInitDeclaration) {
 		visitor.visit(staticInitDeclaration);
 	}
 
 	@Override
-	public void visit(SourceFile andromedaFile) {
+	public void visit(SourceFileNode andromedaFile) {
 		andromedaFile.childrenAccept(this);
 	}
 
 	@Override
-	public void visit(IncludedFile includedFile) {
+	public void visit(IncludeNode includedFile) {
 		includedFile.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(ClassBody classBody) {
+	public void visit(MemberDeclListNode classBody) {
 		classBody.childrenAccept(this);
 	}
 
 	@Override
-	public void visit(InterfaceDeclaration interfaceDeclaration) {
+	public void visit(InterfaceDeclNode interfaceDeclaration) {
 		interfaceDeclaration.childrenAccept(this);
 	}
 
 	@Override
-	public void visit(ClassDeclaration classDeclaration) {
+	public void visit(ClassDeclNode classDeclaration) {
 		classDeclaration.childrenAccept(this);
 	}
 
 	@Override
-	public void visit(FileContent fileContent) {
+	public void visit(GlobalStructureListNode fileContent) {
 		fileContent.childrenAccept(this);
 	}
 
 	@Override
-	public void visit(EnrichDeclaration enrichDeclaration) {
+	public void visit(EnrichDeclNode enrichDeclaration) {
 		enrichDeclaration.getBody().childrenAccept(this);
 	}
 }

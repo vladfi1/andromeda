@@ -12,14 +12,14 @@ package com.sc2mod.andromeda.environment;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.sc2mod.andromeda.syntaxNodes.Annotation;
+import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 
 public interface IAnnotatable {
 	
 	
 	boolean hasAnnotation(String name);
 		
-	void setAnnotationTable(HashMap<String, Annotation> annotations);
+	void setAnnotationTable(HashMap<String, AnnotationNode> annotations);
 
 	HashSet<String> getAllowedAnnotations();
 

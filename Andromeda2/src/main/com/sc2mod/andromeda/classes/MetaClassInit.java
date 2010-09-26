@@ -15,15 +15,15 @@ import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
 import com.sc2mod.andromeda.environment.types.Class;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.syntaxNodes.ArrayType;
-import com.sc2mod.andromeda.syntaxNodes.BasicType;
-import com.sc2mod.andromeda.syntaxNodes.ClassMemberType;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.TypeCategory;
-import com.sc2mod.andromeda.syntaxNodes.VariableDecl;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarators;
+import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
+import com.sc2mod.andromeda.syntaxNodes.BasicTypeNode;
+import com.sc2mod.andromeda.syntaxNodes.MemberTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeCategorySE;
+import com.sc2mod.andromeda.syntaxNodes.UninitedVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNameNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 
 /**
  * Inits parameters for the metaClass "Class".
@@ -43,9 +43,9 @@ public class MetaClassInit {
 		
 		//Add the virtual call table field		
 		if(env.getMaxVCTSize()>0){
-			ArrayType at = new ArrayType(TypeCategory.ARRAY, new BasicType(TypeCategory.BASIC,"int"), new ExpressionList(sg.genIntLiteralExpr(env.getMaxVCTSize())));
-			VariableDeclarators vd = new VariableDeclarators(new VariableDecl(new VariableDeclaratorId("vct",null)));
-			FieldDeclaration fd = new FieldDeclaration(ClassMemberType.FIELD_DECLARATION, null, null, at, vd);
+			ArrayTypeNode at = new ArrayTypeNode(TypeCategorySE.ARRAY, new BasicTypeNode(TypeCategorySE.BASIC,"int"), new ExprListNode(sg.genIntLiteralExpr(env.getMaxVCTSize())));
+			VarDeclListNode vd = new VarDeclListNode(new UninitedVarDeclNode(new VarDeclNameNode("vct",null)));
+			FieldDeclNode fd = new FieldDeclNode(MemberTypeSE.FIELD_DECLARATION, null, null, at, vd);
 			FieldDecl fdecl = new FieldDecl(fd,metaClass,0);
 			metaClass.getFields().addField(fdecl);
 			fdecl.resolveType(tprov);

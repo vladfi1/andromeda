@@ -13,8 +13,8 @@ import com.sc2mod.andromeda.environment.Invocation;
 import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 
 public class ForeachSemantics extends LoopSemantics {
 
@@ -23,13 +23,13 @@ public class ForeachSemantics extends LoopSemantics {
 	private Type itereeType;
 	private Type iterVarType;
 	private LocalVarDecl iterVarDecl;
-	private FieldAccess iterator;
+	private FieldAccessExprNode iterator;
 
-	public void setIterator(FieldAccess iterator) {
+	public void setIterator(FieldAccessExprNode iterator) {
 		this.iterator = iterator;
 	}
 
-	public FieldAccess getIterator() {
+	public FieldAccessExprNode getIterator() {
 		return iterator;
 	}
 	
@@ -43,13 +43,13 @@ public class ForeachSemantics extends LoopSemantics {
 	private Invocation next;
 	private Invocation getIterator;
 	
-	private Statement delStatement;
+	private StmtNode delStatement;
 	
 	
-	public Statement getDelStatement() {
+	public StmtNode getDelStatement() {
 		return delStatement;
 	}
-	public void setDelStatement(Statement delStatemetn) {
+	public void setDelStatement(StmtNode delStatemetn) {
 		this.delStatement = delStatemetn;
 	}
 	public Type getIterVarType() {

@@ -16,14 +16,14 @@ import com.sc2mod.andromeda.environment.Method;
 import com.sc2mod.andromeda.environment.Scope;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNameNode;
 
 public class AccessorDecl extends FieldOrAccessorDecl{
 
-	private AccessorDeclaration declaration;
+	private AccessorDeclNode declaration;
 	private Method getter;
 	public synchronized Method getGetter() {
 		return getter;
@@ -35,12 +35,12 @@ public class AccessorDecl extends FieldOrAccessorDecl{
 
 	private Method setter;
 	
-	public AccessorDecl(AccessorDeclaration a, RecordType containingType, Scope scope) {
+	public AccessorDecl(AccessorDeclNode a, RecordType containingType, Scope scope) {
 		super(a,containingType,a.getAccessorName());
 		a.setSemantics(this);
 		this.declaration = a;
 		String name = a.getAccessorName().getName();
-		MethodDeclaration m;
+		MethodDeclNode m;
 		m = a.getGetMethod();
 		if(m != null){
 			getter = new Method(m, containingType, scope);
@@ -67,7 +67,7 @@ public class AccessorDecl extends FieldOrAccessorDecl{
 		if(getter!=null)getter.resolveTypes(t,null);
 		if(setter!=null){
 			List<ParamDecl> param = new ArrayList<ParamDecl>(1);
-			param.add(new ParamDecl(null, this.getType(), new VariableDeclaratorId("value",null)));
+			param.add(new ParamDecl(null, this.getType(), new VarDeclNameNode("value",null)));
 			setter.resolveTypes(t,param);
 		}
 	}

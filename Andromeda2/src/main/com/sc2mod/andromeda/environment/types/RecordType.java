@@ -31,15 +31,15 @@ import com.sc2mod.andromeda.environment.variables.FieldSet;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.Annotation;
-import com.sc2mod.andromeda.syntaxNodes.ClassBody;
-import com.sc2mod.andromeda.syntaxNodes.ClassMemberDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.ClassMemberType;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.GlobalStructure;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
+import com.sc2mod.andromeda.syntaxNodes.MemberDeclListNode;
+import com.sc2mod.andromeda.syntaxNodes.MemberDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.MemberTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 /**
@@ -49,9 +49,9 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 public abstract class RecordType extends SimpleType implements IModifiable, IGlobal, IAnnotatable {
 
 	private String name;
-	protected GlobalStructure declaration;
+	protected GlobalStructureNode declaration;
 	
-	public GlobalStructure getDeclaration() {
+	public GlobalStructureNode getDeclaration() {
 		return declaration;
 	}
 
@@ -76,7 +76,7 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 	private int numStatics;
 	private int numNonStatics;
 	protected boolean membersResolved;
-	private HashMap<String, Annotation> annotationTable;
+	private HashMap<String, AnnotationNode> annotationTable;
 	private int byteSize = -1;
 	
 	@Override
@@ -109,7 +109,7 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 	}
 	
 	@Override
-	public void setAnnotationTable(HashMap<String, Annotation> annotations) {
+	public void setAnnotationTable(HashMap<String, AnnotationNode> annotations) {
 		annotationTable = annotations;
 	}
 	
@@ -213,12 +213,12 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 		return getFullName();
 	}
 
-	public RecordType(GlobalStructure g, Scope s) {
+	public RecordType(GlobalStructureNode g, Scope s) {
 		super();
 		createMembers();
 		this.declaration = g;
 		//Ugly but necessary :(
-		if(!(g instanceof EnrichDeclaration))
+		if(!(g instanceof EnrichDeclNode))
 			this.name = g.getName();
 		this.scope = s;
 		g.setSemantics(this);
@@ -275,25 +275,25 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 		numStatics += fields.numStaticFields();
 		
 		//Resolve signatures and return types of functions and types of fields
-		ClassBody body = declaration.getBody();
+		MemberDeclListNode body = declaration.getBody();
 		int size = declaration.getBody().size();
 		for(int i=0;i<size;i++){
-			ClassMemberDeclaration c = body.elementAt(i);
+			MemberDeclNode c = body.elementAt(i);
 			IModifiable member;
 			switch(c.getMemberType()){
-			case ClassMemberType.METHOD_DECLARATION:
-				MethodDeclaration m = (MethodDeclaration)c;
+			case MemberTypeSE.METHOD_DECLARATION:
+				MethodDeclNode m = (MethodDeclNode)c;
 				Method meth = new Method(m,this,scope);
 				meth.resolveTypes(t,null);
 				methods.addMethod(meth);
 				member = meth;
 				break;
-			case ClassMemberType.FIELD_DECLARATION:
+			case MemberTypeSE.FIELD_DECLARATION:
 				//Fields were already resolved in constant early resolve visitor
 				continue;
-			case ClassMemberType.CONSTRUCTOR_DECLARATION:
+			case MemberTypeSE.CONSTRUCTOR_DECLARATION:
 			{
-				MethodDeclaration d = (MethodDeclaration)c;
+				MethodDeclNode d = (MethodDeclNode)c;
 				Constructor con = new Constructor(d,(Class)this,scope);
 				con.resolveTypes(t, null);
 				Constructor old = constructors.put(con.getSignature(), con);
@@ -306,9 +306,9 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 				member = con;
 				break;
 			}
-			case ClassMemberType.DESTRUCTOR_DECLARATION:
+			case MemberTypeSE.DESTRUCTOR_DECLARATION:
 			{
-				MethodDeclaration d = (MethodDeclaration)c;
+				MethodDeclNode d = (MethodDeclNode)c;
 				Destructor con = new Destructor(d,(Class)this,scope);
 				con.resolveTypes(t, null);
 				if(destructor != null){
@@ -319,15 +319,15 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 				member = con;
 				break;
 			}	
-			case ClassMemberType.STATIC_INIT:
-				StaticInit s = new StaticInit((StaticInitDeclaration)c,scope);
+			case MemberTypeSE.STATIC_INIT:
+				StaticInit s = new StaticInit((StaticInitDeclNode)c,scope);
 				s.resolveTypes(t, null);
 				staticInits.add(s);
 				t.addStaticInit(s);
 				numStatics++;
 				continue;
-			case ClassMemberType.ACCESSOR_DECLARATION:
-				AccessorDeclaration a = (AccessorDeclaration)c;
+			case MemberTypeSE.ACCESSOR_DECLARATION:
+				AccessorDeclNode a = (AccessorDeclNode)c;
 				AccessorDecl ad = new AccessorDecl(a, this, scope);
 				ad.resolveType(t);
 				fields.addField(ad);

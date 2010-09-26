@@ -10,15 +10,15 @@
 package com.sc2mod.andromeda.environment.variables;
 
 import com.sc2mod.andromeda.environment.types.Type;
-import com.sc2mod.andromeda.syntaxNodes.Modifiers;
+import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.VariableDecl;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarator;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId;
+import com.sc2mod.andromeda.syntaxNodes.UninitedVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNameNode;
 
 public abstract class NonParamDecl extends VarDecl {
 	
-	protected VariableDeclarator declarator;
+	protected VarDeclNode declarator;
 	private boolean constant;
 	private boolean isInitedField;
 	
@@ -32,30 +32,30 @@ public abstract class NonParamDecl extends VarDecl {
 		return constant;
 	}
 	
-	public NonParamDecl(Modifiers mods,Type type, VariableDeclarator decl){
+	public NonParamDecl(ModifierListNode mods,Type type, VarDeclNode decl){
 		super(mods,type,decl.getName());
 		this.declarator = decl;
 		
 		//Every field except variableDecls have an init
-		if(!(declarator instanceof VariableDecl)){
+		if(!(declarator instanceof UninitedVarDeclNode)){
 			isInitedField = true;
 		}
 	}
 	
-	public NonParamDecl(Modifiers mods,com.sc2mod.andromeda.syntaxNodes.Type type,VariableDeclarator decl){
+	public NonParamDecl(ModifierListNode mods,com.sc2mod.andromeda.syntaxNodes.TypeNode type,VarDeclNode decl){
 		super(mods,type,decl.getName());
 		this.declarator = decl;
 		declarator.setSemantics(this);
 		
 		//Every field except variableDecls have an init
-		if(!(declarator instanceof VariableDecl)){
+		if(!(declarator instanceof UninitedVarDeclNode)){
 			isInitedField = true;
 		}
 	}
 	
-	public NonParamDecl(Modifiers fieldModifiers,
-			com.sc2mod.andromeda.syntaxNodes.Type type,
-			VariableDeclaratorId varDeclId) {
+	public NonParamDecl(ModifierListNode fieldModifiers,
+			com.sc2mod.andromeda.syntaxNodes.TypeNode type,
+			VarDeclNameNode varDeclId) {
 		super(fieldModifiers,type,varDeclId);
 		this.declarator = null;
 	}
@@ -66,7 +66,7 @@ public abstract class NonParamDecl extends VarDecl {
 	}
 	
 	@Override
-	public VariableDeclarator getDeclarator(){
+	public VarDeclNode getDeclarator(){
 		return declarator;
 	}
 	

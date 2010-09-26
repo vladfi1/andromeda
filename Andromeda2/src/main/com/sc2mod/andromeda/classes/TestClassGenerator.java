@@ -19,7 +19,7 @@ import com.sc2mod.andromeda.environment.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.types.Class;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 
 public class TestClassGenerator extends ClassGenerator {
 
@@ -40,7 +40,7 @@ public class TestClassGenerator extends ClassGenerator {
 
 	@Override
 	public void generateConstructorInvocation(ConstructorInvocation inv,
-			ExpressionList arguments, Class forClass) {
+			ExprListNode arguments, Class forClass) {
 
 	}
 

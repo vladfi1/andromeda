@@ -21,27 +21,27 @@ import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.semAnalysis.NameResolver;
 import com.sc2mod.andromeda.semAnalysis.SimplicityDecider;
-import com.sc2mod.andromeda.syntaxNodes.AccessType;
-import com.sc2mod.andromeda.syntaxNodes.ArrayAccess;
-import com.sc2mod.andromeda.syntaxNodes.Assignment;
-import com.sc2mod.andromeda.syntaxNodes.BinaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.BlockStatement;
-import com.sc2mod.andromeda.syntaxNodes.BreakStatement;
-import com.sc2mod.andromeda.syntaxNodes.DeleteStatement;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionStatement;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.IfThenElseStatement;
-import com.sc2mod.andromeda.syntaxNodes.Literal;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
-import com.sc2mod.andromeda.syntaxNodes.LiteralType;
-import com.sc2mod.andromeda.syntaxNodes.MethodInvocation;
-import com.sc2mod.andromeda.syntaxNodes.ParenthesisExpression;
-import com.sc2mod.andromeda.syntaxNodes.Statement;
-import com.sc2mod.andromeda.syntaxNodes.StatementList;
-import com.sc2mod.andromeda.syntaxNodes.UnaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.UnaryOperator;
+import com.sc2mod.andromeda.syntaxNodes.AccessTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
+import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.BreakStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.DeleteStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.IfStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpTypeSE;
 import com.sc2mod.andromeda.vm.data.BoolObject;
 import com.sc2mod.andromeda.vm.data.FixedObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
@@ -53,7 +53,7 @@ import com.sc2mod.andromeda.vm.data.IntObject;
  */
 public class SyntaxGenerator {
 	
-	public static final ExpressionList EMPTY_EXPRESSIONS = new ExpressionList();
+	public static final ExprListNode EMPTY_EXPRESSIONS = new ExprListNode();
 
 	private Configuration options;
 	private NameResolver nameResolver;
@@ -63,7 +63,7 @@ public class SyntaxGenerator {
 	}
 
 
-	Expression createAccessorGet(AccessorDecl ad, int invocationType, Expression lValuePrefix, String funcName){
+	ExprNode createAccessorGet(AccessorDecl ad, int invocationType, ExprNode lValuePrefix, String funcName){
 		int invType;
 		if(ad.isStatic()){
 			invType = Invocation.TYPE_STATIC;
@@ -71,15 +71,15 @@ public class SyntaxGenerator {
 			invType = Invocation.TYPE_METHOD;
 		}
 		Invocation i = new Invocation(ad.getGetter(), invType);		
-		ExpressionList arguments = EMPTY_EXPRESSIONS;
-		MethodInvocation m = new MethodInvocation(invocationType,lValuePrefix,funcName,arguments,false);
+		ExprListNode arguments = EMPTY_EXPRESSIONS;
+		MethodInvocationExprNode m = new MethodInvocationExprNode(invocationType,lValuePrefix,funcName,arguments,false);
 		m.setSemantics(i);	
 		m.setInferedType(ad.getType());
 		return m;
 		
 	}
 	
-	Expression createAccessorSetExpr(AccessorDecl ad, int invocationType, Expression lValuePrefix, String funcName, Expression setTo){
+	ExprNode createAccessorSetExpr(AccessorDecl ad, int invocationType, ExprNode lValuePrefix, String funcName, ExprNode setTo){
 		int invType;
 		if(ad.isStatic()){
 			invType = Invocation.TYPE_STATIC;
@@ -87,77 +87,77 @@ public class SyntaxGenerator {
 			invType = Invocation.TYPE_METHOD;
 		}
 		Invocation i = new Invocation(ad.getSetter(), invType);		
-		ExpressionList arguments = new ExpressionList(setTo);
-		MethodInvocation m = new MethodInvocation(invocationType,lValuePrefix,funcName,arguments,false);
+		ExprListNode arguments = new ExprListNode(setTo);
+		MethodInvocationExprNode m = new MethodInvocationExprNode(invocationType,lValuePrefix,funcName,arguments,false);
 		m.setSemantics(i);	
 		m.setInferedType(SpecialType.VOID);
 		return m;
 	}
 	
-	Statement createAccessorSetStmt(AccessorDecl ad, int invocationType, Expression lValuePrefix, String funcName, Expression setTo){
+	StmtNode createAccessorSetStmt(AccessorDecl ad, int invocationType, ExprNode lValuePrefix, String funcName, ExprNode setTo){
 		return genExpressionStatement(createAccessorSetExpr(ad,invocationType,lValuePrefix,funcName,setTo));
 	}
 	
-	Expression genFieldAccess(Expression prefix,int accessType, String name, Type inferedType, VarDecl semantics){
-		FieldAccess f = new FieldAccess(prefix, accessType, name);
+	ExprNode genFieldAccess(ExprNode prefix,int accessType, String name, Type inferedType, VarDecl semantics){
+		FieldAccessExprNode f = new FieldAccessExprNode(prefix, accessType, name);
 		f.setInferedType(inferedType);
 		f.setSemantics(semantics);
 		return f;
 	}
 	
-	Expression genBinaryExpression(Expression left, Expression right, int binOp, Type result, Type leftExpect, Type rightExpect){
-		BinaryExpression binary = new BinaryExpression(left, right, binOp);
+	ExprNode genBinaryExpression(ExprNode left, ExprNode right, int binOp, Type result, Type leftExpect, Type rightExpect){
+		BinOpExprNode binary = new BinOpExprNode(left, right, binOp);
 		binary.setInferedType(result);
 		binary.setLeftExpectedType(leftExpect);
 		binary.setRightExpectedType(rightExpect);
 		return binary;
 	}
 	
-	Statement genExpressionStatement(Expression e){
-		return new ExpressionStatement(e);
+	StmtNode genExpressionStatement(ExprNode e){
+		return new ExprStmtNode(e);
 	}
 	
-	Assignment genAssignExpr(Expression leftSide, Expression rightSide, int operator, int assignmentType){
-		Assignment a = new Assignment(assignmentType, leftSide, operator, rightSide);
+	AssignmentExprNode genAssignExpr(ExprNode leftSide, ExprNode rightSide, int operator, int assignmentType){
+		AssignmentExprNode a = new AssignmentExprNode(assignmentType, leftSide, operator, rightSide);
 		a.setInferedType(rightSide.getInferedType());
 		return a;
 	}
 	
-	Statement genAssignStatement(Expression leftSide, Expression rightSide, int operator, int assignmentType){
+	StmtNode genAssignStatement(ExprNode leftSide, ExprNode rightSide, int operator, int assignmentType){
 		return genExpressionStatement(genAssignExpr(leftSide, rightSide, operator, assignmentType));
 	}
 	
-	Expression genDereferExpr(Expression e){
-		UnaryExpression derefer = new UnaryExpression(e,UnaryOperator.DEREFERENCE);
+	ExprNode genDereferExpr(ExprNode e){
+		UnOpExprNode derefer = new UnOpExprNode(e,UnOpTypeSE.DEREFERENCE);
 		derefer.setInferedType(e.getInferedType().getWrappedType());
 		derefer.setSimple(e.getSimple());
 		return derefer;
 	}
 	
-	Expression genParenthesisExpression(Expression e){
-		ParenthesisExpression p = new ParenthesisExpression(e);
+	ExprNode genParenthesisExpression(ExprNode e){
+		ParenthesisExprNode p = new ParenthesisExprNode(e);
 		System.out.println(e);
 		p.setInferedType(e.getInferedType());
 		p.setSimple(e.getSimple());
 		return p;
 	}
 	
-	Expression genAddressOfExpr(Expression e){
-		UnaryExpression derefer = new UnaryExpression(e,UnaryOperator.ADDRESSOF);
+	ExprNode genAddressOfExpr(ExprNode e){
+		UnOpExprNode derefer = new UnOpExprNode(e,UnOpTypeSE.ADDRESSOF);
 		derefer.setInferedType(e.getInferedType().getWrappedType());
 		return derefer;
 	}
 
-	public FieldAccess genSimpleName(String string, VarDecl semantics) {
-		FieldAccess sn = new FieldAccess(null,AccessType.SIMPLE,string);
+	public FieldAccessExprNode genSimpleName(String string, VarDecl semantics) {
+		FieldAccessExprNode sn = new FieldAccessExprNode(null,AccessTypeSE.SIMPLE,string);
 		sn.setSemantics(semantics);
 		sn.setSimple(SimplicityDecider.isSimple(sn));
 		return sn;
 	}
 
-	public LiteralExpression genIntLiteralExpr(int i) {
-		Literal l = new Literal(new IntObject(i),LiteralType.INT);
-		LiteralExpression le = new LiteralExpression(l);
+	public LiteralExprNode genIntLiteralExpr(int i) {
+		LiteralNode l = new LiteralNode(new IntObject(i),LiteralTypeSE.INT);
+		LiteralExprNode le = new LiteralExprNode(l);
 		le.setConstant(true);
 		le.setValue(l.getValue());
 		le.setSimple(true);
@@ -165,9 +165,9 @@ public class SyntaxGenerator {
 		return le;
 	}
 	
-	public LiteralExpression genFixedLiteralExpr(float f) {
-		Literal l = new Literal(new FixedObject(f),LiteralType.FLOAT);
-		LiteralExpression le = new LiteralExpression(l);
+	public LiteralExprNode genFixedLiteralExpr(float f) {
+		LiteralNode l = new LiteralNode(new FixedObject(f),LiteralTypeSE.FLOAT);
+		LiteralExprNode le = new LiteralExprNode(l);
 		le.setConstant(true);
 		le.setValue(l.getValue());
 		le.setSimple(true);
@@ -175,17 +175,17 @@ public class SyntaxGenerator {
 		return le;
 	}
 
-	public IfThenElseStatement createLoopAbortIf(Expression condition) {
+	public IfStmtNode createLoopAbortIf(ExprNode condition) {
 		//Negate condition
-		Expression newCondition;
-		if(condition instanceof UnaryExpression){
-			UnaryExpression u = (UnaryExpression)condition;
-			if(u.getOperator() == UnaryOperator.NOT){
+		ExprNode newCondition;
+		if(condition instanceof UnOpExprNode){
+			UnOpExprNode u = (UnOpExprNode)condition;
+			if(u.getOperator() == UnOpTypeSE.NOT){
 				newCondition = u.getExpression();
 			} else {
-				newCondition = new UnaryExpression(new ParenthesisExpression(condition), UnaryOperator.NOT);
+				newCondition = new UnOpExprNode(new ParenthesisExprNode(condition), UnOpTypeSE.NOT);
 			}			
-		} else newCondition = new UnaryExpression(new ParenthesisExpression(condition), UnaryOperator.NOT);
+		} else newCondition = new UnOpExprNode(new ParenthesisExprNode(condition), UnOpTypeSE.NOT);
 		
 		//Infer constant value if the expression was constant
 		if(condition.getConstant()){
@@ -196,13 +196,13 @@ public class SyntaxGenerator {
 		}
 		
 		//Create the if block
-		return new IfThenElseStatement(newCondition, new BlockStatement(new StatementList(new BreakStatement(null))), null);
+		return new IfStmtNode(newCondition, new BlockStmtNode(new StmtListNode(new BreakStmtNode(null))), null);
 		
 	}
 
-	public Expression genBoolLiteralExpr(boolean b) {
-		Literal l = new Literal(BoolObject.getBool(b),LiteralType.BOOL);
-		LiteralExpression le = new LiteralExpression(l);
+	public ExprNode genBoolLiteralExpr(boolean b) {
+		LiteralNode l = new LiteralNode(BoolObject.getBool(b),LiteralTypeSE.BOOL);
+		LiteralExprNode le = new LiteralExprNode(l);
 		le.setConstant(true);
 		le.setValue(l.getValue());
 		le.setSimple(true);
@@ -211,17 +211,17 @@ public class SyntaxGenerator {
 	}
 
 
-	public Expression genArrayAccess(Expression prefix, Expression arrayIndex,
+	public ExprNode genArrayAccess(ExprNode prefix, ExprNode arrayIndex,
 			Type inferedType, VarDecl semantics) {
-		ArrayAccess sn = new ArrayAccess(prefix,arrayIndex);
+		ArrayAccessExprNode sn = new ArrayAccessExprNode(prefix,arrayIndex);
 		sn.setSemantics(semantics);
 		sn.setInferedType(inferedType);
 		return sn;
 	}
 
 
-	public Statement genDeleteStatement(Expression expression) {
-		DeleteStatement s = new DeleteStatement(expression);
+	public StmtNode genDeleteStatement(ExprNode expression) {
+		DeleteStmtNode s = new DeleteStmtNode(expression);
 		Invocation in = nameResolver.registerDelete(((Class)expression.getInferedType()),s);
 		s.setSemantics(in);	
 		return s;

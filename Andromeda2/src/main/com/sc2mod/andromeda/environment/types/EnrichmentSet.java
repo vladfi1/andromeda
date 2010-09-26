@@ -21,7 +21,7 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.variables.FieldOrAccessorDecl;
 import com.sc2mod.andromeda.environment.variables.FieldSet;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
-import com.sc2mod.andromeda.syntaxNodes.MethodInvocation;
+import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class EnrichmentSet {

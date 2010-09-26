@@ -19,26 +19,26 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
-import com.sc2mod.andromeda.syntaxNodes.BinaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.FileContent;
-import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.IncludedFile;
-import com.sc2mod.andromeda.syntaxNodes.Literal;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
-import com.sc2mod.andromeda.syntaxNodes.LiteralType;
-import com.sc2mod.andromeda.syntaxNodes.ParenthesisExpression;
-import com.sc2mod.andromeda.syntaxNodes.StructDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.UnaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.VariableAssignDecl;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarator;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarators;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureListNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
+import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.VarAssignDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 
 /**
  * Tries to resolve the value of constant global variables early (before the type inference)
@@ -67,7 +67,7 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 	//************** GLOBAL STRUCTURES *************
 	
 	@Override
-	public void visit(SourceFile andromedaFile) {
+	public void visit(SourceFileNode andromedaFile) {
 		Scope oldScope = scope;
 		scope = andromedaFile.getScope();
 		andromedaFile.childrenAccept(this);
@@ -75,17 +75,17 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 	}
 	
 	@Override
-	public void visit(FileContent fileContent) {
+	public void visit(GlobalStructureListNode fileContent) {
 		fileContent.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(IncludedFile includedFile) {
+	public void visit(IncludeNode includedFile) {
 		includedFile.getIncludedContent().accept(this);
 	}
 
 	@Override
-	public void visit(ClassDeclaration classDeclaration) {
+	public void visit(ClassDeclNode classDeclaration) {
 		RecordType typeBefore = curType;
 		curType = (RecordType) classDeclaration.getSemantics();
 		boolean generic = curType.isGeneric();
@@ -96,7 +96,7 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 	}
 	
 	@Override
-	public void visit(StructDeclaration classDeclaration) {
+	public void visit(StructDeclNode classDeclaration) {
 		RecordType typeBefore = curType;
 		curType = (RecordType) classDeclaration.getSemantics();
 		classDeclaration.getBody().childrenAccept(this);
@@ -104,7 +104,7 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 	}
 	
 	@Override
-	public void visit(EnrichDeclaration enrichDeclaration) {
+	public void visit(EnrichDeclNode enrichDeclaration) {
 		RecordType typeBefore = curType;
 		curType = (RecordType) enrichDeclaration.getSemantics();
 		enrichDeclaration.getBody().childrenAccept(this);
@@ -112,7 +112,7 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 	}
 	
 	@Override
-	public void visit(FieldDeclaration fieldDeclaration) {
+	public void visit(FieldDeclNode fieldDeclaration) {
 		//Visit field type (in case we have an array)
 		fieldDeclaration.getType().childrenAccept(this);
 		
@@ -129,14 +129,14 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 	
 	
 	@Override
-	public void visit(GlobalVarDeclaration g) {
+	public void visit(GlobalVarDeclNode g) {
 		//Visit field type (in case we have an array)
 		g.getFieldDecl().getType().childrenAccept(this);
 		
-		VariableDeclarators dvs = g.getFieldDecl().getDeclaredVariables();
+		VarDeclListNode dvs = g.getFieldDecl().getDeclaredVariables();
 		int size = dvs.size();
 		for(int i=0;i<size;i++){
-			VariableDeclarator vd = dvs.elementAt(i);
+			VarDeclNode vd = dvs.elementAt(i);
 			GlobalVarDecl vdecl = (GlobalVarDecl) vd.getSemantics();
 			vdecl.resolveType(tprov);
 			vdecl.assignIndex();
@@ -147,19 +147,19 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 	}
 	
 	@Override
-	public void visit(BinaryExpression binaryExpression) {
+	public void visit(BinOpExprNode binaryExpression) {
 		binaryExpression.childrenAccept(this);
 		exprAnalyzer.analyze(binaryExpression);
 	}
 	
 	@Override
-	public void visit(UnaryExpression unaryExpression) {
+	public void visit(UnOpExprNode unaryExpression) {
 		unaryExpression.childrenAccept(this);
 		exprAnalyzer.analyze(unaryExpression);
 	}
 	
 	@Override
-	public void visit(VariableAssignDecl variableAssignDecl) {
+	public void visit(VarAssignDeclNode variableAssignDecl) {
 		variableAssignDecl.getInitializer().accept(this);
 		variableAssignDecl.setInferedType(variableAssignDecl.getInitializer().getInferedType());
 		VarDecl decl = (VarDecl)variableAssignDecl.getName().getSemantics();
@@ -171,13 +171,13 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 	}
 	
 	@Override
-	public void visit(ExpressionList expressionList) {
+	public void visit(ExprListNode expressionList) {
 		//Array dimensions are an expression list, so resolve them!
 		expressionList.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(FieldAccess nameExpression) {
+	public void visit(FieldAccessExprNode nameExpression) {
 		//XPilot: added (this is what ExpressionAnalysisVisitor does)
 		nameExpression.childrenAccept(this);
 		
@@ -195,31 +195,31 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 	}
 	
 	@Override
-	public void visit(LiteralExpression le){
+	public void visit(LiteralExprNode le){
 		le.setSimple(true);
-		Literal l = le.getLiteral();
+		LiteralNode l = le.getLiteral();
 		int type = l.getType();
 		
 		//Literals are constant
 		le.setConstant(true);
 		
 		switch(type){
-		case LiteralType.BOOL:
+		case LiteralTypeSE.BOOL:
 			le.setInferedType(BasicType.BOOL);
 			break;
-		case LiteralType.STRING:
+		case LiteralTypeSE.STRING:
 			le.setInferedType(BasicType.STRING);
 			break;
-		case LiteralType.INT:
+		case LiteralTypeSE.INT:
 			le.setInferedType(BasicType.INT);
 			break;
-		case LiteralType.CHAR:
+		case LiteralTypeSE.CHAR:
 			le.setInferedType(BasicType.CHAR);
 			break;
-		case LiteralType.FLOAT:
+		case LiteralTypeSE.FLOAT:
 			le.setInferedType(BasicType.FLOAT);
 			break;
-		case LiteralType.NULL:
+		case LiteralTypeSE.NULL:
 			le.setInferedType(SpecialType.NULL);
 			break;
 		default:
@@ -234,8 +234,8 @@ public class ConstEarlyAnalysisVisitor extends AnalysisVisitor{
 	 * XPilot: Copied from ExpressionAnalysisVisitor
 	 */
 	@Override
-	public void visit(ParenthesisExpression parenthesisExpression) {
-		Expression e = parenthesisExpression.getExpression();
+	public void visit(ParenthesisExprNode parenthesisExpression) {
+		ExprNode e = parenthesisExpression.getExpression();
 		e.accept(this);
 		parenthesisExpression.setInferedType(e.getInferedType());
 		

@@ -10,14 +10,14 @@
 package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.syntaxNodes.VisitorAdaptor;
+import com.sc2mod.andromeda.util.visitors.TreeScanVisitor;
 
 /**
  * Visitor for analysis. Has access to the environment.
  * @author J. 'gex' Finis
  *
  */
-public class AnalysisVisitor extends VisitorAdaptor{
+public class AnalysisVisitor<P,R> extends TreeScanVisitor<P, R>{
 
 	protected Environment env;
 		

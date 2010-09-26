@@ -36,7 +36,7 @@
   </path>
 
   <taskdef name="jflex" classname="JFlex.anttask.JFlexTask" classpathref="buildLibPath"/>
-  <taskdef name="classgen" classname="classgen.AntTask" classpathref="buildLibPath"/>
+  <taskdef name="classgen" classname="classgen.AntTask" classpath="${lib}/classgen-gex.jar"/>
   <taskdef name="cup" classname="java_cup.anttask.CUPTask" classpath="${lib}/java-cup-gex.jar" />
   <taskdef name="cupOld" classname="java_cup.anttask.CUPTask" classpathref="buildLibPath"/>
   <taskdef name="gexEnrich" classname="com.sc2mod.compilerGen.ClassEnricherAntTask" classpathref="buildLibPath"/>

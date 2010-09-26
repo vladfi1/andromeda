@@ -4,109 +4,106 @@
 package com.sc2mod.andromeda.syntaxNodes;
 
 //Attributes
-attr "com.sc2mod.andromeda.environment.types.Type" inferedType with Expression;
-attr "com.sc2mod.andromeda.environment.types.Type" inferedType with VariableDeclaratorId;
-attr "com.sc2mod.andromeda.environment.types.Type" inferedType with VariableDeclarator;
-attr "com.sc2mod.andromeda.environment.Scope" scope with sourceFile;
-attr "com.sc2mod.andromeda.parsing.SourceFileInfo" fileInfo with sourceFile;
-attr "boolean" constant with Expression;
-attr "boolean" simple with Expression;
-attr "boolean" lValue with Expression;
-attr statement successor with Statement;
-attr "com.sc2mod.andromeda.semAnalysis.SuccessorList" successors with Statement;
-attr "com.sc2mod.andromeda.environment.types.Type" leftExpectedType with binaryExpression;
-attr "com.sc2mod.andromeda.environment.types.Type" rightExpectedType with binaryExpression;
-attr "com.sc2mod.andromeda.vm.data.DataObject" value with Expression;
+attr "com.sc2mod.andromeda.environment.types.Type" inferedType with ExprNode;
+attr "com.sc2mod.andromeda.environment.types.Type" inferedType with VarDeclNode;
+attr "com.sc2mod.andromeda.environment.Scope" scope with SourceFileNode;
+attr "com.sc2mod.andromeda.parsing.SourceFileInfo" fileInfo with SourceFileNode;
+attr "boolean" constant with ExprNode;
+attr "boolean" simple with ExprNode;
+attr "boolean" lValue with ExprNode;
+attr StmtNode successor with StmtNode;
+attr "com.sc2mod.andromeda.semAnalysis.SuccessorList" successors with StmtNode;
+attr "com.sc2mod.andromeda.environment.types.Type" leftExpectedType with BinOpExprNode;
+attr "com.sc2mod.andromeda.environment.types.Type" rightExpectedType with BinOpExprNode;
+attr "com.sc2mod.andromeda.vm.data.DataObject" value with ExprNode;
 
+
+//Identifiers are pure strings but with location information
+IdentifierNode ::= string : id
 
 //Global file structure
 
-sourceFile ::= 
-			packageDecl: packageDecl
-			fileContent: imports
-			fileContent: content
+SourceFileNode ::= 
+			PackageDeclNode: packageDecl
+			GlobalStructureListNode: imports
+			GlobalStructureListNode: content
 			
 
-packageDecl ::=
-			fieldAccess: packageName
+PackageDeclNode ::=
+			FieldAccessExprNode: packageName
 			
 
-fileContent ::= globalStructure*
+GlobalStructureListNode ::= GlobalStructureNode*
 
-globalStructure ::= 
-				
-					{classDeclaration} 	annotationList: annotations
-										modifiers: modifiers
-										string: name
-										expression: instanceLimit
-										type: superClass
-										typeList: interfaces
-										classBody: body
-										typeParamList: typeParams
-				|	{enrichDeclaration} annotationList: annotations
-										modifiers: modifiers
-										type: enrichedType
-										classBody: body
-				| 	{FunctionDeclaration} methodDeclaration: funcDecl
-				|	{GlobalVarDeclaration} fieldDeclaration: fieldDecl
-				|	{GlobalInitDeclaration} staticInitDeclaration: initDecl
-				| 	{interfaceDeclaration}
-										annotationList: annotations
-										modifiers: modifiers
-										string: name
-										typeList: interfaces
-										classBody: body
-				|   {structDeclaration} 
-										annotationList: annotations
-										modifiers: modifiers
-										string: name
-										classBody: body
-				|	{includedFile}		sourceFile: includedContent
-				|	{typeAlias}			annotationList: annotations
-										modifiers: modifiers
-										string: name
-										type: enrichedType
-				|	{typeExtension}		annotationList: annotations
-										modifiers: modifiers
-										string: name
-										"boolean": isKey
-										type: enrichedType
-										"boolean": disjoint
-				|	{instanceLimitSetter}
-										type: enrichedType
-										expression: instanceLimit
+GlobalStructureNode ::= {ClassDeclNode} 	AnnotationListNode: annotations
+											ModifierListNode: modifiers
+											string: name
+											ExprNode: instanceLimit
+											TypeNode: superClass
+											TypeListNode: interfaces
+											MemberDeclListNode: body
+											TypeParamListNode: typeParams
+				|	{EnrichDeclNode} 		AnnotationListNode: annotations
+											ModifierListNode: modifiers
+											TypeNode: enrichedType
+											MemberDeclListNode: body
+				| 	{GlobalFuncDeclNode} 	MethodDeclNode: funcDecl
+				|	{GlobalVarDeclNode} 	FieldDeclNode: fieldDecl
+				|	{GlobalStaticInitDeclNode} StaticInitDeclNode: initDecl
+				| 	{InterfaceDeclNode} 	AnnotationListNode: annotations
+											ModifierListNode: modifiers
+											string: name
+											TypeListNode: interfaces
+											MemberDeclListNode: body
+				|   {StructDeclNode}		AnnotationListNode: annotations
+											ModifierListNode: modifiers
+											string: name
+											MemberDeclListNode: body
+				|	{IncludeNode}			SourceFileNode: includedContent
+				|	{TypeAliasDeclNode}		AnnotationListNode: annotations
+											ModifierListNode: modifiers
+											string: name
+											TypeNode: enrichedType
+				|	{TypeExtensionDeclNode}	AnnotationListNode: annotations
+											ModifierListNode: modifiers
+											string: name
+											"boolean": isKey
+											TypeNode: enrichedType
+											"boolean": disjoint
+				|	{InstanceLimitSetterNode} TypeNode: enrichedType
+											ExprNode: instanceLimit
 // Literals
-literal ::= "com.sc2mod.andromeda.vm.data.DataObject": value
+LiteralNode ::= "com.sc2mod.andromeda.vm.data.DataObject": value
 			"int": type
 			
-literalType ::= one of INT,FLOAT,STRING,NULL,CHAR,BOOL,TEXT
+LiteralTypeSE ::= one of INT,FLOAT,STRING,NULL,CHAR,BOOL,TEXT
 
 
-type	::=	{basicType} 
+TypeNode ::= {BasicTypeNode} 
 			"int" 	: category
 			String	: name
-	|  	{simpleType}	
+	|  	{SimpleTypeNode}	
 			"int" 	: category
 			String 	: name
-			typeList: typeArguments
-	|	{qualifiedType}
+			TypeListNode : typeArguments
+	|	{QualifiedTypeNode}
 			"int" 	: category
-			FieldAccess : qualifiedName
-			typeList: typeArguments
-	|	{arrayType} 
+			FieldAccessExprNode : qualifiedName
+			TypeListNode: typeArguments
+	|	{ArrayTypeNode} 
 			"int" 	: category
-			type	: wrappedType
-			expressionList: dimensions
-	|	{pointerType}
+			TypeNode: wrappedType
+			ExprListNode: dimensions
+	|	{PointerTypeNode}
 			"int" 	: category
-			type	: wrappedType
-	|	{funcPointer}
-			"int"	: category
-			type	: returnType
-			typeList: typeArguments	
+			TypeNode	: wrappedType
+	|	{FuncPointerTypeNode}
+			"int"		: category
+			TypeNode	: returnType
+			TypeListNode: typeArguments	
 		
 
-typeCategory ::= one of BASIC,SIMPLE,QUALIFIED,ARRAY,POINTER,FUNCTION
+TypeCategorySE ::= one of BASIC,SIMPLE,QUALIFIED,ARRAY,POINTER,FUNCTION
 			
 // Names
 
@@ -114,240 +111,241 @@ typeCategory ::= one of BASIC,SIMPLE,QUALIFIED,ARRAY,POINTER,FUNCTION
 
 	
 // Modifiers
-modifiers ::= Integer* 
+ModifierListNode ::= Integer* 
 
 
 
-modifierType ::= one of PUBLIC,PROTECTED,PRIVATE,STATIC,ABSTRACT,FINAL,NATIVE,TRANSIENT,CONST,OVERRIDE
+ModifierTypeSE ::= one of PUBLIC,PROTECTED,PRIVATE,STATIC,ABSTRACT,FINAL,NATIVE,TRANSIENT,CONST,OVERRIDE
 
 // Annotations
-annotation ::= "String": name
+AnnotationNode ::= "String": name
 
-annotationList ::= annotation*
+AnnotationListNode ::= AnnotationNode*
 
 // Generics
-typeParam ::= 
+TypeParamNode ::= 
 			String: name
 			Object: typeBound
 			
-typeParamList ::= typeParam*
+TypeParamListNode ::= TypeParamNode*
 
 // Struct declaration
 
 // Class declarations
 
-typeList ::= type*
+TypeListNode ::= TypeNode*
 
 
-classMemberDeclaration ::= {methodDeclaration} 
+MemberDeclNode 			::= {MethodDeclNode} 
 								"int": memberType								
-								methodHeader: header
-								statement: body
-						| {fieldDeclaration}						
+								MethodHeaderNode: header
+								StmtNode: body
+						| {FieldDeclNode}						
 								"int": memberType
-								annotationList: annotations
-								modifiers: fieldModifiers
-								type: type
-								variableDeclarators: declaredVariables
-						| {staticInitDeclaration}
+								AnnotationListNode: annotations
+								ModifierListNode: fieldModifiers
+								TypeNode: type
+								VarDeclListNode: declaredVariables
+						| {StaticInitDeclNode}
 								"int": memberType
-								annotationList: annotations
-								statement: body
-						| {accessorDeclaration}
+								AnnotationListNode: annotations
+								StmtNode: body
+						| {AccessorDeclNode}
 								"int": memberType
-								annotationList: annotations
-								modifiers: fieldModifiers
-								type: type
-								variableDeclaratorId: accessorName
-								parameterList: accessorParameters
-								methodDeclaration: getMethod
-								methodDeclaration: setMethod
+								AnnotationListNode: annotations
+								ModifierListNode: fieldModifiers
+								TypeNode: type
+								IdentifierNode: accessorName
+								ParameterListNode: accessorParameters
+								MethodDeclNode: getMethod
+								MethodDeclNode: setMethod
 								"boolean": accessorUseThis
 
-classBody ::= classMemberDeclaration*
+MemberDeclListNode ::= MemberDeclNode*
 
-classMemberType ::= one of ACCESSOR_DECLARATION,ACCESSOR_GET,ACCESSOR_SET,METHOD_DECLARATION, FIELD_DECLARATION, CONSTRUCTOR_DECLARATION, DESTRUCTOR_DECLARATION, STATIC_INIT
+MemberTypeSE ::= one of ACCESSOR_DECLARATION,ACCESSOR_GET,ACCESSOR_SET,METHOD_DECLARATION, FIELD_DECLARATION, CONSTRUCTOR_DECLARATION, DESTRUCTOR_DECLARATION, STATIC_INIT
 
 // Field Declarations
 
-variableDeclarators ::= variableDeclarator*:declarators
+VarDeclListNode ::= VarDeclNode*:declarators
 
-variableDeclarator ::= {variableDecl} 
-						variableDeclaratorId: name 
-					| {variableAssignDecl} 
-						variableDeclaratorId: name expression: initializer
-					| {variableArrayInitDecl} 
-					variableDeclaratorId: name arrayInitializer: arrayInit
-
-
-variableDeclaratorId ::= String: name variableDeclaratorId: arrayChild		
+VarDeclNode ::= {UninitedVarDeclNode} 
+						IdentifierNode: name 
+					| {VarAssignDeclNode} 
+						IdentifierNode: name
+						ExprNode: initializer
+					| {VarArrayInitDeclNode} 
+						IdentifierNode: name
+						ArrayInitNode: arrayInit
+	
 
 //Accessor declarations
 
-accessorBody ::= 
-			methodDeclaration: getMethod
-			methodDeclaration: setMethod
+AccessorBodyTransNode ::= 
+			MethodDeclNode: getMethod
+			MethodDeclNode: setMethod
 
 //Method declarations
 
-methodHeader ::= annotationList: annotations 
-				modifiers: modifiers
-				type: returnType
+MethodHeaderNode ::= AnnotationListNode: annotations 
+				ModifierListNode: modifiers
+				TypeNode: returnType
 				String: name
-				parameterList: parameters
+				ParameterListNode: parameters
 				Object: throwDeclaration
 
-methodDeclarator ::= String: name
-					parameterList: parameters
+MethodDeclaratorTransNode ::= String: name
+								ParameterListNode: parameters
 
-parameterList ::= parameter*
+ParameterListNode ::= ParameterNode*
 
-parameter ::= type: type 
-			variableDeclaratorId: name
+ParameterNode ::= 	TypeNode: type 
+					IdentifierNode: name
 
 			
-			//Constructor declarations
+//Constructor declarations
 				
 
 
 //Array init
-arrayInitializer ::= variableInitializers: inits "boolean": hasComma
+ArrayInitNode ::= VarInitializerListNode: inits
+					"boolean": hasComma
 
-variableInitializers ::= object* 
+VarInitializerListNode ::= object* 
 
 //Statements
 
-localVariableDeclaration ::= 
-				modifiers: modifiers
-				type: type
-				variableDeclarators: declarators
+LocalVarDeclNode ::= 
+				ModifierListNode: modifiers
+				TypeNode: type
+				VarDeclListNode: declarators
 
-statementList ::= statement*
+StmtListNode ::= StmtNode*
 
 
-statement ::= {blockStatement}
-				statementList: statements
-			| {expressionStatement}
-				expression: expression
-			| {localTypeDeclarationStatement}
-				classDeclaration: classDeclaration
-			| {localVariableDeclarationStatement}
-				localVariableDeclaration: varDeclaration
-			| {ifThenElseStatement}
-				expression: condition
-				statement: thenStatement
-				statement: elseStatement
-			| {whileStatement}
-				expression: condition
-				statement: thenStatement
-			| {doWhileStatement}
-				expression: condition
-				statement: thenStatement
-			| {forStatement}
-				statement: forInit
-				expression: condition
-				blockStatement: forUpdate
-				statement: thenStatement
-			| {forCountStatement}
-				type: iteratorType
-				variableDecl: iterator
-				expression : fromExpr
-				expression : toExpr
-				statement : thenStatement
-			| {forEachStatement}
-				type: iteratorType
-				variableDecl: iterator
-				expression: expression
-				statement: thenStatement
-			| {breakStatement}
+StmtNode ::= {BlockStmtNode}
+				StmtListNode: statements
+			| {ExprStmtNode}
+				ExprNode: expression
+			| {LocalTypeDeclStmtNode}
+				ClassDeclNode: classDeclaration
+			| {LocalVarDeclStmtNode}
+				LocalVarDeclNode: varDeclaration
+			| {IfStmtNode}
+				ExprNode: condition
+				StmtNode: thenStatement
+				StmtNode: elseStatement
+			| {WhileStmtNode}
+				ExprNode: condition
+				StmtNode: thenStatement
+			| {DoWhileStmtNode}
+				ExprNode: condition
+				StmtNode: thenStatement
+			| {ForStmtNode}
+				StmtNode: forInit
+				ExprNode: condition
+				BlockStmtNode: forUpdate
+				StmtNode: thenStatement
+			| {ForCountStmtNode}
+				TypeNode: iteratorType
+				IdentifierNode: iterator
+				ExprNode : fromExpr
+				ExprNode : toExpr
+				StmtNode : thenStatement
+			| {ForEachStmtNode}
+				TypeNode: iteratorType
+				IdentifierNode: iterator
+				ExprNode: expression
+				StmtNode: thenStatement
+			| {BreakStmtNode}
 				string: label
-			| {continueStatement}
+			| {ContinueStmtNode}
 				string: label
-			| {returnStatement}
-				expression: result
-			| {deleteStatement}
-				expression: expression
-			| {throwStatement}
-				expression: result
-			| {explicitConstructorInvocationStatement}
-				expression: expression
+			| {ReturnStmtNode}
+				ExprNode: result
+			| {DeleteStmtNode}
+				ExprNode: expression
+			| {ThrowStmtNode}
+				ExprNode: result
+			| {ExplicitConsCallStmtNode}
+				ExprNode: expression
 				"boolean": useSuper
-				expressionList: arguments
-			| {emptyStatement}
+				ExprListNode: arguments
+			| {EmptyStmtNode}
 			
 
 //Array dimensions
-dims ::= "int":numDimension
+ArrayDimensionsNode ::= "int":numDimension
 
 // Expressions (ouch)
-expression ::= {assignment}
+ExprNode ::= {AssignmentExprNode}
 				"int": assignmentType
-				expression: leftExpression
+				ExprNode: leftExpression
 				"int": operator
-				expression: rightExpression
-			| {fieldAccess}
-				expression: leftExpression  
+				ExprNode: rightExpression
+			| {FieldAccessExprNode}
+				ExprNode: leftExpression  
 				"int": accessType
 				String: name
-			| {arrayAccess}
-				expression: leftExpression
-				expression: rightExpression
-			| {conditionalExpression}
-				expression: leftExpression
-				expression: rightExpression
-				expression: rightExpression2
-			| {binaryExpression}
-				expression: leftExpression
-				expression: rightExpression
+			| {ArrayAccessExprNode}
+				ExprNode: leftExpression
+				ExprNode: rightExpression
+			| {ConditionalExprNode}
+				ExprNode: leftExpression
+				ExprNode: rightExpression
+				ExprNode: rightExpression2
+			| {BinOpExprNode}
+				ExprNode: leftExpression
+				ExprNode: rightExpression
 				"int": operator
-			| {unaryExpression}
-				expression: expression
+			| {UnOpExprNode}
+				ExprNode: expression
 				"int": operator				
-			| {instanceofExpression}
-				expression: leftExpression
-				type: type
-			| {castExpression}
-				type: type
-				expression: rightExpression
-			| {superExpression}
-				expression: superClassName
-			| {thisExpression}
-				expression: thisClassName
-			| {methodInvocation}
+			| {InstanceofExprNode}
+				ExprNode: leftExpression
+				TypeNode: type
+			| {CastExprNode}
+				TypeNode: type
+				ExprNode: rightExpression
+			| {SuperExprNode}
+				ExprNode: superClassName
+			| {ThisExprNode}
+				ExprNode: thisClassName
+			| {MethodInvocationExprNode}
 				"int": invocationType
-				expression: prefix
+				ExprNode: prefix
 				String: funcName
-				expressionList: arguments
+				ExprListNode: arguments
 				"boolean": inline
-			| {arrayCreationExpression}
-				type: type
-				expressionList: definedDimensions
+			| {ArrayCreationExprNode}
+				TypeNode: type
+				ExprListNode: definedDimensions
 				"int": additionalDimensions
-				arrayInitializer: arrayInitializer
-			| {classInstanceCreationExpression}
-				type: type				
-				expressionList: arguments
-				classBody: classBody
-			| {literalExpression}
-				literal: literal
-			| {metaClassExpression}
-				type: type		
-			| {parenthesisExpression}
-				expression: expression
-			| {KeyOfExpression}
-				type: type
+				ArrayInitNode: arrayInitializer
+			| {NewExprNode}
+				TypeNode: type				
+				ExprListNode: arguments
+				MemberDeclListNode: classBody
+			| {LiteralExprNode}
+				LiteralNode: literal
+			| {MetaClassExprNode}
+				TypeNode: type		
+			| {ParenthesisExprNode}
+				ExprNode: expression
+			| {KeyOfExprNode}
+				TypeNode: type
 								
 //Types of method invocations
-accessType ::= one of SIMPLE,SUPER,NATIVE,NAMED_SUPER,EXPRESSION,POINTER
+AccessTypeSE ::= one of SIMPLE,SUPER,NATIVE,NAMED_SUPER,EXPRESSION,POINTER
 
 //Argument list
-expressionList ::= expression*
+ExprListNode ::= ExprNode*
 
-assignmentType ::= one of POINTER, FIELD, ARRAY
+AssignmentTypeSE ::= one of POINTER, FIELD, ARRAY
 
-unaryOperator ::= one of COMP,MINUS,NOT,PREPLUSPLUS,PREMINUSMINUS,POSTPLUSPLUS,POSTMINUSMINUS,DEREFERENCE,ADDRESSOF
+UnOpTypeSE ::= one of COMP,MINUS,NOT,PREPLUSPLUS,PREMINUSMINUS,POSTPLUSPLUS,POSTMINUSMINUS,DEREFERENCE,ADDRESSOF
 
-binaryOperator ::= one of OROR,ANDAND,OR,AND,XOR,EQEQ,NOTEQ,GT,LT,GTEQ,LTEQ,LSHIFT,RSHIFT,URSHIFT,PLUS,MINUS,MULT,DIV,MOD
+BinOpTypeSE ::= one of OROR,ANDAND,OR,AND,XOR,EQEQ,NOTEQ,GT,LT,GTEQ,LTEQ,LSHIFT,RSHIFT,URSHIFT,PLUS,MINUS,MULT,DIV,MOD
 				
 
-assignmentOperatorType ::= one of EQ,MULTEQ,DIVEQ,MODEQ,PLUSEQ,MINUSEQ,LSHIFTEQ,RSHIFTEQ,URSHIFTEQ,ANDEQ,XOREQ,OREQ
+AssignOpTypeSE ::= one of EQ,MULTEQ,DIVEQ,MODEQ,PLUSEQ,MINUSEQ,LSHIFTEQ,RSHIFTEQ,URSHIFTEQ,ANDEQ,XOREQ,OREQ

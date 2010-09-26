@@ -16,15 +16,15 @@ import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
-import com.sc2mod.andromeda.syntaxNodes.BlockStatement;
-import com.sc2mod.andromeda.syntaxNodes.ClassMemberType;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.MethodHeader;
-import com.sc2mod.andromeda.syntaxNodes.StatementList;
+import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.MemberTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodHeaderNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
 
 public class Deallocator extends Destructor{
 
-	private Deallocator(MethodDeclaration functionDeclaration, Class clazz,
+	private Deallocator(MethodDeclNode functionDeclaration, Class clazz,
 			Scope scope) {
 		super(functionDeclaration, clazz, scope);
 		this.setReturnType(SpecialType.VOID);
@@ -33,8 +33,8 @@ public class Deallocator extends Destructor{
 	}
 	
 	public static Deallocator createDeallocator(TypeProvider tp,Class clazz){
-		MethodHeader mh = new MethodHeader(null,null, null, clazz.getName(), null, null);
-		MethodDeclaration md = new MethodDeclaration(ClassMemberType.DESTRUCTOR_DECLARATION, mh, new BlockStatement(new StatementList()));
+		MethodHeaderNode mh = new MethodHeaderNode(null,null, null, clazz.getName(), null, null);
+		MethodDeclNode md = new MethodDeclNode(MemberTypeSE.DESTRUCTOR_DECLARATION, mh, new BlockStmtNode(new StmtListNode()));
 		Deallocator da = new Deallocator(md, clazz, clazz.getScope());
 		da.resolveTypes(tp, null);
 		return da;

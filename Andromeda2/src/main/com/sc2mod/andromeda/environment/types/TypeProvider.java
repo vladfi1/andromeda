@@ -23,16 +23,16 @@ import com.sc2mod.andromeda.environment.StaticInit;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
-import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.StructDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.TypeAlias;
-import com.sc2mod.andromeda.syntaxNodes.TypeCategory;
-import com.sc2mod.andromeda.syntaxNodes.TypeExtension;
-import com.sc2mod.andromeda.syntaxNodes.TypeList;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeAliasDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeCategorySE;
+import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeListNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
 public class TypeProvider {
@@ -99,11 +99,11 @@ public class TypeProvider {
 		registerSimpleType(r);
 	}
 	
-	public void registerStruct(StructDeclaration d, Scope scope) {
+	public void registerStruct(StructDeclNode d, Scope scope) {
 		registerRecordType(new Struct(d,scope));
 	}
 
-	public void registerClass(ClassDeclaration d, Scope scope) {
+	public void registerClass(ClassDeclNode d, Scope scope) {
 		Class c;		
 		if(d.getTypeParams()!=null){
 			c = new GenericClass(d,scope);
@@ -114,7 +114,7 @@ public class TypeProvider {
 		classes.add(c);
 	}
 
-	public void registerInterface(InterfaceDeclaration d, Scope scope) {
+	public void registerInterface(InterfaceDeclNode d, Scope scope) {
 		registerRecordType(new Interface(d,scope));
 	}
 	
@@ -123,15 +123,15 @@ public class TypeProvider {
 		
 	}
 
-	public Type resolveType(com.sc2mod.andromeda.syntaxNodes.Type type){
+	public Type resolveType(com.sc2mod.andromeda.syntaxNodes.TypeNode type){
 		String name = null;
 		int cat = type.getCategory();
 		Type result = null;
-		TypeList args = null;
+		TypeListNode args = null;
 		switch(cat){
-			case TypeCategory.SIMPLE:
+			case TypeCategorySE.SIMPLE:
 				args = type.getTypeArguments();
-			case TypeCategory.BASIC:
+			case TypeCategorySE.BASIC:
 				name = type.getName();
 				result = types.get(name);
 				if(result == null){
@@ -158,15 +158,15 @@ public class TypeProvider {
 										.raiseUnrecoverable();
 				}
 				break;
-			case TypeCategory.QUALIFIED:
+			case TypeCategorySE.QUALIFIED:
 				throw new Error("Qualified type names not possible yet!");
-			case TypeCategory.POINTER:
+			case TypeCategorySE.POINTER:
 				result = getPointerType(resolveType(type.getWrappedType()));
 				break;
-			case TypeCategory.ARRAY:
+			case TypeCategorySE.ARRAY:
 				result = getArrayType(resolveType(type.getWrappedType()),type.getDimensions());
 				break;
-			case TypeCategory.FUNCTION:
+			case TypeCategorySE.FUNCTION:
 				result = getFunctionPointerType(type);
 		}
 
@@ -195,8 +195,8 @@ public class TypeProvider {
 	}
 	
 	private Type getFunctionPointerType(
-			com.sc2mod.andromeda.syntaxNodes.Type type) {
-		TypeList tl = type.getTypeArguments();
+			com.sc2mod.andromeda.syntaxNodes.TypeNode type) {
+		TypeListNode tl = type.getTypeArguments();
 		int size = tl.size();
 		Type[] types = new Type[size];
 		for(int i=0; i<size ; i++){
@@ -213,7 +213,7 @@ public class TypeProvider {
 		
 	}
 
-	private Type getSingleArrayType(Type wrappedType,Expression dimension){
+	private Type getSingleArrayType(Type wrappedType,ExprNode dimension){
 		Type ty = dimension.getInferedType();
 		if(ty == null)
 			throw Problem.ofType(ProblemId.UNKNOWN_ARRAY_DIMENSION_TYPE).at(dimension)
@@ -245,7 +245,7 @@ public class TypeProvider {
 		}
 		return type;
 	}
-	private Type getArrayType(Type wrappedType, ExpressionList dimensions) {
+	private Type getArrayType(Type wrappedType, ExprListNode dimensions) {
 		int size= dimensions.size();
 		for(int i=0;i<size;i++){
 			wrappedType = getSingleArrayType(wrappedType, dimensions.elementAt(i));
@@ -324,8 +324,8 @@ public class TypeProvider {
 	}
 
 	private ArrayList<Enrichment> enrichmentsToResolve = new ArrayList<Enrichment>();
-	private ArrayList<TypeAlias> typeAliases = new ArrayList<TypeAlias>();
-	public void addEnrichment(EnrichDeclaration enrichDeclaration, Scope scope) {
+	private ArrayList<TypeAliasDeclNode> typeAliases = new ArrayList<TypeAliasDeclNode>();
+	public void addEnrichment(EnrichDeclNode enrichDeclaration, Scope scope) {
 		Enrichment er = new Enrichment(enrichDeclaration, scope);
 		recordTypes.add(er);
 		enrichmentsToResolve.add(er);
@@ -412,7 +412,7 @@ public class TypeProvider {
 		}
 	}
 
-	public void registerTypeAlias(TypeAlias typeAlias) {
+	public void registerTypeAlias(TypeAliasDeclNode typeAlias) {
 		typeAliases.add(typeAlias);
 		Type t = resolveType(typeAlias.getEnrichedType());
 		Type old = types.put(typeAlias.getName(), t);
@@ -423,7 +423,7 @@ public class TypeProvider {
 		}
 	}
 
-	public void registerTypeExtension(TypeExtension typeExtension) {
+	public void registerTypeExtension(TypeExtensionDeclNode typeExtension) {
 		Type t = resolveType(typeExtension.getEnrichedType());
 		Extension e = new Extension(typeExtension,t);
 		Type old = types.put(e.getName(), e);

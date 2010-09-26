@@ -11,22 +11,22 @@ package com.sc2mod.andromeda.codetransform;
 
 import com.sc2mod.andromeda.parsing.VisitorErrorAdapater;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.syntaxNodes.ArrayAccess;
-import com.sc2mod.andromeda.syntaxNodes.Assignment;
-import com.sc2mod.andromeda.syntaxNodes.AssignmentOperatorType;
-import com.sc2mod.andromeda.syntaxNodes.BinaryExpression;
-import com.sc2mod.andromeda.syntaxNodes.CastExpression;
-import com.sc2mod.andromeda.syntaxNodes.ClassInstanceCreationExpression;
-import com.sc2mod.andromeda.syntaxNodes.ExplicitConstructorInvocationStatement;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.KeyOfExpression;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
-import com.sc2mod.andromeda.syntaxNodes.MethodInvocation;
-import com.sc2mod.andromeda.syntaxNodes.ParenthesisExpression;
+import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
+import com.sc2mod.andromeda.syntaxNodes.AssignOpTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
+import com.sc2mod.andromeda.syntaxNodes.CastExprNode;
+import com.sc2mod.andromeda.syntaxNodes.NewExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExplicitConsCallStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.KeyOfExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.ThisExpression;
-import com.sc2mod.andromeda.syntaxNodes.UnaryExpression;
+import com.sc2mod.andromeda.syntaxNodes.ThisExprNode;
+import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
 
 public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 
@@ -75,14 +75,14 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 	}
 	
 	@Override
-	public void visit(LiteralExpression literalExpression) {}
+	public void visit(LiteralExprNode literalExpression) {}
 	@Override
-	public void visit(ThisExpression thisExpression) {}
+	public void visit(ThisExprNode thisExpression) {}
 	@Override
-	public void visit(KeyOfExpression keyOfExpression) {}
+	public void visit(KeyOfExprNode keyOfExpression) {}
 
 	@Override
-	public void visit(FieldAccess fieldAccess) {
+	public void visit(FieldAccessExprNode fieldAccess) {
 		
 		//Do left expression
 		invokeSelf(fieldAccess.getLeftExpression());
@@ -93,7 +93,7 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 	}
 	
 	@Override
-	public void visit(ArrayAccess arrayAccess) {
+	public void visit(ArrayAccessExprNode arrayAccess) {
 		//Do left expression
 		invokeSelf(arrayAccess.getLeftExpression());
 		if (parent.replaceExpression != null) {
@@ -110,7 +110,7 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 	}
 	
 	@Override
-	public void visit(MethodInvocation methodInvocation) {
+	public void visit(MethodInvocationExprNode methodInvocation) {
 		//Prefix
 		invokeSelf(methodInvocation.getPrefix());
 		if (parent.replaceExpression != null) {
@@ -123,7 +123,7 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 	}
 	
 	@Override
-	public void visit(CastExpression castExpression) {
+	public void visit(CastExprNode castExpression) {
 		//Expression
 		invokeSelf(castExpression.getRightExpression());
 		if(parent.replaceExpression != null){
@@ -133,7 +133,7 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 	}
 	
 	@Override
-	public void visit(ExpressionList e) {
+	public void visit(ExprListNode e) {
 		int size = e.size();
 		for(int i=0;i<size;i++){
 			invokeSelf(e.elementAt(i));
@@ -146,7 +146,7 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 	
 	
 	@Override
-	public void visit(BinaryExpression a) {
+	public void visit(BinOpExprNode a) {
 		
 		invokeSelf(a.getLeftExpression());
 		if(parent.replaceExpression!=null){
@@ -161,7 +161,7 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 	}
 	
 	@Override
-	public void visit(ParenthesisExpression a) {
+	public void visit(ParenthesisExprNode a) {
 		
 		invokeSelf(a.getExpression());
 		if(parent.replaceExpression!=null){
@@ -172,7 +172,7 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 	
 	
 	@Override
-	public void visit(UnaryExpression unaryExpression) {
+	public void visit(UnOpExprNode unaryExpression) {
 		
 		invokeSelf(unaryExpression.getExpression());
 		if(parent.replaceExpression!=null){
@@ -183,14 +183,14 @@ public class ExpressionTransformationVisitor extends VisitorErrorAdapater {
 	}
 	
 	@Override
-	public void visit(ClassInstanceCreationExpression c) {
+	public void visit(NewExprNode c) {
 		//Visit arguments
 		invokeSelf(c.getArguments());
 	}
 	
 	@Override
-	public void visit(Assignment a) {
-		invokeSelfLValue(a.getLeftExpression(),a.getOperator()!=AssignmentOperatorType.EQ);
+	public void visit(AssignmentExprNode a) {
+		invokeSelfLValue(a.getLeftExpression(),a.getOperator()!=AssignOpTypeSE.EQ);
 		if(parent.replaceExpression!=null){
 			a.setLeftExpression(parent.replaceExpression);
 			parent.replaceExpression = null;

@@ -21,12 +21,12 @@ import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.syntaxNodes.ArrayAccess;
-import com.sc2mod.andromeda.syntaxNodes.ClassInstanceCreationExpression;
-import com.sc2mod.andromeda.syntaxNodes.DeleteStatement;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExpression;
-import com.sc2mod.andromeda.syntaxNodes.MethodInvocation;
+import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.NewExprNode;
+import com.sc2mod.andromeda.syntaxNodes.DeleteStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.FuncNameObject;
 
@@ -37,7 +37,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 	}
 	
 	@Override
-	public void visit(LiteralExpression literalExpression) {
+	public void visit(LiteralExprNode literalExpression) {
 		DataObject o = literalExpression.getLiteral().getValue();
 		if(o instanceof FuncNameObject) {
 			//We have an inlined function name. This function name could be called!
@@ -80,7 +80,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 	}
 	
 	@Override
-	public void visit(MethodInvocation methodInvocation) {
+	public void visit(MethodInvocationExprNode methodInvocation) {
 		//Do children
 		super.visit(methodInvocation);
 		
@@ -92,7 +92,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 	}
 		
 	@Override
-	public void visit(FieldAccess fieldAccess) {
+	public void visit(FieldAccessExprNode fieldAccess) {
 		VarDecl vd = (VarDecl) fieldAccess.getSemantics();
 		
 		//System.out.println(fieldAccess.getName());
@@ -110,7 +110,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 	}
 
 	@Override
-	public void visit(ArrayAccess arrayAccess) {
+	public void visit(ArrayAccessExprNode arrayAccess) {
 		VarDecl vd = (VarDecl) arrayAccess.getSemantics();
 		
 		//System.out.println(((FieldAccess)arrayAccess.getLeftExpression()).getName());
@@ -128,7 +128,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 	}
 	
 	@Override
-	public void visit(ClassInstanceCreationExpression c) {
+	public void visit(NewExprNode c) {
 		//Children
 		super.visit(c);
 		
@@ -142,7 +142,7 @@ public class CallHierarchyExpressionVisitor extends ExpressionTransformationVisi
 	}
 	
 	@Override
-	public void visit(DeleteStatement deleteStatement) {
+	public void visit(DeleteStmtNode deleteStatement) {
 		//Children
 		super.visit(deleteStatement);
 		

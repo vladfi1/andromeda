@@ -29,10 +29,10 @@ import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.CompilationFileManager;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.TypeList;
-import com.sc2mod.andromeda.syntaxNodes.TypeParamList;
+import com.sc2mod.andromeda.syntaxNodes.TypeListNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeParamListNode;
 
 public class Class extends RecordType implements IIdentifiable {
 	
@@ -40,7 +40,7 @@ public class Class extends RecordType implements IIdentifiable {
 
 	//XPilot: GenericClass should have access to (some of) these?
 	protected ClassNameProvider nameProvider;
-	protected ClassDeclaration declaration;
+	protected ClassDeclNode declaration;
 	protected Class superClass;
 	protected Class topClass;
 	protected HashMap<String,Interface> interfaces;
@@ -132,7 +132,7 @@ public class Class extends RecordType implements IIdentifiable {
 		this.hierarchyFields = hierarchyFields;
 	}
 
-	public Class(ClassDeclaration declaration, Scope scope) {
+	public Class(ClassDeclNode declaration, Scope scope) {
 		super(declaration, scope);
 		this.nameProvider = new IndexClassNameProvider(this);
 		interfaces = new HashMap<String,Interface>();
@@ -140,7 +140,7 @@ public class Class extends RecordType implements IIdentifiable {
 		this.declaration = declaration;
 		
 		//XPilot: moved from GenericClass
-		TypeParamList tl = declaration.getTypeParams();
+		TypeParamListNode tl = declaration.getTypeParams();
 		int size = tl == null ? 0 : tl.size();
 		typeParams = new TypeParameter[size];
 		for(int i=0;i<size;i++){
@@ -172,7 +172,7 @@ public class Class extends RecordType implements IIdentifiable {
 	}
 
 	protected void resolveImplements(TypeProvider t) {
-		TypeList tl = declaration.getInterfaces();
+		TypeListNode tl = declaration.getInterfaces();
 		int size = tl.size();
 		for(int i=0;i<size;i++){
 			Type in = t.resolveType(tl.elementAt(i));
@@ -195,7 +195,7 @@ public class Class extends RecordType implements IIdentifiable {
 	public boolean resolveInheritance(TypeProvider t) {
 		if(!super.resolveInheritance(t))return false;
 
-		TypeList in = declaration.getInterfaces();
+		TypeListNode in = declaration.getInterfaces();
 		if(in!=null&&!in.isEmpty())resolveImplements(t);
 		if(declaration.getSuperClass() != null)resolveExtends(t);
 		return true;

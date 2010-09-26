@@ -11,18 +11,18 @@ package com.sc2mod.andromeda.environment.variables;
 
 import com.sc2mod.andromeda.environment.IGlobal;
 import com.sc2mod.andromeda.environment.Scope;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class GlobalVarDecl extends NonParamDecl implements IGlobal{
 
-	private FieldDeclaration declaration;
+	private FieldDeclNode declaration;
 	private Scope scope;
 	private int visibility;
 	private int index;
 	static int curIndex;
 	
-	public GlobalVarDecl(FieldDeclaration globalVarDeclaration, int index, Scope scope) {
+	public GlobalVarDecl(FieldDeclNode globalVarDeclaration, int index, Scope scope) {
 		super(globalVarDeclaration.getFieldModifiers(),globalVarDeclaration.getType(),globalVarDeclaration.getDeclaredVariables().elementAt(index));
 		this.declaration = globalVarDeclaration;
 		this.scope = scope;

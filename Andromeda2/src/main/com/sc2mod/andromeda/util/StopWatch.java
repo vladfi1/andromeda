@@ -5,6 +5,10 @@ public class StopWatch {
 	private long lastTime;
 	private boolean started = false;
 	
+	public StopWatch(){
+		start();
+	}
+	
 	/**
 	 * Starts the stop watch.
 	 */

@@ -25,13 +25,13 @@ public class EclipseTestRunner {
 	private static String[] addTestConfig(String[] args){
 		for(String s: args){
 			//a run config was specified, so do nothing
-			if(s.startsWith("-r")) return args;
+			if(s.startsWith("-c")) return args;
 		}
 		
 		//no run config. Add one
 		String[] args2 = new String[args.length+1];
 		System.arraycopy(args, 0, args2, 1, args.length);
-		args2[0]="-rtest/andromeda.conf";
+		args2[0]="-ctest/andromeda.conf";
 		return args2;
 	}
 	

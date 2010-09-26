@@ -10,9 +10,9 @@
 package com.sc2mod.andromeda.environment.variables;
 
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.syntaxNodes.ClassMemberDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarator;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclaratorId;
+import com.sc2mod.andromeda.syntaxNodes.MemberDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNameNode;
 
 public abstract class FieldOrAccessorDecl extends NonParamDecl {
 
@@ -20,12 +20,12 @@ public abstract class FieldOrAccessorDecl extends NonParamDecl {
 	private boolean isStatic;
 	private RecordType containingType;
 	
-	public FieldOrAccessorDecl(ClassMemberDeclaration f, RecordType containingType, VariableDeclarator varDecl) {
+	public FieldOrAccessorDecl(MemberDeclNode f, RecordType containingType, VarDeclNode varDecl) {
 		super(f.getFieldModifiers(),f.getType(),varDecl);
 		this.containingType = containingType;
 	}
 	
-	public FieldOrAccessorDecl(ClassMemberDeclaration f, RecordType containingType, VariableDeclaratorId varDeclId) {
+	public FieldOrAccessorDecl(MemberDeclNode f, RecordType containingType, VarDeclNameNode varDeclId) {
 		super(f.getFieldModifiers(),f.getType(),varDeclId);
 		this.containingType = containingType;
 	}

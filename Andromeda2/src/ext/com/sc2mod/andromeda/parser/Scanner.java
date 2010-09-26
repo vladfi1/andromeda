@@ -21,7 +21,7 @@ package com.sc2mod.andromeda.parser;
  ***************************************************/
 public interface Scanner {
     /** Return the next token, or <code>null</code> on end-of-file. */
-    public Symbol next_token() throws java.lang.Exception;
+    public Symbol nextToken() throws java.lang.Exception;
     
    public SymbolFactory getSymbolFactory();
 }

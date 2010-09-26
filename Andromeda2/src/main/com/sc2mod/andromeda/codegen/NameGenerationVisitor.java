@@ -26,23 +26,23 @@ import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
-import com.sc2mod.andromeda.syntaxNodes.ClassBody;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.FileContent;
-import com.sc2mod.andromeda.syntaxNodes.FunctionDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.GlobalInitDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.GlobalStructure;
-import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.IncludedFile;
-import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.StructDeclaration;
-import com.sc2mod.andromeda.syntaxNodes.VariableDeclarators;
+import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.MemberDeclListNode;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureListNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStaticInitDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
+import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.VisitorAdaptor;
 
 public class NameGenerationVisitor extends VisitorAdaptor{
@@ -92,7 +92,7 @@ public class NameGenerationVisitor extends VisitorAdaptor{
 	
 	
 	@Override
-	public void visit(SourceFile andromedaFile) {
+	public void visit(SourceFileNode andromedaFile) {
 		SourceFileInfo afi = andromedaFile.getFileInfo();
 		//No names are generated for native libs
 		InclusionType inclType = afi.getInclusionType();
@@ -105,16 +105,16 @@ public class NameGenerationVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(FileContent fileContent) {
+	public void visit(GlobalStructureListNode fileContent) {
 		fileContent.childrenAccept(this);
 	}
 
 	@Override
-	public void visit(IncludedFile includedFile) {
+	public void visit(IncludeNode includedFile) {
 		includedFile.childrenAccept(this);
 	}
 	
-	private void visitTypedef(GlobalStructure g){
+	private void visitTypedef(GlobalStructureNode g){
 		RecordType r = (RecordType)g.getSemantics();
 		r.setGeneratedName(nameProvider.getTypeName(r));
 		Type typeBefore = curType;
@@ -124,14 +124,14 @@ public class NameGenerationVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(StructDeclaration structDeclaration) {
+	public void visit(StructDeclNode structDeclaration) {
 		RecordType r = (RecordType)structDeclaration.getSemantics();
 		r.setGeneratedName(nameProvider.getTypeName(r));
 		nameProvider.assignFieldNames((Struct)structDeclaration.getSemantics());
 	}
 	
 	@Override
-	public void visit(ClassDeclaration classDeclaration) {
+	public void visit(ClassDeclNode classDeclaration) {
 		Class c = (Class)classDeclaration.getSemantics();
 		
 		//If this is a top class we need a name for its alloc method
@@ -147,12 +147,12 @@ public class NameGenerationVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(ClassBody classBody) {
+	public void visit(MemberDeclListNode classBody) {
 		classBody.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(EnrichDeclaration enrichDeclaration) {
+	public void visit(EnrichDeclNode enrichDeclaration) {
 		Type typeBefore = curType;
 		curType = ((Enrichment)enrichDeclaration.getSemantics()).getEnrichedType();
 		enrichDeclaration.childrenAccept(this);
@@ -160,18 +160,18 @@ public class NameGenerationVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(InterfaceDeclaration interfaceDeclaration) {
+	public void visit(InterfaceDeclNode interfaceDeclaration) {
 		visitTypedef(interfaceDeclaration);
 	}
 	
 	@Override
-	public void visit(FunctionDeclaration functionDeclaration) {
+	public void visit(GlobalFuncDeclNode functionDeclaration) {
 		functionDeclaration.getFuncDecl().accept(this);
 	}
 	
 
 	@Override
-	public void visit(MethodDeclaration methodDeclaration) {
+	public void visit(MethodDeclNode methodDeclaration) {
 		Function m = (Function)methodDeclaration.getSemantics();
 		if(inLib&&m.getInvocationCount()==0) return;
 		nameProvider.assignLocalNamesForMethod(m);
@@ -179,25 +179,25 @@ public class NameGenerationVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(GlobalInitDeclaration globalInitDeclaration) {
+	public void visit(GlobalStaticInitDeclNode globalInitDeclaration) {
 		globalInitDeclaration.getInitDecl().accept(this);
 	}
 	
 	@Override
-	public void visit(StaticInitDeclaration staticInitDeclaration) {
+	public void visit(StaticInitDeclNode staticInitDeclaration) {
 		StaticInit m = (StaticInit)staticInitDeclaration.getSemantics();
 		nameProvider.assignLocalNamesForMethod(m);
 		m.setGeneratedName(nameProvider.getFunctionName(m));
 	}
 	
 	@Override
-	public void visit(AccessorDeclaration accessorDeclaration) {
+	public void visit(AccessorDeclNode accessorDeclaration) {
 		accessorDeclaration.childrenAccept(this);
 	}
 	
 	@Override
-	public void visit(FieldDeclaration fieldDeclaration) {
-		VariableDeclarators v = fieldDeclaration.getDeclaredVariables();
+	public void visit(FieldDeclNode fieldDeclaration) {
+		VarDeclListNode v = fieldDeclaration.getDeclaredVariables();
 		int size = v.size();
 		for(int i=0;i<size;i++){
 			FieldDecl decl = (FieldDecl) v.elementAt(i).getName().getSemantics();
@@ -210,8 +210,8 @@ public class NameGenerationVisitor extends VisitorAdaptor{
 	}
 	
 	@Override
-	public void visit(GlobalVarDeclaration globalVarDeclaration) {
-		VariableDeclarators v = globalVarDeclaration.getFieldDecl().getDeclaredVariables();
+	public void visit(GlobalVarDeclNode globalVarDeclaration) {
+		VarDeclListNode v = globalVarDeclaration.getFieldDecl().getDeclaredVariables();
 		int size = v.size();
 		for(int i=0;i<size;i++){
 			VarDecl decl = (VarDecl) v.elementAt(i).getName().getSemantics();

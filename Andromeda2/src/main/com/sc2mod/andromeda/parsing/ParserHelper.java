@@ -12,39 +12,39 @@ package com.sc2mod.andromeda.parsing;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.AccessType;
-import com.sc2mod.andromeda.syntaxNodes.ArrayAccess;
-import com.sc2mod.andromeda.syntaxNodes.ArrayType;
-import com.sc2mod.andromeda.syntaxNodes.Expression;
-import com.sc2mod.andromeda.syntaxNodes.ExpressionList;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccess;
-import com.sc2mod.andromeda.syntaxNodes.QualifiedType;
-import com.sc2mod.andromeda.syntaxNodes.SimpleType;
-import com.sc2mod.andromeda.syntaxNodes.Type;
-import com.sc2mod.andromeda.syntaxNodes.TypeCategory;
-import com.sc2mod.andromeda.syntaxNodes.TypeList;
+import com.sc2mod.andromeda.syntaxNodes.AccessTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.QualifiedTypeNode;
+import com.sc2mod.andromeda.syntaxNodes.SimpleTypeNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeCategorySE;
+import com.sc2mod.andromeda.syntaxNodes.TypeListNode;
 
 public class ParserHelper {
 
-	public static ArrayAccess arrayTypeToAccess(ArrayType a) {
+	public static ArrayAccessExprNode arrayTypeToAccess(ArrayTypeNode a) {
 		
-		ExpressionList dimensions = a.getDimensions();
+		ExprListNode dimensions = a.getDimensions();
 		int size = dimensions.size();
-		Type wrappedType = a.getWrappedType();
+		TypeNode wrappedType = a.getWrappedType();
 //		if(wrappedType.getCategory()!=TypeCategory.SIMPLE)
 //			throw new CompilationError(a, "Invalid array access.");
-		Expression e = null;
+		ExprNode e = null;
 		switch(wrappedType.getCategory()){
-		case TypeCategory.SIMPLE:
-			e = new FieldAccess(null,AccessType.SIMPLE,wrappedType.getName());
+		case TypeCategorySE.SIMPLE:
+			e = new FieldAccessExprNode(null,AccessTypeSE.SIMPLE,wrappedType.getName());
 			break;
-		case TypeCategory.ARRAY:
+		case TypeCategorySE.ARRAY:
 			throw new InternalProgramError("Array in array?");
 			//break;
-		case TypeCategory.QUALIFIED:
+		case TypeCategorySE.QUALIFIED:
 			e = wrappedType.getQualifiedName();
 			break;
-		case TypeCategory.BASIC:
+		case TypeCategorySE.BASIC:
 			throw new InternalProgramError("Basic type as an expression?");
 			//break;
 		default:
@@ -52,23 +52,23 @@ public class ParserHelper {
 		}
 		e.setPos(wrappedType.getLeftPos(), wrappedType.getRightPos());
 		for(int i=0;i<size;i++){
-			Expression dim = dimensions.elementAt(i);
+			ExprNode dim = dimensions.elementAt(i);
 			int right = dim.getRightPos();
 			int left = e.getLeftPos();
-			e = new ArrayAccess(e, dim);
+			e = new ArrayAccessExprNode(e, dim);
 			e.setPos(left, right);
 		}
-		return (ArrayAccess) e;
+		return (ArrayAccessExprNode) e;
 	}
 	
 	
-	public static Type getExpressionType(Expression e, TypeList typeArguments){
-		Type t;
-		if(e instanceof FieldAccess){
+	public static TypeNode getExpressionType(ExprNode e, TypeListNode typeArguments){
+		TypeNode t;
+		if(e instanceof FieldAccessExprNode){
 			if(e.getLeftExpression()==null){
-				t = new SimpleType(TypeCategory.SIMPLE, e.getName(),typeArguments);
+				t = new SimpleTypeNode(TypeCategorySE.SIMPLE, e.getName(),typeArguments);
 			} else {
-				t = new QualifiedType(TypeCategory.QUALIFIED, (FieldAccess) e,typeArguments);
+				t = new QualifiedTypeNode(TypeCategorySE.QUALIFIED, (FieldAccessExprNode) e,typeArguments);
 			}
 		} else {
 			throw new InternalProgramError("non type expession. please bug report immediately!");
@@ -78,8 +78,8 @@ public class ParserHelper {
 	}
 
 
-	public static Expression createInlineMethodInvocation(Expression p,
-			ExpressionList a) {
+	public static ExprNode createInlineMethodInvocation(ExprNode p,
+			ExprListNode a) {
 		throw new InternalProgramError("Inline method calls not implemented yet!");
 	}
 

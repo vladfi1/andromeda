@@ -17,7 +17,7 @@ import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Invocation;
 import com.sc2mod.andromeda.environment.Method;
 import com.sc2mod.andromeda.environment.types.Class;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 
 /**
  * Resolves virtual calls.
@@ -60,7 +60,7 @@ public class VirtualCallResolver {
 			for(Method m : more) {
 				if(m.getInvocationCount() == 0) {
 					m.addInvocation();
-					chv.visit((MethodDeclaration)m.getDefinition());
+					chv.visit((MethodDeclNode)m.getDefinition());
 				}
 			}
 		}

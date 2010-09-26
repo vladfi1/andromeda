@@ -9,11 +9,11 @@
  */
 package com.sc2mod.andromeda.semAnalysis;
 
-import com.sc2mod.andromeda.syntaxNodes.Statement;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 
 public class SuccessorList {
 
-	public static void addAdditionalSuccessor(Statement s, Statement toAdd){
+	public static void addAdditionalSuccessor(StmtNode s, StmtNode toAdd){
 		SuccessorList sl = s.getSuccessors();
 		if(sl == null){
 			s.setSuccessors(sl = new SuccessorList());
@@ -21,7 +21,7 @@ public class SuccessorList {
 		sl.add(toAdd);
 	}
 
-	void add(Statement s) {
+	void add(StmtNode s) {
 		
 	}
 	

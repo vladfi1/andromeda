@@ -18,7 +18,7 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 
 public class Destructor extends Method {
 
@@ -33,7 +33,7 @@ public class Destructor extends Method {
 		this.invokedConstructor = invokedConstructor;
 	}
 
-	public Destructor(MethodDeclaration functionDeclaration, Class clazz, Scope scope) {
+	public Destructor(MethodDeclNode functionDeclaration, Class clazz, Scope scope) {
 		super(functionDeclaration,clazz, scope);
 	}
 	

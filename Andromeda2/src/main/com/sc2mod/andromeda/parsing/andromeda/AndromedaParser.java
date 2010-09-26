@@ -24,9 +24,9 @@ import com.sc2mod.andromeda.parsing.CompilationFileManager;
 import com.sc2mod.andromeda.parsing.IParser;
 import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.SymbolStack;
-import com.sc2mod.andromeda.syntaxNodes.FileContent;
-import com.sc2mod.andromeda.syntaxNodes.IncludedFile;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureListNode;
+import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 
 public class AndromedaParser extends AndromedaGenParser implements IParser {
 
@@ -40,7 +40,7 @@ public class AndromedaParser extends AndromedaGenParser implements IParser {
 		sourceEnvironment = env;
 	}
 
-	private SourceFile parse(Source f, InclusionType inclusionType)  {
+	private SourceFileNode parse(Source f, InclusionType inclusionType)  {
 		SourceReader a = sourceEnvironment.getReader(f, inclusionType);
 		if (a == null)
 			return null;
@@ -53,19 +53,19 @@ public class AndromedaParser extends AndromedaGenParser implements IParser {
 		} catch (Exception e) {
 			throw new InternalProgramError(e);
 		}
-		FileContent topContent = new FileContent();
-		SourceFile top = new SourceFile(null, null, topContent);
+		GlobalStructureListNode topContent = new GlobalStructureListNode();
+		SourceFileNode top = new SourceFileNode(null, null, topContent);
 		top.setFileInfo(new SourceFileInfo(0, InclusionType.MAIN,
 				null));
-		SourceFile fi = ((SourceFile) sym.value);
+		SourceFileNode fi = ((SourceFileNode) sym.value);
 		fi
 				.setFileInfo(new SourceFileInfo(a.getFileId(),
 						inclusionType, null));
-		topContent.append(new IncludedFile(fi));
+		topContent.append(new IncludeNode(fi));
 		return top;
 	}
 
-	public SourceFile parse(Source f, SourceFile fold, InclusionType inclusionType) {
+	public SourceFileNode parse(Source f, SourceFileNode fold, InclusionType inclusionType) {
 		if (fold == null)
 			return parse(f, inclusionType);
 		SourceReader a = sourceEnvironment.getReader(f, inclusionType);
@@ -80,11 +80,11 @@ public class AndromedaParser extends AndromedaGenParser implements IParser {
 		} catch (Exception e) {
 			throw new InternalProgramError(e);
 		}
-		SourceFile fi = ((SourceFile) sym.value);
+		SourceFileNode fi = ((SourceFileNode) sym.value);
 		fi
 				.setFileInfo(new SourceFileInfo(a.getFileId(),
 						inclusionType, null));
-		fold.getContent().append(new IncludedFile(fi));
+		fold.getContent().append(new IncludeNode(fi));
 		return fold;
 	}
 

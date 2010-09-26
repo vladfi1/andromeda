@@ -10,6 +10,7 @@
 package com.sc2mod.andromeda.syntaxNodes;
 
 import com.sc2mod.andromeda.environment.SemanticsElement;
+import com.sc2mod.andromeda.syntaxNodes.util.VisitorNode;
 
 public abstract class SyntaxNode implements VisitorNode {
 	private int left;

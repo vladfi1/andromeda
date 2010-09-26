@@ -16,7 +16,7 @@ import com.sc2mod.andromeda.parsing.TriggerExtractor;
 import com.sc2mod.andromeda.parsing.Workflow;
 import com.sc2mod.andromeda.program.FileCollector;
 import com.sc2mod.andromeda.program.Program;
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.util.StopWatch;
 
 public class ParsePhase extends Phase {
@@ -36,7 +36,7 @@ public class ParsePhase extends Phase {
 
 		this.parser = language.createParser(env);
 		this.input = env.getParserInput();
-		SourceFile result = null;
+		SourceFileNode result = null;
 		result = parseFilesOfType(result,InclusionType.NATIVE,"native library");
 		result = parseFilesOfType(result,InclusionType.LANGUAGE,"andromeda system library");
 		result = parseFilesOfType(result,InclusionType.MAIN,null);
@@ -44,7 +44,7 @@ public class ParsePhase extends Phase {
 		env.setSyntaxTree(result);
 	}
 	
-	private SourceFile parseFile(InclusionType iType, Source file, SourceFile parsed, String typeName){
+	private SourceFileNode parseFile(InclusionType iType, Source file, SourceFileNode parsed, String typeName){
 		System.out.print("Parsing " + typeName + " ["+ file.getName() +"]...");
 		if(typeName == null) typeName = file.getTypeName();
 		StopWatch timer = new StopWatch();
@@ -54,7 +54,7 @@ public class ParsePhase extends Phase {
 		return parsed;
 	}
 	
-	private SourceFile parseFilesOfType(SourceFile parsed, InclusionType iType, String typeName){
+	private SourceFileNode parseFilesOfType(SourceFileNode parsed, InclusionType iType, String typeName){
 		List<Source> srcs = input.get(iType);
 		if(srcs == null) return parsed;
 		for(Source s : srcs){

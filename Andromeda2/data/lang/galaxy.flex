@@ -15,7 +15,8 @@ import com.sc2mod.andromeda.parsing.Symbol;
 
 %public
 %class GalaxyScanner
-%implements sym
+%implements sym, Scanner
+%function nextToken
 
 %unicode
 

@@ -12,12 +12,12 @@ package com.sc2mod.andromeda.environment.variables;
 import java.util.ArrayList;
 
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclaration;
+import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class FieldDecl extends FieldOrAccessorDecl {
 
-	private FieldDeclaration fieldDeclaration;
+	private FieldDeclNode fieldDeclaration;
 	private final int index;
 	private int fieldIndex;
 	private FieldDecl usesField;
@@ -46,7 +46,7 @@ public class FieldDecl extends FieldOrAccessorDecl {
 		return super.getGeneratedName();
 	}
 
-	public FieldDecl(FieldDeclaration f, RecordType containingType, int index) {
+	public FieldDecl(FieldDeclNode f, RecordType containingType, int index) {
 		super(f,containingType,f.getDeclaredVariables().elementAt(index));
 		this.fieldDeclaration = f;
 		this.index = GlobalVarDecl.curIndex++;		
@@ -57,7 +57,7 @@ public class FieldDecl extends FieldOrAccessorDecl {
 	public SyntaxNode getDefinition() {
 		return fieldDeclaration;
 	}
-	public FieldDeclaration getFieldDeclaration(){
+	public FieldDeclNode getFieldDeclaration(){
 		return fieldDeclaration;
 	}
 	

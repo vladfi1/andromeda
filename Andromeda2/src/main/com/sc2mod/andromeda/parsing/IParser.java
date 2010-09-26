@@ -1,10 +1,10 @@
 package com.sc2mod.andromeda.parsing;
 
-import com.sc2mod.andromeda.syntaxNodes.SourceFile;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 
 public interface IParser {
 
-	SourceFile parse(Source f, SourceFile af, InclusionType inclusionType);
+	SourceFileNode parse(Source f, SourceFileNode af, InclusionType inclusionType);
 
 	CompilationFileManager getSourceEnvironment();
 
