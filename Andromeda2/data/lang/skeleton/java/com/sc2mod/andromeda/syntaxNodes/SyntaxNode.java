@@ -11,12 +11,12 @@ package com.sc2mod.andromeda.syntaxNodes;
 
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.syntaxNodes.util.VisitorNode;
+import com.sc2mod.andromeda.notifications.InternalProgramError;
 
 public abstract class SyntaxNode implements VisitorNode {
 	private int left;
 	private int right;
-	private SemanticsElement semantics;
-
+	
 	public abstract SyntaxNode getParent();
 
 	public abstract void setParent(SyntaxNode parent);
@@ -47,11 +47,11 @@ public abstract class SyntaxNode implements VisitorNode {
 	}
 	
 	public void setSemantics(SemanticsElement s){
-		semantics = s;
+		throw new InternalProgramError("Cannot set semantics for " + this.getClass().getSimpleName() + ". Not defined for this class!");
 	}
 	
 	public SemanticsElement getSemantics(){
-		return semantics;
+		throw new InternalProgramError("Cannot get semantics for " + this.getClass().getSimpleName() + ". Not defined for this class!");
 	}
 
 }

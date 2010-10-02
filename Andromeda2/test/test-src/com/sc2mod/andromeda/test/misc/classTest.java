@@ -9,7 +9,7 @@
  */
 package com.sc2mod.andromeda.test.misc;
 class DFS{
-	public static void e(){}
+	public DFS e(){ return null; }
 }
 public class classTest extends DFS{
 
@@ -20,6 +20,7 @@ public class classTest extends DFS{
 	public void bla(A b,B a){ System.out.println("B");}
 
 
+	public DFS e(){ return null; }
 	
 }
 

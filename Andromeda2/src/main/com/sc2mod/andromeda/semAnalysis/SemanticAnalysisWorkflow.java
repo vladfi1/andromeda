@@ -23,30 +23,38 @@ public class SemanticAnalysisWorkflow {
 
 
 	public static Environment analyze(CompilationEnvironment compEnv){
+		
+		//Create the semantics environment
 		Environment env = new Environment();
 		compEnv.setSemanticEnvironment(env);
 		SourceFileNode syntax = compEnv.getSyntaxTree();
 		
-		ConstantResolveVisitor constResolve = new ConstantResolveVisitor();
+		//--- ConstantResolveVisitor constResolve = new ConstantResolveVisitor();
 		
-		//Analyze and register structure
-		TypeFinderTreeScanner typeAnalysisVisitor = new TypeFinderTreeScanner(env);
-		syntax.accept(typeAnalysisVisitor);
+		// 1.) Analyze and register types
+		syntax.accept( new TypeRegistryTreeScanner(env), null );
 		
-		//Resolve class hierarchy (if there are any classes)
-		if(!env.typeProvider.getClasses().isEmpty()){
-			env.resolveClassHierarchy();
-		}
+		// 2.) Resolve and check class hierarchy
+		syntax.accept( new ClassHierachyCheckVisitor(env) );
 		
-		//Resolve constant variables
-		NameResolver r = new NameResolver(new ArrayLocalVarStack(), env);
-		ExpressionAnalyzer exprAnalyzer = new ExpressionAnalyzer(constResolve,env.typeProvider);
-		ConstEarlyAnalysisVisitor constResolver = new ConstEarlyAnalysisVisitor(exprAnalyzer,r, constResolve, env);
-		syntax.accept(constResolver);
+		//---Resolve class hierarchy (if there are any classes)
+		//---if(!env.typeProvider.getClasses().isEmpty()){
+		//---	env.resolveClassHierarchy();
+		//---}
 		
-		//Determine signatures and non-local non-constant variable types
-		env.resolveTypes();
+		//---//Resolve constant variables
+		//---NameResolver r = new NameResolver(new ArrayLocalVarStack(), env);
+		//---ExpressionAnalyzer exprAnalyzer = new ExpressionAnalyzer(constResolve,env.typeProvider);
+		//---ConstEarlyAnalysisVisitor constResolver = new ConstEarlyAnalysisVisitor(exprAnalyzer,r, constResolve, env);
+		//---syntax.accept(constResolver);
 		
+		//---Determine signatures and non-local non-constant variable types
+		//---env.resolveTypes();
+		
+		// 3.) Register fields, methods and other constructs (also resolve their types and signatures)
+		syntax.accept( new StructureRegistryTreeScanner(env) );
+		
+		// 4.) Analyze statements and expressions
 		//Infer expression types, resolve function calls and field accesses
 		ExpressionAnalysisVisitor expressionAnalysisVisitor = new ExpressionAnalysisVisitor(exprAnalyzer,r,constResolve,env,compEnv.getConfig());
 		syntax.accept(expressionAnalysisVisitor);	

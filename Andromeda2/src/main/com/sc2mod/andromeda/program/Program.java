@@ -34,6 +34,7 @@ import com.sc2mod.andromeda.parsing.options.InvalidParameterException;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
+import com.sc2mod.andromeda.syntaxNodes.util.NoResultVisitorAdapter;
 import com.sc2mod.andromeda.syntaxNodes.util.Visitor;
 import com.sc2mod.andromeda.syntaxNodes.util.VisitorAdapter;
 import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
@@ -175,14 +176,13 @@ public class Program {
 			System.out.println(PerfTest.syntaxNodes + " syn");
 			CompilationEnvironment cr = invokeWorkflow(files, o, Language.ANDROMEDA);
 			SourceFileNode st = cr.getSyntaxTree();
-			VisitorAdapter<String,Visitor.Nothing> va = new VisitorAdapter<String,Visitor.Nothing>() {
+			VoidVisitorAdapter va = new VoidVisitorAdapter() {
 			int x;
 				@Override
 	
-			public Nothing visitDefault(SyntaxNode sn, String in) {
-					sn.childrenAccept(this,in);
+			public void visitDefault(SyntaxNode sn) {
+					sn.childrenAccept(this);
 					x++;
-					return NOTHING;
 			}
 				@Override
 					public String toString() {
@@ -191,7 +191,7 @@ public class Program {
 			};
 			StopWatch sw = new StopWatch();
 			for(int i = 0;i < 1000;i++){
-				st.accept(va,"blub");
+				st.accept(va);
 			}
 			System.out.println(va.toString());
 			sw.printTime("TIME: ");

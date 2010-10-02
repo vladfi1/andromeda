@@ -1,7 +1,7 @@
 <project name="Enricher" default="compile" basedir="..">
-  <property name="src" location="genUtils"/>
-  <property name="java" location="genUtils"/>
-  <property name="classes" location="build/customAnt"/>
+  <property name="src" location="build/build-src"/>
+  <property name="java" location="build/build-src"/>
+  <property name="classes" location="build/build-bin"/>
   <property name="dist" location="dist"/>
   <property name="lib" location="lib"/>
   <property name="bin" location="build/temp/bin"/>
