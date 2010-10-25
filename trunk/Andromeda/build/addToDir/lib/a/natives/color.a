@@ -1,0 +1,157 @@
+package a.natives;
+/**
+*	Enrichment for native type 'color'.
+*	@author NewName
+*/
+
+public enrich color
+{
+	/**
+	*	Create a color object with the specified channel values. Each value shoudl be given as a percentage (0-100).
+	*	@param red the value for the red channel.
+	*	@param green the value for the green channel.
+	*	@param blue the value for the blue channel.
+	*	@param alpha the value for the alpha channel.
+	*	@return the created color object.
+	*/
+	public static color create(fixed red, fixed green, fixed blue, fixed alpha)
+	{
+		return ColorWithAlpha(red, green, blue, alpha);
+	}
+	
+	/**
+	*	Create a color object with the specified channel values. Each value shoudl be given as a percentage (0-100).
+	*	@param red	the value for the red channel.
+	*	@param green the value for the green channel.
+	*	@param blue the value for the blue channel.
+	*	@return the created color object.
+	*/
+	public static color create(fixed red, fixed green, fixed blue)
+	{
+		return Color(red, green, blue);
+	}
+	
+	/**
+	*	Return the diffuse color at the specified index. The index belongs to the arrray of colors which appear when selecting a color in the game lobby.
+	*	@param index the index of the desired color.
+	*	@return the diffuse color at the specified index.
+	*/
+	public static color diffuse(int index)
+	{
+		return ColorFromIndex(index, c_teamColorDiffuse);
+	}
+	
+	/**
+	*	Return the emissive color at the specified index. The index belongs to the arrray of colors which appear when selecting a color in the game lobby.
+	*	@param index the index of the desired color.
+	*	@return the emissive color at the specified index.
+	*/
+	public static color emissive(int index)
+	{
+		return ColorFromIndex(index, c_teamColorEmissive);
+	}
+	
+	/**
+	*	Red component. (read-only)
+	*/
+	public fixed r
+	{
+		public get 
+		{
+			return ColorGetComponent(this, c_colorComponentRed);
+		}
+	}
+	
+	/**
+	*	Returns a new color object with the red component changed to the specified value.
+	*	@param value the new value for the red component of the color.
+	*	@return the new color object.
+	*/
+	public color setRed(fixed value)
+	{
+		return ColorWithAlpha(
+			value,
+			ColorGetComponent(this, c_colorComponentGreen),
+			ColorGetComponent(this, c_colorComponentBlue),
+			ColorGetComponent(this, c_colorComponentAlpha)
+		);
+	}
+
+	/**
+	*	Green component. (read-only)
+	*/
+	public fixed g
+	{
+		public get 
+		{
+			return ColorGetComponent(this, c_colorComponentGreen);
+		}
+	}
+	
+	/**
+	*	Returns a new color object with the green component changed to the specified value.
+	*	@param value the new value for the green component of the color.
+	*	@return the new color object.
+	*/
+	public color setGreen(fixed value)
+	{
+		return ColorWithAlpha(
+			ColorGetComponent(this, c_colorComponentRed),
+			value,
+			ColorGetComponent(this, c_colorComponentBlue),
+			ColorGetComponent(this, c_colorComponentAlpha)
+		);
+	}
+
+	/**
+	*	Blue component. (read-only)
+	*/
+	public fixed b
+	{
+		public get 
+		{
+			return ColorGetComponent(this, c_colorComponentBlue);
+		}
+	}
+
+	/**
+	*	Returns a new color object with the blue component changed to the specified value.
+	*	@param value the new value for the blue component of the color.
+	*	@return the new color object.
+	*/
+	public color setBlue(fixed value)
+	{
+		return ColorWithAlpha(
+			ColorGetComponent(this, c_colorComponentRed),
+			ColorGetComponent(this, c_colorComponentGreen),
+			value,
+			ColorGetComponent(this, c_colorComponentAlpha)
+		);
+	}
+	
+	/**
+	*	Alpha component. (read-only)
+	*/
+	public fixed a
+	{
+		public get 
+		{
+			return ColorGetComponent(this, c_colorComponentAlpha);
+		}
+	}
+	
+	/**
+	*	Returns a new color object with the alpha component changed to the specified value.
+	*	@param value the new value for the alpha component of the color.
+	*	@return the new color object.
+	*/
+	public color setAlpha(fixed value)
+	{
+		return ColorWithAlpha(
+			ColorGetComponent(this, c_colorComponentRed),
+			ColorGetComponent(this, c_colorComponentGreen),
+			ColorGetComponent(this, c_colorComponentBlue),
+			value
+		);
+	}
+}

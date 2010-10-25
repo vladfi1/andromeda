@@ -1,0 +1,172 @@
+package a.natives;
+/*
+*	Enrichment for native type 'playergroup'
+*	@author NewName
+*/
+
+import a.natives.Soundchannel;
+
+public enrich playergroup
+{
+	/**
+	*	Create a player group containing all players in the game.
+	*	@return a playergroup containing all players.
+	*/
+	public static playergroup allPlayers()
+	{
+		return PlayerGroupAll();
+	}
+	
+	/**
+	*	Create a player group containing all active players in the game.
+	*	@return a playergroup containing all active players.
+	*/
+	public static playergroup activePlayers()
+	{
+		return PlayerGroupActive();
+	}
+	
+	/**
+	*	Create an empty player group.
+	*	@return an empty playergroup.
+	*/
+	public static playergroup empty()
+	{
+		return PlayerGroupEmpty();
+	}
+	
+	/**
+	*	Create a copy of this playergroup.
+	*	@return the copy.
+	*/
+	public playergroup copy()
+	{
+		return PlayerGroupCopy(this);
+	}
+
+	/**
+	*	Clear all players from this playergroup.
+	*/
+	public void clear()
+	{
+		PlayerGroupClear(this);
+	}
+
+	/**
+	*	Add the given player to this playergroup.
+	*	@param p the player to add.
+	*/
+	public void add(Player p)
+	{
+		PlayerGroupAdd(this, (int)p);
+	}
+	
+	/**
+	*	Add all players in the specified player group to this player group.
+	*	@param group the player group to add.
+	*/
+	public void addGroup(playergroup group)
+	{
+		// Mimics AddPlayerGroupToPlayerGroup(group, this);
+
+		for (int i = 1; i <= group.count(); i++) this.add(group.getPlayer(i));
+	}
+
+	/**
+	*	Remove the given player from this player group.
+	*	@param p the player to remove.
+	*/
+	public void remove(Player p)
+	{
+		PlayerGroupRemove(this, (int)p);
+	}
+	
+	/**
+	*	Remove all players in the specified player group from this player group.
+	*	@param group the player group to remove.
+	*/
+	public void removeGroup(playergroup group)
+	{
+		// Mimics RemovePlayerGroupFromPlayerGroup(group, this);
+
+		for (int i = 1; i <= group.count(); i++) this.remove(group.getPlayer(i));
+	}
+
+	/**
+	*	Returns the number of players in this player group.
+	*	@return the number of players.
+	*/
+	public int count()
+	{
+		return PlayerGroupCount(this);
+	}
+
+	/**
+	*	Get the player at the specified index of this player group.
+	*	@param index the index for the desired player.
+	*	@return the player at the specified index.
+	*/
+	public Player getPlayer(int index)
+	{
+		return (Player)PlayerGroupPlayer(this, index);
+	}
+
+	/**
+	*	Searches this player group for the specified player. Returns true if found.
+	*	@param p the player to search for.
+	*	@return true if this player group contains the specified player, false otherwise.
+	*/
+	public bool containsPlayer(Player p)
+	{
+		return PlayerGroupHasPlayer(this, (int)p);
+	}
+	
+	/**
+	*	Modify the volume for sounds playing through the specified channel for this group of players.
+	*	@param channel the sound channel for which the volume will be modified.
+	*	@param volume the new volume for the channel as a percentage value (0-100).
+	*	@param duration the duration for which this modification should persist.
+	*/
+	public void setVolume(Soundchannel channel, fixed volume, fixed duration)
+	{
+		 SoundChannelSetVolume(this, (int)channel, volume, duration);
+	}
+	
+	/**
+	*	Set the muted state for the specified sound channel of these players.
+	*	@param channel the sound channel which will be muted or unmuted.
+	*	@param muted the mute parameter for the channel; true is muted, false is unmuted.
+	*/
+	public void setMuted(Soundchannel channel, bool muted)
+	{
+		SoundChannelMute(this, (int)channel, muted);
+	}
+	
+	/**
+	*	Set the pause state for all sounds in the specified sound channel for these players.
+	*	@param channel the sound channel which will be paused or unpaused.
+	*	@param paused the pause parameter for the channel; true is paused, false is unpaused.
+	*/
+	public void setPaused(Soundchannel channel, bool paused)
+	{
+		SoundChannelPause(this, (int)channel, paused);
+	}
+	
+	/**
+	*	Stops all sounds in the specified sound channel for these players.
+	*	@param channel the sound channel for which all sounds will be stopped.
+	*/
+	public void stop(Soundchannel channel)
+	{
+		SoundChannelStop(this, (int)channel);
+	}
+	
+	/**
+	*	Shows or hides the achievement panel for these players.
+	*	@param value whether the achievement panel should be visible.
+	*/
+	public void setAchievementPanelVisible(bool value)
+	{
+		AchievementPanelSetVisible (this, value);
+	}
+}

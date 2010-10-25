@@ -1,0 +1,113 @@
+package physics2d.collision;
+
+import a.util.Math;
+import physics2d.collision.Proxy;
+import physics2d.geom.AABB;
+
+/**
+ * Broadphase collision detection.
+ * @author XPilot
+ */
+public class BroadPhase<T> {
+	/**
+	 * Head node of proxy linked list.
+	 */
+	private Proxy<T> proxyList;
+	
+	public BroadPhase() {
+		proxyList = new Proxy<T>();
+		proxyList.prev = proxyList.next = proxyList;
+	}
+	
+	/**
+	 * Adds an object to the broadphase.
+	 * @param object The object to add.
+	 * @param bounds The object's bounding box.
+	 * @return A proxy for the object.
+	 */
+	public Proxy<T> addObject(T object, AABB bounds) {
+		Proxy<T> proxy = new Proxy<T>(object);
+		addProxy(proxy, bounds);
+		return bounds;
+	}
+	
+	/**
+	 * Adds proxy to the broadphase.
+	 * @param proxy The proxy to add.
+	 * @param bounds The proxy's bounding box.
+	 */
+	private void addProxy(Proxy<T> proxy, AABB bounds) {
+		proxy.setBounds(bounds);
+		
+		Proxy<T> last = proxyList.prev;
+		proxy.prev = last;
+		last.next = proxy;
+		proxy.next = proxyList;
+		proxyList.prev = proxy;
+	}
+	
+	/**
+	 * Removes a proxy from the broadphase.
+	 */
+	public void removeProxy(Proxy<T> proxy) {
+		proxy.prev.next = proxy.next;
+		proxy.next.prev = proxy.prev;
+	}
+	
+	/**
+	 * Moves a proxy.
+	 * @param bounds The proxy's new bounds.
+	 */
+	public void moveProxy(Proxy<T> proxy, AABB bounds) {
+		proxy.setBounds(bounds);
+	}
+	
+	public ArrayList<T> query(AABB aabb) {
+		ArrayList<T> hits = new ArrayList<T>();
+		for(Proxy<T> proxy = proxyList.next; proxy != proxyList; proxy = proxy.next) {
+			if(intersects(aabb, proxy)) {
+				hits.addLast(proxy.object);
+			}
+		}
+		return hits;
+	}
+		
+	private bool intersects(AABB aabb, Proxy<T> proxy) {
+		if(lower[0] > aabb.x2) return false;
+		if(lower[1] > aabb.y2) return false;
+		if(upper[0] < aabb.x1) return false;
+		if(upper[1] < aabb.y1) return false;
+		return true;
+	}
+	
+	public ArrayList<T> query(Segment seg) {
+		ArrayList<T> hits = new ArrayList<T>();
+		for(Proxy<T> proxy = proxyList.next; proxy != proxyList; proxy = proxy.next) {
+			if(intersects(aabb, seg)) {
+				hits.addLast(proxy.object);
+			}
+		}
+		return hits;	
+	}
+	
+	private bool intersects(Segment seg, Proxy<T> proxy) {
+		fixed[2] e;
+		e[0] = proxy.upper[0] - proxy.lower[0];
+		e[1] = proxy.upper[1] - proxy.lower[1];
+		
+		fixed d[2];
+		d[0] = seg.p2.x - seg.p1.x;
+		d[1] = seg.p2.y - seg.p1.y;
+		
+		fixed[2] c;
+		c[0] = 2.0 * seg.p1.x + d[0] - (proxy.lower[0] + proxy.upper[0]);
+		c[1] = 2.0 * seg.p1.y + d[1] - (proxy.lower[1] + proxy.upper[1]);
+		
+		if(Math.abs(c[0]) > Math.abs(d[0]) + e[0]) return false;
+		if(Math.abs(c[1]) > Math.abs(d[1]) + e[1]) return false;
+		
+		if(Math.abs(d[0] * c[1] - d[1] * c[0]) > e[0] * Math.abs(d[1]) + e[1] * Math.abs(d[0])) return false;
+		
+		return true;
+	}
+}

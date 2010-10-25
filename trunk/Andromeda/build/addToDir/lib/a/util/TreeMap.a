@@ -1,0 +1,584 @@
+package a.util;
+
+import a.util.Comparator;
+import a.util.Map;
+import a.util.Math;
+
+/**
+ * An ordered map implementation. TreeMap is backed by a red-black tree, which guarantees O(log n) 
+ * performance for the methods put(), getValue(), remove(), and containsKey().
+ * @author wangbot
+ */
+public class TreeMap<K,V> extends Map<K,V> {
+	static const bool RED = true;
+	static const bool BLACK = false;
+	
+	RBNode<K,V> LEFT_LEAF;
+	RBNode<K,V> RIGHT_LEAF;
+	
+	RBNode<K,V> FORE;
+	RBNode<K,V> AFT;
+	
+	RBNode<K,V> root;
+	Comparator<K> comp;
+	int size;
+	
+	public TreeMap(Comparator<K> comp) {
+		// not efficient, but currently the best way to do it
+		LEFT_LEAF = new RBNode<K,V>(this, null, BLACK);
+		RIGHT_LEAF = new RBNode<K,V>(this, null, BLACK);
+		FORE = new RBNode<K,V>(this, null, RED);
+		AFT = new RBNode<K,V>(this, null, RED);
+		
+		this.root = LEFT_LEAF;
+		this.comp = comp;
+		this.size = 0;
+	}
+	
+	/**
+	 * Performs a left tree rotation on the specified node.
+	 */
+	void rotateLeft(RBNode<K,V> node) {
+		RBNode<K,V> right = node.getRight();
+		node.replaceSubtree(right);
+		node.setRight(right.getLeft());
+		right.setLeft(node);
+	}
+	
+	/**
+	 * Performs a right tree rotation on the specified node.
+	 */
+	void rotateRight(RBNode<K,V> node) {
+		RBNode<K,V> left = node.getLeft();
+		node.replaceSubtree(left);
+		node.setLeft(left.getRight());
+		left.setRight(node);
+	}
+	
+	/**
+	 * Moves the specified node one level closer to the root using the appropriate tree 
+	 * rotation.
+	 */
+	RBNode<K,V> liftUp(RBNode<K,V> node) {
+		RBNode<K,V> parent = node.parent;
+		if (node.isLeftChild()) {
+			rotateRight(parent);
+		} else if (node.isRightChild()) {
+			rotateLeft(parent);
+		}
+		return parent;
+	}
+	
+	/**
+	 * Returns the leftmost non-leaf node in the specified node's subtree.
+	 */
+	RBNode<K,V> leftmost(RBNode<K,V> node) {
+		while (!node.getLeft().isLeaf()) {
+			node = node.getLeft();
+		}
+		return node;
+	}
+	
+	/**
+	 * Restores the R-B tree's representation invariants after an insertion 
+	 * on the specified node.
+	 */
+	void insertFixUp(RBNode<K,V> node) {
+		while (node != root && node.parent.c == RED) {
+			if (node.grandparent().recolorRed()) {
+				node = node.grandparent();
+			} else {
+				if (node.isLeftChild() != node.parent.isLeftChild()) {
+					node = liftUp(node);
+				}
+				node.parent.c = BLACK;
+				node.grandparent().c = RED;
+				node = liftUp(node.parent);
+			}
+		}
+		root.c = BLACK;
+	}
+	
+	/**
+	 * Restores the R-B tree's representation invariants after a deletion 
+	 * has resulted in the specified node replacing the deleted node. The shifted 
+	 * node is assumed to be black.
+	 */
+	void deleteFixUp(RBNode<K,V> node) {
+		while (node != root && node.c == BLACK) {
+			RBNode<K,V> sibling = node.sibling();
+			if (sibling.c == RED) {
+				sibling.c = BLACK;
+				sibling = liftUp(sibling);
+				sibling.c = RED;
+				sibling = sibling.otherChild(node);
+			}
+			if (sibling.getLeft().c == BLACK && sibling.getRight().c == BLACK) {
+				sibling.c = RED;
+				node = node.parent;
+			} else {
+				RBNode<K,V> sameSideNiece = sibling.sameSideChild();
+				if (sameSideNiece.c == BLACK) {
+					RBNode<K,V> otherSideNiece = sibling.otherChild(sameSideNiece);
+					liftUp(otherSideNiece);
+					sibling = otherSideNiece;
+				}
+				sibling.c = sibling.parent.c;
+				sibling.parent.c = BLACK;
+				sibling.sameSideChild().c = BLACK;
+				liftUp(sibling);
+				break;
+			}
+		}
+		node.c = BLACK;
+	}
+	
+	/**
+	 * Finds the leaf node that would be replaced by a new node if the specified 
+	 * entry were inserted into the tree.
+	 */
+	protected RBNode<K,V> findLastInsertPosition(MapEntry<K,V> entry) {
+		RBNode<K,V> ptr = root;
+		while (!ptr.isLeaf()) {
+			LEFT_LEAF.parent = RIGHT_LEAF.parent = ptr;
+			if (comp.compare(entry.key, ptr.entry.key) < 0) {
+				ptr = ptr.getLeft();
+			} else {
+				ptr = ptr.getRight();
+			}
+		}
+		return ptr;
+	}
+	
+	/**
+	 * Attempts to find the node within the tree containing the specified key.
+	 * If the key does not exist, then the leaf node that would be replaced if
+	 * the key were inserted into the tree is returned instead.
+	 */
+	protected RBNode<K,V> find(K key) {
+		RBNode<K,V> ptr = root;
+		while (!ptr.isLeaf()) {
+			LEFT_LEAF.parent = RIGHT_LEAF.parent = ptr;
+			int comparison = comp.compare(key, ptr.entry.key);
+			if (comparison == 0) {
+				return ptr;
+			} else if (comparison < 0) {
+				ptr = ptr.getLeft();
+			} else {
+				ptr = ptr.getRight();
+			}
+		}
+		return ptr;
+	}
+	
+	/**
+	 * Finds the in-order successor of the specified node. The in-order 
+	 * successor has the property that it is the least node in the tree that is 
+	 * greater than the specified node.
+	 */
+	protected RBNode<K,V> successor(RBNode<K,V> node) {
+		if (!node.isLeaf() && !node.getRight().isLeaf()) {
+			return leftmost(node.getRight());
+		}
+		RBNode<K,V> ptr = node;
+		while (ptr != root && !ptr.isLeftChild()) {
+			ptr = ptr.parent;
+		}
+		if (ptr == root) {
+			return AFT;
+		} else {
+			return ptr.parent;
+		}
+	}
+	
+	RBNode<K,V> successorRedirect(RBNode<K,V> node) {
+		return successor(node);
+	}
+	
+	/**
+	 * Inserts the specified entry into the tree.
+	 */
+	protected RBNode<K,V> insert(MapEntry<K,V> entry) {
+		RBNode<K,V> node = new RBNode<K,V>(this, entry, RED);
+		RBNode<K,V> ptr = findLastInsertPosition(entry);
+		ptr.replaceSubtree(node);
+		insertFixUp(node);
+		size++;
+		return node;
+	}
+	
+	/**
+	 * Removes the specified node from the tree.
+	 */
+	protected void remove(RBNode<K,V> node) {
+		RBNode<K,V> toRemove = node;
+		RBNode<K,V> successor = successor(toRemove);
+		if (toRemove.getLeft().isLeaf()) {
+			toRemove.deleteAndReplace(toRemove.getRight());
+		} else if (toRemove.getRight().isLeaf()) {
+			toRemove.deleteAndReplace(toRemove.getLeft());
+		} else {
+			successor.deleteAndReplace(successor.getRight());
+			toRemove.substituteNode(successor);
+		}
+		//toRemove.parent = successor;
+		//toRemove.markDeleted();
+		delete toRemove;
+		size--;
+	}
+	
+	/**
+	 * Removes all nodes from the tree.
+	 */
+	protected void clearNodes(RBNode<K,V> node) {
+		if (node != null && !node.isLeaf()) {
+			clearNodes(node.getLeft());
+			clearNodes(node.getRight());
+			delete node;
+		}
+	}
+	
+	public bool isEmpty() {
+		return size == 0;
+	}
+	
+	public int size() {
+		return size;
+	}
+	
+	public void clear() {
+		clearNodes(root);
+		root = LEFT_LEAF;
+		size = 0;
+	}
+	
+	public bool containsKey(K key) {
+		return !find(key).isLeaf();
+	}
+	
+	public V getValue(K key) {
+		RBNode<K,V> node = find(key);
+		if (!node.isLeaf()) {
+			return node.entry.value;
+		} else {
+			return null;
+		}
+	}
+	
+	public V put(K key, V value) {
+		RBNode<K,V> node = find(key);
+		V old = null;
+		if (node.isLeaf()) {
+			insert(new MapEntry<K,V>(key, value));
+		} else {
+			old = node.entry.value;
+			node.entry.value = value;
+		}
+		return old;
+	}
+	
+	public V remove(K key) {
+		RBNode<K,V> node = find(key);
+		V old = null;
+		if (!node.isLeaf()) {
+			old = node.entry.value;
+			remove(node);
+		}
+		return old;
+	}
+	
+	public Set<K> keySet() {
+		return new TreeMapKeySet<K,V>(this);
+	}
+	
+	/**
+	 * Checks to see that this tree adheres to all representation invariants of a 
+	 * red-black tree. The invariants are:
+	 *    - The root is black.
+	 *    - Every red node has only black children.
+	 *    - The black tree is perfectly balanced.
+	 * For debugging purposes.
+	 * @return true if this tree is a correct red-black tree.
+	 */
+	public bool checkRepresentation() {
+		if (root.c == RED) {
+			System.print("Root is red.");
+			return false;
+		}
+		int depth = computeDepth(root);
+		if (depth == -1) {
+			return false;
+		}
+		int maxDepth =  Math.max(1, (int)Math.ceil(Math.log(size)/Math.log(2)) + 1);
+		if (depth > maxDepth) {
+			System.print("Black height exceeded");
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Computes the black depth of the specified node's subtree. The black depth is 
+	 * defined as the number of black nodes along any path from the node to any leaf 
+	 * in its subtree. If any "double-reds" are detected in the subtree (a red node with 
+	 * a red parent), or if any part of the subtree is unbalanced, this method will 
+	 * return -1.
+	 */
+	private int computeDepth(RBNode<K,V> ptr) {
+		if (ptr.isLeaf())
+			return 0;
+		if (ptr.c == RED && ptr.parent != null && ptr.parent.c == RED) {
+			System.print("Red node has red parent");
+			return -1;
+		}
+		int black = 0;
+		if (ptr.c == BLACK) {
+			black = 1;
+		}
+		int leftSide = computeDepth(ptr.getLeft());
+		int rightSide = computeDepth(ptr.getRight());
+		if (leftSide != rightSide) {
+			System.print("Tree is unbalanced.");
+			return -1;
+		}
+		return black + leftSide;
+	}
+	
+	public ~TreeMap() {
+		clear();
+		delete LEFT_LEAF;
+		delete RIGHT_LEAF;
+		delete FORE;
+		delete AFT;
+	}
+}
+
+private class RBNode<K,V> {
+	static const bool RED = true;
+	static const bool BLACK = false;
+	
+	TreeMap<K,V> tree;
+	MapEntry<K,V> entry;
+	bool c;
+	
+	RBNode<K,V> parent;
+	private RBNode<K,V> left;
+	private RBNode<K,V> right;
+	
+	public RBNode(TreeMap<K,V> tree, MapEntry<K,V> entry, bool c) {
+		this.tree = tree;
+		this.entry = entry;
+		this.c = c;
+		this.parent = null;
+		setLeft(tree.LEFT_LEAF);
+		setRight(tree.RIGHT_LEAF);
+	}
+	
+	bool isLeftChild() {
+		if (parent == null) {
+			return false;
+		} else {
+			return this == parent.left;
+		}
+	}
+	
+	bool isRightChild() {
+		if (parent == null) {
+			return false;
+		} else {
+			return this == parent.right;
+		}
+	}
+	
+	bool isLeaf() {
+		return (this == tree.LEFT_LEAF || this == tree.RIGHT_LEAF);
+	}
+	
+	RBNode<K,V> getLeft() {
+		return left;
+	}
+	
+	RBNode<K,V> getRight() {
+		return right;
+	}
+	
+	RBNode<K,V> grandparent() {
+		if (parent != null) {
+			return parent.parent;
+		} else {
+			return null;
+		}
+	}
+	
+	RBNode<K,V> sibling() {
+		if (isLeftChild()) {
+			return parent.right;
+		} else if (isRightChild()) {
+			return parent.left;
+		} else {
+			return null;
+		}
+	}
+	
+	RBNode<K,V> sameSideChild() {
+		if (isLeftChild()) {
+			return left;
+		} else if (isRightChild()) {
+			return right;
+		} else {
+			return null;
+		}
+	}
+	
+	RBNode<K,V> otherChild(RBNode<K,V> node) {
+		if (left == node) {
+			return right;
+		} else if (right == node) {
+			return left;
+		} else {
+			return null;
+		}
+	}
+	
+	RBNode<K,V> setLeft(RBNode<K,V> node) {
+		if (node == tree.RIGHT_LEAF) {
+			node = tree.LEFT_LEAF;
+		}
+		left = node;
+		node.parent = this;
+		return node;
+	}
+	
+	RBNode<K,V> setRight(RBNode<K,V> node) {
+		if (node == tree.LEFT_LEAF) {
+			node = tree.RIGHT_LEAF;
+		}
+		right = node;
+		node.parent = this;
+		return node;
+	}
+	
+	bool recolorRed() {
+		if (c == BLACK && left.c == RED && right.c == RED) {
+			this.c = RED;
+			left.c = BLACK;
+			right.c = BLACK;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	RBNode<K,V> replaceSubtree(RBNode<K,V> node) {
+		if (this == tree.root) {
+			tree.root = node;
+			node.parent = null;
+		} else if (isLeftChild()) {
+			node = parent.setLeft(node);
+		} else {
+			node = parent.setRight(node);
+		}
+		return node;
+	}
+	
+	RBNode<K,V> deleteAndReplace(RBNode<K,V> node) {
+		node = replaceSubtree(node);
+		
+		if (c == BLACK) {
+			tree.deleteFixUp(node);
+		}
+		
+		return node;
+	}
+	
+	void substituteNode(RBNode<K,V> node) {
+		node = replaceSubtree(node);
+		node.setLeft(left);
+		node.setRight(right);
+		node.c = this.c;
+	}
+	
+	public ~RBNode() {
+		if (entry != null) {
+			delete entry;
+		}
+	}
+}
+
+private class TreeMapKeySet<K,V> extends Set<K> {
+	TreeMap<K,V> map;
+	
+	public TreeMapKeySet(TreeMap<K,V> map) {
+		this.map = map;
+	}
+	
+	public bool isEmpty() {
+		return map.isEmpty();
+	}
+	
+	public int size() {
+		return map.size();
+	}
+	
+	public bool contains(K key) {
+		return map.containsKey(key);
+	}
+	
+	public bool add(K key) {
+		System.error("Unsupported operation");
+		return false;
+	}
+	
+	public bool remove(K key) {
+		return map.remove(key) == null;
+	}
+	
+	public void clear() {
+		map.clear();
+	}
+	
+	public Iterator<K> getIterator() {
+		return new TreeMapKeySetIterator<K,V>(this);
+	}
+}
+
+private class TreeMapKeySetIterator<K,V> extends Iterator<K> {
+	TreeMapKeySet<K,V> s;
+	RBNode<K,V> node;
+	
+	public TreeMapKeySetIterator(TreeMapKeySet<K,V> s) {
+		this.s = s;
+		this.node = s.map.FORE;
+	}
+	
+	private bool advance() {
+		if (node == s.map.AFT) {
+			return false;
+		} else if (s.isEmpty()) {
+			node = s.map.AFT;
+		} else if (node == s.map.FORE) {
+			node = s.map.leftmost(s.map.root);
+		} else {
+			node = s.map.successorRedirect(node);
+		}
+		return node != s.map.AFT;
+	}
+	
+	public bool hasNext() {
+		if (node == s.map.FORE) {
+			return !s.isEmpty();
+		} else if (node == s.map.AFT) {
+			return false;
+		} else {
+			return s.map.successorRedirect(node) != s.map.AFT;
+		}
+	}
+	
+	public K next() {
+		if (advance()) {
+			return node.entry.key;
+		} else {
+			return null;
+		}
+	}
+}

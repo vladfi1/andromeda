@@ -1,0 +1,16 @@
+package a.natives;
+/**  
+*	Definition and enrichment for IntersectionType type.
+*	@author NewName
+*/
+typedef IntersectionType uses int;
+
+public enrich IntersectionType
+{
+	public static const IntersectionType
+		CENTER = (IntersectionType)c_actorIntersectAgainstCenter,
+		RADIUS_CONTACT = (IntersectionType)c_actorIntersectAgainstRadiusContact,
+		RADIUS_GAME = (IntersectionType)c_actorIntersectAgainstRadiusGame,
+		RADIUS_VISUAL = (IntersectionType)c_actorIntersectAgainstRadiusVisual;
+}
+		

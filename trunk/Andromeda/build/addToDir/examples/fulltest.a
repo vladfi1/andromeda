@@ -1,0 +1,365 @@
+/**
+*	Test File for testing if various features of andromeda compile correctly
+*	@author gex
+*/
+
+
+void testInt(string testCase, int result, int desiredResult){
+	if(result != desiredResult){
+		System.error(testCase + " failed: " + result + " : " + desiredResult);
+	} else {
+		System.debug(testCase + " succeeded!");
+	}
+}
+
+static{
+	varTest();
+	sideEffectTest();
+	ifTest();
+	whileLoopTest();
+	forLoopTest();
+	classFieldTest();
+	classTest();
+}
+
+/*************** SIDE EFFECTS ***************/
+class AccessorTest{
+	
+	public AccessorTest[5] xs;
+	private int a;
+	
+	int A{
+	
+		get{
+			return a;
+		}
+		
+		set{
+			a = value;		
+		}
+	
+	}
+	
+	public AccessorTest(){
+		x = this;
+		xs[3] = this;
+	}
+	
+	public AccessorTest getX(){
+		evalCount++;
+		return x;
+	}
+	static int evalCount = 0;
+	
+	public int b = 0;
+	public int c = 10;
+	public AccessorTest x;
+}
+
+AccessorTest st = new AccessorTest();
+int testEvalCount = 0;
+
+
+AccessorTest complexLeft(){
+	testEvalCount++;
+	return st;
+}
+
+void sideEffectTest(){
+	
+	int i=0 , j=0;
+	
+	//Simple
+	i = j = 1;
+	testInt("side effects 1", i, 1);
+	
+	i = j += 1;
+	testInt("side effects 2", i, 2);
+
+	i = ++j;
+	testInt("side effects 3", i, 3);
+	
+	//Complex left
+	i = complexLeft().b = 1;
+	testInt("side effects 4", i, 1);
+	testInt("side effects 5", st.b, 1);
+	
+	i = complexLeft().b += 3;
+	testInt("side effects 6", i, 4);
+	testInt("side effects 7", st.b, 4);
+	
+	i = ++complexLeft().b;
+	testInt("side effects 6", i, 5);
+	testInt("side effects 7", st.b, 5);
+	
+	//Complex right
+	i = complexLeft().b = complexLeft().c;
+	testInt("side effects 8", i, 10);
+	testInt("side effects 9", st.b, 10);
+	
+	i = complexLeft().b += complexLeft().c;
+	testInt("side effects 10", i, 20);
+	testInt("side effects 11", st.b, 20);
+			
+	testInt("side effects eval count", testEvalCount, 7);
+
+
+	//Really complex
+	i = st.x.getX().x.b = 24;
+	testInt("side effects 12", i, 24);
+	testInt("side effects 13", st.b, 24);
+	
+	i = st.x.getX().getX().b += 24;
+	testInt("side effects 14", i, 48);
+	testInt("side effects 15", st.b, 48);
+	
+	i = ++st.x.xs[3].getX().x.xs[3].b;
+	
+	testInt("side effects 16", i, 49);
+	testInt("side effects 17", st.b, 49);
+	
+	testInt("side effects eval count 2", AccessorTest.evalCount, 4);
+}
+
+/*************** CLASS FIELDS ***************/
+int gClassFieldTest = 5;
+
+
+class Foo{
+
+	int k = i++;
+	int l = ++k;
+	static int i = ++gClassFieldTest;
+	static int j = i;
+}
+
+class Foo2 extends Foo{
+	int z = ++l;
+	static int i = super.i++ + 4;
+}
+
+int gClassFieldTest2 = ++Foo.j;
+
+void classFieldTest(){
+	
+	testInt("static fields",gClassFieldTest2,7);
+	testInt("static fields 2",Foo2.i,10);
+	testInt("fields",new Foo2().z,9);
+	testInt("fields 2",new Foo2().z,10);
+}
+
+/*************** GLOBALS AND LOCALS (INIT SIDE EFFECTS AND REUSE) ***************/
+int gTest = 5;
+int gTest2 = ++gTest;
+int gTest3 = gTest2++;
+int gTest4 = gTest3;
+
+
+void varTest(){
+	int i = 5,j = i++, k=j;
+	
+	testInt("locals side-effect init",k,5);
+			
+	{ int x = 6;
+		x = x;
+	}
+	
+	{ int x;
+		testInt("locals reuse",x,0);
+	}
+	
+	testInt("globals side-effect init",gTest3,6);
+}
+
+/*************** IFS (AND SIDE EFFECTS IN THEIR CONDITIONS) ***************/
+void ifTest(){
+	int i = 0;
+	if(true);
+	
+	if(true); else ;
+	
+	if(i++<i++){
+		
+	}
+	testInt("if test 1",i,2);
+	
+	i=0;
+	if(i++==i++)
+		if(i++==i++)i*=2;
+	testInt("if test 2",i,8);
+}
+
+/*************** WHILE AND DO WHILE WITH SIDE EFFECTS (AND CONTINUE) ***************/
+void whileLoopTest(){
+	int i = 0, j = 10;
+	int k;
+	
+
+	while(i++<j--){
+		k++;
+	}
+	testInt("while loop",k,5);
+	
+	i = 0; j = 10; k = 0;
+	do{
+		k++;
+	} while(i++<j--);
+	testInt("do-while loop 1",k,6);
+	
+	i = 0; j = 10; k = 0;
+	do{
+		k++;
+		if(k == 2) continue;
+	} while(i++<j--);
+	testInt("do-while loop 2",k,6);
+
+}
+ 
+/*************** FOR LOOPS: ALL KINDS ***************/ 
+void forLoopTest(){
+	int j, k;
+
+	for(int i=1;i<10;i++){
+		j = i;
+	}
+	testInt("For loop 1", j, 9);
+	
+	j = 0;
+	for(;j<10;){
+		j++;
+	}
+	testInt("For loop 2", j, 10);
+	
+	j = 0;
+	for(;;){
+		j++;
+		if(j>=10) break;
+	}
+	testInt("For loop 3", j, 10);
+	
+	j = 0;
+	k = 10;
+	for(j--,k++;j<k;j++,k--){
+		j--;
+		
+	}
+	testInt("For loop 4", j, -1);
+	
+	k=0;
+	for(int i=0;i<10;i++){
+		
+		if(true){
+			k++;
+			continue;
+		} 		
+	}
+	testInt("For loop 5", k, 10);
+	
+	k=0;
+	j=0;
+	int l= 0;
+	for(int i=0;i<10;i++,j=0)
+		for(j++;j<10;j++) l++;
+	
+	testInt("For loop 6", l, 90);
+	
+	j = k = 0;
+	for(;j++<k-- + 10;) ;
+	testInt("For loop 7", k, -6);
+
+}
+
+/*************** CLASSES ***************/
+
+class Top{
+	static int t = 5;
+	int c = 5;
+
+	public Top(){
+		c = 6;
+	}
+
+	public ~Top(){
+		t = 6;
+	}
+	
+	public int getInt(){
+		return 2;
+	}
+}
+
+class Medium1 extends Top{
+
+
+	public Medium1(){
+		this(8);
+		c = 7;
+	
+	}
+	
+	public Medium1(int i){
+		super();
+		c = i;
+	}
+	
+	public int getInt(){
+		return 3;
+	}
+
+}
+
+class Medium2 extends Top{
+
+	public int getInt(){
+		return 4;
+	}
+}
+
+class Bottom1 extends Medium1{
+	public int getInt(){
+		return 5;
+	}
+	
+}
+
+class Bottom2 extends Medium1{
+
+	public Bottom2(){
+		c = 9;
+	}
+	
+	public ~Bottom2(){
+		t = 7;
+		
+	}
+	
+}
+
+void classTest(){
+	Top t = new Top();
+	Top t2 = new Medium1();
+	Top t3 = new Medium1(20);
+	Top t4 = new Bottom1();
+	Top t5 = new Bottom2();
+	
+	testInt("Constructors 1",t.c,6);
+	testInt("Constructors 2",t2.c,7);
+	testInt("Constructors 3",t3.c,20);
+	testInt("Constructors 4",t4.c,7);
+	testInt("Constructors 5",t5.c,9);
+	
+	testInt("Virtual calls 1",t.getInt(),2);
+	testInt("Virtual calls 2",t2.getInt(),3);
+	testInt("Virtual calls 3",t4.getInt(),5);
+	testInt("Virtual calls 4",t5.getInt(),3);
+	
+	delete t;
+	testInt("Destructors 1",Top.t,6);
+	Top.t = 1;
+	delete t2;
+	testInt("Destructors 2",Top.t,6);
+	Top.t = 1;
+	delete t5;
+	testInt("Destructors 3",Top.t,6);
+	
+}

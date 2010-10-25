@@ -1,0 +1,32 @@
+PARTIAL REPARSING
+
+-Keep mapping source => Global Structures
+-Remove structures of reparsed files
+=>Problem, from where was a file imported, maybe also imports have to be removed
+-Keep mapping of which file was imported by which files (bidirectional)
+-Reparse files
+-for each include, check if it was included before. Cases:
+ ->File was included afterwards (no matter if included before): Check timestamp, do reparse, if necessasry
+	=>Problem: Files inside of map files have no timestamp
+	-> Solution: Implement hasChanged with hash values
+ ->File was included before but not afterwards: Remove
+-BAD: Do complete semantic analysis again, after "resetting" stuff
+-GOOD: Only redo global things and visitors for the newly parsed files
+ => Problem: Non rechecked code could depend on code in the reparsed files
+    Example: Code calls method defined in the reparsed files
+-MEDIUM: At least omit native libs
+	=> Better: keep a dependency graph:
+	One source depends another one if it uses something from that source, i.e. a type, function, ...
+	Problem: Dependency graph hard to track
+	possible solution:
+		=> on-demand dependency: Track all usages of a function and type
+		DUNNO HOW
+		
+		
+ERROR RECOVERY:
+
+-type errors
+	=> expression gets the type Error
+	=> error propagates while infering
+	=> error message is only given on first raise, not on propagation
+	=> type dependant operations do not throw errors if used on a term of type error

@@ -1,0 +1,31 @@
+
+package com.sc2mod.andromeda.environment.operations
+MethodDeclNode : Function
+StaticInitDeclNode : StaticInit
+MethodInvocationExprNode : Invocation
+ReturnStmtNode : Operation
+NewExprNode : ConstructorInvocation
+ExplicitConsCallStmtNode : ConstructorInvocation
+DeleteStmtNode : Invocation
+
+package com.sc2mod.andromeda.environment.scopes
+SourceFileNode : FileScope 
+
+package com.sc2mod.andromeda.environment.types
+ClassDeclNode : Class
+InterfaceDeclNode : Interface
+StructDeclNode : Struct
+EnrichDeclNode : Enrichment
+
+package com.sc2mod.andromeda.environment.variables
+IdentifierNode : VarDecl
+AccessorDeclNode : AccessorDecl
+FieldAccessExprNode : VarDecl
+NameExprNode : VarDecl
+ArrayAccessExprNode : VarDecl
+
+package com.sc2mod.andromeda.semAnalysis
+ForStmtNode : LoopSemantics
+WhileStmtNode : LoopSemantics
+DoWhileStmtNode : LoopSemantics
+ForEachStmtNode : ForeachSemantics

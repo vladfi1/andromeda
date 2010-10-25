@@ -1,0 +1,38 @@
+package a.natives;
+/**  
+*	Definition and enrichment for RegionActor type.
+*	@author NewName
+*/
+
+import a.natives.IntersectionType;
+
+typedef RegionActor extends actor;
+
+public enrich RegionActor
+{
+	/**
+	*	Creates a region actor from a game region.  You can use a region actor to send an actor message to all of the actors that are currently inside it. 
+	*	@param scope the scope this region actor will belong to.
+	*	@param name the string ID of the region actor you are creating.
+	*	@param r the region that this region actor should enclose.
+	*	@return the newly created actor object.
+	*/
+	public static RegionActor create(actorscope scope, string name, region r)
+	{
+		return (RegionActor)ActorRegionCreate (scope, name, r);
+	}
+	
+	/**
+	*	Sends an actor message to all the actors contained within the specified region actor. An actor message will perform an action and/or trigger an event on the actor it is sent to.
+	*	The format for filters is a list of comma delimited actor types.  The format for terms is a list of semi colon delimited actor terms. 
+	*	@param type defines what will be used to test against for intersections with this actor region.
+	*	@param filters a class filter used to specify which types of actors should receive the message.
+	*	@param terms used to specify a condition that an actor in the region must meet in order to receive the message.
+	*	@param message the actor message to send.
+	*/
+	public void send(string message, IntersectionType type, string filters, string terms)
+	{
+		ActorRegionSend(this, (int)type, message, filters, terms);
+	}
+}
+

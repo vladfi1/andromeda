@@ -1,0 +1,158 @@
+package a.natives;
+/*
+*	Enrichment for native type 'order'
+*	@author Still needs one!
+*/
+
+public enrich order
+{
+	/**
+	*	Description here.
+	*	@param p2 Unknown abilcmd.
+	*/
+	public void setAbilityCommand(abilcmd p2)
+	{
+		OrderSetAbilityCommand(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a abilcmd.
+	*/
+	public abilcmd getAbilityCommand()
+	{
+		return OrderGetAbilityCommand(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void setPlayer(int p2)
+	{
+		OrderSetPlayer(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int getPlayer()
+	{
+		return OrderGetPlayer(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int getTargetType()
+	{
+		return OrderGetTargetType(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown point.
+	*	@param p3 Unknown unit.
+	*	@param p4 Unknown string.
+	*	@return Returns a bool.
+	*/
+	public bool setTargetPlacement(point p2, unit p3, string p4)
+	{
+		return OrderSetTargetPlacement(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown point.
+	*/
+	public void setTargetPoint(point p2)
+	{
+		OrderSetTargetPoint(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a point.
+	*/
+	public point getTargetPoint()
+	{
+		return OrderGetTargetPoint(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a point.
+	*/
+	public point getTargetPosition()
+	{
+		return OrderGetTargetPosition(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*/
+	public void setTargetUnit(unit p2)
+	{
+		OrderSetTargetUnit(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a unit.
+	*/
+	public unit getTargetUnit()
+	{
+		return OrderGetTargetUnit(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*/
+	public void setTargetPassenger(unit p2)
+	{
+		OrderSetTargetPassenger(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*/
+	public void setTargetItem(unit p2)
+	{
+		OrderSetTargetItem(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a unit.
+	*/
+	public unit getTargetItem()
+	{
+		return OrderGetTargetItem(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown bool.
+	*/
+	public void setFlag(int p2, bool p3)
+	{
+		OrderSetFlag(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool getFlag(int p2)
+	{
+		return OrderGetFlag(this, p2);
+	}
+
+}

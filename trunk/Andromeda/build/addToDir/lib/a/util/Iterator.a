@@ -1,0 +1,17 @@
+package a.util;
+
+/**
+ * Iterates through a collection.
+ */
+public abstract class Iterator<E> {
+	/**
+	 * @return Whether this iterator has another element.
+	 */
+	public abstract bool hasNext();
+	
+	/**
+	 * Advances the iterator.
+	 * @return The next element.
+	 */
+	public abstract E next();
+}

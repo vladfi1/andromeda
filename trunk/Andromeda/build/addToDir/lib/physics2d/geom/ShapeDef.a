@@ -1,0 +1,20 @@
+package physics2d.geom;
+
+import physics2d.geom.ShapeType;
+
+/**
+ * Definition of a shape.
+ * @author XPilot
+ */
+public abstract class ShapeDef {
+	/* final */ ShapeType type;
+	
+	public fixed restitution;
+	public fixed friction;
+	
+	ShapeDef(ShapeType type) {
+		this.type = type;
+		restitution = 1.0;
+		friction = 0.0;
+	}
+}

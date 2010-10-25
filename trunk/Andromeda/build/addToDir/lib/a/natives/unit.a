@@ -1,0 +1,1530 @@
+package a.natives;
+/*
+*	Enrichment for native type 'unit'
+*	@author Still needs one!
+*/
+
+public enrich unit
+{
+	/**
+	*	Description here.
+	*/
+	public void loadModel()
+	{
+		UnitLoadModel(this);
+	}
+
+	/**
+	*	Description here.
+	*/
+	public void unloadModel()
+	{
+		UnitUnloadModel(this);
+	}
+
+	/**
+	*	Removes the unit, likely any triggers whcih rely on detecting units dying will not fire.
+	*/
+	public void remove()
+	{
+		UnitRemove(this);
+	}
+
+	/**
+	*	Kills the unit, likely ignoring all shields and damage protection.
+	*/
+	public void kill()
+	{
+		UnitKill(this);
+	}
+
+	/**
+	*	Revives the unit if it is dead. *May only work on heroes, needs more research*
+	*/
+	public void revive()
+	{
+		UnitRevive(this);
+	}
+
+	/**
+	*	Checks if the unit is alive.
+	*	@return A bool with "true" if the unit is alive or "false" if the unit is dead/removed.
+	*/
+	public bool isAlive()
+	{
+		return UnitIsAlive(this);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a bool.
+	*/
+	public bool isValid()
+	{
+		return UnitIsValid(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown bool.
+	*/
+	public void waitUntilIdle(bool p2)
+	{
+		UnitWaitUntilIdle(this, p2);
+	}
+
+	/**
+	*	Returns the units type, the same as used in unit creation.
+	*	@return A string containing the units type.
+	*/
+	public string getType()
+	{
+		return UnitGetType(this);
+	}
+
+	/**
+	*	Returns the player who owns the unit.
+	*	@return The player who owns the unit.
+	*/
+	public int getOwner()
+	{
+		return UnitGetOwner(this);
+	}
+
+	/**
+	*	Changes the owner of the unit.
+	*	@param p2 The new owner.
+	*	@param p3 Unknown bool. If it's like WC3, if the unit should have its color changed.
+	*/
+	public void setOwner(int p2, bool p3)
+	{
+		UnitSetOwner(this, p2, p3);
+	}
+
+	/**
+	*	Changes the color of the unit.
+	*	@param p2 The player's color you wish to change it to.
+	*/
+	public void setTeamColorIndex(int p2)
+	{
+		UnitSetTeamColorIndex(this, p2);
+	}
+
+	/**
+	*	Changes the unit's color back to what it was originally.
+	*/
+	public void resetTeamColorIndex()
+	{
+		UnitResetTeamColorIndex(this);
+	}
+
+	/**
+	*	Gets the units current position.
+	*	@return Returns the units position in a point variable.
+	*/
+	public point getPosition()
+	{
+		return UnitGetPosition(this);
+	}
+	
+	public point position
+	{
+		get
+		{
+			return this.getPosition();
+		}
+		
+		set
+		{
+			this.setPosition(value, false);
+		}
+	
+	}
+
+	/**
+	*	Changes the units position.
+	*	@param position The point to move the unit to.
+	*	@param blend Whether or not to "blend" the unit, which makes the unit not instantly teleport the point, but slide.
+	*/
+	public void setPosition(point position, bool blend)
+	{
+		UnitSetPosition(this, position, blend);
+	}
+	
+	/**
+	*	Changes the units position.
+	*	@param p The point to move the unit to.
+	*/
+	public void setPosition(point p)
+	{
+		UnitSetPosition(this, p, false);
+	}
+
+	/**
+	*	Returns the current height of the unit.
+	*	@return The height of the unit relative to the ground (needs more research to be sure).
+	*/
+	public fixed getHeight()
+	{
+		return UnitGetHeight(this);
+	}
+
+	/**
+	*	Sets the unit's height.
+	*	@param p2 The height the unit should be set to.
+	*	@param p3 The time the unit will take to reach this height.
+	*/
+	public void setHeight(fixed p2, fixed p3)
+	{
+		UnitSetHeight(this, p2, p3);
+	}
+
+	/**
+	 *	Sets the unit's height.
+	 *	@param height The height to which the unit should be set.
+	 */
+	public void setHeight(fixed height) {
+		UnitSetHeight(this, height, 0.0);
+	}	
+	
+	/**
+	*	Gets the current facing of the unit.
+	*	@return The facing of the unit, in degrees.
+	*/
+	public fixed getFacing()
+	{
+		return UnitGetFacing(this);
+	}
+	
+	public fixed facing
+	{
+		get
+		{
+			return this.getFacing();
+		}
+		
+		set
+		{
+			this.setFacing(value, 0); 
+		}
+	}
+
+	/**
+	*	Sets the units facing.
+	*	@param p2 The angle to make the unit face in degrees.
+	*	@param p3 The amount of time to make the unit take to turn.
+	*/
+	public void setFacing(fixed p2, fixed p3)
+	{
+		UnitSetFacing(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a point.
+	*/
+	public point getAttachmentPoint(string p2)
+	{
+		return UnitGetAttachmentPoint(this, p2);
+	}
+
+	/**
+	*	Resets the units movement speed to what it originally was.
+	*/
+	public void resetSpeed()
+	{
+		UnitResetSpeed(this);
+	}
+
+	/**
+	*	Sets the scale of the unit. Can be used to hilarious effect (setting z to 10% squishes it).
+	*	@param p2 X Scaling (percent)
+	*	@param p3 Y Scaling (percent)
+	*	@param p4 Z Scaling (percent)
+	*/
+	public void setScale(fixed p2, fixed p3, fixed p4)
+	{
+		UnitSetScale(this, p2, p3, p4);
+	}
+
+	/**
+	*	Unkonw. May make the cursor change into something different while highlighting a unit; more research is needed.
+	*	@param p2 Unknown string.
+	*/
+	public void setCursor(string p2)
+	{
+		UnitSetCursor(this, p2);
+	}
+
+	/**
+	*	Sets the unit's info text.
+	*	@param p2 The info text.
+	*	@param p3 Highlight tooltip.
+	*	@param p4 Subtip tooltip.
+	*/
+	public void setInfoText(text p2, text p3, text p4)
+	{
+		UnitSetInfoText(this, p2, p3, p4);
+	}
+
+	/**
+	*	Clears highlight tooltip (according to the Trigger Editor).
+	*/
+	public void clearInfoText()
+	{
+		UnitClearInfoText(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown bool.
+	*/
+	public void forceStatusBar(bool p2)
+	{
+		UnitForceStatusBar(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown bool.
+	*/
+	public void setState(int p2, bool p3)
+	{
+		UnitSetState(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool testState(int p2)
+	{
+		return UnitTestState(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void setPropertyInt(int p2, int p3)
+	{
+		UnitSetPropertyInt(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown fixed.
+	*/
+	public void setPropertyFixed(int p2, fixed p3)
+	{
+		UnitSetPropertyFixed(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown bool.
+	*	@return Returns a int.
+	*/
+	public int getPropertyInt(int p2, bool p3)
+	{
+		return UnitGetPropertyInt(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown bool.
+	*	@return Returns a fixed.
+	*/
+	public fixed getPropertyFixed(int p2, bool p3)
+	{
+		return UnitGetPropertyFixed(this, p2, p3);
+	}
+
+	/**
+	*	Sets the unit's custom value.
+	*	@param p2 The "index" (consider it an array).
+	*	@param p3 The value to set the slot to.
+	*/
+	public void setCustomValue(int p2, fixed p3)
+	{
+		UnitSetCustomValue(this, p2, p3);
+	}
+
+	/**
+	*	Return's the unit's custom value.
+	*	@param p2 The "index" (consider it an array)
+	*	@return Returns the custom value at the index.
+	*/
+	public fixed getCustomValue(int p2)
+	{
+		return UnitGetCustomValue(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown fixed.
+	*/
+	public void addChargeRegen(string p2, fixed p3)
+	{
+		UnitAddChargeRegen(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a fixed.
+	*/
+	public fixed getChargeRegen(string p2)
+	{
+		return UnitGetChargeRegen(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown fixed.
+	*/
+	public void addChargeUsed(string p2, fixed p3)
+	{
+		UnitAddChargeUsed(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a fixed.
+	*/
+	public fixed getChargeUsed(string p2)
+	{
+		return UnitGetChargeUsed(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown fixed.
+	*/
+	public void addCooldown(string p2, fixed p3)
+	{
+		UnitAddCooldown(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a fixed.
+	*/
+	public fixed getCooldown(string p2)
+	{
+		return UnitGetCooldown(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown point.
+	*/
+	public void createEffectPoint(string p2, point p3)
+	{
+		UnitCreateEffectPoint(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown unit.
+	*/
+	public void createEffectUnit(string p2, unit p3)
+	{
+		UnitCreateEffectUnit(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown point.
+	*	@return Returns a int.
+	*/
+	public int validateEffectPoint(string p2, point p3)
+	{
+		return UnitValidateEffectPoint(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown unit.
+	*	@return Returns a int.
+	*/
+	public int validateEffectUnit(string p2, unit p3)
+	{
+		return UnitValidateEffectUnit(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown bool.
+	*/
+	public void setAIOption(int p2, bool p3)
+	{
+		UnitSetAIOption(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool getAIOption(int p2)
+	{
+		return UnitGetAIOption(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown abilcmd.
+	*	@param p3 Unknown int.
+	*/
+	public void abilitySpend(abilcmd p2, int p3)
+	{
+		UnitAbilitySpend(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown abilcmd.
+	*	@param p3 Unknown int.
+	*/
+	public void abilityReset(abilcmd p2, int p3)
+	{
+		UnitAbilityReset(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown abilcmd.
+	*	@param p3 Unknown int.
+	*	@return Returns a fixed.
+	*/
+	public fixed abilityChargeInfo(abilcmd p2, int p3)
+	{
+		return UnitAbilityChargeInfo(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int abilityCount()
+	{
+		return UnitAbilityCount(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a bool.
+	*/
+	public bool abilityExists(string p2)
+	{
+		return UnitAbilityExists(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown bool.
+	*/
+	public void abilityEnable(string p2, bool p3)
+	{
+		UnitAbilityEnable(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown bool.
+	*/
+	public void abilityShow(string p2, bool p3)
+	{
+		UnitAbilityShow(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a string.
+	*/
+	public string abilityGet(int p2)
+	{
+		return UnitAbilityGet(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown bool.
+	*	@return Returns a bool.
+	*/
+	public bool abilityCheck(string p2, bool p3)
+	{
+		return UnitAbilityCheck(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown abilcmd.
+	*	@param p3 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool checkAbilCmdState(abilcmd p2, int p3)
+	{
+		return UnitCheckAbilCmdState(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown int.
+	*/
+	public void abilityChangeLevel(string p2, int p3)
+	{
+		UnitAbilityChangeLevel(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a int.
+	*/
+	public int abilityGetLevel(string p2)
+	{
+		return UnitAbilityGetLevel(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a int.
+	*/
+	public int abilityMaxLevel(string p2)
+	{
+		return UnitAbilityMaxLevel(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@param p4 Unknown fixed.
+	*/
+	public void abilityAddChargeRegen(string p2, string p3, fixed p4)
+	{
+		UnitAbilityAddChargeRegen(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@return Returns a fixed.
+	*/
+	public fixed abilityGetChargeRegen(string p2, string p3)
+	{
+		return UnitAbilityGetChargeRegen(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@param p4 Unknown fixed.
+	*/
+	public void abilityAddChargeUsed(string p2, string p3, fixed p4)
+	{
+		UnitAbilityAddChargeUsed(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@return Returns a fixed.
+	*/
+	public fixed abilityGetChargeUsed(string p2, string p3)
+	{
+		return UnitAbilityGetChargeUsed(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@param p4 Unknown fixed.
+	*/
+	public void abilityAddCooldown(string p2, string p3, fixed p4)
+	{
+		UnitAbilityAddCooldown(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@return Returns a fixed.
+	*/
+	public fixed abilityGetCooldown(string p2, string p3)
+	{
+		return UnitAbilityGetCooldown(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown int.
+	*/
+	public void cargoCreate(string p2, int p3)
+	{
+		UnitCargoCreate(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a unit.
+	*/
+	public unit cargo(int p2)
+	{
+		return UnitCargo(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a unitgroup.
+	*/
+	public unitgroup cargoGroup()
+	{
+		return UnitCargoGroup(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int cargoValue(int p2)
+	{
+		return UnitCargoValue(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a unit.
+	*/
+	public unit transport()
+	{
+		return UnitTransport(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a unit.
+	*/
+	public unit agent(int p2)
+	{
+		return UnitAgent(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown abilcmd.
+	*	@param p3 Unknown int.
+	*/
+	public void magazineArm(abilcmd p2, int p3)
+	{
+		UnitMagazineArm(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a int.
+	*/
+	public int magazineCount(string p2)
+	{
+		return UnitMagazineCount(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int queueItemCount(int p2)
+	{
+		return UnitQueueItemCount(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@return Returns a string.
+	*/
+	public string queueItemGet(int p2, int p3)
+	{
+		return UnitQueueItemGet(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@return Returns a fixed.
+	*/
+	public fixed queueItemTime(int p2, int p3)
+	{
+		return UnitQueueItemTime(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool queueItemTypeCheck(int p2, int p3)
+	{
+		return UnitQueueItemTypeCheck(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int queueGetProperty(int p2)
+	{
+		return UnitQueueGetProperty(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a bool.
+	*/
+	public bool moverExists(string p2)
+	{
+		return UnitMoverExists(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool testPlane(int p2)
+	{
+		return UnitTestPlane(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a fixed.
+	*/
+	public fixed getProgressComplete(int p2)
+	{
+		return UnitGetProgressComplete(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void setProgressComplete(int p2, int p3)
+	{
+		UnitSetProgressComplete(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void setProgressStage(int p2, int p3)
+	{
+		UnitSetProgressStage(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool checkProgressState(int p2, int p3)
+	{
+		return UnitCheckProgressState(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown unit.
+	*	@param p4 Unknown int.
+	*/
+	public void behaviorAdd(string p2, unit p3, int p4)
+	{
+		UnitBehaviorAdd(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown int.
+	*	@param p4 Unknown int.
+	*/
+	public void behaviorAddPlayer(string p2, int p3, int p4)
+	{
+		UnitBehaviorAddPlayer(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int behaviorCountAll()
+	{
+		return UnitBehaviorCountAll(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a int.
+	*/
+	public int behaviorCount(string p2)
+	{
+		return UnitBehaviorCount(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a fixed.
+	*/
+	public fixed behaviorDuration(string p2)
+	{
+		return UnitBehaviorDuration(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown fixed.
+	*/
+	public void behaviorSetDuration(string p2, fixed p3)
+	{
+		UnitBehaviorSetDuration(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a bool.
+	*/
+	public bool behaviorEnabled(string p2)
+	{
+		return UnitBehaviorEnabled(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a string.
+	*/
+	public string behaviorGet(int p2)
+	{
+		return UnitBehaviorGet(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a bool.
+	*/
+	public bool hasBehavior(string p2)
+	{
+		return UnitHasBehavior(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown int.
+	*/
+	public void behaviorRemove(string p2, int p3)
+	{
+		UnitBehaviorRemove(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown int.
+	*	@param p4 Unknown int.
+	*/
+	public void behaviorRemovePlayer(string p2, int p3, int p4)
+	{
+		UnitBehaviorRemovePlayer(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*	@param p3 Unknown string.
+	*	@param p4 Unknown int.
+	*/
+	public void behaviorTransfer(unit p2, string p3, int p4)
+	{
+		UnitBehaviorTransfer(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void behaviorRemoveCategory(int p2)
+	{
+		UnitBehaviorRemoveCategory(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@param p4 Unknown fixed.
+	*/
+	public void behaviorAddChargeRegen(string p2, string p3, fixed p4)
+	{
+		UnitBehaviorAddChargeRegen(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@return Returns a fixed.
+	*/
+	public fixed behaviorGetChargeRegen(string p2, string p3)
+	{
+		return UnitBehaviorGetChargeRegen(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@param p4 Unknown fixed.
+	*/
+	public void behaviorAddChargeUsed(string p2, string p3, fixed p4)
+	{
+		UnitBehaviorAddChargeUsed(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@return Returns a fixed.
+	*/
+	public fixed behaviorGetChargeUsed(string p2, string p3)
+	{
+		return UnitBehaviorGetChargeUsed(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@param p4 Unknown fixed.
+	*/
+	public void behaviorAddCooldown(string p2, string p3, fixed p4)
+	{
+		UnitBehaviorAddCooldown(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*	@return Returns a fixed.
+	*/
+	public fixed behaviorGetCooldown(string p2, string p3)
+	{
+		return UnitBehaviorGetCooldown(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown bool.
+	*/
+	public void xPGainEnable(string p2, bool p3)
+	{
+		UnitXPGainEnable(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a marker.
+	*/
+	public marker marker(int p2)
+	{
+		return UnitMarker(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown marker.
+	*/
+	public void markerAdd(marker p2)
+	{
+		UnitMarkerAdd(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown marker.
+	*	@return Returns a int.
+	*/
+	public int markerCount(marker p2)
+	{
+		return UnitMarkerCount(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown marker.
+	*/
+	public void markerRemove(marker p2)
+	{
+		UnitMarkerRemove(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a order.
+	*/
+	public order order(int p2)
+	{
+		return UnitOrder(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int orderCount()
+	{
+		return UnitOrderCount(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a bool.
+	*/
+	public bool orderHasAbil(string p2)
+	{
+		return UnitOrderHasAbil(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown order.
+	*	@return Returns a bool.
+	*/
+	public bool orderIsValid(order p2)
+	{
+		return UnitOrderIsValid(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool isHarvesting(int p2)
+	{
+		return UnitIsHarvesting(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown order.
+	*	@param p3 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool issueOrder(order p2, int p3)
+	{
+		return UnitIssueOrder(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*	@return Returns a int.
+	*/
+	public int rallyPoint(unit p2)
+	{
+		return UnitRallyPoint(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int rallyPointCount()
+	{
+		return UnitRallyPointCount(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int rallyPointTargetCount(int p2)
+	{
+		return UnitRallyPointTargetCount(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@return Returns a point.
+	*/
+	public point rallyPointTargetPoint(int p2, int p3)
+	{
+		return UnitRallyPointTargetPoint(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@return Returns a unit.
+	*/
+	public unit rallyPointTargetUnit(int p2, int p3)
+	{
+		return UnitRallyPointTargetUnit(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int techTreeBehaviorCount(string p2, int p3)
+	{
+		return UnitTechTreeBehaviorCount(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int techTreeUnitCount(string p2, int p3)
+	{
+		return UnitTechTreeUnitCount(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int techTreeUpgradeCount(string p2, int p3)
+	{
+		return UnitTechTreeUpgradeCount(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int inventoryCount(int p2)
+	{
+		return UnitInventoryCount(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a unit.
+	*/
+	public unit inventoryItem(int p2)
+	{
+		return UnitInventoryItem(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a unitgroup.
+	*/
+	public unitgroup inventoryGroup()
+	{
+		return UnitInventoryGroup(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@return Returns a unit.
+	*/
+	public unit inventoryCreate(string p2)
+	{
+		return UnitInventoryCreate(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown string.
+	*/
+	public void weaponAdd(string p2, string p3)
+	{
+		UnitWeaponAdd(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@return Returns a int.
+	*/
+	public int weaponCount()
+	{
+		return UnitWeaponCount(this);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool weaponCheck(int p2, int p3)
+	{
+		return UnitWeaponCheck(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a string.
+	*/
+	public string weaponGet(int p2)
+	{
+		return UnitWeaponGet(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool weaponIsEnabled(int p2)
+	{
+		return UnitWeaponIsEnabled(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a fixed.
+	*/
+	public fixed weaponPeriod(int p2)
+	{
+		return UnitWeaponPeriod(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*/
+	public void weaponRemove(string p2)
+	{
+		UnitWeaponRemove(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@return Returns a bool.
+	*/
+	public bool weaponsPlaneTest(int p2)
+	{
+		return UnitWeaponsPlaneTest(this, p2);
+	}
+
+	/**
+	*	Gets the unit's xp.
+	*	@return Returns the unit's xp.
+	*/
+	public fixed getXpTotal()
+	{
+		return UnitXPTotal(this);
+	}
+	
+	//Alias to getXpTotal()
+	/**
+	*	Gets the unit's xp.
+	*	@return Returns the unit's xp.
+	*/
+	public fixed getXp()
+	{
+		return this.getXpTotal();
+	}
+	
+	/**
+	*	Read-only.
+	*/
+	public fixed xpTotal
+	{
+		get
+		{
+			return this.getXp();
+		}
+	}
+	
+	//Alias to xpTotal
+	/**
+	*	Read-only.
+	*/
+	public fixed xp
+	{
+		get
+		{
+			return this.getXp();
+		}
+	}
+	
+
+	/**
+	*	Gets the units level (assumably for Heroes? Needs more information)
+	*	@return Returns the unit's level.
+	*/
+	public int getLevel()
+	{
+		return UnitLevel(this);
+	}
+	
+	/**
+	*	Read-only.
+	*/
+	public int level
+	{
+		public get
+		{
+			return this.getLevel();
+		}
+	}
+
+	/**
+	*	Checks a unit to a unit filter.
+	*	@param p The player who's perspective it will be judged from.
+	*	@param uf The filter.
+	*	@return Returns true if the unit can get through the filter, false if not.
+	*/
+	public bool isFilterMatch(int p, unitfilter uf)
+	{
+		return UnitFilterMatch(this, p, uf);
+	}
+	
+	/**
+	*	Checks a unit to a unit filter, with the default perspective of player 1.
+	*	@param uf The filter.
+	*	@return Returns true if the unit can get through the filter, false if not.
+	*/
+	public bool filterMatch(unitfilter uf)
+	{
+		return UnitFilterMatch(this, 1, uf);
+	}
+
+	/**
+	*	Returns a unitref which points to this unit.
+	*	@return Returns the unit's unitref.
+	*/
+	public unitref getUnitRef()
+	{
+		return UnitRefFromUnit(this);
+	}
+	
+	/**
+	*	Read-only. 
+	*/
+	public unitref unitRef
+	{
+		public get
+		{
+			return this.getUnitRef();
+		}
+	}
+
+	/**
+	*	Selects or deselects the unit.
+	*	@param p The player to select/deselect for.
+	*	@param flag Whether or not to select/deselect. True to select, false to deselect.
+	*/
+	public void select(int p, bool flag)
+	{
+		UnitSelect(this, p, flag);
+	}
+
+	/**
+	*	Checks if a unit is selected by a player.
+	*	@param p The player to check,
+	*	@return Returns true if the unit is selected by the player, false otherwise.
+	*/
+	public bool isSelected(int p)
+	{
+		return UnitIsSelected(this, p);
+	}
+
+	/**
+	*	Flashes a ring around a unit.
+	*	@param duration How long to flash for.
+	*/
+	public void flashSelection(fixed duration)
+	{
+		UnitFlashSelection(this, duration);
+	}
+
+	/**
+	 * Gets this unit's main actor.
+	 * @return This unit's main actor.
+	 */
+	public actor getMainActor() {
+		return ActorFromScope(ActorScopeFromUnit(this), "::Main");
+	}
+}

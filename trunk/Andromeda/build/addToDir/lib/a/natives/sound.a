@@ -1,0 +1,112 @@
+package a.natives;
+/*
+*	Enrichment for native type 'sound'
+*	@author NewName
+*/
+
+public enrich sound
+{
+	/**
+	*	Stop playing this sound.
+	*	@param fade whether to fade out this sound.
+	*/
+	public void stop(bool fade)
+	{
+		SoundStop(this, fade);
+	}
+	
+	/**
+	*	Stop playing all model sounds.
+	*/
+	public static void stopAllModel()
+	{
+		SoundStopAllModelSounds();
+	}
+	
+	/**
+	*	Stop playing all sounds explicitly started through triggers.
+	*	@param fade whether to fade out this sound.
+	*/
+	public static void stopAllTrigger(bool fade)
+	{
+		SoundStopAllTriggerSounds(fade);
+	}
+
+	/**
+	*	Set the volume for this sound as a percentage (0-100) of maximum volume.
+	*	@param volume the volume of this sound.
+	*/
+	public void setVolume(fixed volume)
+	{
+		SoundSetVolume(this, volume);
+	}
+
+	/**
+	*	Set the location that this sound radiates from. 3D sound will only play for player if they have vision of this location.
+	*	@param position the horizontal location of the sound.
+	*	@param height the vertical elevation of the sound.
+	*/
+	public void setPosition(point position, fixed height)
+	{
+		SoundSetPosition(this, position, height);
+	}
+
+	/**
+	*	Sets the time in seconds at which this sound starts playing. Use negative time to offset backward from the end of the sound.
+	*	@param time the time at which to start.
+	*/
+	public void setOffset(fixed time)
+	{
+		SoundSetOffset(this, time < 0 ? -time : time, time < 0 ? c_soundOffsetEnd : c_soundOffsetStart);
+	}
+
+	/**
+	*	Blocks execution until this sound has played the specified number of second. Use negative time to block until playback is the specified time from the end of the sound.
+	*	@param time the time at which to return normal execution.
+	*/
+	public void wait(fixed time)
+	{
+		SoundWait(this, time < 0 ? -time : time, time < 0 ? c_soundOffsetEnd : c_soundOffsetStart);
+	}
+	
+	/**
+	*	Blocks execution until this sound has fully played.
+	*/
+	public void wait()
+	{
+		SoundWait(this, 0.0, c_soundOffsetEnd);
+	}
+
+	/**
+	*	Attach this sound to a unit, such that the position of this sound will follow the given unit.
+	*	@param u the unit that this sound should follow.
+	*	@param height the elevation of this sound above the unit.
+	*/
+	public void attachUnit(unit u, fixed height)
+	{
+		SoundAttachUnit(this, u, height);
+	}
+
+	/**
+	*	Set global factors for distance, doppler, and rolloff.
+	*	@param distance
+	*	@param doppler
+	*	@param rolloff
+	*/
+	public static void setFactors(fixed distance, fixed doppler, fixed rolloff)
+	{
+		SoundSetFactors(distance, doppler, rolloff);
+	}
+	
+	/**
+	*	Set reverb parameters.
+	*	@param reverb the type of reverb.
+	*	@param duration the reverb duration.
+	*	@param ambient
+	*	@param global
+	*/
+	public static void setReverb(string reverb, fixed duration, bool ambient, bool global)
+	{
+		SoundSetReverb(reverb, duration, ambient, global);
+	}
+}

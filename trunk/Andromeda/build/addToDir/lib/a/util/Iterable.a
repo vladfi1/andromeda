@@ -1,0 +1,10 @@
+package a.util;
+
+import a.util.Iterator;
+
+/**
+ * Can be the target of a "for each" loop.
+ */
+public abstract class Iterable<E> {
+	public abstract Iterator<E> getIterator();
+}

@@ -1,0 +1,62 @@
+package a.natives;
+/**  
+*	Definition and enrichment for difficulty type
+*	@author NewName
+*/
+typedef Difficulty uses int;
+
+public enrich Difficulty
+{
+	public static const Difficulty 
+		VERY_EASY = (Difficulty)(0),	// I've confirmed very easy, the rest are speculation -NewName
+
+
+		EASY = (Difficulty)(1),
+		MEDIUM = (Difficulty)(2),	// looking at bliz's code, this seems to be the case
+
+
+		HARD = (Difficulty)(3),
+		VERY_HARD = (Difficulty)(4);	// ???
+
+
+
+	/**
+	*	The name of this difficulty level. (read-only)
+	*/
+	public text name
+	{
+		public get {
+			return DifficultyName((int)this);
+		}
+	}
+	
+	/**
+	*	The campaign name of this difficulty level. (read-only)
+	*/
+	public text campaignName
+	{
+		public get {
+			return DifficultyNameCampaign((int)this);
+		}
+	}
+	
+	/**
+	*	True if this difficulty level is enabled. (read-only)
+	*/
+	public bool enabled
+	{
+		public get {
+			return DifficultyEnabled((int)this);
+		}
+	}
+	
+	/**
+	*	The AI actions per minute for this difficulty level. (read-only)
+	*/
+	public int apm
+	{
+		public get {
+			return DifficultyAPM((int)this);
+		}
+	}
+}

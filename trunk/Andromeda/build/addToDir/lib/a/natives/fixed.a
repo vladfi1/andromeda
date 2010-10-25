@@ -1,0 +1,223 @@
+package a.natives;
+
+import a.util.Math;
+
+/**  
+*        Enrichment for type fixed
+*        @author Belphegor
+*/
+public enrich fixed
+{
+	public static const int ANY_PRECISION = c_fixedPrecisionAny;
+
+	/**
+	* 	Returns a new fixed which is an absolute value of this fixed number.
+	* 	Absolute value represents distance from the 0.
+	*	@return absolute value of this fixed
+	*/
+	public fixed abs()
+	{
+		return AbsF(this);
+	}
+	
+	/**
+	*	Returns new fixed with this fixed number as base and exp as exponent
+	*	@param exp exponent of the number
+	*	@return fixed that represents this to a power of exp(this^exp)
+	*/
+	public fixed pow(fixed exp)
+	{
+		return Pow(this, exp);
+	}
+	
+	/**
+	*	Returns the higher value between this and that fixed. The returned value is a copy
+	* 	@param that fixed which we compare for maximum value
+	*	@return maximum value
+	*/
+	public fixed max(fixed that)
+	{
+		return MaxF(this, that);
+	}
+	
+	/**
+	*	Returns the lesser value between this and that fixed. The returned value is a copy
+	* 	@param that fixed number which we compare for minimum value
+	*	@return minimum value
+	*/
+	public fixed min(fixed that)
+	{
+		return MinF(this, that);
+	}
+	
+	
+	/**
+	*	Returns a new fixed number which represents square-root of this fixed
+	*	@return square root of this fixed number.
+	*/
+	public fixed sqrt()
+	{
+		return SquareRoot(this);
+	}
+	
+	/**
+	*	Returns a new fixed result of the division between this fixed and the divisor
+	*	@param div represents divisor
+	*	@return square root of this fixed number.
+	*/
+	public fixed mod(fixed div)
+	{
+		return ModF(this, div);
+	}
+	
+	/**
+	*	Returns a new fixed number which represents sine this fixed, where 
+	*  	this fixed is treated as the angle.
+	*	@return sine of this fixed.
+	*/
+	public fixed sin()
+	{
+		//NOTE: Untested I assume the angle is between -180° (excluded) and 180°.
+
+		return Sin(this);
+	}
+	
+	/**
+	*	Returns a new fixed number which represents cosine this fixed, where 
+	*  	this fixed is treated as the angle.
+	*	@return cosine of this fixed.
+	*/
+	public fixed cos()
+	{
+		//NOTE: Untested I assume the angle is between -180° (excluded) and 180°.
+
+		return Cos(this);
+	}
+
+	/**
+	*	Returns a new fixed number which represents tangent this fixed, where 
+	*  	this fixed is treated as the angle.
+	*	@return tangent of this fixed.
+	*/
+	public fixed tan()
+	{
+		//NOTE: Untested I assume the angle is between -180° (excluded) and 180°.
+
+		return Tan(this);
+	}
+	
+	
+	/**
+	*	Returns a new fixed number which represents arcsine this fixed, where 
+	*  	this fixed is treated as the angle.
+	*	@return arcsine of this fixed.
+	*/
+	public fixed asin()
+	{
+		//NOTE: Untested I assume the angle is between -180° (excluded) and 180°.
+
+		return ASin(this);
+	}
+
+	/**
+	*	Returns a new fixed number which represents arccosine this fixed, where 
+	*  	this fixed is treated as the angle.
+	*	@return arccosine of this fixed.
+	*/
+	public fixed acos()
+	{
+		//NOTE: Untested I assume the angle is between -180° (excluded) and 180°.
+
+		return ACos(this);
+	}
+
+	/**
+	*	Returns a new fixed number which represents arctangent this fixed, where 
+	*  	this fixed is treated as the angle.
+	*	@return arctangent of this fixed.
+	*/
+	public fixed atan()
+	{
+		//NOTE: Untested I assume the angle is between -180° (excluded) and 180°.
+
+		return ATan(this);
+	}	
+	
+	/**
+	*	Generates a random fixed number  in [min,max] range. 
+	*	Ordering of min and max doesn't affect the results. In other words random(0.0,1.0) generates 
+	*   value in same range as random(1.0,0.0).
+	* 	@param min lowest possible value to be generated
+	* 	@param max highest possible value to be generated
+	*	@return random fixed value in [min, max] range
+	*/
+	public static fixed random(fixed min, fixed max)
+	{
+		return RandomFixed(min,max);
+	}
+	
+	
+	/**
+	*	Compares this fixed to that fixed and negative, zero or a positive fixedeger
+	* 	if this is lesser, equal or greater than that respectively:<code>
+	*         this < that  => <0
+	*         this == that => 0
+	*         this > that  => >0</code>
+	* 	@param that fixed to which we compare
+	* 	@return  negative, zero or a positive fixedeger if this is lesser, equal or greater than that respectively
+	*/
+	public fixed compareTo(fixed that)
+	{
+		if (this < that) return -1;
+		else if (this > that) return 1;
+		return 0;
+	}
+	
+	/**
+	*	Compares this fixed to that fixed and returns true if both have the same value
+	* 	@param that fixed to which we compare for equality
+	*	@return true if two fixeds are equal, false otherwise 
+	*/
+	public bool equals(fixed that)
+	{
+		return this==that;
+	}
+	
+	/**
+	* 	Returns a hash code of this fixed
+	*	@return hash code
+	*/
+	public int hash()
+	{
+		return (int) this;
+	}
+	
+	/**
+	* 	Returns a hash code of this fixed.
+	*	@return An int with the same bits as this fixed.
+	*/
+	public int hashCode() {
+		return Math.fixedToIntBits(this);
+	}
+	
+	/**
+	*	Returns a string representation of this fixed
+	*	@return string representation of this fixed
+	*/
+	public string toString() {
+		return FixedToString(this, ANY_PRECISION);
+	}
+	
+	public string toString(int precision) {
+		return FixedToString(this, precision);
+	}
+	
+	/**
+	*	Returns a text representation of this fixed
+	*	@return text representation of this fixed
+	*/
+	public text toText()
+	{
+		return (text) this;
+	}
+}

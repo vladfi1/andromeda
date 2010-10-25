@@ -1,0 +1,94 @@
+package physics2d.geom;
+
+import physics2d.dynamics.Body;
+import physics2d.geom.ShapeDef;
+import physics2d.geom.MassData;
+import physics2d.geom.Vec2;
+import physics2d.geom.AABB;
+import physics2d.geom.XForm;
+
+/**
+ * A (convex) shape used for collision detection.
+ * @author XPilot
+ */
+public abstract class Shape {
+	/**
+	 * This shape's type.
+	 */
+	/* final */ ShapeType type;
+
+	/* final */ fixed restitution;
+	/* final */ fixed friction;
+	
+	/**
+	 * The parent body.
+	 */
+	/* final */ Body body;
+	
+	public Shape(ShapeDef def) {
+		type = def.type;
+		restitution = def.restitution;
+		friction = def.friction;
+		body = null;
+	}
+	
+	public ShapeType getType() {
+		return type;
+	}
+	
+	public fixed getRestitution() {
+		return restitution;
+	}
+	
+	public fixed getFriction() {
+		return friction;
+	}
+	
+	public Body getBody() {
+		return body;
+	}
+	
+	/**
+	 * Compute the mass properties of this shape using its dimensions and density.
+	 * The inertia tensor is computed about the local origin, not the centroid.
+	 * @param result Stores the mass data for this shape.
+	 */
+	public abstract void computeMass(MassData result);
+	
+	/**
+	 * Computes the minimal radius for a circle to contain this shape.
+	 * @param center The center of the circle.
+	 * @return The minimal radius.
+	 */
+	public abstract fixed computeRadius(Vec2 center);
+	
+	/**
+	 * Given a transform, computes the axis aligned bounding box for this shape.
+	 * @param xf the World transform of the shape.
+	 * @param result Stores the axis aligned box.
+	 */
+	public abstract void computeAABB(XForm xf, AABB result);
+	
+	/**
+	 * Given two transforms, compute the associated swept axis aligned bounding box for this shape.
+	 * @param xf1 the starting shape world transform.
+	 * @param xf2 the ending shape world transform.
+	 * @param result Stores the axis aligned box. (return parameter)
+	 */
+	public abstract void computeSweptAABB(XForm xf1, XForm xf2, AABB result);
+	
+	/**
+	 * Support mapping that maps each vector v to the farthest point in this shape along v.
+	 * @param xf The world transform.
+	 * @param v The desired direction.
+	 * @param result Stores the point furthest along v.
+	 */
+	public abstract void support(XForm xf, Vec2 v, Vec2 result);
+	
+	/**
+	 * Gets a point in this shape.
+	 * @param xf The world transform.
+	 * @param result Stores the point.
+	 */
+	public abstract void getPoint(XForm xf, Vec2 result);
+}

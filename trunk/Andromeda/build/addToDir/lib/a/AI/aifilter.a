@@ -1,0 +1,187 @@
+package a.ai;
+/*
+*	Enrichment for native type 'aifilter'
+*	@author Still needs one!
+*/
+
+public enrich aifilter
+{
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void setFilterAlliance(int p2)
+	{
+		AISetFilterAlliance(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@param p4 Unknown marker.
+	*/
+	public void setFilterMarker(int p2, int p3, marker p4)
+	{
+		AISetFilterMarker(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*/
+	public void setFilterSelf(unit p2)
+	{
+		AISetFilterSelf(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitfilter.
+	*/
+	public void setFilterBits(unitfilter p2)
+	{
+		AISetFilterBits(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unit.
+	*	@param p3 Unknown fixed.
+	*/
+	public void setFilterRange(unit p2, fixed p3)
+	{
+		AISetFilterRange(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown fixed.
+	*	@param p3 Unknown fixed.
+	*/
+	public void setFilterLife(fixed p2, fixed p3)
+	{
+		AISetFilterLife(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown fixed.
+	*	@param p3 Unknown fixed.
+	*/
+	public void setFilterLifeLost(fixed p2, fixed p3)
+	{
+		AISetFilterLifeLost(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown fixed.
+	*	@param p3 Unknown fixed.
+	*/
+	public void setFilterLifePercent(fixed p2, fixed p3)
+	{
+		AISetFilterLifePercent(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown fixed.
+	*	@param p3 Unknown fixed.
+	*/
+	public void setFilterLifeSortReference(fixed p2, fixed p3)
+	{
+		AISetFilterLifeSortReference(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown fixed.
+	*/
+	public void setFilterLifeMod(int p2, fixed p3)
+	{
+		AISetFilterLifeMod(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown fixed.
+	*	@param p3 Unknown marker.
+	*/
+	public void setFilterLifePerMarker(fixed p2, marker p3)
+	{
+		AISetFilterLifePerMarker(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown fixed.
+	*	@param p3 Unknown fixed.
+	*/
+	public void setFilterShields(fixed p2, fixed p3)
+	{
+		AISetFilterShields(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown fixed.
+	*	@param p3 Unknown fixed.
+	*/
+	public void setFilterEnergy(fixed p2, fixed p3)
+	{
+		AISetFilterEnergy(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*/
+	public void setFilterPlane(int p2)
+	{
+		AISetFilterPlane(this, p2);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*/
+	public void setFilterCanAttackEnemy(int p2, int p3)
+	{
+		AISetFilterCanAttackEnemy(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown bool.
+	*	@param p3 Unknown bool.
+	*/
+	public void setFilterCanAttackAlly(bool p2, bool p3)
+	{
+		AISetFilterCanAttackAlly(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown int.
+	*	@param p4 Unknown string.
+	*/
+	public void setFilterBehaviorCount(int p2, int p3, string p4)
+	{
+		AISetFilterBehaviorCount(this, p2, p3, p4);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown unitgroup.
+	*	@return Returns a unitgroup.
+	*/
+	public unitgroup getFilterGroup(unitgroup p2)
+	{
+		return AIGetFilterGroup(this, p2);
+	}
+
+}

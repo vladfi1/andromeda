@@ -1,0 +1,91 @@
+package a.util;
+
+import a.util.AbstractList;
+import a.util.Heap;
+
+/**
+ * Array built on the Heap.
+ * Does not perform bounds checks.
+ * @author XPilot
+ */
+public class Array<E> extends AbstractList<E> {
+	
+	/**
+	 * Index in the Heap.
+	 */
+	/* final */ int ptr;
+	/**
+	 * Length of the array.
+	 */
+	public /* final */ int length;
+	
+	public Array(int length) {
+		if(length == 0) ptr = -1;
+		else ptr = Heap.malloc(length);
+		this.length = length;
+	}
+	
+	public ~Array() {
+		if (length > 0) {
+			Heap.free(ptr);
+		}
+	}
+	
+	public override int size() {
+		return length;
+	}
+	
+	/**
+	 * Does not perform bounds checks.
+	 */
+	public override void setIndex(int index, E value) {
+		Heap.array[ptr + index] = (int)value;
+	}
+	
+	/**
+	 * Does not perform bounds checks.
+	 */
+	public override E getIndex(int index) {
+		return (E)Heap.array[ptr + index];
+	}
+	
+	/**
+	 * Unsupported operation.
+	 */
+	public override void clear() {}
+	
+	/**
+	 * Unsupported operation.
+	 * @return true
+	 */
+	public override bool isEmpty() {
+		return true;
+	}
+	
+	/**
+	 * Unsupported operation.
+	 * @return false
+	 */
+	public override bool addIndex(int index, E element) {
+		System.error("Unsupported Operation: Array.addIndex(int, E)");
+		return false;
+	}
+	
+	/**
+	 * Unsupported operation.
+	 * @return null
+	 */
+	public override E removeIndex(int index) {
+		System.error("Unsupported Operation: Array.removeIndex(int)");
+		return null;
+	}
+	
+	/**
+	 * A shallow copy of this array.
+	 */
+	public Array<E> clone() {
+		Array<E> clone = new Array<E>(length);
+		Heap.copy(ptr, clone.ptr, length);
+		return clone;
+	}
+}

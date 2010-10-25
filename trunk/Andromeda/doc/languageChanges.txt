@@ -1,0 +1,42 @@
+-You only have one namespace for fields, accessors and methods now,
+	so you cannot have a method x() if you have a field x.
+	This solves some ambiguities.
+-Packages should now work correctly and you should be able to use qualified names, if necessary
+-You can now enrich almost any type.
+-Changes to the visibility system:
+		=> things without any visibility modifier are now considered public.
+			Using "public" explicitly is deprecated but will still compile.
+		=> package visibility nests: If something is package visible, it is
+			visible from all files in the same package and from files of subpackages
+		=> the modifier "internal" grants package visibility
+		=> the "protected" modifier grants package visibility and visibility to all subtypes
+		   and enrichments of that type and subtypes.
+		=> the private modifier is the same as in java and most other languages:
+			Only the same scope can access the values.
+			Even enrichments of a class cannot use the classes private fields.
+-
+
+
+if a parameterless method is defined without parenthesis, then it can be
+called without parenthesis. Only methods that just return some value should be defined this way
+Example:
+
+public abstract get x();
+get int x(){
+	return 4;
+}
+
+x;
+
+how to get function pointers?
+
+accessors:
+x.get
+x.set
+
+
+
+.get
+
+	
+		

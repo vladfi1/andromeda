@@ -1,0 +1,255 @@
+package a.util;
+/**
+* Definition and enrichment for type 'Key'
+* @author tolleder
+*/
+
+typedef Key uses int;
+enrich Key
+{
+    /**
+    *       If this constant is used in addEventKeyPressed the trigger will be executed for every key
+    *       press/release fulfilling the other filters.
+    */
+    public static const Key KEY_ANY = (Key)c_keyNone;
+
+    //TODO: Find the codes for the keys Starcraft 2 detects, but are not listed in the constants-
+    //TODO: Think about the naming of multiple word keys like NUMPAD0,PRINTSCREEN,NEXTTRACK,...
+    public static const Key KEY_NONE = (Key)c_keyNone;
+    public static const Key KEY_SHIFT = (Key)c_keyShift;
+    public static const Key KEY_CONTROL = (Key)c_keyControl;
+    public static const Key KEY_ALT = (Key)c_keyAlt;
+    public static const Key KEY_0 = (Key)c_key0;
+    public static const Key KEY_1 = (Key)c_key1;
+    public static const Key KEY_2 = (Key)c_key2;
+    public static const Key KEY_3 = (Key)c_key3;
+    public static const Key KEY_4 = (Key)c_key4;
+    public static const Key KEY_5 = (Key)c_key5;
+    public static const Key KEY_6 = (Key)c_key6;
+    public static const Key KEY_7 = (Key)c_key7;
+    public static const Key KEY_8 = (Key)c_key8;
+    public static const Key KEY_9 = (Key)c_key9;
+    public static const Key KEY_A = (Key)c_keyA;
+    public static const Key KEY_B = (Key)c_keyB;
+    public static const Key KEY_C = (Key)c_keyC;
+    public static const Key KEY_D = (Key)c_keyD;
+    public static const Key KEY_E = (Key)c_keyE;
+    public static const Key KEY_F = (Key)c_keyF;
+    public static const Key KEY_G = (Key)c_keyG;
+    public static const Key KEY_H = (Key)c_keyH;
+    public static const Key KEY_I = (Key)c_keyI;
+    public static const Key KEY_J = (Key)c_keyJ;
+    public static const Key KEY_K = (Key)c_keyK;
+    public static const Key KEY_L = (Key)c_keyL;
+    public static const Key KEY_M = (Key)c_keyM;
+    public static const Key KEY_N = (Key)c_keyN;
+    public static const Key KEY_O = (Key)c_keyO;
+    public static const Key KEY_P = (Key)c_keyP;
+    public static const Key KEY_Q = (Key)c_keyQ;
+    public static const Key KEY_R = (Key)c_keyR;
+    public static const Key KEY_S = (Key)c_keyS;
+    public static const Key KEY_T = (Key)c_keyT;
+    public static const Key KEY_U = (Key)c_keyU;
+    public static const Key KEY_V = (Key)c_keyV;
+    public static const Key KEY_W = (Key)c_keyW;
+    public static const Key KEY_X = (Key)c_keyX;
+    public static const Key KEY_Y = (Key)c_keyY;
+    public static const Key KEY_Z = (Key)c_keyZ;
+    public static const Key KEY_SPACE = (Key)c_keySpace;
+    public static const Key KEY_GRAVE = (Key)c_keyGrave;
+    public static const Key KEY_NUMPAD0 = (Key)c_keyNumPad0;
+    public static const Key KEY_NUMPAD1 = (Key)c_keyNumPad1;
+    public static const Key KEY_NUMPAD2 = (Key)c_keyNumPad2;
+    public static const Key KEY_NUMPAD3 = (Key)c_keyNumPad3;
+    public static const Key KEY_NUMPAD4 = (Key)c_keyNumPad4;
+    public static const Key KEY_NUMPAD5 = (Key)c_keyNumPad5;
+    public static const Key KEY_NUMPAD6 = (Key)c_keyNumPad6;
+    public static const Key KEY_NUMPAD7 = (Key)c_keyNumPad7;
+    public static const Key KEY_NUMPAD8 = (Key)c_keyNumPad8;
+    public static const Key KEY_NUMPAD9 = (Key)c_keyNumPad9;
+    public static const Key KEY_NUMPADPLUS = (Key)c_keyNumPadPlus;
+    public static const Key KEY_NUMPADMINUS = (Key)c_keyNumPadMinus;
+    public static const Key KEY_NUMPADMULTIPLY = (Key)c_keyNumPadMultiply;
+    public static const Key KEY_NUMPADDIVIDE = (Key)c_keyNumPadDivide;
+    public static const Key KEY_NUMPADDECIMAL = (Key)c_keyNumPadDecimal;
+    public static const Key KEY_EQUALS = (Key)c_keyEquals;
+    public static const Key KEY_MINUS = (Key)c_keyMinus;
+    public static const Key KEY_BRACKETOPEN = (Key)c_keyBracketOpen;
+    public static const Key KEY_BRACKETCLOSE = (Key)c_keyBracketClose;
+    public static const Key KEY_BACKSLASH = (Key)c_keyBackSlash;
+    public static const Key KEY_SEMICOLON = (Key)c_keySemiColon;
+    public static const Key KEY_APOSTROPHE = (Key)c_keyApostrophe;
+    public static const Key KEY_COMMA = (Key)c_keyComma;
+    public static const Key KEY_PERIOD = (Key)c_keyPeriod;
+    public static const Key KEY_SLASH = (Key)c_keySlash;
+    public static const Key KEY_ESCAPE = (Key)c_keyEscape;
+    public static const Key KEY_ENTER = (Key)c_keyEnter;
+    public static const Key KEY_BACKSPACE = (Key)c_keyBackSpace;
+    public static const Key KEY_TAB = (Key)c_keyTab;
+    public static const Key KEY_LEFT = (Key)c_keyLeft;
+    public static const Key KEY_UP = (Key)c_keyUp;
+    public static const Key KEY_RIGHT = (Key)c_keyRight;
+    public static const Key KEY_DOWN = (Key)c_keyDown;
+    public static const Key KEY_INSERT = (Key)c_keyInsert;
+    public static const Key KEY_DELETE = (Key)c_keyDelete;
+    public static const Key KEY_HOME = (Key)c_keyHome;
+    public static const Key KEY_END = (Key)c_keyEnd;
+    public static const Key KEY_PAGEUP = (Key)c_keyPageUp;
+    public static const Key KEY_PAGEDOWN = (Key)c_keyPageDown;
+    public static const Key KEY_CAPSLOCK = (Key)c_keyCapsLock;
+    public static const Key KEY_NUMLOCK = (Key)c_keyNumLock;
+    public static const Key KEY_SCROLLLOCK = (Key)c_keyScrollLock;
+    public static const Key KEY_PAUSE = (Key)c_keyPause;
+    public static const Key KEY_PRINTSCREEN = (Key)c_keyPrintScreen;
+    public static const Key KEY_NEXTTRACK = (Key)c_keyNextTrack;
+    public static const Key KEY_PREVTRACK = (Key)c_keyPrevTrack;
+    public static const Key KEY_F1 = (Key)c_keyF1;
+    public static const Key KEY_F2 = (Key)c_keyF2;
+    public static const Key KEY_F3 = (Key)c_keyF3;
+    public static const Key KEY_F4 = (Key)c_keyF4;
+    public static const Key KEY_F5 = (Key)c_keyF5;
+    public static const Key KEY_F6 = (Key)c_keyF6;
+    public static const Key KEY_F7 = (Key)c_keyF7;
+    public static const Key KEY_F8 = (Key)c_keyF8;
+    public static const Key KEY_F9 = (Key)c_keyF9;
+    public static const Key KEY_F10 = (Key)c_keyF10;
+    public static const Key KEY_F11 = (Key)c_keyF11;
+    public static const Key KEY_F12 = (Key)c_keyF12;
+
+    /**
+    *   The total number of keys Starcraft 2 can detect. You can use this constant as length for an array
+    *   containing one value for each key.
+    */
+    public static const int COUNT=99;
+
+    private static string[COUNT] displayText;
+    static
+    {
+        //TODO: Change multi letter strings to single letter whenever possible (unicode support?)
+        displayText[(int)KEY_SHIFT]="SHIFT";
+        displayText[(int)KEY_CONTROL]="CTRL";
+        displayText[(int)KEY_ALT]="ALT";
+
+        displayText[(int)KEY_0]="0";
+        displayText[(int)KEY_1]="1";
+        displayText[(int)KEY_2]="2";
+        displayText[(int)KEY_3]="3";
+        displayText[(int)KEY_4]="4";
+        displayText[(int)KEY_5]="5";
+        displayText[(int)KEY_6]="6";
+        displayText[(int)KEY_7]="7";
+        displayText[(int)KEY_8]="8";
+        displayText[(int)KEY_9]="9";
+
+        displayText[(int)KEY_A]="A";
+        displayText[(int)KEY_B]="B";
+        displayText[(int)KEY_C]="C";
+        displayText[(int)KEY_D]="D";
+        displayText[(int)KEY_E]="E";
+        displayText[(int)KEY_F]="F";
+        displayText[(int)KEY_G]="G";
+        displayText[(int)KEY_H]="H";
+        displayText[(int)KEY_I]="I";
+        displayText[(int)KEY_J]="J";
+        displayText[(int)KEY_K]="K";
+        displayText[(int)KEY_L]="L";
+        displayText[(int)KEY_M]="M";
+        displayText[(int)KEY_N]="N";
+        displayText[(int)KEY_O]="O";
+        displayText[(int)KEY_P]="P";
+        displayText[(int)KEY_Q]="Q";
+        displayText[(int)KEY_R]="R";
+        displayText[(int)KEY_S]="S";
+        displayText[(int)KEY_T]="T";
+        displayText[(int)KEY_U]="U";
+        displayText[(int)KEY_V]="V";
+        displayText[(int)KEY_W]="W";
+        displayText[(int)KEY_X]="X";
+        displayText[(int)KEY_Y]="Y";
+        displayText[(int)KEY_Z]="Z";
+
+        displayText[(int)KEY_SPACE]="SPACE";
+        displayText[(int)KEY_GRAVE]="`";
+
+        displayText[(int)KEY_NUMPAD0]="NUM0";
+        displayText[(int)KEY_NUMPAD1]="NUM1";
+        displayText[(int)KEY_NUMPAD2]="NUM2";
+        displayText[(int)KEY_NUMPAD3]="NUM3";
+        displayText[(int)KEY_NUMPAD4]="NUM4";
+        displayText[(int)KEY_NUMPAD5]="NUM5";
+        displayText[(int)KEY_NUMPAD6]="NUM6";
+        displayText[(int)KEY_NUMPAD7]="NUM7";
+        displayText[(int)KEY_NUMPAD8]="NUM8";
+        displayText[(int)KEY_NUMPAD9]="NUM9";
+
+        displayText[(int)KEY_NUMPADPLUS]="NUM+";
+        displayText[(int)KEY_NUMPADMINUS]="NUM-";
+        displayText[(int)KEY_NUMPADMULTIPLY]="NUM*";
+        displayText[(int)KEY_NUMPADDIVIDE]="NUM/";
+        displayText[(int)KEY_NUMPADDECIMAL]="NUM.";
+
+        displayText[(int)KEY_EQUALS]="=";
+        displayText[(int)KEY_MINUS]="-";
+        displayText[(int)KEY_BRACKETOPEN]="(";
+        displayText[(int)KEY_BRACKETCLOSE]=")";
+        displayText[(int)KEY_BACKSLASH]="\\";
+        displayText[(int)KEY_SEMICOLON]=";";
+        displayText[(int)KEY_APOSTROPHE]="'";
+        displayText[(int)KEY_COMMA]=",";
+        displayText[(int)KEY_PERIOD]=".";
+        displayText[(int)KEY_SLASH]="/";
+
+        displayText[(int)KEY_ESCAPE]="ESC";
+        displayText[(int)KEY_ENTER]="\n";
+        displayText[(int)KEY_BACKSPACE]="BACKSPACE";
+        displayText[(int)KEY_TAB]="\t";
+
+        displayText[(int)KEY_LEFT]="LEFT";
+        displayText[(int)KEY_UP]="UP";
+        displayText[(int)KEY_RIGHT]="RIGHT";
+        displayText[(int)KEY_DOWN]="DOWN";
+
+        displayText[(int)KEY_INSERT]="INSERT";
+        displayText[(int)KEY_DELETE]="DELETE";
+        displayText[(int)KEY_HOME]="HOME";
+        displayText[(int)KEY_END]="END";
+
+        displayText[(int)KEY_PAGEUP]="PAGEUP";
+        displayText[(int)KEY_PAGEDOWN]="PAGEDOWN";
+
+        displayText[(int)KEY_CAPSLOCK]="CAPSLOCK";
+        displayText[(int)KEY_NUMLOCK]="NUMLOCK";
+        displayText[(int)KEY_SCROLLLOCK]="SCROLLLOCK";
+
+        displayText[(int)KEY_PAUSE]="PAUSE";
+        displayText[(int)KEY_PRINTSCREEN]="PRINT";
+
+        displayText[(int)KEY_NEXTTRACK]=">>";
+        displayText[(int)KEY_PREVTRACK]="<<";
+
+        displayText[(int)KEY_F1]="F1";
+        displayText[(int)KEY_F2]="F2";
+        displayText[(int)KEY_F3]="F3";
+        displayText[(int)KEY_F4]="F4";
+        displayText[(int)KEY_F5]="F5";
+        displayText[(int)KEY_F6]="F6";
+        displayText[(int)KEY_F7]="F7";
+        displayText[(int)KEY_F8]="F8";
+        displayText[(int)KEY_F9]="F9";
+        displayText[(int)KEY_F10]="F10";
+        displayText[(int)KEY_F11]="F11";
+        displayText[(int)KEY_F12]="F12";
+    }
+
+
+    /**
+    *   Returns a human readable version of the key code.
+    *   @return an upper case string with any number of characters
+    */
+    public string getDisplayString()
+    {
+        //TODO: Add a security check whether the key is valid for debug mode
+        return displayText[(int)this];
+    }
+
+}

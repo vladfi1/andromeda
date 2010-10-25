@@ -1,0 +1,331 @@
+package physics2d.dynamics;
+
+import a.util.ArrayList;
+import physics2d.geom.Vec2;
+import physics2d.geom.Shape;
+import physics2d.geom.XForm;
+import physics2d.dynamics.Sweep;
+import physics2d.dynamics.BodyDef;
+
+/**
+ * A rigid body made up of several shapes.
+ * @author XPilot
+ */
+public class Body {
+	
+	private static const int STATIC_FLAG = 1 << 0;
+	private static const int ROTATION_FIXED_FLAG = 1 << 1;
+	private static const int ACTIVE_FLAG = 1 << 2;
+	
+	//"static" variables
+	
+	/**
+	 * Stores various information about this body.
+	 */
+	private int flags;
+	
+	private fixed mass;
+	private Vec2 centroid;
+	private fixed inertia;
+	
+	/**
+	 * Shape array.
+	 */
+	protected ArrayList<Shape> shapes;
+	
+	/**
+	 * Body linked list.
+	 */
+	Body prev, next;
+	
+	//"dynamic" variables
+	
+	/**
+	 * Body origin transform.
+	 */
+	private XForm transform;
+	
+	/**
+	 * Swept motion in a frame.
+	 */
+	private Sweep sweep;
+	
+	private Vec2 linearVelocity;
+	private fixed angularVelocity;
+	
+	private Vec2 force;
+	private fixed torque;
+	
+	private fixed linearDamping;
+	private fixed angularDamping;
+	
+	Body() {}
+	
+	public Body(BodyDef def) {
+		flags = 0;
+		if(def.isStatic) {
+			flags = flags | STATIC_FLAG;
+		}
+		if(def.isRotationFixed) {
+			flags = flags | ROTATION_FIXED_FLAG;
+		}
+		if(def.isActive) {
+			flags = flags | ACTIVE_FLAG;
+		}
+		
+		mass = def.massData.mass;
+		centroid = def.massData.centroid.clone();
+		inertia = def.massData.inertia;
+		
+		shapes = new ArrayList<Shape>(1);
+		
+		transform = new XForm(def.position, def.angle);
+		
+		sweep = new Sweep();
+		sweep.centroid = centroid;
+		XForm.apply(transform, centroid, sweep.center0);
+		sweep.center1.setVec(sweep.center0);
+		sweep.angle0 = sweep.angle1 = def.angle;
+		
+		linearVelocity = new Vec2();
+		angularVelocity = 0.0;
+		
+		force = new Vec2();
+		torque = 0.0;
+		
+		linearDamping = def.linearDamping;
+		angularDamping = def.angularDamping;
+	}
+	
+	/**
+	 * Deletes all member objects, including shapes.
+	 */
+	public ~Body() {
+		delete centroid;
+		for(int i = 0; i < shapes.size(); i++) {
+			delete shapes.getIndex(i);
+		}
+		delete shapes;
+		delete transform;
+		delete sweep;
+		delete linearVelocity;
+		delete force;
+	}
+	
+	public bool isStatic() {
+		return (flags & STATIC_FLAG) != 0;
+	}
+	
+	public bool isRotationFixed() {
+		return (flags & ROTATION_FIXED_FLAG) != 0;
+	}
+	
+	public bool isActive() {
+		return (flags & ACTIVE_FLAG) != 0;
+	}
+	
+	public void setActive(bool active) {
+		if(active) {
+			flags = flags | ACTIVE_FLAG;
+		} else {
+			flags = flags & ~ACTIVE_FLAG;
+		}
+	}
+	
+	public fixed getMass() {
+		return mass;
+	}
+	
+	public Vec2 getCentroid() {
+		return centroid;
+	}
+	
+	public fixed getInertia() {
+		return inertia;
+	}
+	
+	public ArrayList<Shape> getShapes() {
+		return shapes;
+	}
+	
+	public void addShape(Shape shape) {
+		shape.body = this;
+		shapes.addLast(shape);
+	}
+	
+	public void setMass(MassData massData) {
+		mass = massData.mass;
+		centroid.setVec(massData.centroid);
+		inertia = massData.inertia;
+	}
+	
+	public void setMassFromShapes() {
+		mass = 0.0;
+		centroid.setZero();
+		inertia = 0.0;
+		
+		MassData massData = new MassData();
+		
+		for(int i = 0; i < shapes.size(); i++) {
+			shapes.getIndex(i).computeMass(massData);
+			
+			mass += massData.mass;
+			centroid.add(massData.centroid, massData.mass);
+			inertia += massData.inertia;
+		}
+		
+		centroid.divide(mass);
+		//center moment of inertia about centroid, not origin
+		inertia -= mass * centroid.magnitude2();
+		
+		delete massData;
+	}
+	
+	public Vec2 getPosition() {
+		return sweep.center0;
+	}
+	
+	public fixed getAngle() {
+		return sweep.angle0;
+	}
+	
+	public XForm getTransform() {
+		return transform;
+	}
+	
+	public Vec2 getLinearVelocity() {
+		return linearVelocity;
+	}
+	
+	public void setLinearVelocity(Vec2 velocity) {
+		linearVelocity.setVec(velocity);
+	}
+	
+	public fixed getAngularVelocity() {
+		return angularVelocity;
+	}
+	
+	public void setAngularVelocity(fixed omega) {
+		angularVelocity = omega;
+	}
+	
+	public Vec2 getForce() {
+		return force;
+	}
+	
+	public fixed getTorque() {
+		return torque;
+	}
+	
+	public fixed getLinearDamping() {
+		return linearDamping;
+	}
+	
+	public void setLinearDamping(fixed damping) {
+		linearDamping = damping;
+	}
+	
+	public fixed getAngularDamping() {
+		return angularDamping;
+	}
+	
+	public void setAngularDamping(fixed damping) {
+		angularDamping = damping;
+	}
+	
+	/**
+	 * Applies a force at the center of mass.
+	 * @param force The applied force.
+	 */
+	public void applyForce(Vec2 force) {
+		this.force.add(force);
+	}
+	
+	/**
+	 * Applies a force at the specified point.
+	 * @param force The applied force.
+	 * @param place The point of application, in world coordinates.
+	 */
+	public void applyForce(Vec2 force, Vec2 place) {
+		this.force.add(force);
+		Vec2 temp = Vec2.difference(place, sweep.center0);
+		torque += Vec2.cross(temp, force);
+		delete temp;
+	}
+	
+	/**
+	 * Applies a torque about the center of mass.
+	 * @param torque The applied torque.
+	 */
+	public void applyTorque(fixed torque) {
+		this.torque += torque;
+	}
+	
+	/**
+	 * Applies an impulse at the specified point.
+	 * Immediately changes body's velocity (linear and angular).
+	 * @param impulse The applied impulse.
+	 * @param place The point of application, in world coordinates.
+	 */
+	public void applyImpulse(Vec2 impulse, Vec2 place) {
+		Vec2 temp = new Vec2(impulse).divide(mass);
+		linearVelocity.add(temp);
+		Vec2.difference(place, sweep.center0, temp);
+		angularVelocity += Vec2.cross(temp, force);
+		delete temp;
+	}
+	
+	/**
+	 * Get the world coordinates of a point given the local coordinates.
+	 * @param localPoint A point on the body measured relative the the body's origin.
+	 * @return A new point expressed in world coordinates.
+	 */
+	public Vec2 getWorldLocation(Vec2 localPoint) {
+		return XForm.apply(transform, localPoint);
+	}
+
+	/**
+	 * Get the world coordinates of a point given the local coordinates.
+	 * @param localPoint A point on the body measured relative the the body's origin.
+	 * @param result Stores the point expressed in world coordinates.
+	 */
+	public Vec2 getWorldLocation(Vec2 localPoint, Vec2 result) {
+		return XForm.apply(transform, localPoint, result);
+	}
+	
+	/**
+	 * Gets a local point relative to the body's origin given a world point.
+	 * @param worldPoint a point in world coordinates.
+	 * @return A new local point relative to the body's origin.
+	 */
+	public Vec2 getLocalPoint(Vec2 worldPoint) {
+		return XForm.applyInverse(transform, worldPoint);
+	}
+
+	/**
+	 * Gets a local point relative to the body's origin given a world point.
+	 * @param worldPoint a point in world coordinates.
+	 * @param result Stores the corresponding local point relative to the body's origin.
+	 */
+	public Vec2 getLocalPoint(Vec2 worldPoint, Vec2 result) {
+		return XForm.applyInverse(transform, worldPoint, result);
+	}
+
+	/**
+	 * Gets a local vector given a world vector.
+	 * @param worldVector a vector in world coordinates.
+	 * @return the corresponding local vector.
+	 */
+	public Vec2 getLocalVector(Vec2 worldVector) {
+		return Mat22.multiplyTrans(transform.getRotation(), worldVector);
+	}
+
+	/**
+	 * Gets a local vector given a world vector.
+	 * @param worldVector a vector in world coordinates.
+	 * @param result Stores the corresponding local vector.
+	 */
+	public Vec2 getLocalVector(Vec2 worldVector, Vec2 result) {
+		return Mat22.multiplyTrans(transform.getRotation(), worldVector, result);
+	}
+}

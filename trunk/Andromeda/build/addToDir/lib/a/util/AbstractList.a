@@ -1,0 +1,132 @@
+package a.util;
+
+import a.util.List;
+import a.util.Iterator;
+import a.util.Comparator;
+
+/**
+ * List that supports random access.
+ * @author XPilot
+ */
+public abstract class AbstractList<E> extends List<E> {
+	//utility methods
+	/**
+	 * Swaps the elements at index1 and index2.
+	 */
+	public void swap(int index1, int index2) {
+		E temp = getIndex(index1);
+		setIndex(index1, getIndex(index2));
+		setIndex(index2, temp);
+	}
+	
+	private static int left(int i) {
+		return (i << 1) | 1;
+	}
+	
+	private static int right(int i) {
+		return (i << 1) + 2;
+	}
+	
+	private void maintainHeap(int i, int length, Comparator<E> c) {
+		while(i < length) {
+			int max = i;
+			
+			int left = left(i);
+			if(left < length && c.compare(getIndex(left), getIndex(max)) > 0) {
+				max = left;
+			}
+			int right = right(i);
+			if(right < length && c.compare(getIndex(right), getIndex(max)) > 0) {
+				max = right;
+			}
+			
+			if(max != i) {
+				swap(max, i);
+				i = max;
+			} else break;
+		}
+	}
+	
+	/**
+	 * Turns this list into a heap.
+	 * @param c Comparator defining an order on the elements.
+	 */
+	public void buildHeap(Comparator<E> c) {
+		for(int i = (size() << 1) - 1; i >= 0; i--) {
+			maintainHeap(i, size(), c);
+		}
+	}
+	
+	/**
+	 * Sorts this List.
+	 * @param c Comparator defining an order on the elements.
+	 */
+	public void heapSort(Comparator<E> c) {
+		buildHeap(c);
+		int length = size();
+		while(length > 0) {
+			length--;
+			swap(0, length);
+			maintainHeap(0, length, c);
+		}
+	}
+	
+	/**
+	 * Searches for an element, assuming that the subarray is in ascending order.
+	 * @param c Comparator defining an order on the elements.
+	 * @param search The element to search for.
+	 * @return The index of the desired object, or -1 if not found.
+	 */
+	public int binarySearch(Comparator<E> c, E search) {
+		int low = 0, high = size() - 1;
+		while(high > low) {
+			int middle = (low + high) >> 1;
+			int compare = c.compare(search, getIndex(middle));
+			if(compare > 0) {
+				low = middle + 1;
+			} else if(compare < 0) {
+				high = middle - 1;
+			} else {
+				return middle;
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * Searches this list for an element.
+	 * @param element The element to search for.
+	 * @return The index of the element, or -1 if not found.
+	 */
+	public int indexOf(E element) {
+		for(int i = 0; i < size(); i++) {
+			if(getIndex(i) == element)
+				return i;
+		}
+		return -1;
+	}
+	
+	public override Iterator<E> getIterator() {
+		return new AbstractListIterator<E>(this);
+	}
+}
+
+private class AbstractListIterator<E> extends Iterator<E> {
+	private AbstractList<E> list;
+	private int index;
+	
+	AbstractListIterator(AbstractList<E> list) {
+		this.list = list;
+		index = 0;
+	}
+	
+	public override bool hasNext() {
+		return index < list.size();
+	}
+	
+	public override E next() {
+		E temp = list.getIndex(index);
+		index++;
+		return temp;
+	}
+}

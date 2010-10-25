@@ -1,0 +1,307 @@
+package a.natives;
+/**
+*	Enrichment for native type 'string'
+*	@author geX
+*/
+public enrich string{
+
+	
+	/**
+	*	Constant returned by find methods if the string to find
+	*	could not be found.
+	*/
+	public static const int NOT_FOUND = -1;
+	
+	/**
+	*	Constant that can be handed to the replace method to indicate
+	*	that all occurrences should be replaced
+	*/
+	public static const int REPLACE_ALL = -1;
+	
+	/**
+	*	The length of the string (readonly).
+	*/
+	public int Length{
+		public get{
+			return StringLength(this);
+		}
+	}
+	
+	/**
+	 * @return The length of this string.
+	 */
+	public int length() {
+		return StringLength(this);
+	}
+	
+	/**
+	*	Returns a copy of this string, transformed to upper/lower case
+	*	@param upper if the result should be uppercase (lowercase otherwise)
+	*	@return the string in upper/lower case
+	*/
+	public string toCase(bool upper){
+		return StringCase(this,upper);
+	}
+	
+	/**
+	*	Returns a copy of this string, transformed to upper case
+	*	@return the string in upper case
+	*/
+	public string toUpperCase(){
+		return StringCase(this,true);
+	}
+	
+	/**
+	*	Returns a copy of this string, transformed to lower case
+	*	@return the string in lower case
+	*/
+	public string toLowerCase(){
+		return StringCase(this,false);
+	}
+	
+	/**
+	*	Returns a substring of this string starting at index <code>start</code>
+	*	and ending at index <code>end</code>. I.e. the length of the resulting
+	*	string will be end-start.
+	*	@param start start index
+	*	@param end end index
+	*	@return the substring ranging from start to end
+	*/
+	public string subStr(int start, int end){
+		return StringSub(this, start, end);
+	}
+	
+	/**
+	*	Returns a substring of this string starting at index <code>start</code>
+	*	and ending the end of this string. 
+	*	(equivalent to subStr(start,this.Length)
+	*	string will be end-start.
+	*	@param start start index
+	*	@param end end index
+	*	@return the substring ranging from start to end
+	*/
+	public string subStr(int start){
+		return StringSub(this, start, this.Length);
+	}
+	
+	/**
+	*	Returns true if and only if <code>str</code> has the same content as
+	*	this string.
+	*	@param str another string to compare to this one
+	*	@return whether the two strings have the same content                                
+	*/	
+	public bool equals(string str){
+		return (this==str);
+	}
+	
+	
+	/**
+	*	Returns true if and only if <code>str</code> has the same content as
+	*	this string. This function works case insensitive.
+	*	@param str another string to compare to this one
+	*	@return whether the two strings have the same content (case insensitive)                               
+	*/	
+	public bool equalsIgnoreCase(string str){
+		return StringEqual(this,str,false);
+	}
+	
+	/**
+	*	Returns true if and only if <code>str</code> has the same content as
+	*	this string. If caseSensitive was set, then the match is
+	*	case sensitive.
+	*	<b>This is a compatibility method! Rather use the simple equals method
+	*	for case sensitive matches or the equalsIgnoreCase method vor insensitive matches</b>
+	*	@param str another string to compare to this one
+	*	@param caseSensitive if this equality should be case sensitive
+	*	@return whether the two strings have the same content                                
+	*/	
+	public bool equals(string str, bool caseSensitive){
+		return StringEqual(this,str,caseSensitive);
+	}
+	
+	/**
+	*	Tries to find the first occurence of string <code>toFind</code> in this
+	*	string and returns its start position.
+	*	If the string couldn't be found string.NOT_FOUND is returned.
+	*	Case Sensitive!
+	*	@param toFind string to be found
+	*	@return starting position of first occurence or string.NOT_FOUND
+	*/
+	public int find(string toFind){
+		return StringFind(this,toFind,true);
+	}
+	
+	/**
+	*	Tries to find the first occurence of string <code>toFind</code> in this
+	*	string and returns its start position.
+	*	If the string couldn't be found string.NOT_FOUND is returned.
+	*	@param toFind string to be found
+	*	@param whether to perform a case sensitive match
+	*	@return starting position of first occurence or string.NOT_FOUND
+	*/
+	public int find(string toFind, bool caseSensitive){
+		return StringFind(this,toFind,caseSensitive);
+	}
+	
+	/**
+	*	Returns true if and only if <code>prefix</code> is a prefix of this string.
+	*	Case sensitive!
+	*	@param prefix the string to be checked for prefix
+	*	@return whether <code>prefix</code> is a prefix of this string
+	*/
+	public bool startsWith(string prefix){
+		return StringContains(this,prefix,c_stringBegin,true);
+	}
+	
+	/**
+	*	Returns true if and only if <code>suffix</code> is a suffix of this string.
+	*	Case sensitive!
+	*	@param suffix the string to be checked for suffix
+	*	@return whether <code>suffix</code> is a suffix of this string
+	*/
+	public bool endsWith(string suffix){
+		return StringContains(this,suffix,c_stringEnd,true);
+	}
+	
+	/**
+	*	Returns true if and only if <code>prefix</code> is a prefix of this string.
+	*	@param prefix the string to be checked for prefix
+	*	@param caseSensitive whether the matching should be done case sensitive
+	*	@return whether <code>prefix</code> is a prefix of this string
+	*/
+	public bool startsWith(string prefix, bool caseSensitive){
+		return StringContains(this,prefix,c_stringBegin,caseSensitive);
+	}
+	
+	/**
+	*	Returns true if and only if <code>suffix</code> is a suffix of this string.
+	*	@param suffix the string to be checked for suffix
+	*	@param caseSensitive whether the matching should be done case sensitive
+	*	@return whether <code>suffix</code> is a suffix of this string
+	*/
+	public bool endsWith(string suffix, bool caseSensitive){
+		return StringContains(this,suffix,c_stringEnd,caseSensitive);
+	}
+	
+	/**
+	*	Returns true if and only if substr is contained in this string.
+	*	A string is also considered to be contained in itself, so 
+	*	<code>"a".contains("a")</code> is true.
+	*	Case sensitive!
+	*	@param substr string to find in this string
+	*	@return whether <code>substr</code> is contained
+	*/
+	public bool contains(string substr){
+		return StringContains(this, substr, c_stringAnywhere, true);
+	}
+	
+	/**
+	*	Returns true if and only if substr is contained in this string.
+	*	A string is also considered to be contained in itself, so 
+	*	<code>"a".contains("a")</code> is true.
+	*	@param substr string to find in this string
+	*	@param caseSensitive whether the matching should be done case sensitive
+	*	@return whether <code>substr</code> is contained
+	*/
+	public bool contains(string substr, bool caseSensitive){
+		return StringContains(this, substr, c_stringAnywhere, caseSensitive);
+	}
+
+	/**
+	*	StringWord splits the string into words separated by whitespace,
+	*	and returns the word corresponding to the given index.
+	*
+	*	Ex: "klaatu barada nikto".getWord(2) will return "barada"
+	*	@param n word index
+	*	@return n'th word or null if the string doesn't have so many words
+	*/
+	public string getWord(int n){
+		return StringWord(this, n);
+	}
+
+	/**
+	*	Replaces the characters with index <code>start</code> to <code>end</end>
+	*	by the replacement string
+	*	@param replacement replacement string
+	*	@param start start index of replacement range
+	*	@param end index for first character not to be replaced anymore
+	*	@return n'th word or null if the string doesn't have so many words
+	*/
+	public string replaceRange(string replacement, int start, int end){
+		return StringReplace(this, replacement, start, end);
+	}
+	
+	/**
+	*	Replaces all occurences of string <code>searchFor</code>
+	*	in this string by <code>replaceBy</code> and returns the result.
+	*	@param searchFor substring to be replaced
+	*	@param replaceBy replacement
+	*	@return the result of the replacement
+	*/
+	public string replaceAll(string searchFor, string replaceBy){
+		return StringReplaceWord(this,searchFor, replaceBy, c_stringReplaceAll, true);
+	}
+	
+	
+	/**
+	*	Replaces all occurences of string <code>searchFor</code>
+	*	in this string by <code>replaceBy</code> and returns the result.
+	*	@param searchFor substring to be replaced
+	*	@param replaceBy replacement
+	*	@param caseSens if the search should be case sensitive
+	*	@return the result of the replacement
+	*/
+	public string replaceAll(string searchFor, string replaceBy, bool caseSens){
+		return StringReplaceWord(this,searchFor, replaceBy, c_stringReplaceAll, caseSens);
+	}
+	
+	/**
+	*	Replaces the first occurence of string <code>searchFor</code>
+	*	in this string by <code>replaceBy</code> and returns the result.
+	*	@param searchFor substring to be replaced
+	*	@param replaceBy replacement
+	*	@return the result of the replacement
+	*/
+	public string replaceFirst(string searchFor, string replaceBy){
+		return StringReplaceWord(this,searchFor, replaceBy, 1, true);
+	}
+	
+	
+	/**
+	*	Replaces the first occurence of string <code>searchFor</code>
+	*	in this string by <code>replaceBy</code> and returns the result.
+	*	@param searchFor substring to be replaced
+	*	@param replaceBy replacement
+	*	@param caseSens if the search should be case sensitive
+	*	@return the result of the replacement
+	*/
+	public string replaceFirst(string searchFor, string replaceBy, bool caseSens){
+		return StringReplaceWord(this,searchFor, replaceBy, 1, caseSens);
+	}
+	
+	/**
+	*	Replaces the first <code>maxReplacements</code> occurences of string <code>searchFor</code>
+	*	in this string by <code>replaceBy</code> and returns the result.
+	*	@param searchFor substring to be replaced
+	*	@param replaceBy replacement	
+	*	@param maxReplacements maximum number of replacements
+	*	@return the result of the replacement
+	*/
+	public string replace(string searchFor, string replaceBy, int maxReplacements){
+		return StringReplaceWord(this,searchFor, replaceBy, maxReplacements, true);
+	}
+		
+	/**
+	*	Replaces the first <code>maxReplacements</code> occurences of string <code>searchFor</code>
+	*	in this string by <code>replaceBy</code> and returns the result.
+	*	@param searchFor substring to be replaced
+	*	@param replaceBy replacement
+	*	@param maxReplacements maximum number of replacements
+	*	@param caseSens if the search should be case sensitive
+	*	@return the result of the replacement
+	*/
+	public string replace(string searchFor, string replaceBy, int maxReplacements, bool caseSens){
+		return StringReplaceWord(this,searchFor, replaceBy, maxReplacements, caseSens);
+	}
+	
+}

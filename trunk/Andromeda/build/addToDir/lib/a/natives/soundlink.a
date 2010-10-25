@@ -1,0 +1,154 @@
+package a.natives;
+/*
+*	Enrichment for native type 'soundlink'
+*	@author NewName
+*/
+
+public enrich soundlink
+{
+	public static const int ASSET_INDEX_ANY = c_soundIndexAny;
+
+	/**
+	*	Creates a sound link which refers to a sound that is given by the specified sound ID and asset index.
+	*	The sound ID identifies the data entry for the sound, and the asset index identifies the asset within that data entry.
+	*	Use ASSET_INDEX_ANY to refer to sounds sequentially or randomly, depending on the data entry.
+	*	@param id the sound ID for the sound.
+	*	@param index the asset index for the sound.
+	*	@return a sound link referring to the specified sound.
+	*/
+	public static soundlink create(string id, int index)
+	{
+		return SoundLink(id, index);
+	}
+
+	/**
+	*	Returns the sound ID, as specified in the 'create' method.
+	*	@return the sound ID for this sound link.
+	*/
+	public string getId()
+	{
+		return SoundLinkId(this);
+	}
+
+	/**
+	*	Returns the asset index, as specified in the 'create' method.
+	*	@return the asset index for this sound link.
+	*/
+	public int getAssetIndex()
+	{
+		return SoundLinkAsset(this);
+	}
+
+	/**
+	*	Play the sound referred to by this sound link. The sound will be played for the given players, will play at the given percentage (0-100) of maximum volume, and will skip the specified number of seconds.
+	*	@param players the players who will hear the sound.
+	*	@param volume the volume that the sound will play at.
+	*	@param offset the number of seconds to skip ahead in the sound.
+	*	@return the playing sound.
+	*/
+	public sound play(playergroup players, fixed volume, fixed offset)
+	{
+		SoundPlay(this, players, volume, offset);
+		return SoundLastPlayed();
+	}
+
+	/**
+	*	Play the sound referred to by this sound link. 
+	*	The sound will be played for the given players, will play at the given percentage (0-100) of maximum volume, and will skip the specified number of seconds.
+	*	The sound will radiate from the given horizontal location and vertical height.
+	*	@param players the players who will hear the sound.
+	*	@param volume the volume that the sound will play at.
+	*	@param offset the number of seconds to skip ahead in the sound.
+	*	@param location the horizontal location of the sound.
+	*	@param height the vertical elevation of the sound.
+	*	@return the playing sound.
+	*/
+	public sound playAtPoint(playergroup players, fixed volume, fixed offset, point location, fixed height)
+	{
+		SoundPlayAtPoint(this, players, location, height, volume, offset);
+		return SoundLastPlayed();
+	}
+
+	/**
+	*	Play the sound referred to by this sound link. 
+	*	The sound will be played for the given players, will play at the given percentage (0-100) of maximum volume, and will skip the specified number of seconds.
+	*	The sound will radiate from the given unit at the given vertical height.
+	*	@param players the players who will hear the sound.
+	*	@param volume the volume that the sound will play at.
+	*	@param offset the number of seconds to skip ahead in the sound.
+	*	@param u the unit which this sound will follow.
+	*	@param height the vertical elevation of the sound.
+	*	@return the playing sound.
+	*/
+	public sound playOnUnit(playergroup players, fixed volume, fixed offset, unit u, fixed height)
+	{
+		SoundPlayOnUnit(this, players, u, height, volume, offset);
+		return SoundLastPlayed();
+	}
+
+	/**
+	*	Play the sound referred to by this sound link, with an animation on a unit group for the specified player group.
+	*	@param players the players who will hear the sound.
+	*	@param units the units for the animation.
+	*	@param animation the animation to play with the sound.
+	*	@return the playing sound.
+	*/
+	public sound playScene(playergroup players, unitgroup units, string animation)
+	{
+		SoundPlayScene(this, players, units, animation);
+		return SoundLastPlayed();
+	}
+
+	/**
+	*	Play the sound referred to by this sound link, with a scene for the specified player group.
+	*	@param players the players who will hear the sound.
+	*	@param file the scene file.
+	*	@param camera the camera to use to play the scene.
+	*	@return the playing sound.
+	*/
+	public sound playSceneFile(playergroup players, string file, string camera)
+	{
+		SoundPlaySceneFile(this, players, file, camera);
+		return SoundLastPlayed();
+	}
+
+	/**
+	*	Send a network query for the duration of a sound.
+	*	This will allow the sound duration to be accessed even if the sound duration has not been preloaded.
+	*	Use the 'queryWait' method to ensure that all results are received before attempting to access 'getLengthSync'.
+	*/
+	public void queryLength()
+	{
+		SoundLengthQuery(this);
+	}
+	
+	/**
+	*	Blocks execution until all queries sent with 'queryLength' have been received for all players.
+	*/
+	public static void queryWait()
+	{
+		SoundLengthQueryWait();
+	}
+
+	/**
+	*	Returns the duration of a sound.
+	*	Note that since sound files are localized and potentially different for each player,
+	*	a network query must be sent to all players, and all results must be received before a synchronous result can be accessed.
+	*	The process is to call 'queryLength' then call 'queryWait' when it is safe to pause execution, then call 'getLengthSync' to get the duration.
+	*	@return Returns a fixed.
+	*/
+	public fixed getLengthSync()
+	{
+		return SoundLengthSync(this);
+	}
+
+	/**
+	*	Returns the subtitle text for the sound referred to by this sound link.
+	*	@return the subtite text.
+	*/
+	public text getSubtitleText()
+	{
+		return SoundSubtitleText(this);
+	}
+
+}

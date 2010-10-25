@@ -1,0 +1,57 @@
+package a.ai;
+/*
+*	Enrichment for native type 'waveinfo'
+*	@author Still needs one!
+*/
+
+public enrich waveinfo
+{
+	/**
+	*	Description here.
+	*	@param p2 Unknown string.
+	*	@param p3 Unknown int.
+	*/
+	public void add(string p2, int p3)
+	{
+		AIWaveInfoAdd(this, p2, p3);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown point.
+	*	@param p4 Unknown wavetarget.
+	*	@param p5 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int attack(int p2, point p3, wavetarget p4, int p5)
+	{
+		return AIWaveInfoAttack(this, p2, p3, p4, p5);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown point.
+	*	@param p4 Unknown wavetarget.
+	*	@param p5 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int suicide(int p2, point p3, wavetarget p4, int p5)
+	{
+		return AIWaveInfoSuicide(this, p2, p3, p4, p5);
+	}
+
+	/**
+	*	Description here.
+	*	@param p2 Unknown int.
+	*	@param p3 Unknown point.
+	*	@param p4 Unknown int.
+	*	@return Returns a int.
+	*/
+	public int scout(int p2, point p3, int p4)
+	{
+		return AIWaveInfoScout(this, p2, p3, p4);
+	}
+
+}

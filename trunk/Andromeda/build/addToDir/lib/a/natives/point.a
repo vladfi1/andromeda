@@ -1,0 +1,300 @@
+package a.natives;
+
+import a.util.Math;
+
+/**
+ * Enrichment for type Point
+ * @author Belphegor, XPilot
+ */
+public enrich point {
+
+	/**
+	 * A constant used to calculate angle and radius
+	 */
+	protected static point ORIGIN_POINT = point.create(0,0);
+	
+	public static point create(fixed x, fixed y) {
+		return Point(x, y);
+	}
+	
+	public static point fromId(int id) {
+		return PointFromId(id);
+	}
+
+	/**
+	 *   Accessors for the x-coordinate of the point. 
+	 */
+	public fixed x
+	{
+		public get 
+		{
+			//NOTE: UNTESTED. API seems to indicate it does this.
+
+			return PointGetX(this);
+		}
+		public set
+		{
+			//NOTE: UNTESTED. API seems to indicate it does this.
+
+			point newPoint = Point(value, PointGetY(this));
+			//NOTE: API isn't clear whether p1 becomes p2 or vice versa
+
+			PointSet(this, newPoint);
+		}
+	}
+
+	/**
+	 * Returns this point's x-coordinate.
+	 * @return This point's x-coordinate.
+	 */
+	public fixed getX() {
+		return PointGetX(this);
+	}
+	
+	/**
+	 *   Accessors for the y-coordinate of the point. 
+	 */
+	public fixed y
+	{
+		public get
+		{
+			//NOTE: UNTESTED. API seems to indicate it does this.
+
+			return PointGetY(this);
+		}
+		public set
+		{
+			//NOTE: UNTESTED. API seems to indicate it does this.
+
+			point newPoint = Point(PointGetX(this),value);
+			//NOTE: API isn't clear whether p1 becomes p2 or vice versa
+
+			PointSet(this, newPoint);
+		}
+	}
+
+	/**
+	 * Returns this point's y-coordinate.
+	 * @return This point's y-coordinate.
+	 */
+	public fixed getY() {
+		return PointGetY(this);
+	}
+	
+	/**
+	 * Returns this point's height.
+	 * @return This point's height.
+	 */
+	public fixed getHeight() {
+		return PointGetHeight(this);
+	}
+	
+	/**
+	 * Sets this point's height.
+	 * @param height The new height.
+	 */
+	public void setHeight(fixed height) {
+		PointSetHeight(this, height);
+	}
+	
+	/**
+	 *	Accessor for distance from the origin point (polar coordinates) 
+	 */
+	public fixed d
+	{
+		public get
+		{
+			//NOTE: UNSURE whether this order of parameters is correct
+
+			return DistanceBetweenPoints(ORIGIN_POINT, this);
+		}
+		public set
+		{
+			//NOTE: UNSURE whether this order of parameters is correct
+
+			fixed oldAngle =  AngleBetweenPoints(ORIGIN_POINT, this);
+			point newPoint = PointWithOffsetPolar(ORIGIN_POINT, value, oldAngle);
+			//NOTE: API isn't clear whether p1 becomes p2 or vice versa
+
+			PointSet(this, newPoint);
+		}
+	}
+
+	/**
+	 *	Accessor for angle from the origin point (polar coordinates).
+	 *	Angle is in degrees between -180° (excluded) and 180°.
+	 */
+	public fixed angle
+	{
+		public get
+		{
+			//NOTE: UNSURE whether this order of parameters is correct
+
+			return AngleBetweenPoints(ORIGIN_POINT, this);
+		}
+		public set
+		{
+			//NOTE: UNSURE whether this order of parameters is correct
+
+			fixed oldDistance = AngleBetweenPoints(ORIGIN_POINT, this);
+			point newPoint = PointWithOffsetPolar(ORIGIN_POINT, oldDistance, value);
+			//NOTE: API isn't clear whether p1 becomes p2 or vice versa
+
+			PointSet(this, newPoint);
+		}
+	}
+
+	/**
+	 *	Returns whether the given point A is within given distance of this Point
+	 *	@param a Point to which we compare distance
+	 *	@param distance how far can point A be from this point
+	 */
+	public bool pointInRange(point a, fixed distance)
+	{
+		//This is a recoded version as seen on http://www.sc2mapster.com/api-docs/functions/points-in-range/
+
+		if(distance<0)
+		{ 
+			return false;
+		}
+		return (DistanceBetweenPoints(this, a) <= distance);
+
+		/*
+		 *	Alternative simple version
+		 *	
+		 *	return PointsInRange(this, a, distance)
+		 *   NOTE: PointsInRange only compares distance per coordinate not the distance in 
+		 *         Euclidean geometry
+		 *	Example:
+		 *	PointInRange(Point(0, 0), Point(1, 1), 1) # true
+		 *	PointInRange(Point(0, 0), Point(0, 10), 15) # false
+		 */
+	}
+
+
+	/**
+	 *	Returns the angle between two points
+	 *	@param a first point for comparison
+	 *	@param b second point for comparison
+	 *	@return angle between points as a <b>fixed</b> value between -180° (excluded) and 180°.
+	 */
+	public static fixed angleBetweenPoints(point a, point b)
+	{
+		return AngleBetweenPoints(a,b);
+	}
+
+	/**
+	 *	Returns Euclidean distance between two points
+	 *	@param a first point for comparison
+	 *	@param b second point for comparison
+	 *	@return Euclidean distance 
+	 */
+	public static fixed distanceBetweenPoints(point a, point b)
+	{
+		return DistanceBetweenPoints(a,b);
+	}
+
+	/**
+	 *	Returns a new point translated by dx, dy
+	 *       Usage:<code>
+	 *		Point a = Point(3,4);
+	 *		a.translateXY(1,1) # a == (4,5)</code>
+	 *	@param dx ammount by which we translate this point horizontally
+	 *	@param dy ammount by which we translate this point vertically
+	 *	@return new translated Point
+	 */
+	public point translateXY(fixed dx, fixed dy)
+	{
+		return PointWithOffset(this, dx, dy);
+	}
+
+	/**
+	 *	Returns whether the point is passable or not
+	 *	NOTE: API is scarce on what passable means
+	 *	@return whether true if point is passable
+	 */
+	public bool isPassable()
+	{
+		return PointPathingPassable(this);
+	}
+
+	/**
+	 *	Returns whether this point is connected to connect point
+	 *	NOTE: API is scarce on what connected means
+	 *	@param connect point 
+	 *	@return true if this point is connected to connect point
+	 */
+	public bool isConnectedTo(point connect)
+	{
+		return PointPathingIsConnected(this, connect);
+	}
+
+	/**
+	 *	Returns the assumed cost of connection between this and connect point
+	 *	NOTE: API is scarce on what and how means
+	 *	@param connect point 
+	 *	@return heuristic valuation of travel cost
+	 */
+	public int PointPathingCost(point connect)
+	{
+		return PointPathingCost(this, connect);
+	}		
+
+	/**
+	 * 	Returns the cliff level of this point
+	 *	@return cliff level as a fixed number
+	 */
+	public fixed getCliffLevel()
+	{
+		return PointPathingCliffLevel(this); 
+	}
+
+	/**
+	 *	Returns a new point translated by (radius, angle) in polar notation
+	 *      Usage:<code>
+	 *		Point a = Point(0,0);
+	 *		a.translate(1.41421356237,45) # a == (4,5)</code>
+	 *	@param radius represents radius by which we translate the point
+	 *	@param angle in degrees represents angle by which we translate the point
+	 *	@return new point defined by base translated by (radius*cos(angle in radian), radius*sin(angle in radian))
+	 */
+	public point translatePolar(fixed radius, fixed angle)
+	{
+		return PointWithOffsetPolar(this, radius, angle);
+	}
+
+	/**
+	 *	Returns whether the two points are the same
+	 *	@param par point which we compare to <b>this</> point
+	 *	@return returns true if both x and y coordinates match
+	 */
+	public bool equals(point par)
+	{
+		return (this==par);
+	}
+
+	/**
+	 *	Returns hash code for this point
+	 *	@return hash code
+	 */
+	public int hash()
+	{
+		//NOTE: I assume that Ints are at least 8 bit and that << and ^ are the fastest available operations 
+		return (FixedToInt(PointGetX(this)) ^ (FixedToInt(PointGetY(this)) << 4));
+	}
+
+	public int hashCode() {
+		return Math.fixedToIntBits(PointGetX(this)) ^ Math.fixedToIntBits(PointGetY(this));
+	}
+
+	/**
+	 *	Returns string representation of this point
+	 *	@return string representation
+	 */
+	public string toString()
+	{
+		//NOTE: FixedToString has two parameters. The second parameter is precision. 
+
+		return "Point["+FixedToString(PointGetX(this),4)+", "+FixedToString(PointGetY(this),4)+"]";
+	}
+}

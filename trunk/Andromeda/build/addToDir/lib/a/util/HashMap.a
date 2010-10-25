@@ -1,0 +1,26 @@
+package a.util;
+
+import a.util.Heap;
+
+/**
+ * HashMap implementation.
+ * @author XPilot
+ */
+public class HashMap<K, V> extends Map<K, V> {
+	public static const int DEFAULT_CAPACITY = 15;
+	public static const fixed LOAD_FACTOR = 0.75;
+	
+	private Hasher<K> hasher;
+	private int ptr;
+	private int capacity;
+	
+	public HashMap(Hasher<K> hasher) {
+		this(hasher, DEFAULT_CAPACITY);
+	}
+	
+	public HashMap(Hasher<K> hasher, int capacity) {
+		this.hasher = hasher;
+		ptr = Heap.malloc(capacity);
+		this.capacity = Heap.round(capacity);
+	}
+}

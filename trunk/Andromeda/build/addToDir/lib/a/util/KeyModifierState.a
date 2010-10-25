@@ -1,0 +1,22 @@
+package a.util;
+/**
+* Definition and enrichment for type 'keyModifierState'
+* @author tolleder
+*/
+
+typedef KeyModifierState uses int;
+enrich KeyModifierState
+{
+    /**
+    *       It does not matter whether the key is pressed or not.
+    */
+    public const static KeyModifierState IGNORE=(KeyModifierState)c_keyModifierStateIgnore;
+    /**
+    *       The trigger will only fire if the key is pressed.
+    */
+    public const static KeyModifierState REQUIRE=(KeyModifierState)c_keyModifierStateRequire;
+    /**
+    *       The trigger will not fire if the key is pressed.
+    */
+    public const static KeyModifierState EXCLUDE=(KeyModifierState)c_keyModifierStateExclude;
+}

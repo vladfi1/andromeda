@@ -1,0 +1,200 @@
+package a.natives;
+/*
+*	Enrichment for native type 'region'
+*	@author NewName
+*/
+
+public enrich region
+{
+	/**
+	*	Assigns this region as the playable map area. Unit will generally be confined to this area, and the camera bounds will be adjusted to accommodate.
+	*/
+	public void setAsPlayableArea()
+	{
+		RegionPlayableMapSet(this);
+	}
+
+	/**
+	*	Adds a rectangle to this region.
+	*	@param additive true if this rectangle should add to the region, false if it should subtract.
+	*	@param minx the minimum x coordinate for points in the rectangle.
+	*	@param miny the minimum y coordinate for points in the rectangle.
+	*	@param maxx the maximum x coordinate for points in the rectangle.
+	*	@param maxy the maximum y coordinate for points in the rectangle.
+	*/
+	public void addRect(bool additive, fixed minx, fixed miny, fixed maxx, fixed maxy)
+	{
+		RegionAddRect(this, additive, minx, miny, maxx, maxy);
+	}
+
+	/**
+	*	Adds a circle to this region.
+	*	@param additive true if this circle should add to the region, false if it should subtract.
+	*	@param center the centre of the circle.
+	*	@param radius the radius of the circle.
+	*/
+	public void addCircle(bool additive, point center, fixed radius)
+	{
+		RegionAddCircle(this, additive, center, radius);
+	}
+
+	/**
+	*	Adds another region to this region.
+	*	@param subject the region which will be added to this region.
+	*/
+	public void addRegion(region subject)
+	{
+		RegionAddRegion(this, subject);
+	}
+
+	/**
+	*	The offset for this region.
+	*/
+	public point offset
+	{
+		public get {
+			return RegionGetOffset(this);
+		}
+		public set {
+			RegionSetOffset(this, value);
+		}
+	}
+
+	/**
+	*	Determines if the given point lies within this region.
+	*	@param p the point to test.
+	*	@return true if the given point lies within the region, false otherwise.
+	*/
+	public bool contains(point p)
+	{
+		return RegionContainsPoint(this, p);
+	}
+
+	/**
+	*	Attempts to find a random point somewhere within the region.  For region containing only a single positive shape, this is guaranteed to work, but for more complex sets of shapes it may give up after a maximum number of tries and return (0, 0).
+	*	@return Returns a point.
+	*/
+	public point randomPoint()
+	{
+		return RegionRandomPoint(this);
+	}
+
+	/**
+	*	The minimum boundary for this region. In general, this is a point composed of the left-most x coordinate, and the bottom-most y coordinate within this region.
+	*	@return a point describing the minimum boundary of this region.
+	*/
+	public point minBound()
+	{
+		return RegionGetBoundsMin(this);
+	}
+
+	/**
+	*	The maximum boundary for this region. In general, this is a point composed of the right-most x coordinate, and the top-most y coordinate within this region.
+	*	@return a point describing the maximum boundary of this region.
+	*/
+	public point maxBound()
+	{
+		return RegionGetBoundsMax(this);
+	}
+
+	/**
+	*	The centre of this region. Setting the centre will adjust the offset such that the region becomes centred on the given point.
+	*/
+	public point center
+	{
+		public get {
+			return RegionGetCenter(this);
+		}
+		public set {
+			RegionSetCenter(this, value);
+		}
+	}
+
+	/**
+	*	Attach the region to the given unit such that the region centre is always at the unit's position plus the given offset.
+	*	@param target the unit which this region will be attached to.
+	*	@param offset the attachment offset.
+	*/
+	public void attachToUnit(unit target, point offset)
+	{
+		RegionAttachToUnit(this, target, offset);
+	}
+
+	/**
+	*	Detach the region from a unit.
+	*/
+	public void detachFromUnit()
+	{
+		RegionAttachToUnit(this, null, null);
+	}
+
+	/**
+	*	Returns the unit this region is attached to.
+	*	@return the unit this region is attached to.
+	*/
+	public unit getAttachedUnit()
+	{
+		return RegionGetAttachUnit(this);
+	}
+
+	/**
+	*	Create a rectangular region with the specified boundaries.
+	*	@param minx the minimum x coordinate for points in the rectangle.
+	*	@param miny the minimum y coordinate for points in the rectangle.
+	*	@param maxx the maximum x coordinate for points in the rectangle.
+	*	@param maxy the maximum y coordinate for points in the rectangle.
+	*	@return the new region.
+	*/
+	public static region rect(fixed minx, fixed miny, fixed maxx, fixed maxy)
+	{
+		return RegionRect(minx, miny, maxx, maxy);
+	}
+
+	/**
+	*	Create a circular region with the specified parameters.
+	*	@param center the centre of the circle.
+	*	@param radius the radius of the circle.
+	*	@return the new region.
+	*/
+	public static region circle(point center, fixed radius)
+	{
+		return RegionCircle(center, radius);
+	}
+
+	/**
+	*	Find a region given its id.
+	*	@param id the id of the region.
+	*	@return the region with the given id.
+	*/
+	public static region fromID(int id)
+	{
+		return RegionFromId(id);
+	}
+
+	/**
+	*	Create an empty region.
+	*	@return an empty region.
+	*/
+	public static region empty()
+	{
+		return RegionEmpty();
+	}
+
+	/**
+	*	Returns a region that encompasses the entire map.
+	*	@return a region that encompasses the entire map.
+	*/
+	public static region entireMap()
+	{
+		return RegionEntireMap();
+	}
+
+	/**
+	*	Returns a region that encompasses the playable map area.
+	*	@return a region that encompasses the playable map area.
+	*/
+	public static region playableMap()
+	{
+		return RegionPlayableMap();
+	}
+}

@@ -1,0 +1,35 @@
+package a.natives;
+/**  
+*	Definition and enrichment for sound channel type
+*	@author NewName
+*/
+typedef Soundchannel uses int;
+
+public enrich Soundchannel
+{
+	public static const Soundchannel
+		ME = (Soundchannel) c_soundCategoryME,
+		MOVIE = (Soundchannel) c_soundCategoryMovie,
+		TV = (Soundchannel) c_soundCategoryTV,
+		DIALOGUE = (Soundchannel) c_soundCategoryDialogue,
+		MISSON = (Soundchannel) c_soundCategoryMission,
+		MUSIC = (Soundchannel) c_soundCategoryMusic,
+		AMBIENT = (Soundchannel) c_soundCategoryAmbient,
+		S_AMBIENT = (Soundchannel) c_soundCategorySAmbient,
+		ALERT = (Soundchannel) c_soundCategoryAlert,
+		DEATH = (Soundchannel) c_soundCategoryDeath,
+		READY = (Soundchannel) c_soundCategoryReady,
+		SPELL = (Soundchannel) c_soundCategorySpell,
+		COMBAT = (Soundchannel) c_soundCategoryCombat,
+		VOICE = (Soundchannel) c_soundCategoryVoice,
+		UI = (Soundchannel) c_soundCategoryUI,
+		FLAMES = (Soundchannel) c_soundCategoryFlames,
+		BUILD = (Soundchannel) c_soundCategoryBuild,
+		GATHER = (Soundchannel) c_soundCategoryGather,
+		DOODAD = (Soundchannel) c_soundCategoryDoodad,
+		S_EMITTERS = (Soundchannel) c_soundCategorySEmitters,
+		S_PIECES = (Soundchannel) c_soundCategorySPieces,
+		FOLEY = (Soundchannel) c_soundCategoryFoley,
+		MOVEMENT = (Soundchannel) c_soundCategoryMovement,
+		OTHER = (Soundchannel) c_soundCategoryOther;
+}

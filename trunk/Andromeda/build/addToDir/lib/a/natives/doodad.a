@@ -1,0 +1,27 @@
+package a.natives;
+/*
+*	Enrichment for native type 'doodad'
+*	@author NewName
+*/
+
+public enrich doodad
+{
+	/**
+	*	Finds a doodad given its ID.
+	*	@param id the id of the sought doodad.
+	*	@return the sought doodad.
+	*/
+	public static doodad fetch(int id)
+	{
+		return DoodadFromId (id);
+	}
+	
+	/**
+	*	Returns the actor for this doodad.
+	*	@return the actor for this doodad.
+	*/
+	public actor getActor()
+	{
+		return ActorFromDoodad (this);
+	}
+}

@@ -1,0 +1,87 @@
+package physics2d.collision;
+
+import physics2d.geom.Vec2;
+import physics2d.geom.Edge;
+import physics2d.geom.PolygonShape;
+
+public class Polygon [8] {
+	bool edgeCopy = false;
+	bool vertCopy = false;
+	int count;
+	Array<Vec2> vertices;
+	Array<Edge> edges;
+	
+	public Polygon(int num) {
+		count = num;
+		vertices = new Array<Vec2>(num);
+		edges = new Array<Vec2>(num);
+	}
+	
+	public Polygon(PolygonShape poly) {
+		this(poly.getVertexCount());
+		for(int i = 0; i < vertices.length; i++) {
+			vertices.setIndex(i, poly.getVertex(i));
+			edges.setIndex(i, poly.getEdge(i));
+		}
+	}
+	
+	public ~Polygon() {
+		if(vertCopy) {
+			for(int i = 0; i < vertices.length; i++) {
+				delete vertices.getIndex(i);
+			}
+		}
+		if(edgeCopy) {
+			for(int i = 0; i < vertices.length; i++) {
+				delete edges.getIndex(i);
+			}
+		}
+		delete vertices;
+		delete edges;
+	}
+	
+	public int getVertexCount() {
+		return vertexCount;
+	}
+	
+	/**
+	 * Index is taken modulo the vertex count.
+	 */
+	public Vec2 getVertex(int index) {
+		if(index >= vertices.length) index -= vertices.length;
+		return vertices.getIndex(index);
+	}
+	
+	/**
+	 * Index is taken modulo the vertex count.
+	 */
+	public Vec2 getEdge(int index) {
+		if(index >= edges.length) index -= edges.length;
+		return edges.getIndex(index);
+	}
+	
+	/**
+	 * The vertex with maximum x coordinate. Ties broken by maximum y coordinate.
+	 * @return The index of the maximum vertex.
+	 */
+	public int getMaxVertex() {
+		int max = 0;
+		Vec2 v = vertices.getIndex(max);
+		for(int i = 1; i < vertices.length; i++) {
+			Vec2 next = vertices.getIndex(i);
+			if(next.x > v.x || (next.x == v.x && next.y > v.y)) {
+				max = i;
+				v = next;
+			}
+		}
+		return max;
+	}
+	
+	public Polygon negate() {
+		vertCopy = edgeCopy = true;
+		for(int i = 0; i < vertices.length; i++) {
+			vertices.getIndex(i).clone().negate();
+			edges.getIndex(i).clone().negate();
+		}
+	}
+}

@@ -1,0 +1,40 @@
+//Three private access errors
+class X{
+	private int i = 5;
+	protected int j = 1;
+	internal int k = 1;
+	static{
+		//Should work
+		i = 6;
+		X.i = 7;
+		j = 2;
+		X.j = 3;
+		k = 1;
+		X.k = 5;
+	}
+}
+
+static{
+	//!
+	X.i = 2;
+	
+	//works
+	X.j = 1;
+}
+
+class Y extends X{
+	static{
+		//!
+		X.i = 3;
+		//works
+		X.j = 6;
+	}
+}
+
+enrich X{
+
+	static{
+		X.i = 2;
+		X.j = 7;
+	}
+}

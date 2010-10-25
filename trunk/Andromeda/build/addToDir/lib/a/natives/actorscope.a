@@ -1,0 +1,92 @@
+package a.natives;
+/*
+*	Enrichment for native type 'actorscope'
+*	@author NewName
+*/
+
+import a.natives.Portrait;
+
+public enrich actorscope
+{
+	/**
+	*	Creates an empty actorscope with the given identifier.
+	*	@param name the identifier for the new actorscope.
+	*/
+	public static actorscope create(string name)
+	{
+		return ActorScopeCreate (name);
+	}
+	
+	/**
+	*	Returns the actorscope specified by the given reference.
+	*	@param name the reference of the sought actorscope.
+	*	@return the sought actorscope.
+	*/
+	public static actorscope fetch(string name)
+	{
+		return ActorScopeFrom (name);
+	}
+	
+	/**
+	*	Kills an actor scope along with all of the actors in that scope.
+	*/
+	public void kill()
+	{
+		ActorScopeKill (this);
+	}
+	
+	/**
+	*	Tells an actor scope to orphan itself, meaning that, once all of the actors inside of that scope have died, the scope will kill itself. 
+	*	Under normal circumstances, this happens automatically.  However, it is theoretically possible for a user (through trigger script) to create actors in a scope where the scope won't automatically die once its actors are dead.
+	*/
+	public void orphan()
+	{
+		ActorScopeOrphan (this);
+	}
+	
+	/**
+	*	Returns an actor from this scope.
+	*	@param name either an actor ID or an actor reference for the sought actor.
+	*	@return the sought actor.
+	*/
+	public actor getChild(string name)
+	{
+		return ActorFromScope (this, name);
+	}
+	
+	/**
+	*	No idea what this does. No documentation available.
+	*/
+	public actor getRef(string refName)
+	{
+		return ActorScopeRefGet(this, refName);
+	}
+	
+	/**
+	*	No idea what this does. No documentation available.
+	*/
+	public void setRef(string refName, actor value)
+	{
+		ActorScopeRefSet(this, refName, value);
+	}
+	
+	/**
+	*	Sends an actor message to all actors in this scope.  An actor message will perform an action and/or trigger an event on the actor it is sent to.
+	*	@param message the actor message to send.
+	*/
+	public void send(string message)
+	{
+		ActorScopeSend (this, message);
+	}
+	
+	/**
+	*	Returns the debug information for this actorscope.
+	*	@return the debug information as a text object.
+	*/
+	public text getDebug()
+	{
+		return ActorScopeGetText (this);
+	}
+	
+	
+}

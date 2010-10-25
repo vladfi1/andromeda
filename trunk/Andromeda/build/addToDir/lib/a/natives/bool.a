@@ -1,0 +1,108 @@
+package a.natives;
+/**  
+*   	 Enrichment for type bool
+*   	 @author Belphegor
+*/
+public enrich bool
+{
+   	 /**
+   	 *	Returns result of boolean operation AND between this boolean and another. 
+   	 *   @param b second parameter  
+   	 *   @return returns false if either of the booleans is false
+   	 */
+   	 bool and(bool b)
+   	 {
+   		 return (this && b);
+   	 }
+   	 
+   	 /**
+   	 *	Returns result of boolean operation OR between this boolean and another. 
+   	 *   @param b second parameter  
+   	 *   @return returns true if either of the booleans is true
+   	 */   	 
+   	 bool or (bool b)
+   	 {
+   		 return (this || b);
+   	 }
+
+   	 /**
+   	 *	Returns a reversed copy of the boolean 
+   	 *   @return returns true if boolean is false and false if it is true
+   	 */   			 
+   	 bool negate()
+   	 {
+   		 return (! this);
+   	 }
+   	 
+   	 /**
+   	 *	Returns result of boolean operation XOR between this boolean and another. 
+   	 *   @param b second parameter  
+   	 *   @return returns true if the booleans aren't same
+   	 */
+   	 bool xor(bool b)
+   	 {
+   		 return (! this == b);
+   	 }
+   	 
+   	 
+   	 /**
+   	 *	Returns a result of the implication between this boolean and another. 
+   	 *   @param b second parameter  
+   	 *   @return returns false only if this is true and the boolean parameter is false, otherwise returns true
+   	 */
+   	 bool implc(bool b)
+   	 {
+   		 return (!this && b);
+   	 }
+   	 
+   	 /**
+   	 *	Returns an integer representation of boolean
+   	 *	@return a integer representation of this number
+   	 */
+   	 int toInt()
+   	 {
+   		 return BoolToInt(this);
+   	 }
+   	 
+   	 /**
+   	 *	Compares this boolean with the parameter and returns the result of the operation
+   	 *   @param b boolean to which we compare this one
+   	 *	@return returns true if both booleans are true/false
+   	 */
+   	 bool equals(bool b)
+   	 {
+   		 return (this == b);
+   	 }
+   	 
+   	 /**
+   	 *	Creates a hash representation of the boolean 
+   	 *	@return two different prime numbers for use in hash
+   	 */
+   	 int hash()
+   	 {
+   		 if (this)
+   		 {
+   			 return 173;
+   		 }
+   		 else
+   		 {
+   			 return 13;
+   		 }
+   	 }
+
+   	 /**
+   	 *	Returns a string representation of this boolean 
+   	 *	@return "true" if true and "false" if this boolean is false
+   	 */
+   	 string toString()
+   	 {
+   		 if(this)
+   		 {
+   			 return "true";
+   		 }
+   		 else
+   		 {
+   			 return "false";
+   		 }
+   	 }
+}

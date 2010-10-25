@@ -1,0 +1,156 @@
+package physics2d.collision;
+
+import physics2d.geom.Vec2;
+import physics2d.geom.Edge;
+import physics2d.geom.PolygonShape;
+
+/**
+ * Calculates minimum penetrations between shapes.
+ * @author XPilot
+ */
+public static class MinimumPenetration {
+
+	public static Polygon minkowskiSum(PolygonShape poly1, PolygonShape poly2) {
+		Polygon p1 = new Polygon(poly1);
+		Polygon p2 = new Polygon(poly2);
+		Polygon sum = minkowskiSum(p1, p2);
+		delete p1;
+		delete p2;
+		return sum;
+	}
+	
+	public static Polygon minkowskiDifference(PolygonShape poly1, PolygonShape poly2) {
+		Polygon p1 = new Polygon(poly1);
+		Polygon p2 = new Polygon(poly2);
+		Polygon dif = minkowskiDifference(p1, p2);
+		delete p1;
+		delete p2;
+		return dif;
+	}
+
+	public static Polygon minkowskiSum(Polygon poly1, Polygon poly2) {
+		int max1 = poly1.getMaxVertex();
+		int max2 = poly2.getMaxVertex();
+		
+		Polygon poly = new Polygon(poly1.count + poly2.count);
+		poly.vertCopy = true;
+		poly.vertices.setIndex(0, Vec2.sum(poly1.getVertex(max1), poly2.getVertex(max2)));
+		
+		for(int i = 0, i1 = max1, i2 = max2; i < poly.count;) {
+			Edge edge1 = poly1.getEdge(i1);
+			Edge edge2 = poly2.getEdge(i2);
+			Edge next = null;
+			
+			fixed cross = edge1.getTangent().cross(edge2.getTangent());
+			if(cross > 0) {
+				next = edge1;
+				i1++;
+			} else {
+				next = edge2;
+				i2++;
+			}
+			
+			poly.edges.setIndex(i, next);
+			Vec2 prev = poly.vertices.getIndex(i);
+			i++;
+			if(i < poly.count) {
+				poly.vertices.setIndex(i, Vec2.sum(prev, next.getTangent()));
+			}
+		}
+		
+		return poly;
+	}
+	
+	public static Polygon minkowskiDifference(Polygon poly1, Polygon poly2) {
+		return minkowskiSum(poly1, poly2.negate());
+	}
+}
+
+public class Polygon [8] {
+	bool edgeCopy = false;
+	bool vertCopy = false;
+	int count;
+	Array<Vec2> vertices;
+	Array<Edge> edges;
+	
+	Polygon(int count) {
+		this.count = count;
+		vertices = new Array<Vec2>(count);
+		edges = new Array<Edge>(count);
+	}
+	
+	public Polygon(PolygonShape poly) {
+		this(poly.getVertexCount());
+		for(int i = 0; i < count; i++) {
+			vertices.setIndex(i, poly.getVertex(i));
+			edges.setIndex(i, poly.getEdge(i));
+		}
+	}
+	
+	public ~Polygon() {
+		if(vertCopy) {
+			for(int i = 0; i < count; i++) {
+				delete vertices.getIndex(i);
+			}
+		}
+		if(edgeCopy) {
+			for(int i = 0; i < count; i++) {
+				delete edges.getIndex(i);
+			}
+		}
+		delete vertices;
+		delete edges;
+	}
+	
+	public int getVertexCount() {
+		return count;
+	}
+	
+	/**
+	 * Index is taken modulo the vertex count.
+	 */
+	public Vec2 getVertex(int index) {
+		if(index >= count) index -= count;
+		return vertices.getIndex(index);
+	}
+	
+	/**
+	 * Index is taken modulo the vertex count.
+	 */
+	public Edge getEdge(int index) {
+		if(index >= count) index -= count;
+		return edges.getIndex(index);
+	}
+	
+	/**
+	 * The vertex with maximum x coordinate. Ties broken by maximum y coordinate.
+	 * @return The index of the maximum vertex.
+	 */
+	public int getMaxVertex() {
+		int max = 0;
+		Vec2 v = vertices.getIndex(max);
+		for(int i = 1; i < count; i++) {
+			Vec2 next = vertices.getIndex(i);
+			if(next.x > v.x || (next.x == v.x && next.y > v.y)) {
+				max = i;
+				v = next;
+			}
+		}
+		return max;
+	}
+	
+	public Polygon negate() {
+		vertCopy = edgeCopy = true;
+		for(int i = 0; i < count; i++) {
+			vertices.getIndex(i).clone().negate();
+			edges.getIndex(i).clone().negate();
+		}
+		return this;
+	}
+	
+	public void debug() {
+		for(int i = 0; i < count; i++) {
+			System.debug(vertices.getIndex(i).toString());
+		}
+	}
+}

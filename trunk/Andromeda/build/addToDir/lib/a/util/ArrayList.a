@@ -1,0 +1,171 @@
+package a.util;
+
+import a.util.AbstractList;
+import a.util.Heap;
+import a.util.Array;
+
+/**
+ * ArrayList implementation that uses the Heap as storage.
+ * @author XPilot
+ */
+public class ArrayList<E> extends AbstractList<E> {
+	
+	public static const int DEFAULT_CAPACITY = 7;
+
+	/**
+	 * The index in the Heap.
+	 */
+	private int ptr;
+	/**
+	 * The ArrayList's capacity.
+	 */
+	private int capacity;
+	/**
+	 * The current size.
+	 */
+	private int size;
+	
+	/**
+	 * ArrayList with capacity DEFAULT_CAPACITY = 7.
+	 */
+	public ArrayList() {
+		this(DEFAULT_CAPACITY);
+	}
+
+	/**
+	 * ArrayList with specified capacity.
+	 * @param capacity Must be positive.
+	 */
+	public ArrayList(int capacity) {
+		this.capacity = Heap.round(capacity);
+		ptr = Heap.malloc(this.capacity);
+		size = 0;
+	}
+	
+	public ~ArrayList() {
+		Heap.free(ptr);
+	}
+	
+	public override int size() {
+		return size;
+	}
+	
+	public override bool isEmpty() {
+		return size == 0;
+	}
+	
+	public override void clear() {
+		size = 0;
+	}
+	
+	/**
+	 * @return A shallow copy of this ArrayList.
+	 */
+	public ArrayList<E> clone() {
+		ArrayList<E> clone = new ArrayList<E>(capacity);
+		Heap.copy(ptr, clone.ptr, size);
+		clone.size = size;
+		return clone;
+	}
+	
+	/**
+	 * Tries to set the capacity to a specified amount.
+	 * @return Whether successful.
+	 */
+	public bool setCapacity(int capacity) {
+		capacity = Heap.round(capacity);
+		int ptr = Heap.realloc(this.ptr, capacity);
+		if(ptr == Heap.ERROR) return false;
+		this.ptr = ptr;
+		this.capacity = capacity;
+		return true;
+	}
+	
+	/**
+	 * Ensures a minimum specified capacity.
+	 * @return Whether successful.
+	 */
+	public bool ensureCapacity(int capacity) {
+		if(capacity < this.capacity) return true;
+		return setCapacity(capacity);
+	}
+	
+	/**
+	 * Decreases the capacity to a certain level.
+	 * @return Whether successful.
+	 */
+	public bool decreaseCapacity(int capacity) {
+		if(capacity < size) return false;
+		return setCapacity(capacity);
+	}
+	
+	/**
+	 * Decreases the capacity to its minimum possible level.
+	 * @return Whether successful.
+	 */
+	public bool trimToSize() {
+		return decreaseCapacity(size);
+	}
+	
+	public override E getIndex(int index) {
+		if(index < 0 || index >= size) return null;
+		return (E)Heap.array[ptr + index];
+	}
+	
+	public override void setIndex(int index, E element) {
+		if(index < 0 || index >= size) return;//should somehow signal error here
+		Heap.array[ptr + index] = (int)element;
+	}
+	
+	/**
+	 * Adds an element to the end of this list.
+	 * @return Whether successful.
+	 */
+	public bool addLast(E element) {
+		if(size == capacity)
+			if(!ensureCapacity(size + 1)) return false;
+		
+		Heap.array[ptr + size] = (int)element;
+		size++;
+		return true;
+	}
+	
+	public override bool addIndex(int index, E element) {
+		if(index < 0 || index > size) {
+			System.error("ArrayList.addIndex: index = " + index + ", size = " + size);
+			return false;
+		}
+		if(size == capacity)
+			if(!ensureCapacity(size + 1)) return false;
+		
+		Heap.copy(ptr + index, ptr + index + 1, size - index);
+		Heap.array[ptr + index] = (int)element;
+		size++;
+		return true;
+	}
+	
+	/**
+	 * Removes the last element of this list.
+	 * @return The element removed.
+	 */
+	public E removeLast() {
+		if(isEmpty()) return null;
+		size--;
+		E element = (E)Heap.array[ptr + size];
+		return element;
+	}
+	
+	public override E removeIndex(int index) {
+		if(index < 0 || index > size) return null;
+		E element = (E)Heap.array[ptr + index];
+		Heap.copy(ptr + index + 1, ptr + index, size - index - 1);
+		size--;
+		return element;
+	}
+	
+	public Array<E> toArray() {
+		Array<E> array = new Array<E>(size);
+		Heap.copy(ptr, array.ptr, size);
+		return array;
+	}
+}

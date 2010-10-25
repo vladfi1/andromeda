@@ -1,0 +1,129 @@
+<project name="Build Parser" default="build all" basedir="..">
+  <property name="langPath" location="data/lang"/>
+ 	<property name="src-main" location="src/main" />
+	<property name="src-gui" location="src/gui" />
+	<property name="src-gen" location="src/gen" />
+	<property name="src-ext" location="src/ext" />
+	<property name="src-mopaq" location="../MoPaQLib/src" />
+  <property name="srcOut" location="src/gen"/>
+  <property name="classOut" location="bin"/>
+  <property name="dist" location="dist"/>
+  <property name="lib" location="lib/build"/>
+  <property name="build-bin" location="build/build-bin"/>
+  <property environment="env"/>
+
+	<!--
+  <path id="binaries">
+    <pathelement location="${bin}"/>
+    <fileset dir="${bin}">
+      <include name="**/*.jar"/>
+      <include name="**/*.zip"/>
+    </fileset> 
+    <fileset dir="lib" includes="**/*.jar"/>
+    <pathelement path="${java.class.path}"/>
+    <pathelement path="${build-bin}"/>
+  </path>
+	-->
+  <path id="buildLibPath">
+    <pathelement location="${lib}"/>
+    <fileset dir="${lib}">
+      <include name="**/*.jar"/>
+      <include name="**/*.zip"/>
+    </fileset>
+    <fileset dir="lib" includes="**/*.jar"/>
+    <pathelement path="${build-bin}"/>
+    <pathelement path="${java.class.path}"/>
+  </path>
+
+  <taskdef name="jflex" classname="JFlex.anttask.JFlexTask" classpathref="buildLibPath"/>
+  <taskdef name="classgen" classname="classgen.AntTask" classpath="${lib}/classgen-gex.jar"/>
+  <taskdef name="cup" classname="java_cup.anttask.CUPTask" classpath="${lib}/java-cup-gex.jar" />
+  <taskdef name="cupOld" classname="java_cup.anttask.CUPTask" classpathref="buildLibPath"/>
+  <taskdef name="gexEnrich" classname="com.sc2mod.andromeda.buildUtils.ClassEnricherAntTask" classpathref="buildLibPath"/>
+
+  <target name="init">
+    <mkdir dir="${classOut}"/>
+    <mkdir dir="${srcOut}"/>
+  </target>
+
+  <target name="classgen" depends="init">
+    <delete dir="${srcOut}/com/sc2mod/andromeda/syntaxNodes"/>
+    <delete dir="${classOut}/com/sc2mod/anromeda/syntaxNodes"/>
+    <classgen file="${langPath}/andromeda.cl" destdir="${srcOut}" visitor="true"/>
+  </target>
+	
+  <target name="enrich" depends="classgen">
+    <gexEnrich path="${srcOut}/com/sc2mod/andromeda/syntaxNodes" semanticsFile="${langPath}/semantics.gex"/> 
+    <gexEnrich scanner="${srcOut}/com/sc2mod/andromeda/parser/AndromedaScanner.java"/>
+  	<gexEnrich scanner="${srcOut}/com/sc2mod/andromeda/parser/GalaxyScanner.java"/>
+  </target>
+
+  <target name="cup" depends="init">
+  	 <cup srcfile="${langPath}/andromeda.cup" destdir="${srcOut}" interface="true" parser="AndromedaGenParser"/>
+ 	 <cup srcfile="${langPath}/galaxy.cup" destdir="${srcOut}" interface="true" parser="GalaxyGenParser"/>
+  </target>
+
+  <target name="jflex" depends="cup">
+  	<jflex file="${langPath}/unicode.flex" destdir="${srcOut}"/>
+    <jflex file="${langPath}/andromeda.flex" destdir="${srcOut}" skeleton="${langPath}/skeleton/flex/skeleton.nested"/>
+    <jflex file="${langPath}/galaxy.flex" destdir="${srcOut}" skeleton="${langPath}/skeleton/flex/skeleton.nested"/>
+  </target>
+
+  <target name="build parser" depends="jflex">
+  </target>
+	
+  <target name="build syntax nodes" depends="enrich">
+  <delete file="${srcOut}/com/sc2mod/andromeda/syntaxNodes/SyntaxNode.java"/>
+   <copy todir="${srcOut}">
+     <fileset dir="${langPath}/skeleton/java" includes="**/**.java"/>
+   </copy>
+  </target>
+
+  <target name="build all" depends="build parser,build syntax nodes">
+	<javac destdir="${classOut}">
+		<classpath refid="buildLibPath" />
+		<src path="${src-main}" />
+		<src path="${src-gen}" />
+		<src path="${src-mopaq}" />
+		<src path="${src-gui}" />
+		<src path="${src-ext}" />
+	</javac>
+  </target>
+	
+  <target name="cleanAll">
+    <delete dir="${srcOut}"/>
+    <delete dir="${classOut}"/>
+  </target>
+
+  <target name="cleanBin">
+    <delete dir="${classOut}"/>
+  </target>
+	
+<!-- we do not need to make a jar here!!
+  <target name="dist" depends="compile">
+    <jar jarfile="${dist}/Compiler.jar" basedir="${classes}">
+     <manifest>
+       <attribute name="Main-Class" value="Parser"/>
+       <attribute name="Class-Path" value="java-cup-10k-b2-runtime-TUM.jar"/>
+     </manifest>
+    </jar>
+  </target>
+
+
+  <target name="run" depends="dist">
+    <java classname="Parser" fork="true">
+      <arg value="input.test"/>
+      <classpath refid="binaries"/>
+    </java>
+  </target>
+  -->
+	 <target name="visitor">
+	 	<taskdef name="visitorGen" classname="com.sc2mod.visitorgen.AntTask" classpath="${lib}/VisitorGen-v1.0.jar"/>
+		<visitorGen visitorNodeName="SemanticsVisitorNode" confFile="${langPath}/semanticsVisitor.gex" classSrcDir="${src-main}" visitorSrcDir="${src-gen}" visitorPackage="com.sc2mod.andromeda.environment.visitors">
+			<Visitor type="void" name="VoidSemanticsVisitor" adaptername="VoidSemanticsVisitorAdapter"/>
+			<Visitor type="voidresult" name="NoResultSemanticsVisitor" adaptername="NoResultSemanticsVisitorAdapter"/>
+			<Visitor type="param" name="ParameterSemanticsVisitor" adaptername="ParameterSemanticsVisitorAdapter"/>
+		</visitorGen>
+	  </target>
+
+</project>

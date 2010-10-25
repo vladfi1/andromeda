@@ -1,0 +1,134 @@
+package a.util;
+
+import a.util.Iterable;
+import a.util.Iterator;
+
+/**
+ * Stack implementation using a singly linked list.
+ * @author XPilot
+ */
+public class LinkedStack<E> extends Iterable<E> {
+	/**
+	 * The size of the stack.
+	 */
+	private int size;
+	
+	/**
+	 * The first link in the list.
+	 */
+	private Link<E> head;
+	
+	/**
+	 * Empty stack.
+	 */
+	public LinkedStack() {
+		size = 0;
+		head = null;
+	}
+	
+	/**
+	 * Clears the stack.
+	 */
+	public ~LinkedStack() {
+		clear();
+	}
+	
+	/**
+	 * @return the size of this stack.
+	 */
+	public int getSize() {return size;}
+	
+	/**
+	 * @return Whether this stack is empty.
+	 */
+	public bool isEmpty() {return size == 0;}
+	
+	/**
+	 * Clears all data from this stack.
+	 */
+	public void clear() {
+		while(head != null) {
+			Link<E> temp = head;
+			head = head.next;
+			delete temp;
+		}
+		size = 0;
+	}
+	
+	/**
+	 * Pushes an element onto the stack.
+	 */
+	public void push(E element) {
+		head = new Link<E>(element, head);
+		size++;
+	}
+	
+	/**
+	 * Pops an element from the stack.
+	 * @return The top element of the stack.
+	 */
+	public E pop() {
+		if(isEmpty()) return null;
+		else {
+			Link<E> temp = head;
+			head = head.next;
+			delete temp;
+			size--;
+			return head.element;
+		}
+	}
+	
+	/**
+	 * Does not modify the stack.
+	 * @return The top element of the stack.
+	 */
+	public E peek() {
+		if(isEmpty()) return null;
+		else return head.element;
+	}
+	
+	/**
+	 * @return An iterator for this LinkedStack.
+	 */
+	public Iterator<E> getIterator() {
+		return new LinkedStackIterator(this);
+	}
+}
+
+/**
+ * The links in a LinkedStack.
+ */
+private class Link<E> [256] {
+	/**
+	 * The element in this link.
+	 */
+	E element;
+	/**
+	 * The next link.
+	 */
+	Link<E> next;
+	
+	Link(E element, Link<E> next) {
+		this.element = element;
+		this.next = next;
+	}
+}
+
+/**
+ * Iterator for LinkedStack.
+ */
+private class LinkedStackIterator<E> extends Iterator<E> {
+	private Link<E> current;
+	
+	LinkedStackIterator(LinkedStack<E> stack) {
+		current = stack.head;
+	}
+	
+	public bool hasNext() {return current != null;}
+	
+	public E next() {
+		E temp = current.element;
+		current = current.next;
+		return temp;
+	}
+}

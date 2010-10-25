@@ -1,0 +1,340 @@
+package physics2d.geom;
+
+import physics2d.geom.Vec2;
+
+/**
+ * A 2x2 matrix.
+ * @author XPilot
+ */
+public class Mat22 {
+	
+	/**
+	 * Mat22 entries. Format: e<row><column>
+	 */
+	public fixed e11, e12, e21, e22;
+	
+	/**
+	 * Creates a zero matrix.
+	 */
+	public Mat22() {
+		e11 = e12 = e21 = e22 = 0;
+	}
+	
+	/**
+	 * Creates a matrix with the desired entries.
+	 */
+	public Mat22(fixed e11, fixed e12, fixed e21, fixed e22) {
+		this.e11 = e11;
+		this.e12 = e12;
+		this.e21 = e21;
+		this.e22 = e22;
+	}
+	
+	/**
+	 * Creates a matrix with the same entries as m.
+	 */
+	public Mat22(Mat22 m) {
+		e11 = m.e11;
+		e12 = m.e12;
+		e21 = m.e21;
+		e22 = m.e22;
+	}
+
+	/**
+	 * Returns a clone of this matrix.
+	 */
+	public Mat22 clone() {
+		return new Mat22(this);
+	}
+	
+	/**
+	 * Determines whether this matrix and m have the same entries.
+	 */
+	public bool equals(Mat22 m) {
+		return this.e11 == m.e11
+			&& this.e12 == m.e12
+			&& this.e21 == m.e21
+			&& this.e22 == m.e22;
+	}
+	
+	/**
+	 * Sets the entries of this matrix.
+	 */
+	public Mat22 setMatrix(fixed e11, fixed e12, fixed e21, fixed e22) {
+		this.e11 = e11;
+		this.e12 = e12;
+		this.e21 = e21;
+		this.e22 = e22;
+		return this;
+	}
+	
+	/**
+	 * Sets this matrix to have the same entries as m.
+	 * @return This matrix.
+	 */
+	public Mat22 setMatrix(Mat22 m) {
+		e11 = m.e11;
+		e12 = m.e12;
+		e21 = m.e21;
+		e22 = m.e22;
+		return this;
+	}
+	
+	/**
+	 * Sets this matrix to the identity.
+	 * @return This matrix.
+	 */
+	public Mat22 setIdentity() {
+		e11 = e22 = 1;
+		e12 = e21 = 0;
+		return this;
+	}
+	
+	/**
+	 * Multiplies each entry of this matrix by a.
+	 */
+	public Mat22 multiply(fixed a) {
+		e11 = e11 * a;
+		e12 = e12 * a;
+		e21 = e21 * a;
+		e22 = e22 * a;
+		return this;
+	}
+	
+	/**
+	 * Divides each entry of this matrix by a.
+	 */
+	public Mat22 divide(fixed a) {
+		e11 = e11 / a;
+		e12 = e12 / a;
+		e21 = e21 / a;
+		e22 = e22 / a;
+		return this;
+	}
+	
+	/**
+	 * Calculates and returns the determinant of this matrix.
+	 */
+	public fixed determinant() {
+		return e11 * e22 - e12 * e21;
+	}
+	
+	/**
+	 * Calculates and returns the transpose of m.
+	 */
+	public static Mat22 transpose(Mat22 m) {
+		return new Mat22(m.e11, m.e21, m.e12, m.e22);
+	}
+	
+	/**
+	 * Calculates the transpose of m and stores the result in result.
+	 * @return result
+	 */
+	public static Mat22 transpose(Mat22 m, Mat22 result) {
+		return result.setMatrix(m.e11, m.e21, m.e12, m.e22);
+	}
+	
+	/**
+	 * Transposes this matrix.
+	 * @return This matrix, after transposition.
+	 */
+	public Mat22 transpose() {
+		fixed temp = e12;
+		e12 = e21;
+		e21 = temp;
+		return this;
+	}
+	
+	/**
+	 * Calculates and returns the adjugate of m.
+	 */
+	public static Mat22 adjugate(Mat22 m) {
+		return new Mat22(m.e22, -m.e21, -m.e12, m.e11);
+	}
+	
+	/**
+	 * Calculates the adjugate of m and stores the result in result.
+	 * @return result
+	 */
+	public static Mat22 adjugate(Mat22 m, Mat22 result) {
+		return result.setMatrix(m.e22, -m.e21, -m.e12, m.e11);
+	}
+	
+	/**
+	 * Adjugates this matrix.
+	 * @return This matrix, after adjugation.
+	 */
+	public Mat22 adjugate() {
+		fixed temp = e11;
+		e11 = e22;
+		e22 = temp;
+		e12 = -e12;
+		e21 = -e21;
+		return this;
+	}
+	
+	/**
+	 * Calculates and returns the inverse of m.
+	 */
+	public static Mat22 inverse(Mat22 m) {
+		return adjugate(m).divide(m.determinant());
+	}
+	
+	/**
+	 * Calculates the inverse of m and stores the result in result.
+	 * @return result
+	 */
+	public static Mat22 inverse(Mat22 m, Mat22 result) {
+		return adjugate(m, result).divide(m.determinant());
+	}
+	
+	/**
+	 * Inverses this matrix.
+	 * @return This matrix, after inversing.
+	 */
+	public Mat22 inverse() {
+		return adjugate().divide(determinant());
+	}
+	
+	/**
+	 * Multiplies v by m and returns the result.
+	 */
+	public static Vec2 multiply(Mat22 m, Vec2 v) {
+		return new Vec2(m.e11 * v.x + m.e12 * v.y, m.e21 * v.x + m.e22 * v.y);
+	}
+	
+	/**
+	 * Multiplies v by m and stores the result in result.
+	 * @return result
+	 */
+	public static Vec2 multiply(Mat22 m, Vec2 v, Vec2 result) {
+		return result.setVec(m.e11 * v.x + m.e12 * v.y, m.e21 * v.x + m.e22 * v.y);
+	}
+	
+	/**
+	 * Multiplies v by this matrix.
+	 * @return v
+	 */
+	public Vec2 multiply(Vec2 v) {
+		return v.setVec(e11 * v.x + e12 * v.y, e21 * v.x + e22 * v.y);
+	}
+	
+	/**
+	 * Multiplies v by the transpose of m and returns the result.
+	 */
+	public static Vec2 multiplyTrans(Mat22 m, Vec2 v) {
+		return new Vec2(m.e11 * v.x + m.e21 * v.y, m.e12 * v.x + m.e22 * v.y);
+	}
+	
+	/**
+	 * Multiplies v by the transpose m and stores the result in result.
+	 * @return result
+	 */
+	public static Vec2 multiplyTrans(Mat22 m, Vec2 v, Vec2 result) {
+		return result.setVec(m.e11 * v.x + m.e21 * v.y, m.e12 * v.x + m.e22 * v.y);
+	}
+	
+	/**
+	 * Multiplies v by this matrix.
+	 * @return v
+	 */
+	public Vec2 multiplyTrans(Vec2 v) {
+		return v.setVec(e11 * v.x + e21 * v.y, e12 * v.x + e22 * v.y);
+	}
+	
+	/**
+	 * Calculates and returns the product of m1 and m2.
+	 */
+	public static Mat22 multiply(Mat22 m1, Mat22 m2) {
+		return new Mat22(m1.e11 * m2.e11 + m1.e12 * m2.e21,
+							m1.e11 * m2.e12 + m1.e12 * m2.e22,
+							m1.e21 * m2.e11 + m1.e22 * m2.e21,
+							m1.e21 * m2.e12 + m1.e22 * m2.e22);
+	}
+	
+	/**
+	 * Calculates the product of m1 and m2 and stores the result in result.
+	 * @return result
+	 */
+	public static Mat22 multiply(Mat22 m1, Mat22 m2, Mat22 result) {
+		return result.setMatrix(m1.e11 * m2.e11 + m1.e12 * m2.e21,
+								m1.e11 * m2.e12 + m1.e12 * m2.e22,
+								m1.e21 * m2.e11 + m1.e22 * m2.e21,
+								m1.e21 * m2.e12 + m1.e22 * m2.e22);
+	}
+	
+	/**
+	 * Multiplies this matrix by m (m on the left).
+	 * @return This matrix.
+	 */
+	public Mat22 multiply(Mat22 m) {
+		return setMatrix(m.e11 * e11 + m.e12 * e21,
+						m.e11 * e12 + m.e12 * e22,
+						m.e21 * e11 + m.e22 * e21,
+						m.e21 * e12 + m.e22 * e22);
+	}
+	
+	/**
+	 * Creates the matrix for rotation CCW by a certain angle.
+	 * @param angle The angle in degrees.
+	 */
+	public static Mat22 createRotationMatrix(fixed angle) {
+		fixed c = Cos(angle);
+		fixed s = Sin(angle);
+		return new Mat22(c, -s, s, c);
+	}
+	
+	/**
+	 * Makes this matrix a rotation matrix (rotates CCW).
+	 * @param angle The angle in degrees.
+	 * @return This matrix.
+	 */
+	public Mat22 setRotationMatrix(fixed angle) {
+		fixed c = Cos(angle);
+		fixed s = Sin(angle);
+		return setMatrix(c, -s, s, c);
+	}
+	
+	/**
+	 * Creates the matrix for scaling by a certain factor.
+	 * @param scale The scale factor.
+	 */
+	public static Mat22 createScaleMatrix(fixed scale) {
+		return new Mat22(scale, 0, 0, scale);
+	}
+	
+	/**
+	 * Makes this matrix a scaling matrix.
+	 * @param scale The scale factor.
+	 * @return This matrix.
+	 */
+	public Mat22 setScaleMatrix(fixed scale) {
+		return setMatrix(scale, 0, 0, scale);
+	}
+	
+	/**
+	 * Creates the matrix for scaling in each component.
+	 * @param scaleX The scale factor for the x component.
+	 * @param scaleY The scale factor for the y component
+	 */
+	public static Mat22 ceateScaleMatrix(fixed scaleX, fixed scaleY) {
+		return new Mat22(scaleX, 0, 0, scaleY);
+	}
+	
+	/**
+	 * Makes this matrix a scaling matrix.
+	 * @param scaleX The scale factor for the x component.
+	 * @param scaleY The scale factor for the y component
+	 * @return This matrix.
+	 */
+	public Mat22 setScaleMatrix(fixed scaleX, fixed scaleY) {
+		return setMatrix(scaleX, 0, 0, scaleY);
+	}
+	
+	/**
+	 * @return A string representation of this matrix.
+	 */
+	public string toString() {
+		return "[[" + e11 + " " + e12 + "][" + e21 + " " + e22 + "]]";
+	}
+}
