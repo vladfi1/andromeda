@@ -12,7 +12,7 @@ public class BasicTests extends AndromedaSingleRunTest{
 		//is located in the same folder and named like this class (with .a extension instead of .java)
 		callAndromeda();
 		
-		assertNoMoreErrors();
+		assertNoMoreProblems();
 		checkOutput();
 	}
 	
@@ -22,7 +22,7 @@ public class BasicTests extends AndromedaSingleRunTest{
 		//is located in the same folder and named like this class (with .a extension instead of .java)
 		callAndromeda();
 		
-		assertNoMoreErrors();
+		assertNoMoreProblems();
 		checkOutput();
 	}
 }

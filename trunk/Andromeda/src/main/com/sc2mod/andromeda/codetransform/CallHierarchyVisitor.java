@@ -9,9 +9,14 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
+import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.operations.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Invocation;
+import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.InclusionType;
@@ -31,6 +36,17 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	//XPilot: these are not used...
 	//boolean readAccess = true;
 	//boolean writeAccess;
+	//FIXME: Assign a good starting size to this and other hash maps. This can be done by counting the elements in the environment.
+	private HashSet<SemanticsElement> marked = new HashSet<SemanticsElement>();
+	
+	private void mark(SemanticsElement elem){
+		marked.add(elem);
+	}
+	
+	private boolean isMarked(SemanticsElement elem){
+		return marked.contains(elem);
+	}
+	
 	
 	private CallHierarchyExpressionVisitor exprVisitor;
 	private StaticInitVisitor staticInitVisitor;
@@ -69,11 +85,11 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	public void visit(VarAssignDeclNode vad) {
 		//Marked? do nothing
 		VarDecl vd = (VarDecl) vad.getName().getSemantics();
-		if(vd.isMarked()) {
+		if(isMarked(vd)) {
 			return;
 		}
 		
-		vd.mark();
+		mark(vd);
 		
 		//Do init
 		super.visit(vad);
@@ -94,16 +110,17 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 		//XPilot: Not sure if static inits are ever marked
 		
 		//Function already marked? Return
-		if(f.isMarked()) return;
+		if(isMarked(f)) return;
 		
 		//Now check the body for calls
 		body.accept(this);
 		
 		//Mark function as visited
-		f.mark();
+		mark(f);
 		
 		//Check for unused locals
-		UnusedFinder.checkForUnusedLocals(f, options);
+		//TODO: Redo unused finding
+		//UnusedFinder.checkForUnusedLocals(f, options);
 	}
 	
 	@Override
@@ -112,7 +129,7 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 		Function f = (Function)methodDeclaration.getSemantics();
 		
 		//Function already marked? Return
-		if(f.isMarked()) return;
+		if(isMarked(f)) return;
 		
 		StmtNode body = methodDeclaration.getBody();
 		
@@ -121,11 +138,12 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 			body.accept(this);
 			
 			//Check for unused locals
-			UnusedFinder.checkForUnusedLocals(f,options);
+			//TODO: Redo unused finding
+			//UnusedFinder.checkForUnusedLocals(f,options);
 		}
 		
 		//Mark function as visited
-		f.mark();
+		mark(f);
 	}
 	
 	//************** STATEMENTS (just loop through and replace expressions if necessary) ********

@@ -236,7 +236,7 @@ public abstract class ScopeContentSet {
 			case OP_SET:
 				if(doOps){
 					inNestedIteration = true;
-					nestedIterator = ((OperationSet)elem).getIterator();
+					nestedIterator = ((OperationSet)elem).iterator();
 					return next();
 				}
 				break;

@@ -12,6 +12,7 @@ package com.sc2mod.andromeda.environment.types;
 //XPilot: what is this? :)
 //import javax.management.relation.RoleUnresolved;
 
+import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeParamNode;
 
 /**
@@ -19,6 +20,7 @@ import com.sc2mod.andromeda.syntaxNodes.TypeParamNode;
  * @author J. 'gex' Finis
  *
  */
+import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -30,6 +32,7 @@ public class TypeParameter extends Type {
 	private Class forClass;
 	
 	public TypeParameter(Class forClass, TypeParamNode elementAt) {
+		super(forClass);
 		decl = elementAt;
 		this.forClass = forClass;
 		name = elementAt.getName();
@@ -97,12 +100,23 @@ public class TypeParameter extends Type {
 	
 	@Override
 	public int getByteSize() {
-		//throw new Error("Getting byte size of params not supported!");
-		//XPilot: type parameters are always ints (pointers)
+		//type parameters are always ints (pointers)
 		return 4;
 	}
+	
+	@Override
+	public Visibility getVisibility() {
+		return Visibility.PROTECTED;
+	}
 
+	@Override
+	public TypeParamNode getDefinition() {
+		return decl;
+	}
+	
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+
 }

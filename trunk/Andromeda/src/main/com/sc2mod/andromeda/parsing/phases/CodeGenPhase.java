@@ -27,7 +27,7 @@ public class CodeGenPhase extends Phase{
 			cg.generateClasses(semEnv.typeProvider.getClasses());
 		}
 		c.generateCode(snv,env.getSyntaxTree());
-		c.writeInit();
+		c.writeInit(env.getSyntaxTree());
 		
 		env.getTransientData().setCodeGenerator(c);
 		

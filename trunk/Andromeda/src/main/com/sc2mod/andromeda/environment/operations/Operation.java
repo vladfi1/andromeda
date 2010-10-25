@@ -65,7 +65,6 @@ public abstract class Operation extends SemanticsElement implements ScopedElemen
 	
 	public abstract String getGeneratedName();
 
-	public abstract int getIndex();
 
 	public abstract int getInvocationCount();
 	
@@ -92,19 +91,13 @@ public abstract class Operation extends SemanticsElement implements ScopedElemen
 	public abstract boolean hasBody();
 	
 	public abstract boolean isCreateCode();
-
-	public abstract boolean isMarked();
-
-	public abstract void mark();
-
+	
 	public abstract void setCreateCode(boolean createCode);
 
 	
 	public abstract void setFlowReachesEnd(boolean b);
 
 	public abstract void setGeneratedName(String generatedName);
-
-	public abstract void setIndex(int index);
 
 
 	public abstract void setLocals(LocalVarDecl[] locals);

@@ -67,7 +67,6 @@ public abstract class VarDecl extends SemanticsElement implements ScopedElement,
 	private int numReads;
 	private int numWrites;
 	private int numInlines;
-	private boolean marked;
 	private boolean createCode = true;
 	private List<StmtNode> initCode;
 	
@@ -288,14 +287,6 @@ public abstract class VarDecl extends SemanticsElement implements ScopedElement,
 	
 	public boolean isGlobalField(){
 		return false;
-	}
-	
-	public boolean isMarked() {
-		return marked;
-	}
-
-	public void mark() {
-		this.marked = true;
 	}
 
 	/**

@@ -70,9 +70,8 @@ public class Interface extends ReferentialType implements SemanticsVisitorNode {
 
 	@Override
 	public String getDescription() {
-		return "Interface, defined at:\n" + CompilationFileManager.getLastEnvironment().getSourceInformation(declaration);
+		return "interface";
 	}
-	
 
 
 	

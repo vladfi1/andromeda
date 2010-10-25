@@ -12,6 +12,7 @@ package com.sc2mod.andromeda.codegen;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.types.Struct;
 import com.sc2mod.andromeda.environment.types.Type;
@@ -30,6 +31,11 @@ public class LongNameProvider implements INameProvider {
 
 	private Object token = new Object();
 	private Hashtable<String, Object> localNames = new Hashtable<String, Object>();
+	private FunctionIndexProvider indexProvider;
+	
+	public LongNameProvider(Environment semEnv) {
+		this.indexProvider = new FunctionIndexProvider(semEnv);
+	}
 	
 	@Override
 	public void assignLocalNamesForMethod(Function function) {
@@ -112,7 +118,7 @@ public class LongNameProvider implements INameProvider {
 		}
 		
 		if(writeIndex){
-			int index = function.getIndex();
+			int index = indexProvider.getFuncIndex(function);
 			if(index != 0){
 				builder.append("__").append(index);
 			}

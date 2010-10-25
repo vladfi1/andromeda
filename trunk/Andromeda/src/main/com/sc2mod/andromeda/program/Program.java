@@ -106,12 +106,14 @@ public class Program {
 
 		
 		//Load config
+		File confFile = (File)clOptions.getParam(CLOption.SET_CONFIG);
 		try {			
-			config = new ConfigFile((File)clOptions.getParam(CLOption.SET_CONFIG), true);
+			
+			config = new ConfigFile(confFile, true);
 		} catch (FileNotFoundException e) {
-			throw new InitializationError("Config file (andromeda.conf) not found!");
+			throw new InitializationError("Config file (" + Files.getCleanPath(confFile) + ") not found!");
 		} catch (IOException e) {
-			throw new InitializationError("Error reading config file (andromeda.conf)!");
+			throw new InitializationError("Error reading config file (" + Files.getCleanPath(confFile) + ")!");
 		}
 	
 		//Assemble options
@@ -172,8 +174,6 @@ public class Program {
 		
 		if(invokeWorkflow(files, o, Language.ANDROMEDA).getResult().isSuccessful()){
 			System.out.println("");
-			System.out.println(PerfTest.symbols + " sym");
-			System.out.println(PerfTest.syntaxNodes + " syn");
 			CompilationEnvironment cr = invokeWorkflow(files, o, Language.ANDROMEDA);
 			SourceFileNode st = cr.getSyntaxTree();
 			VoidVisitorAdapter va = new VoidVisitorAdapter() {

@@ -138,20 +138,9 @@ public class GenericFunctionProxy extends Operation {
 		return function.isCreateCode();
 	}
 
-
-	@Override
-	public boolean isMarked() {
-		return function.isMarked();
-	}
-
 	@Override
 	public boolean isMember() {
 		return function.isMember();
-	}
-
-	@Override
-	public void mark() {
-		function.mark();
 	}
 
 	@Override
@@ -167,11 +156,6 @@ public class GenericFunctionProxy extends Operation {
 	@Override
 	public void setGeneratedName(String generatedName) {
 		function.setGeneratedName(generatedName);
-	}
-
-	@Override
-	public void setIndex(int index) {
-		function.setIndex(index);
 	}
 
 	@Override

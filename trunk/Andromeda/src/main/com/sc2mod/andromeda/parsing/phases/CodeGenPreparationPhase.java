@@ -30,7 +30,7 @@ public class CodeGenPreparationPhase extends Phase{
 		MetaClassInit.init(new SyntaxGenerator(),env.getTransientData(),semEnv);
 		
 		//Generate and save name provider
-		INameProvider nameProvider = INameProvider.Factory.createProvider(options);
+		INameProvider nameProvider = INameProvider.Factory.createProvider(semEnv, options);
 	
 		//Do name and class field generation
 		NameGenerationVisitor snv = new NameGenerationVisitor(nameProvider, options);

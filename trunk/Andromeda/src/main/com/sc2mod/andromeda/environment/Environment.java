@@ -31,12 +31,12 @@ public final class Environment {
 	private Package defaultPackage = new Package(this, "<default>", null);
 	public final TypeProvider typeProvider = new TypeProvider(this);
 	
-	public Iterable<ScopedElement> iterateOverContent(){
+	public Iterable<ScopedElement> iterateOverContent(final boolean stepIntoOperations,final boolean stepIntoPackages){
 		return new Iterable<ScopedElement>() {
 			
 			@Override
 			public Iterator<ScopedElement> iterator() {
-				return defaultPackage.getContent().getDeepIterator(true, true);
+				return defaultPackage.getContent().getDeepIterator(stepIntoOperations, stepIntoPackages);
 			}
 		};
 	}

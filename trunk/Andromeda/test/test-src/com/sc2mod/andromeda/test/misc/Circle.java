@@ -48,9 +48,6 @@ class Circle2 implements CircleInterface{
 	}
 }
 
-class C extends Circle{
-	static int i = super.i;
-}
 class CircleUser {
 	
 	public static void bla(){

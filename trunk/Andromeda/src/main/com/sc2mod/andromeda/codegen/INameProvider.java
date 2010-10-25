@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.codegen;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.types.Struct;
@@ -34,12 +35,12 @@ import com.sc2mod.andromeda.parsing.options.Parameter;
 public interface INameProvider {
 	
 	public static class Factory{
-		public static INameProvider createProvider(Configuration o){
+		public static INameProvider createProvider(Environment semEnv, Configuration o){
 			boolean shortenVarNames = o.getParamBool(Parameter.CODEGEN_SHORTEN_VAR_NAMES);
 			if(shortenVarNames){
 				return new ShortNameProvider();
 			} else {
-				return new LongNameProvider();
+				return new LongNameProvider(semEnv);
 			}
 		}
 	}

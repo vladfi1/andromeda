@@ -303,39 +303,6 @@ public class TypeProvider {
 
 
 
-	public void resolveMemberTypes() {
-		LinkedList<RecordType> typesToResolve = new LinkedList<RecordType>();
-		typesToResolve.addAll(enrichmentsToResolve);
-		typesToResolve.addAll(rootRecordTypes);
-		while(!typesToResolve.isEmpty()){
-			RecordType r = typesToResolve.poll();
-			typesToResolve.addAll(r.descendants);
-			r.resolveMembers(this);
-		}
-
-		enrichmentsToResolve.clear();
-	}
-
-
-
-	public void generateMethodIndex() {
-		for(String s: types.keySet()){
-			Type t = types.get(s);
-			if(t instanceof RecordType){
-				RecordType r = (RecordType)t;
-				r.getMethods().generateMethodIndex();
-				
-				//Constructors
-				int i = 0;
-				for(Entry<Signature, Constructor> e: r.constructors.entrySet()){
-						e.getValue().setIndex(i++);			
-				}
-			}
-		}
-		for(Entry<Type, EnrichmentSet> e: enrichments.entrySet()){
-			e.getValue().getMethods().generateFunctionIndex();
-		}
-	}
 
 	public void generateClassAndInterfaceIndex() {
 		for(RecordType r: rootRecordTypes){

@@ -93,12 +93,12 @@ public class VirtualCallTable {
 		
 		//First we process all methods
 		for(Operation op : methods){
-			processMethod(op, env);
+			processMethod(op, transientData);
 		}
 		
 		//Lastly the destructor, if it was defined in this class and not copied down
 		Destructor m = clazz.getDestructor();
-		if(m != null && m.getContainingType() == clazz) processMethod(m,env);
+		if(m != null && m.getContainingType() == clazz) processMethod(m,transientData);
 		
 		//Generate tables for subclasses
 		for(RecordType r : clazz.getDecendants()) {
@@ -106,7 +106,7 @@ public class VirtualCallTable {
 		}
 	}
 
-	private void processMethod(Operation op, Environment env){
+	private void processMethod(Operation op, TransientCompilationData env){
 		//Methods without body and methods that are not called virtually are ignored
 		if(!op.isCalledVirtually()) {
 //			System.out.println(m + " virtual = false.");

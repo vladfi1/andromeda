@@ -11,12 +11,15 @@ import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.scopes.ScopedElement;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.Class;
 import com.sc2mod.andromeda.environment.types.Interface;
 import com.sc2mod.andromeda.environment.types.RecordType;
+import com.sc2mod.andromeda.environment.types.Struct;
 import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -193,5 +196,21 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 			.details(superClass.getName(),c.getName())
 			.raiseUnrecoverable();
 		
+	}
+	
+	
+	/**
+	 * Struct members are checked so that they contain no modifiers.
+	 */
+	@Override
+	public void visit(Struct struct) {
+		for(ScopedElement s : struct.getContent().viewValues()){
+			//Since the parser anything but fields in structs, we can safely cast to fieldDecl here
+			FieldDecl field = (FieldDecl)s;
+			if(!field.getFieldDeclaration().getFieldModifiers().isEmpty()){
+				throw Problem.ofType(ProblemId.STRUCT_MEMBER_WITH_MODIFIER).at(field.getFieldDeclaration().getFieldModifiers())
+								.raiseUnrecoverable();
+			}
+		}
 	}
 }

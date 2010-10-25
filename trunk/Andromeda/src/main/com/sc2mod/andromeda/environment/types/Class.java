@@ -188,13 +188,13 @@ public class Class extends ReferentialType implements IIdentifiable , SemanticsV
 		}
 	}
 	
-	protected Class(Class genericParent){
-		super(genericParent);
-	}
+//	protected Class(Class genericParent){
+//		super(genericParent);
+//	}
 
 	@Override
 	public String getDescription() {
-		return "Class, defined at:\n" + CompilationFileManager.getLastEnvironment().getSourceInformation(this.getDeclaration());
+		return "class";
 	}
 	
 	@Override

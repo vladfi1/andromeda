@@ -9,39 +9,22 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import com.sc2mod.andromeda.environment.IAnnotatable;
 import com.sc2mod.andromeda.environment.IGlobal;
 import com.sc2mod.andromeda.environment.IModifiable;
-import com.sc2mod.andromeda.environment.MethodSet;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.Util;
-import com.sc2mod.andromeda.environment.operations.Constructor;
-import com.sc2mod.andromeda.environment.operations.Destructor;
-import com.sc2mod.andromeda.environment.operations.Method;
-import com.sc2mod.andromeda.environment.operations.StaticInit;
-import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.Scope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.variables.AccessorDecl;
-import com.sc2mod.andromeda.environment.variables.FieldSet;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
-import com.sc2mod.andromeda.syntaxNodes.MemberDeclListNode;
-import com.sc2mod.andromeda.syntaxNodes.MemberDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 /**
  * A class or interface.

@@ -31,7 +31,7 @@ import com.sc2mod.andromeda.util.Debug;
  * @author gex
  *
  */
-public abstract class OperationSet implements ScopedElement{
+public abstract class OperationSet implements ScopedElement, Iterable<Operation>{
 
 	private final String uid;
 	protected final Scope scope;
@@ -71,7 +71,7 @@ public abstract class OperationSet implements ScopedElement{
 		}
 	}
 	
-	public Iterator<Operation> getIterator(){
+	public Iterator<Operation> iterator(){
 		return opSet.values().iterator();
 	}
 	
@@ -233,6 +233,10 @@ public abstract class OperationSet implements ScopedElement{
 	
 	public boolean isEmpty() {
 		return opSet.isEmpty();
+	}
+
+	public int size() {
+		return opSet.size();
 	}
 
 

@@ -19,6 +19,7 @@ import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 
 import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.ScopedElement;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
@@ -41,7 +42,7 @@ public class Struct extends RecordType {
 
 	@Override
 	public String getDescription() {
-		return "Struct, defined at:\n" + CompilationFileManager.getLastEnvironment().getSourceInformation(declaration);
+		return "struct";
 	}
 	
 
@@ -50,23 +51,6 @@ public class Struct extends RecordType {
 		return TypeCategory.STRUCT;
 	}
 	
-	
-	
-	@Override
-	void resolveMembers(TypeProvider t) {
-		super.resolveMembers(t);
-		for(String name: fields.getFieldNames()){
-			//Since the parser forbids accessors in structs, we can safely cast to fieldDecl here
-			FieldDecl field = (FieldDecl)fields.getFieldByName(name);
-			if(!field.getFieldDeclaration().getFieldModifiers().isEmpty()){
-				throw Problem.ofType(ProblemId.STRUCT_MEMBER_WITH_MODIFIER).at(field.getFieldDeclaration().getFieldModifiers())
-								.raiseUnrecoverable();
-			}
-		}
-	}
-	
-
-
 	/**
 	 * Structs cannot be passed as parameter or returned
 	 */
@@ -78,8 +62,9 @@ public class Struct extends RecordType {
 	@Override
 	protected int calcByteSize() {
 		int result = 0;
-		for(String s: fields.getFieldNames()){
-			VarDecl f = fields.getFieldByName(s);
+		for(ScopedElement elem : getContent().viewValues()){
+			//We can cast do var decl here since structs only contain fields.
+			VarDecl f = (VarDecl) elem;
 			result += f.getType().getMemberByteSize();
 		}
 		return result;

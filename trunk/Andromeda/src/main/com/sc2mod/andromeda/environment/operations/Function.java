@@ -77,7 +77,6 @@ public class Function extends Operation {
 	private boolean createCode = true;
 	private boolean flowReachesEnd;
 	private String generatedName;
-	private int index;
 	private int inlineCount;
 	private int invocationCount;
 	private HashMap<String, AnnotationNode> annotations;
@@ -88,7 +87,6 @@ public class Function extends Operation {
 	private boolean isOverride;
 	private boolean isStrcall;
 	private LocalVarDecl[] locals;
-	private boolean marked;
 	private String name;
 	protected ParamDecl[] params;
 	protected List<ImplicitParamDecl> implicitParams;
@@ -199,9 +197,6 @@ public class Function extends Operation {
 		return generatedName==null?name:generatedName;
 	}
 
-	public int getIndex() {
-		return index;
-	}
 
 	public int getInvocationCount() {
 		return invocationCount;
@@ -276,11 +271,6 @@ public class Function extends Operation {
 	public boolean isInline() {
 		return isInline;
 	}
-
-	@Override
-	public boolean isMarked() {
-		return marked;
-	}
 	
 	@Override
 	public boolean isNative() {
@@ -304,12 +294,6 @@ public class Function extends Operation {
 	public boolean isStrcall() {
 		return isStrcall;
 	}
-
-	@Override
-	public void mark() {
-		this.marked = true;
-	}
-	
 
 
 	@Override
@@ -345,13 +329,7 @@ public class Function extends Operation {
 	public synchronized void setGeneratedName(String generatedName) {
 		this.generatedName = generatedName;
 	}
-
-	@Override
-	public void setIndex(int index) {
-		this.index = index;
-	}
-
-
+	
 	@Override
 	public void setLocals(LocalVarDecl[] locals) {
 		this.locals = locals;

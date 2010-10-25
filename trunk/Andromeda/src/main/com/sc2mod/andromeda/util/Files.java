@@ -84,4 +84,12 @@ public class Files {
 			throw new InvalidParameterException("The supplied directory " + f.getAbsolutePath().toString() + " is a file, not a directory");
 		}
 	}
+
+	public static String getCleanPath(File confFile) {
+		try {
+			return confFile.getCanonicalPath();
+		} catch (IOException e) {
+			return confFile.getAbsolutePath();
+		}
+	}
 }
