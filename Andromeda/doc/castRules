@@ -1,8 +1,0 @@
-
-implicit:
-extension -> supertype
-
-explicit:
-extension -> extension (unchecked)
-extension<int> -> class
-class -> extension<int>

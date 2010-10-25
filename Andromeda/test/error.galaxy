@@ -1,4 +1,0 @@
-
-void blaa(){
- gv_untitledVariable001[gv_st].lv_Recorded[4] = gv_st;
- }

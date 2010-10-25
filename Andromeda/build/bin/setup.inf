@@ -1,8 +1,0 @@
-[Version]
-Signature="$chicago$"
-[DefaultInstall]
-AddReg=CCK.add
-[CCK.add]
-HKCU,Environment,CCK_HOME,,"%cckhome%"
-HKCU,Environment,ANT_HOME,,"%cckhome%"
-[Strings]

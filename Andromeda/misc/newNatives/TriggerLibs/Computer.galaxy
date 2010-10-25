@@ -1,4 +1,0 @@
-include "TriggerLibs/MeleeAI"
-include "TriggerLibs/Terran"
-include "TriggerLibs/Protoss"
-include "TriggerLibs/Zerg"

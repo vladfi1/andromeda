@@ -1,5 +1,0 @@
-/**
- * 
- * @author J. 'gex' Finis
- *
- */

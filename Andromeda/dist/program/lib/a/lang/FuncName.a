@@ -1,3 +1,0 @@
-package a.lang;
-
-public typedef funcName extends string;
