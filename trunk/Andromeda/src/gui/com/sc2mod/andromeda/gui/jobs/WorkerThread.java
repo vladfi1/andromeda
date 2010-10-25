@@ -10,6 +10,9 @@
 package com.sc2mod.andromeda.gui.jobs;
 
 import com.sc2mod.andromeda.program.Program;
+import com.sc2mod.andromeda.util.logging.Log;
+import com.sc2mod.andromeda.util.logging.LogFormat;
+import com.sc2mod.andromeda.util.logging.LogLevel;
 import com.sc2mod.andromeda.util.logging.Logger;
 
 public class WorkerThread extends Thread{
@@ -32,7 +35,7 @@ public class WorkerThread extends Thread{
 		try {
 			currentJob.execute();
 		} catch (OutOfMemoryError e) {
-			Program.log.println("--- Out of memory, restart the program! If this error occurs often you should increase max heap space of your Java Virtual Machine ---");
+			Log.print(LogLevel.CAPTION,LogFormat.ERROR,"--- Out of memory, restart the program! If this error occurs often you should increase max heap space of your Java Virtual Machine ---");
 		} finally {
 			System.gc();
 			Program.jobHandler.fireJobFinished(currentJob);

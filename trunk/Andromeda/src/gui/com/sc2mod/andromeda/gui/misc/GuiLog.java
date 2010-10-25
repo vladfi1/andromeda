@@ -11,17 +11,21 @@ package com.sc2mod.andromeda.gui.misc;
 
 import java.awt.Color;
 import java.io.PrintStream;
+import java.util.EnumMap;
+import java.util.Map;
 
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import com.sc2mod.andromeda.gui.forms.AutoscrollPane;
+import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.parsing.CompilationFileManager;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.util.logging.CollectingLog;
+import com.sc2mod.andromeda.util.logging.LogFormat;
+import com.sc2mod.andromeda.util.logging.LogLevel;
 import com.sc2mod.andromeda.util.logging.Logger;
 
-public class GuiLog extends CollectingLog{
+public class GuiLog extends Logger{
 	
 	private static final SimpleAttributeSet STYLE_NORMAL = new SimpleAttributeSet();
 	public static final SimpleAttributeSet STYLE_ERROR = new SimpleAttributeSet();
@@ -31,6 +35,8 @@ public class GuiLog extends CollectingLog{
 	private static final SimpleAttributeSet STYLE_TEST = new SimpleAttributeSet();
 	private static final SimpleAttributeSet STYLE_HIGHLIGHT = new SimpleAttributeSet();
 	private AutoscrollPane logPane;
+	
+	private static Map<LogFormat, SimpleAttributeSet> formats = new EnumMap<LogFormat, SimpleAttributeSet>(LogFormat.class);
 	
 	public GuiLog(AutoscrollPane logPane){
 		this.logPane = logPane;
@@ -57,27 +63,34 @@ public class GuiLog extends CollectingLog{
 		StyleConstants.setBold(STYLE_HIGHLIGHT, true);
 		StyleConstants.setForeground(STYLE_TEST,Color.orange);
 		
-	}
-	
-	@Override
-	public void print(String message) {
-		logPane.append(message, STYLE_NORMAL);
-	}
-	
-	@Override
-	public void println(String message) {
-		print(message);
-		print("\n");
-	}
-	
-	@Override
-	public void warning(SyntaxNode where, String message) {	
-		super.warning(where, message);
-		logPane.append("\nWARNING: " +message + "\nat: " + CompilationFileManager.getLastEnvironment().getSourceInformation(where) + "\n", STYLE_WARNING);
+		formats.put(LogFormat.NORMAL, STYLE_NORMAL);
+		formats.put(LogFormat.CAPTION, STYLE_CAPTION);
+		formats.put(LogFormat.ERROR, STYLE_ERROR);
+		
 	}
 
 	@Override
-	public void caption(String message) {
-		logPane.append(message + "\n", STYLE_CAPTION);
+	public void print(LogLevel logLevel, LogFormat logFormat, String message) {
+		SimpleAttributeSet style = formats.get(logFormat);
+		if(style == null)
+			style = STYLE_NORMAL;
+		logPane.append(message, style);
+	}
+
+	@Override
+	public void printProblem(Problem problem, boolean printStackTraces) {
+		SimpleAttributeSet style;
+		switch(problem.getSeverity()){
+		case WARNING:
+			style = STYLE_WARNING;
+			break;
+		case INFO:
+			style = STYLE_NORMAL;
+			break;
+		default:
+			style = STYLE_ERROR;
+		}
+		logPane.append(getDefaultProblemString(problem, printStackTraces), style);
+		 
 	}
 }
