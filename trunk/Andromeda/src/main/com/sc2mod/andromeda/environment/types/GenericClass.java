@@ -50,11 +50,7 @@ public class GenericClass extends Class{
 	public boolean isGeneric() {
 		return true;
 	}
-	
-	@Override
-	public TypeCategory getCategory() {
-		return TypeCategory.GENERIC_CLASS;
-	}
+
 	
 	@Override
 	public String getFullName() {

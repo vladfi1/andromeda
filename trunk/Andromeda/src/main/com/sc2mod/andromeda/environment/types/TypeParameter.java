@@ -84,7 +84,6 @@ public class TypeParameter extends Type {
 		if(toType.isTypeOrExtension(BasicType.INT)) return true; 
 		if(toType.getCategory()==TypeCategory.TYPE_PARAM)return true;
 		if(toType.getCategory()==TypeCategory.CLASS) return true;
-		if(toType.getCategory()==TypeCategory.GENERIC_CLASS) return true;//XPilot: added
 		return false;
 	}
 

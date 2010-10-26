@@ -45,10 +45,6 @@ public abstract class Operation extends SemanticsElement implements ScopedElemen
 	
 	public abstract void addImplicitLocals(ArrayList<LocalVarDecl> vars);
 	
-	public abstract void addInline();
-	
-	public abstract void addInvocation();
-	
 	public abstract void addReturnStmt(ReturnStmtNode r);
 
 	public abstract boolean flowReachesEnd();
@@ -63,10 +59,6 @@ public abstract class Operation extends SemanticsElement implements ScopedElemen
 	
 	public abstract String getDescription();
 	
-	public abstract String getGeneratedName();
-
-
-	public abstract int getInvocationCount();
 	
 	public abstract LocalVarDecl[] getLocals();
 
@@ -78,41 +70,32 @@ public abstract class Operation extends SemanticsElement implements ScopedElemen
 
 	public abstract Signature getSignature();
 	
-	//TODO: Factor out into Util method
-	public String getNameAndSignature(){
-		return new StringBuilder(64)
-			.append(getName().toString())
-			.append("(")
-			.append(getSignature().toString())
-			.append(")")
-			.toString();
-	}
-
-	
 	public abstract boolean hasBody();
 	
-	public abstract boolean isCreateCode();
+	public abstract String getGeneratedName();
+	public abstract void setGeneratedName(String generatedName);
 	
+	public abstract int getInvocationCount();
+	
+	public abstract void addInline();
+	
+	public abstract void addInvocation();
+	
+	public abstract boolean isCreateCode();
 	public abstract void setCreateCode(boolean createCode);
-
 	
 	public abstract void setFlowReachesEnd(boolean b);
 
-	public abstract void setGeneratedName(String generatedName);
 
 
 	public abstract void setLocals(LocalVarDecl[] locals);
 
 	public abstract void setName(String name);
-
-	//TODO: Factor out into codegenInfo or util class, only used by code generation
-	public abstract boolean usesThis();
 	
 	abstract void setReturnType(Type returnType);
 
 	public abstract OperationType getOperationType();
 	
-	//TODO: Maybe factor out into util class
 	public abstract FuncPointerDecl getPointerDecl(TypeProvider tp);
 	
 	public OverrideInformation getOverrideInformation(){

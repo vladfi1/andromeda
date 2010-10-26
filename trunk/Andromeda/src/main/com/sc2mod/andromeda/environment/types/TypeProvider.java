@@ -309,7 +309,6 @@ public class TypeProvider {
 			TypeCategory category = r.getCategory();
 			switch(category){
 			case CLASS:
-			case GENERIC_CLASS://XPilot: added
 				Class c = (Class)r;
 				c.generateClassIndex(this);
 				c.generateImplementsTransClosure();

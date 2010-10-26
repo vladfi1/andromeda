@@ -88,8 +88,6 @@ public class Method extends Function {
 	
 	@Override public void setStatic() { isStatic = true; }
 	@Override public boolean isStatic() { return isStatic; }
-	
-	@Override public boolean usesThis() { return !isStatic; }
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }

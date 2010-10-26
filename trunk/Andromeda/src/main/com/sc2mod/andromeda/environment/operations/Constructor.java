@@ -64,14 +64,6 @@ public class Constructor extends Method {
 					.details("Constructors","static")
 					.raiseUnrecoverable();
 	}
-
-	/**
-	 * Constructors use this, but not as parameter.
-	 */
-	@Override
-	public boolean usesThis() {
-		return false;
-	}
 	
 	public OperationType getOperationType(){
 		return OperationType.CONSTRUCTOR;

@@ -57,14 +57,7 @@ public class Destructor extends Method {
 					.raiseUnrecoverable();
 	}
 	
-	
-	/**
-	 * Destructors use this
-	 */
-	@Override
-	public boolean usesThis() {
-		return true;
-	}
+
 	
 	public OperationType getOperationType(){
 		return OperationType.DESTRUCTOR;

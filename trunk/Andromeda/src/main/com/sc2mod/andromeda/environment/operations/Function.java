@@ -354,11 +354,6 @@ public class Function extends Operation {
 	}
 	
 	@Override
-	public boolean usesThis() {
-		return false;
-	}
-	
-	@Override
 	public void setReturnType(Type returnType) {
 		this.returnType = returnType;
 	}

@@ -22,6 +22,7 @@ import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationType;
+import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.ScopeUtil;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
@@ -133,7 +134,7 @@ public abstract class CodeGenerator extends VoidVisitorAdapter {
 		}
 		
 		//Method ? Add this
-		if(m.usesThis()){
+		if(OperationUtil.usesThis(m)){
 			classGen.generateThisParam(m);
 			functionBuffer.append(m.getContainingType().getGeneratedName());
 			functionBuffer.append(" ");

@@ -223,7 +223,6 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		
 		
 		switch (t.getCategory()) {
-		case GENERIC_CLASS:
 		case CLASS:
 			
 			ConstructorInvocation ci = parent.resolveConstructorCall(c,(Class) t,

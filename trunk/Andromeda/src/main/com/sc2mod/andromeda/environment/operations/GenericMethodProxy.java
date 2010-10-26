@@ -81,11 +81,6 @@ public class GenericMethodProxy extends Method {
 	public int hashCode() {
 		return method.hashCode();
 	}
-	
-	@Override
-	public void addOverride(Operation overrider) {
-		method.addOverride(overrider);
-	}
 
 	@Override
 	public Type getContainingType() {
@@ -93,47 +88,7 @@ public class GenericMethodProxy extends Method {
 	}
 
 	@Override
-	public int getCurVirtualCallChildIndex() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public int getOperationType() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public int getNextVirtualCallChildIndex() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public Operation getOverridenMethod() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public ArrayList<Operation> getOverridingMethods() {
-		return method.getOverridingMethods();
-	}
-
-	@Override
-	public String getVirtualCaller() {
-		return method.getVirtualCaller();
-	}
-
-	@Override
-	public int getVirtualCallIndex() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public int getVirtualTableIndex() {
+	public OperationType getOperationType() {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
@@ -144,29 +99,8 @@ public class GenericMethodProxy extends Method {
 	}
 
 	@Override
-	public boolean isCalledVirtually() {
-		return method.isCalledVirtually();
-	}
-
-	@Override
-	public boolean isMember() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean isOverridden() {
-		return method.isOverridden();
-	}
-
-	@Override
 	public boolean isStatic() {
 		return method.isStatic();
-	}
-
-	@Override
-	public void registerVirtualCall() {
-		method.registerVirtualCall();
 	}
 
 	@Override
@@ -180,37 +114,7 @@ public class GenericMethodProxy extends Method {
 	}
 
 	@Override
-	protected void setOverriddenMethod(Method method) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
 	public void setStatic() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setVirtualCallerName(String virtualCallerName) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setVirtualCallIndex(int virtualCallIndex) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setVirtualTableIndex(int virtualTableIndex) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean usesThis() {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
@@ -264,12 +168,6 @@ public class GenericMethodProxy extends Method {
 	@Override
 	public synchronized String getGeneratedName() {
 		return method.getGeneratedName();
-	}
-
-	@Override
-	public int getIndex() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
 	}
 
 	@Override
@@ -351,11 +249,6 @@ public class GenericMethodProxy extends Method {
 	}
 
 	@Override
-	public boolean isMarked() {
-		return method.isMarked();
-	}
-
-	@Override
 	public boolean isNative() {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
@@ -370,12 +263,6 @@ public class GenericMethodProxy extends Method {
 	@Override
 	public boolean isStrcall() {
 		return method.isStrcall();
-	}
-
-	@Override
-	public void mark() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
 	}
 
 
@@ -410,12 +297,6 @@ public class GenericMethodProxy extends Method {
 
 	@Override
 	public synchronized void setGeneratedName(String generatedName) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setIndex(int index) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}

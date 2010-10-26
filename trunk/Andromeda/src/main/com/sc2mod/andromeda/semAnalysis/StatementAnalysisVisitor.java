@@ -684,7 +684,6 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 			
 			
 			throw new Error("array foreach not yet supported");
-		case GENERIC_CLASS://XPilot: added so that generic classes can be iterated
 		case BASIC:
 		case CLASS:
 		case INTERFACE:
@@ -828,7 +827,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		analyzeExpression(expr);
 		Type type = expr.getInferedType();
 		//made generic class delete-able
-		if(type.getCategory()!=TypeCategory.CLASS && type.getCategory()!=TypeCategory.GENERIC_CLASS){
+		if(type.getCategory()!=TypeCategory.CLASS){
 			Problem.ofType(ProblemId.DELETE_NON_CLASS).at(expr)
 				.details(type.getUid(),type.getDescription())
 				.raiseUnrecoverable();

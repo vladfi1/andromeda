@@ -165,11 +165,6 @@ public class GenericFunctionProxy extends Operation {
 	}
 
 	@Override
-	public boolean usesThis() {
-		return function.usesThis();
-	}
-
-	@Override
 	public String getUid() {
 		return function.getUid();
 	}
@@ -259,71 +254,6 @@ public class GenericFunctionProxy extends Operation {
 		return function.getScope();
 	}
 
-	@Override
-	public StmtNode getBody() {
-		return function.getBody();
-	}
-	
-	@Override
-	public void addOverride(Operation m) {
-		function.addOverride(m);
-	}
-
-	@Override
-	public boolean isOverridden() {
-		return function.isOverridden();
-	}
-
-	@Override
-	public boolean isCalledVirtually() {
-		return function.isCalledVirtually();
-	}
-
-	@Override
-	public Operation getOverridenMethod() {
-		return function.getOverridenMethod();
-	}
-
-	@Override
-	public int getVirtualTableIndex() {
-		return function.getVirtualTableIndex();
-	}
-
-	@Override
-	public int getCurVirtualCallChildIndex() {
-		return function.getCurVirtualCallChildIndex();
-	}
-
-	@Override
-	public void setVirtualCallIndex(int callIndex) {
-		function.setVirtualCallIndex(callIndex);
-	}
-
-	@Override
-	public void setVirtualTableIndex(int tableIndex) {
-		function.setVirtualTableIndex(tableIndex);
-	}
-
-	@Override
-	public int getNextVirtualCallChildIndex() {
-		return function.getNextVirtualCallChildIndex();
-	}
-
-	@Override
-	public void setVirtualCallerName(String virtualCallerName) {
-		function.setVirtualCallerName(virtualCallerName);
-	}
-
-	@Override
-	public int getVirtualCallIndex() {
-		return function.getVirtualCallIndex();
-	}
-
-	@Override
-	public String getVirtualCaller() {
-		return function.getVirtualCaller();
-	}
-
 
 	@Override
 	public HashSet<String> getAllowedAnnotations() {
@@ -345,16 +275,6 @@ public class GenericFunctionProxy extends Operation {
 	@Override
 	public void afterAnnotationsProcessed() {
 		function.afterAnnotationsProcessed();
-	}
-	
-	@Override
-	protected void registerVirtualCall() {
-		function.registerVirtualCall();
-	}
-	
-	@Override
-	protected void setOverriddenMethod(Method method) {
-		function.setOverriddenMethod(method);
 	}
 
 	@Override

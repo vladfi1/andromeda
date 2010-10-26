@@ -9,10 +9,9 @@ public enum TypeCategory {
 	 POINTER(5), 
 	 ENRICH(6),
 	 ARRAY(7),
-	 GENERIC_CLASS(8),
-	 EXTENSION(9),
-	 FUNCTION(10),
-	 TYPE_PARAM(11),
+	 EXTENSION(8),
+	 FUNCTION(9),
+	 TYPE_PARAM(10),
 	 OTHER(0);
 	 
 	 TypeCategory (int index){

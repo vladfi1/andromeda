@@ -10,7 +10,7 @@ public class PerfTest {
 	private static class C{
 		int x;
 
-		public int getX() {
+		public int hashCode() {
 			return x;
 		}
 
@@ -25,13 +25,13 @@ public class PerfTest {
 		HashMap<C, Integer> map = PerfTest.m;
 		map.put(c,5);
 		for(int i=0;i<1000000000;i++){
-			int x = map.get(c);
+			int x = c.hashCode();
 			
 		}
 		StopWatch w = new StopWatch();
 		w.start();
 		for(long i=0;i<1000000000l;i++){
-			int x = map.get(c);
+			int x = c.hashCode();
 		
 		}
 		w.printTime("");

@@ -76,11 +76,6 @@ public class GenericClassInstance extends GenericClass {
 	public ClassNameProvider getNameProvider() {
 		return theType.getNameProvider();
 	}
-
-	@Override
-	public TypeCategory getCategory() {
-		return TypeCategory.GENERIC_CLASS;
-	}
 	
 	@Override
 	public Type getWrappedType() {

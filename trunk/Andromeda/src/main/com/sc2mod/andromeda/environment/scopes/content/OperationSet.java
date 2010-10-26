@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.Scope;
 import com.sc2mod.andromeda.environment.scopes.ScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
@@ -141,7 +142,7 @@ public abstract class OperationSet implements ScopedElement, Iterable<Operation>
 	private String assembleFuncList() {
 		StringBuilder sb = new StringBuilder(128);
 		for(Entry<Signature, Operation> e : opSet.entrySet()){
-			sb.append(e.getValue().getNameAndSignature()).append("\n");
+			sb.append(OperationUtil.getNameAndSignature(e.getValue())).append("\n");
 		}
 		//remove last newline
 		sb.setLength(sb.length()-1);
@@ -169,7 +170,7 @@ public abstract class OperationSet implements ScopedElement, Iterable<Operation>
 			if(s.canImplicitCastTo(sig)){
 				if(candidate != null) 
 					throw Problem.ofType(ProblemId.AMBIGUOUS_METHOD_CALL).at(where)
-								.details(opSet.get(candidate).getNameAndSignature(),opSet.get(sig).getNameAndSignature())
+								.details(OperationUtil.getNameAndSignature(opSet.get(candidate)),OperationUtil.getNameAndSignature(opSet.get(sig)))
 								.raiseUnrecoverable();
 				candidate = sig;					
 			}
