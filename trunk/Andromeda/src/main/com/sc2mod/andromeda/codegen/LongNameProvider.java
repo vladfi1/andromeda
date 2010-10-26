@@ -82,27 +82,27 @@ public class LongNameProvider implements INameProvider {
 		builder.setLength(0);
 		
 		boolean writeIndex = false;
-		switch(function.getFunctionType()){
-		case Function.TYPE_NATIVE:
+		switch(function.getOperationType()){
+		case NATIVE:
 			return function.getName();
-		case Function.TYPE_STATIC_METHOD:
+		case STATIC_METHOD:
 			builder.append("s_");
-		case Function.TYPE_METHOD:
+		case METHOD:
 			builder.append(function.getContainingType().getUid()).append("__");
-		case Function.TYPE_FUNCTION:
+		case FUNCTION:
 			builder.append(function.getName());
 			writeIndex = true;
 			break;
-		case Function.TYPE_CONSTRUCTOR:
+		case CONSTRUCTOR:
 			builder.append("new__");
 			builder.append(function.getContainingType().getUid());
 			writeIndex = true;
 			break;
-		case Function.TYPE_DESTRUCTOR:
+		case DESTRUCTOR:
 			builder.append("delete__");
 			builder.append(function.getContainingType().getUid());
 			break;
-		case Function.TYPE_STATIC_INIT:
+		case STATIC_INIT:
 			builder.append("init___");
 			Type r = function.getContainingType();
 			if(r != null){

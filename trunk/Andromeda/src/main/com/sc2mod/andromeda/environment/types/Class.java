@@ -53,24 +53,69 @@ public class Class extends ReferentialType implements IIdentifiable , SemanticsV
 
 	//XPilot: GenericClass should have access to (some of) these?
 
+	/**
+	 * The classes destructor. If this class has no own destructor, this
+	 * will point to the destructor of the next super class that has a destructor.
+	 * If no super class has one, it points to the deallocator.
+	 */
 	protected Destructor destructor;
+	
+	/**
+	 * The constructors of this class.
+	 */
 	protected OperationSet constructors = new MethodSet(this, "<cons>");
+	
+	/**
+	 * The name provider of this class
+	 */
 	protected ClassNameProvider nameProvider;
+	
+	/**
+	 * The syntax node declaring this class
+	 */
 	protected ClassDeclNode declaration;
+	
+	/**
+	 * The super class, or null if this is a top class.
+	 */
 	protected Class superClass;
+	
+	//TODO: Factor out? After all it isn't even used. maybe delete.
 	private HashMap<String,Interface> interfacesTransClosure;
+	
 	protected int classIndex;
-	private String allocatorName;
 	protected int minInstanceofIndex;
+	
+	//TODO: Put this into the classNameProvider? After all, it is heavily related to name generation and code generation.
+	private String allocatorName;
+	
+	//TODO: Factor out, this is heavily related with code generation.
 	private ArrayList<VarDecl> hierarchyFields;
+	
+	/**
+	 * The classes instance limit
+	 */
 	private int instanceLimit = DEFAULT_CLASS_INSTANCE_LIMIT;
+	
+	//TODO: Factor this out? The instanciation count has nothing todo with the class but with its environment.
 	private int instantiationCount;
+	
+	//TODO: same as above
 	private int indirectInstantiationCount;
+	
+	/**
+	 * The virtual call table of this class.
+	 */
 	private VirtualCallTable virtualCallTable;
 
+	/**
+	 * Wether this class is declared static
+	 */
 	private boolean isStatic;
 	
-	//XPilot: added
+	/**
+	 * The type parameters of this class
+	 */
 	protected TypeParameter[] typeParams;
 	
 	private static HashSet<String> allowedAnnotations = new HashSet<String>();

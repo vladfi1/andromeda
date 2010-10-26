@@ -66,13 +66,8 @@ public class Destructor extends Method {
 		return true;
 	}
 	
-	public int getFunctionType(){
-		return TYPE_DESTRUCTOR;
-	}
-	
-	@Override
-	public boolean isMember() {
-		return true;
+	public OperationType getOperationType(){
+		return OperationType.DESTRUCTOR;
 	}
 	
 	@Override

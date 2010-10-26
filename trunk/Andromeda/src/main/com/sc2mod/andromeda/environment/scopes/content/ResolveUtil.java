@@ -152,7 +152,7 @@ public final class ResolveUtil {
 	
 	public static Invocation registerDelete(Class class1, DeleteStmtNode deleteStatement) {
 		Destructor destructor = class1.getDestructor();
-		if(destructor.isOverridden())
+		if(destructor.getOverrideInformation().isOverridden())
 			return new Invocation(destructor,InvocationType.VIRTUAL);
 		return new Invocation(destructor,InvocationType.METHOD);
 	}
@@ -210,7 +210,7 @@ public final class ResolveUtil {
 			if(op.isStatic()){
 				return new Invocation(op, InvocationType.STATIC);
 			}
-			if(!disallowVirtual && op.isOverridden())
+			if(!disallowVirtual && op.getOverrideInformation().isOverridden())
 				return new Invocation(op,InvocationType.VIRTUAL);
 			return new Invocation(op,InvocationType.METHOD);
 			

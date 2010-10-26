@@ -53,13 +53,7 @@ public class Function extends Operation {
 		return header;
 	}
 	
-	public static final int TYPE_FUNCTION = 1;
-	public static final int TYPE_METHOD = 2;
-	public static final int TYPE_STATIC_METHOD = 3;
-	public static final int TYPE_CONSTRUCTOR = 4;
-	public static final int TYPE_DESTRUCTOR = 5;
-	public static final int TYPE_STATIC_INIT = 6;
-	public static final int TYPE_NATIVE = 7;
+
 	
 	private static HashSet<String> allowedAnnotations = new HashSet<String>();
 	static{
@@ -130,9 +124,7 @@ public class Function extends Operation {
 		Util.processAnnotations(this, decl.getAnnotations());
 	}
 	
-	public static boolean isForwardDeclaration(Operation op){
-		return !op.hasBody() && !op.isNative();
-	}
+
 	
 	public void addImplicitLocals(ArrayList<LocalVarDecl> vars){
 
@@ -349,13 +341,6 @@ public class Function extends Operation {
 	public void setOverride() {
 		isOverride = true;
 	}
-
-	/**
-	 * This is called for methods when a forward declaration is done.
-	 * Just ignore it.
-	 */
-	@Override
-	public void addOverride(Operation m) {	}
 	
 	@Override
 	public void setStatic() {
@@ -379,18 +364,10 @@ public class Function extends Operation {
 	}
 
 	@Override
-	public int getFunctionType(){
-		return isNative?TYPE_NATIVE:TYPE_FUNCTION;
+	public OperationType getOperationType(){
+		return isNative?OperationType.NATIVE:OperationType.FUNCTION;
 	}
 	
-	@Override
-	public boolean isMember(){
-		return false;
-	}
-	@Override
-	public StmtNode getBody() {
-		return body;
-	}
 	
 
 	

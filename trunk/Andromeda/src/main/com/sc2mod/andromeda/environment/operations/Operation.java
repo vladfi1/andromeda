@@ -78,6 +78,7 @@ public abstract class Operation extends SemanticsElement implements ScopedElemen
 
 	public abstract Signature getSignature();
 	
+	//TODO: Factor out into Util method
 	public String getNameAndSignature(){
 		return new StringBuilder(64)
 			.append(getName().toString())
@@ -104,72 +105,18 @@ public abstract class Operation extends SemanticsElement implements ScopedElemen
 
 	public abstract void setName(String name);
 
+	//TODO: Factor out into codegenInfo or util class, only used by code generation
 	public abstract boolean usesThis();
 	
 	abstract void setReturnType(Type returnType);
 
-	public abstract int getFunctionType();
+	public abstract OperationType getOperationType();
 	
-	public abstract boolean isMember();
-	
-	public abstract StmtNode getBody();
-
+	//TODO: Maybe factor out into util class
 	public abstract FuncPointerDecl getPointerDecl(TypeProvider tp);
 	
-	public void addOverride(Operation m) {
-		throw new Error("Abstract method!");
-	}
-
-	public boolean isOverridden() {
-		throw new Error("Abstract method!");
-	}
-
-	public boolean isCalledVirtually() {
-		throw new Error("Abstract method!");
-	}
-
-	public Operation getOverridenMethod() {
-		throw new Error("Abstract method!");
-	}
-
-	public int getVirtualTableIndex() {
-		throw new Error("Abstract method!");
-	}
-
-	public int getCurVirtualCallChildIndex() {
-		throw new Error("Abstract method!");
-	}
-
-	public void setVirtualCallIndex(int callIndex) {
-		throw new Error("Abstract method!");
-	}
-
-	public void setVirtualTableIndex(int tableIndex) {
-		throw new Error("Abstract method!");
-	}
-
-	public int getNextVirtualCallChildIndex() {
-		throw new Error("Abstract method!");
-	}
-
-	public void setVirtualCallerName(String virtualCallerName) {
-		throw new Error("Abstract method!");
-	}
-
-	public int getVirtualCallIndex() {
-		throw new Error("Abstract method!");
-	}
-
-	public String getVirtualCaller() {
-		throw new Error("Abstract method!");
-	}
-
-	protected void registerVirtualCall() {
-		throw new Error("Abstract method!");
-	}
-
-	protected void setOverriddenMethod(Method method) {
-		throw new Error("Abstract method!");
+	public OverrideInformation getOverrideInformation(){
+		throw new Error("Cannot get override information for a non method operation!");
 	}
 	
 	@Override

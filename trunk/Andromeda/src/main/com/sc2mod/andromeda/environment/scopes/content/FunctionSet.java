@@ -2,6 +2,7 @@ package com.sc2mod.andromeda.environment.scopes.content;
 
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.Scope;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -20,9 +21,9 @@ public class FunctionSet extends OperationSet {
 	@Override
 	protected Operation doHandleDuplicate(Operation oldOp, Operation newOp) {
 		//Handle forward declarations.
-		if(Function.isForwardDeclaration(oldOp)){
+		if(OperationUtil.isForwardDeclaration(oldOp)){
 			return newOp;
-		} else if(Function.isForwardDeclaration(newOp)){
+		} else if(OperationUtil.isForwardDeclaration(newOp)){
 			return oldOp;
 		}
 		//FIXME: Check that no forward declaration is undefined in the end.

@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.GenericFunctionProxy;
 import com.sc2mod.andromeda.environment.operations.Method;
+import com.sc2mod.andromeda.environment.operations.OverrideInformation;
 import com.sc2mod.andromeda.environment.types.Class;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
@@ -107,25 +108,28 @@ public class VirtualCallTable {
 	}
 
 	private void processMethod(Operation op, TransientCompilationData env){
+		OverrideInformation info = op.getOverrideInformation();
 		//Methods without body and methods that are not called virtually are ignored
-		if(!op.isCalledVirtually()) {
+		if(!info.isCalledVirtually()) {
 //			System.out.println(m + " virtual = false.");
 			return;
 		}
 		
 //		System.out.println(m + " virtual = true.");
 		
-		Operation overrides = op.getOverridenMethod();
+		Operation overrides = info.getOverridenMethod();
 		
 //		System.out.println("Overrides: " + overrides);
 		
 		int callIndex;
 		int tableIndex;
-		if(overrides != null && overrides.isCalledVirtually()) {
+		if(overrides != null && overrides.getOverrideInformation().isCalledVirtually()) {
+			OverrideInformation overridesInfo = overrides.getOverrideInformation();
+			
 			//This method is already in the call table!
-			tableIndex = overrides.getVirtualTableIndex();
+			tableIndex = overridesInfo.getVirtualTableIndex();
 			if(op.isAbstract()) {
-				callIndex = overrides.getCurVirtualCallChildIndex();
+				callIndex = overridesInfo.getCurVirtualCallChildIndex();
 			} else {
 				callIndex = superTable.incCallIndex(tableIndex);
 			}
@@ -149,8 +153,8 @@ public class VirtualCallTable {
 			env.registerMaxVCTSize(table.size());
 		}
 		//Set the indices for the method
-		op.setVirtualCallIndex(callIndex);
-		op.setVirtualTableIndex(tableIndex);
+		info.setVirtualCallIndex(callIndex);
+		info.setVirtualTableIndex(tableIndex);
 	}
 	
 	/**
@@ -174,8 +178,8 @@ public class VirtualCallTable {
 		//If the method is identical to the method in the top table, we do not increment the index
 		//(since we have done it already in the top table in the recursive call)
 		//XPilot: added check for superTable not containing the tableIndex
-		if(superTableIndex >= 0 && superTable.table.get(tableIndex)==m) return m.getCurVirtualCallChildIndex();
-		return table.get(tableIndex).getNextVirtualCallChildIndex();
+		if(superTableIndex >= 0 && superTable.table.get(tableIndex)==m) return m.getOverrideInformation().getCurVirtualCallChildIndex();
+		return table.get(tableIndex).getOverrideInformation().getNextVirtualCallChildIndex();
 	}
 
 	/**

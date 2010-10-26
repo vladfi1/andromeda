@@ -73,13 +73,8 @@ public class Constructor extends Method {
 		return false;
 	}
 	
-	public int getFunctionType(){
-		return TYPE_CONSTRUCTOR;
-	}
-
-	@Override
-	public boolean isMember() {
-		return true;
+	public OperationType getOperationType(){
+		return OperationType.CONSTRUCTOR;
 	}
 	
 	@Override

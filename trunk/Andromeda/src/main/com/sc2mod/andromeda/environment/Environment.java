@@ -40,11 +40,6 @@ public final class Environment {
 			}
 		};
 	}
-		
-	public void generateFunctionIndex() {
-	//	functions.generateFunctionIndex();
-		typeProvider.generateMethodIndex();
-	}
 
 
 	/**

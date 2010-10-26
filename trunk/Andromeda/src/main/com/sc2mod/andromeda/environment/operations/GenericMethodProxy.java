@@ -99,7 +99,7 @@ public class GenericMethodProxy extends Method {
 	}
 
 	@Override
-	public int getFunctionType() {
+	public int getOperationType() {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
@@ -254,11 +254,6 @@ public class GenericMethodProxy extends Method {
 	public HashSet<String> getAllowedAnnotations() {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public StmtNode getBody() {
-		return method.getBody();
 	}
 
 	@Override

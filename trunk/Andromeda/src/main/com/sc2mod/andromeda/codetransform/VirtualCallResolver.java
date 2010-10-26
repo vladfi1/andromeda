@@ -47,8 +47,8 @@ public class VirtualCallResolver {
 				Method method = (Method)inv.getWhichFunction();
 				if(calledVirtually(method)) {
 					registerOverriders(method, more);
-					if(!method.isCalledVirtually()) {
-						method.registerVirtualCall();
+					if(!method.getOverrideInformation().isCalledVirtually()) {
+						method.getOverrideInformation().registerVirtualCall();
 					}
 					inv.setInvocationType(InvocationType.VIRTUAL);
 				} else {
@@ -76,7 +76,7 @@ public class VirtualCallResolver {
 	 * @return Whether the method needs to be called virtually.
 	 */
 	private boolean calledVirtually(Method method) {
-		for(Operation f : method.getOverridingMethods()) {
+		for(Operation f : method.getOverrideInformation().getOverridingMethods()) {
 			if(((Class)f.getContainingType()).isUsed()) {
 				return true;
 			}
@@ -91,7 +91,7 @@ public class VirtualCallResolver {
 	 * @param methods Set of registered methods.
 	 */
 	private void registerOverriders(Method method, HashSet<Method> methods) {
-		ArrayList<Operation> overriders = method.getOverridingMethods();
+		ArrayList<Operation> overriders = method.getOverrideInformation().getOverridingMethods();
 		if(overriders != null) {
 			for(Operation f : overriders) {
 				Method m = (Method)f;
@@ -101,8 +101,8 @@ public class VirtualCallResolver {
 					continue;
 				}
 				
-				if(!m.isCalledVirtually()) {
-					m.registerVirtualCall();
+				if(!m.getOverrideInformation().isCalledVirtually()) {
+					m.getOverrideInformation().registerVirtualCall();
 					methods.add(m);
 				}
 				registerOverriders(m, methods);

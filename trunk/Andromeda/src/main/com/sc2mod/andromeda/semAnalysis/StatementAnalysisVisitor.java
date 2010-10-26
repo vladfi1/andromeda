@@ -20,6 +20,7 @@ import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Invocation;
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.AccessType;
 import com.sc2mod.andromeda.environment.scopes.FileScope;
@@ -415,12 +416,12 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		
 		
 		//If this is a con-/destructor, do checks for it
-		int functionType = curOperation.getFunctionType();
+		OperationType functionType = curOperation.getOperationType();
 		switch(functionType){
-		case Function.TYPE_CONSTRUCTOR:
+		case CONSTRUCTOR:
 			checkConstructor((Constructor)curOperation,body);
 			break;
-		case Function.TYPE_DESTRUCTOR:
+		case DESTRUCTOR:
 			checkDestructor((Destructor)curOperation);
 			break;
 		}
@@ -433,7 +434,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		curOperation.setLocals(nameResolver.methodFinished(OperationUtil.countParams(curOperation)));
 
 		//If this is a non void function, check if the exec path does not end without a return
-		if(curOperation.getReturnType()!=SpecialType.VOID&&functionType!=Function.TYPE_CONSTRUCTOR){
+		if(curOperation.getReturnType()!=SpecialType.VOID&&functionType!=OperationType.CONSTRUCTOR){
 			if(!execPathStack.isTopFrameEmpty())
 				throw Problem.ofType(ProblemId.MISSING_RETURN).at(functionDeclaration)
 						.raiseUnrecoverable();

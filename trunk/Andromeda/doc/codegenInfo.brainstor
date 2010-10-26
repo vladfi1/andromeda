@@ -1,0 +1,18 @@
+== codegen information ==
+
+type
+ - generated name
+ 
+class
+ - generated defintion name ?
+ - class index
+ - max instanceof index
+ - isUsed
+ - isStaticUsed
+ - allocatorName
+ 
+operation:
+ - inline count
+ - invocation count
+ - isCreateCode
+ - usesThis

@@ -91,9 +91,9 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 	private void generateMethodLineInternal(VirtualCallTable vct, int i) {
 		Operation m = vct.table.get(i);
 		//Only add to the table if not abstract and not yet in the table
-		if(m.getVirtualCaller()==null){
+		if(m.getOverrideInformation().getVirtualCaller()==null){
 			if(!m.isAbstract()) methodLine.add(m);
-			m.setVirtualCallerName(virtualCallerName);
+			m.getOverrideInformation().setVirtualCallerName(virtualCallerName);
 		}	
 			
 		for(VirtualCallTable child: vct.subTables){
@@ -140,7 +140,7 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 		buffer.append(nameProvider.getLocalNameRaw("this", numParams)).append("].");
 		buffer.append(((Class)m.getContainingType()).getHierarchyFields().get(1).getGeneratedName()).append("].");
 		buffer.append(ResolveUtil.rawResolveField(metaClass, "vct", null, false).getGeneratedName());
-		buffer.append("[").append(m.getVirtualTableIndex()).append("];");
+		buffer.append("[").append(m.getOverrideInformation().getVirtualTableIndex()).append("];");
 		
 		generateSignature(m);
 		

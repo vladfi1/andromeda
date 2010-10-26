@@ -174,7 +174,7 @@ public class IndexClassGenerator extends ClassGenerator {
 				if(m.isAbstract()){
 					buffer.append("=").append(-1).append(";");
 				} else {
-					buffer.append("=").append(m.getVirtualCallIndex()).append(";");
+					buffer.append("=").append(m.getOverrideInformation().getVirtualCallIndex()).append(";");
 				}
 			}
 		}

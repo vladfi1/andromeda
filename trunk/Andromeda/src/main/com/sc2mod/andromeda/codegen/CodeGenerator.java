@@ -21,6 +21,7 @@ import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.ScopeUtil;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
@@ -97,7 +98,7 @@ public abstract class CodeGenerator extends VoidVisitorAdapter {
 
 	
 	public void writeFuncHeader(Operation m, SimpleBuffer functionBuffer, String description, String alternativeName, String deciderName, boolean isVCT){
-		boolean isConstructor = m.getFunctionType()==Function.TYPE_CONSTRUCTOR;
+		boolean isConstructor = m.getOperationType()==OperationType.CONSTRUCTOR;
 		
 		if(description!=null&&insertComments){
 			functionBuffer.append(description);

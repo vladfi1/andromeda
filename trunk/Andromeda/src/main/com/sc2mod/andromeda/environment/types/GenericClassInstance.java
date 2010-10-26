@@ -295,18 +295,6 @@ public class GenericClassInstance extends GenericClass {
 	}
 
 	@Override
-	public void checkHierarchy(TypeProvider typeProvider) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void checkImplicitConstructor() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
 	void generateClassIndex(TypeProvider tp) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
@@ -326,12 +314,6 @@ public class GenericClassInstance extends GenericClass {
 
 	@Override
 	public int getClassIndex() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public ArrayList<FieldDecl> getHierarchyFields() {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
@@ -371,24 +353,6 @@ public class GenericClassInstance extends GenericClass {
 	}
 
 	@Override
-	protected void resolveExtends(TypeProvider t) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	protected void resolveImplements(TypeProvider t) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean resolveInheritance(TypeProvider t) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
 	public void setAllocatorName(String allocatorName) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
@@ -402,12 +366,6 @@ public class GenericClassInstance extends GenericClass {
 
 	@Override
 	public void setGeneratedName(String generatedName) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setHierarchyFields(ArrayList<FieldDecl> hierarchyFields) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}

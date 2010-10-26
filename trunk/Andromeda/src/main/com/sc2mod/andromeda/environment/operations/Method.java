@@ -31,78 +31,25 @@ public class Method extends Function {
 	private boolean isAbstract;
 	private boolean isStatic;
 	private Type containingType;
-	private Operation overrides;
-	private ArrayList<Operation> overriders;
-	private int overrideCount;
-	private boolean isCalledVirtually;
-	private int virtualCallIndex;
-	private int virtualTableIndex;
-	private int virtualCallOffset;
-	private String virtualCaller;
+	private OverrideInformation overrideInformation;
 	
 	public Method( MethodDeclNode functionDeclaration, Type containingType, Scope scope) {
 		super(functionDeclaration,scope);
 		this.containingType = containingType;
+		if(!isStatic){
+			overrideInformation = new OverrideInformation(this);
+		}
 	}
 	
 	//XPilot: for method proxies
 	protected Method() {}
 	
-
 	@Override
-	public String getVirtualCaller() {
-		return virtualCaller;
+	public OverrideInformation getOverrideInformation() {
+		return overrideInformation;
 	}
 
-	@Override
-	public void setVirtualCallerName(String virtualCallerName) {
-		virtualCaller = virtualCallerName;
-	}
 	
-	@Override
-	public int getNextVirtualCallChildIndex() {
-		virtualCallOffset++;
-		return virtualCallIndex + virtualCallOffset;
-	}
-	
-	@Override
-	public int getCurVirtualCallChildIndex() {
-		return virtualCallIndex + virtualCallOffset;
-	}
-	
-	@Override
-	public int getVirtualTableIndex() {
-		return virtualTableIndex;
-	}
-
-	@Override
-	public void setVirtualTableIndex(int virtualTableIndex) {
-		this.virtualTableIndex = virtualTableIndex;
-	}
-
-	@Override
-	public int getVirtualCallIndex() {
-		return virtualCallIndex;
-	}
-
-	@Override
-	public void setVirtualCallIndex(int virtualCallIndex) {
-		this.virtualCallIndex = virtualCallIndex;
-	}
-	
-	@Override
-	protected void setOverriddenMethod(Method method) {
-		overrides = method;
-	}
-
-	@Override
-	public void addOverride(Operation overrider) {
-//		System.out.println(overrider.getDescription() + " -> " + this.getDescription());
-		overrider.setOverriddenMethod(this);
-		overrideCount++;
-		if(overriders==null) overriders = new ArrayList<Operation>(2);
-		overriders.add(overrider);
-	}
 	
 	@Override
 	public String getDescription() {
@@ -111,49 +58,12 @@ public class Method extends Function {
 		return "method " + t.getFullName() + "." + getUid();
 	}
 	
-	@Override
-	public boolean isOverridden() {
-		return overriders != null;
-	}
-	
-	public ArrayList<Operation> getOverridingMethods() {
-		return overriders;		
-	}
-	
-	@Override
-	public Operation getOverridenMethod() {
-		return overrides;
-	}
-	
-	/**
-	 * Only called by VirtualCallResolver.
-	 */
-	@Override
-	public void registerVirtualCall() {
 
-		//Already called virtually, skip!
-		//if(isCalledVirtually) return;
 
-		//This and all overriders are called virtually
-		isCalledVirtually = true;
-		
-		// XPilot: these will be set in VirtualCallResolver
-		/*
-		if(overriders != null)
-			for(AbstractFunction m: overriders) {
-				m.registerVirtualCall();
-			}
-		*/
-	}
 	
 	@Override
-	public boolean isCalledVirtually() {
-		return isCalledVirtually;
-	}
-	
-	@Override
-	public int getFunctionType() {
-		return isStatic?TYPE_STATIC_METHOD:TYPE_METHOD;
+	public OperationType getOperationType() {
+		return isStatic?OperationType.STATIC_METHOD:OperationType.METHOD;
 	}
 	
 	@Override
@@ -180,7 +90,6 @@ public class Method extends Function {
 	@Override public boolean isStatic() { return isStatic; }
 	
 	@Override public boolean usesThis() { return !isStatic; }
-	@Override public boolean isMember() { return !isStatic; }
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }

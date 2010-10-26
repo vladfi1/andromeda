@@ -88,8 +88,8 @@ public class GenericFunctionProxy extends Operation {
 	}
 
 	@Override
-	public int getFunctionType() {
-		return function.getFunctionType();
+	public OperationType getOperationType() {
+		return function.getOperationType();
 	}
 
 	@Override
@@ -97,10 +97,6 @@ public class GenericFunctionProxy extends Operation {
 		return function.getGeneratedName();
 	}
 
-	@Override
-	public int getIndex() {
-		return function.getIndex();
-	}
 
 	@Override
 	public int getInvocationCount() {
@@ -136,11 +132,6 @@ public class GenericFunctionProxy extends Operation {
 	@Override
 	public boolean isCreateCode() {
 		return function.isCreateCode();
-	}
-
-	@Override
-	public boolean isMember() {
-		return function.isMember();
 	}
 
 	@Override

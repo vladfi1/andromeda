@@ -162,11 +162,6 @@ public class GenericVarProxy extends VarDecl {
 	}
 
 	@Override
-	public boolean isMarked() {
-		return wrappedDecl.isMarked();
-	}
-
-	@Override
 	public boolean isMember() {
 		return wrappedDecl.isMember();
 	}
@@ -184,12 +179,6 @@ public class GenericVarProxy extends VarDecl {
 	@Override
 	public boolean isStatic() {
 		return wrappedDecl.isStatic();
-	}
-
-
-	@Override
-	public void mark() {
-		wrappedDecl.mark();
 	}
 
 	@Override

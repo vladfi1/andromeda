@@ -11,4 +11,8 @@ public class OperationUtil {
 		if(l == null) return op.getParams().length;
 		return op.getParams().length + l.size();
 	}
+	
+	public static boolean isForwardDeclaration(Operation op){
+		return !op.hasBody() && !op.isNative();
+	}
 }

@@ -25,6 +25,7 @@ import com.sc2mod.andromeda.environment.operations.Invocation;
 import com.sc2mod.andromeda.environment.operations.InvocationType;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.BasicType;
@@ -316,21 +317,21 @@ public class CodeGenVisitor extends CodeGenerator {
 		// For some special functions (constructor, destructor, static init)
 		// we have to add returns if the control flow reaches the end of the function
 		if (m.flowReachesEnd()) {
-			switch(m.getFunctionType()){
-			case Function.TYPE_CONSTRUCTOR:
+			switch(m.getOperationType()){
+			case CONSTRUCTOR:
 				functionBuffer.newLine(curIndent);
 				functionBuffer.append("return ").append(classGen.getThisName())
 						.append(";");
 				break;
-			case Function.TYPE_DESTRUCTOR:
+			case DESTRUCTOR:
 				functionBuffer.newLine(curIndent);
 				Destructor d = (Destructor)curFunction;
-				Operation overridden = d.getOverridenMethod();
+				Operation overridden = d.getOverrideInformation().getOverridenMethod();
 				String destrName = overridden==null?((Class)d.getContainingType()).getDeallocatorName():overridden.getGeneratedName();
 				curBuffer.append(destrName).append("(").append(classGen.getThisName()).append(");");
 				if(newLines) curBuffer.newLine(curIndent);
 				break;
-			case Function.TYPE_STATIC_INIT:
+			case STATIC_INIT:
 				functionBuffer.newLine(curIndent);
 				functionBuffer.append("return true;");
 				break;
@@ -407,15 +408,15 @@ public class CodeGenVisitor extends CodeGenerator {
 		Configuration options = this.options;
 		SimpleBuffer functionBuffer = this.functionBuffer;
 
-		int functionType = m.getFunctionType();
+		OperationType functionType = m.getOperationType();
 		String comment = null;
 		if(insertComments){
 			switch(functionType){
-			case Function.TYPE_CONSTRUCTOR:
+			case CONSTRUCTOR:
 				comment = "//Constructor for class ".concat(m.getContainingType()
 						.getUid());
 				break;
-			case Function.TYPE_DESTRUCTOR:
+			case DESTRUCTOR:
 				comment = "//Destructor for class ".concat(m.getContainingType()
 						.getUid());
 				break;
@@ -427,7 +428,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		// Only for functions with body
 		StmtNode body = methodDeclaration.getBody();
 		if (body != null) {
-			generateFunctionBody(m, body, Function.TYPE_CONSTRUCTOR == functionType);
+			generateFunctionBody(m, body, OperationType.CONSTRUCTOR == functionType);
 		} else
 			functionBuffer.append(";");
 
@@ -976,17 +977,17 @@ public class CodeGenVisitor extends CodeGenerator {
 	public void visit(ReturnStmtNode returnStatement) {
 		ExprNode result = returnStatement.getResult();
 		if (result == null) {
-			switch(curFunction.getFunctionType()){
-			case Function.TYPE_CONSTRUCTOR:
+			switch(curFunction.getOperationType()){
+			case CONSTRUCTOR:
 				curBuffer.append("return ").append(classGen.getThisName())
 				.append(";");
 				break;
-			case Function.TYPE_STATIC_INIT:
+			case STATIC_INIT:
 				curBuffer.append("return true;");
 				break;
-			case Function.TYPE_DESTRUCTOR:
+			case DESTRUCTOR:
 				Destructor d = (Destructor)curFunction;
-				Operation overridden = d.getOverridenMethod();
+				Operation overridden = d.getOverrideInformation().getOverridenMethod();
 				String destrName = overridden==null?((Class)d.getContainingType()).getDeallocatorName():overridden.getGeneratedName();
 				curBuffer.append(destrName).append("(").append(classGen.getThisName()).append(");");
 				if(newLines) curBuffer.newLine(curIndent);
@@ -1015,7 +1016,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		Invocation i = (Invocation) deleteStatement.getSemantics();
 		InvocationType accessType = i.getInvocationType();
 		if(accessType==InvocationType.VIRTUAL){
-			curBuffer.append(((Method) i.getWhichFunction()).getVirtualCaller());
+			curBuffer.append(i.getWhichFunction().getOverrideInformation().getVirtualCaller());
 		} else {
 			curBuffer.append(i.getWhichFunction().getGeneratedName());
 		}

@@ -285,7 +285,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		
 		InvocationType accessType = i.getInvocationType();
 		if(accessType==InvocationType.VIRTUAL){
-			curBuffer.append(((Method) i.getWhichFunction()).getVirtualCaller());
+			curBuffer.append(((Method) i.getWhichFunction()).getOverrideInformation().getVirtualCaller());
 		} else {
 			curBuffer.append(i.getWhichFunction().getGeneratedName());
 		}

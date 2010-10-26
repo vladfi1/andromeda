@@ -24,8 +24,8 @@ public class StaticInit extends Function {
 	}
 	
 	@Override
-	public int getFunctionType() {
-		return TYPE_STATIC_INIT;
+	public OperationType getOperationType() {
+		return OperationType.STATIC_INIT;
 	}
 	
 	@Override

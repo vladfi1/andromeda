@@ -19,6 +19,7 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.operations.Function;
+import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
 import com.sc2mod.andromeda.environment.types.Class;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -53,7 +54,7 @@ public abstract class ClassGenerator {
 	 * @param isConstructor if the function is a constructor
 	 */
 	public void generateThisParam(Operation f) {
-		int index = f.getLocals().length+f.getParams().length + (f.getFunctionType()==Function.TYPE_CONSTRUCTOR?1:0);
+		int index = f.getLocals().length+f.getParams().length + (f.getOperationType()==OperationType.CONSTRUCTOR?1:0);
 		curThisName = nameProvider.getLocalNameRaw("this", index);
 	}
 

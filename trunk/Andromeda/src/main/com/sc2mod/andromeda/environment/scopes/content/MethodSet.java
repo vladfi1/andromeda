@@ -90,7 +90,7 @@ public class MethodSet extends OperationSet {
 					.raiseUnrecoverable();
 		
 		//Override permitted, add it!
-		superOp.addOverride(subOp);
+		superOp.getOverrideInformation().addOverride(subOp);
 		
 		//FIXME check for unimplemented methods in non abstract classes
 //		//Was the old one without body? Reduce abstract count

@@ -69,7 +69,7 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 			{
 				class1.setDestructor(superClass.getDestructor());
 			} else {
-				superClass.getDestructor().addOverride(destructor);
+				superClass.getDestructor().getOverrideInformation().addOverride(destructor);
 			}
 		} else {
 			if(destructor == null){
