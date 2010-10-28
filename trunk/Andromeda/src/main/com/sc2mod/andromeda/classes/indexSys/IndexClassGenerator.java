@@ -255,7 +255,7 @@ public class IndexClassGenerator extends ClassGenerator {
 			buffer.newLine(codeGenVisitor.curIndent);
 		}
 		
-		buffer.append(className).append(" ").append(c.getAllocatorName()).append("(");
+		buffer.append(className).append(" ").append(c.getNameProvider().getAllocatorName()).append("(");
 		buffer.append(allocParamTypeName).append(" ").append(curClassIdName).append(")");
 		
 		//Forward decl
@@ -382,7 +382,7 @@ public class IndexClassGenerator extends ClassGenerator {
 			buffer.newLine(codeGenVisitor.curIndent);
 		}
 		
-		buffer.append("void ").append(c.getDeallocatorName()).append("(");
+		buffer.append("void ").append(c.getNameProvider().getDeallocatorName()).append("(");
 		buffer.append(c.getGeneratedName()).append(" ").append(curThisName).append(")");
 		
 		//Forward decl
@@ -450,7 +450,7 @@ public class IndexClassGenerator extends ClassGenerator {
 			buffer.newLine(indent);
 		}
 		
-		buffer.append(c.getGeneratedName()).append(" ").append(c.getAllocatorName()).append("(");
+		buffer.append(c.getGeneratedName()).append(" ").append(c.getNameProvider().getAllocatorName()).append("(");
 		buffer.append(c.getGeneratedName()).append(" ").append(curThisName).append(")");
 		
 		//Forward decl
@@ -505,14 +505,14 @@ public class IndexClassGenerator extends ClassGenerator {
 		ArrayList<Class> fieldInits = inv.getWrappedFieldInits();
 		int size = fieldInits==null?0:fieldInits.size();
 		for(int i=size-1;i>=0;i--){
-			buffer.append(fieldInits.get(i).getAllocatorName()).append("(");		
+			buffer.append(fieldInits.get(i).getNameProvider().getAllocatorName()).append("(");		
 		}
 		
 		Operation f = inv.getWhichFunction();
 		if(f == null){
 			//We have an allocator call
 			Class c = inv.getClassToAlloc();
-			buffer.append(c.getAllocatorName());
+			buffer.append(c.getNameProvider().getAllocatorName());
 		} else {
 			//We have a constructor call
 			buffer.append(inv.getWhichFunction().getGeneratedName());

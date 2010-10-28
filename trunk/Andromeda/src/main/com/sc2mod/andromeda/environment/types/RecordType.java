@@ -20,6 +20,7 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.Util;
 import com.sc2mod.andromeda.environment.scopes.Scope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
+import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
@@ -30,7 +31,7 @@ import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
  * A class or interface.
  * @author J. 'gex' Finis
  */
-public abstract class RecordType extends SimpleType implements IModifiable, IGlobal, IAnnotatable {
+public abstract class RecordType extends NamedType implements IModifiable, IGlobal, IAnnotatable {
 
 	private String name;
 	protected GlobalStructureNode declaration;
@@ -58,7 +59,6 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 	private HashMap<String, AnnotationNode> annotationTable;
 	private int byteSize = -1;
 	
-
 	
 	@Override
 	public int getRuntimeType() {
@@ -186,8 +186,12 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 		Util.processAnnotations(this, g.getAnnotations());
 	}
 	
+	/**
+	 * Constructor for generic instances of a type.
+	 * @param genericParent the type for which to create a generic instance.
+	 */
 	protected RecordType(RecordType genericParent){
-		super(genericParent);
+		super(GENERIC,genericParent);
 	}
 	
 	private void createMembers() {
@@ -204,93 +208,6 @@ public abstract class RecordType extends SimpleType implements IModifiable, IGlo
 	public String getUid() {
 		return getName();
 	}
-
-
-//	
-//	void resolveMembers(TypeProvider t){
-//		
-//		//Add members from super classes and interfaces, this should be done in the subtypes which then
-//		//call this method		
-//		
-//	
-//		
-//		
-//		//Add fields to counts
-//		numNonStatics += fields.numNonStaticFields();
-//		numStatics += fields.numStaticFields();
-//		
-//		//Resolve signatures and return types of functions and types of fields
-//		MemberDeclListNode body = declaration.getBody();
-//		int size = declaration.getBody().size();
-//		for(int i=0;i<size;i++){
-//			MemberDeclNode c = body.elementAt(i);
-//			IModifiable member;
-//			switch(c.getMemberType()){
-//			case MemberTypeSE.METHOD_DECLARATION:
-//				MethodDeclNode m = (MethodDeclNode)c;
-//				Method meth = new Method(m,this,scope);
-//				meth.resolveTypes(t,null);
-//				methods.addMethod(meth);
-//				member = meth;
-//				break;
-//			case MemberTypeSE.FIELD_DECLARATION:
-//				//Fields were already resolved in constant early resolve visitor
-//				continue;
-//			case MemberTypeSE.CONSTRUCTOR_DECLARATION:
-//			{
-//				MethodDeclNode d = (MethodDeclNode)c;
-//				Constructor con = new Constructor(d,(Class)this,scope);
-//				con.resolveTypes(t, null);
-//				Constructor old = constructors.put(con.getSignature(), con);
-//				/*
-//				if(old!=null)
-//					throw new CompilationError(con.getDefinition(),old
-//							.getDefinition(),
-//							"Duplicate constructor!","First Definition");
-//				*/
-//				member = con;
-//				break;
-//			}
-//			case MemberTypeSE.DESTRUCTOR_DECLARATION:
-//			{
-//				MethodDeclNode d = (MethodDeclNode)c;
-//				Destructor con = new Destructor(d,(Class)this,scope);
-//				con.resolveTypes(t, null);
-//				if(destructor != null){
-//					throw Problem.ofType(ProblemId.DUPLICATE_DESTRUCTOR).at(con.getDefinition(),destructor.getDefinition())
-//								.raiseUnrecoverable();
-//				}
-//				destructor = con;
-//				member = con;
-//				break;
-//			}	
-//			case MemberTypeSE.STATIC_INIT:
-//				StaticInit s = new StaticInit((StaticInitDeclNode)c,scope);
-//				s.resolveTypes(t, null);
-//				staticInits.add(s);
-//				t.addStaticInit(s);
-//				numStatics++;
-//				continue;
-//			case MemberTypeSE.ACCESSOR_DECLARATION:
-//				AccessorDeclNode a = (AccessorDeclNode)c;
-//				AccessorDecl ad = new AccessorDecl(a, this, scope);
-//				ad.resolveType(t);
-//				fields.addField(ad);
-//				member = ad;
-//				break;
-//			default:
-//				throw new InternalProgramError(c,"Unknown class member type " + c.getMemberType());
-//			}
-//			if(member.isStatic()){
-//				numStatics++;
-//			} else {
-//				numNonStatics++;
-//			}
-//		}
-//		
-//		membersResolved = true;
-//	
-//	}
 
 	@Override
 	public Scope getScope() {

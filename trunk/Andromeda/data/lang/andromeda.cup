@@ -340,7 +340,6 @@ functionDeclaration ::=	methodDeclaration:m {: RESULT = new GlobalFuncDeclNode(m
 						|	DOUBLE:l {: RESULT = new BasicTypeNode("fixed"); RESULT.setPos(lleft,lright);  :} 
 						|	FIXED:l {: RESULT = new BasicTypeNode("fixed"); RESULT.setPos(lleft,lright);  :} 
 						;
-
 					referenceType ::=
 							classOrInterfaceType:t {: RESULT = t; :}
 						|	arrayType:t {: RESULT = t; :}

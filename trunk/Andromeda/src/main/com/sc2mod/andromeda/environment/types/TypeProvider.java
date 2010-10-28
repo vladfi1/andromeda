@@ -114,7 +114,7 @@ public class TypeProvider {
 	//			REGISTRATION METHODS 			
 	//==========================================
 
-	void registerSimpleType(SimpleType t){
+	void registerSimpleType(NamedType t){
 		//Add the type to all scopes to which it belongs
 		t.getScope().addContent(t.getName(), t);
 		

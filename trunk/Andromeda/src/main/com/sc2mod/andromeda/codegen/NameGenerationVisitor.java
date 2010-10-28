@@ -11,6 +11,7 @@ package com.sc2mod.andromeda.codegen;
 
 import java.util.ArrayList;
 
+import com.sc2mod.andromeda.classes.ClassNameProvider;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
@@ -133,15 +134,15 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 	@Override
 	public void visit(ClassDeclNode classDeclaration) {
 		Class c = (Class)classDeclaration.getSemantics();
-		
+		ClassNameProvider className = c.getNameProvider();
 		//If this is a top class we need a name for its alloc method
 		if(c.isTopClass()){
-			c.setAllocatorName(nameProvider.getGlobalNameRawNoPrefix("alloc___" + c.getName()));
-			c.setDeallocatorName(nameProvider.getGlobalNameRawNoPrefix("dealloc___" + c.getName()));
+			className.setAllocatorName(nameProvider.getGlobalNameRawNoPrefix("alloc___" + c.getName()));
+			className.setDeallocatorName(nameProvider.getGlobalNameRawNoPrefix("dealloc___" + c.getName()));
 		} else {
 			//If it is not a top class we maybe need a name for its field init method
 			if(TypeUtil.hasTypeFieldInits(c))
-				c.setAllocatorName(nameProvider.getGlobalNameRawNoPrefix("init___" + c.getName()));
+				className.setAllocatorName(nameProvider.getGlobalNameRawNoPrefix("init___" + c.getName()));
 		}
 		visitTypedef(classDeclaration);
 	}

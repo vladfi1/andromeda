@@ -7,7 +7,7 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.generic;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,20 +19,26 @@ import com.sc2mod.andromeda.classes.VirtualCallTable;
 import com.sc2mod.andromeda.environment.Signature;
 
 import com.sc2mod.andromeda.environment.operations.Constructor;
+import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.GenericClass;
+import com.sc2mod.andromeda.environment.types.RecordType;
+import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.TypeParamMapping;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class GenericClassInstance extends GenericClass {
+public class GenericClassInstance extends Class {
 
-	private GenericClass theType;
+	private Class theType;
 	private Signature signature;
 	private boolean genericMembersResolved;
 	private TypeParamMapping paramMap;
 	
-	public GenericClassInstance(GenericClass class1, Signature s) {
-		super(class1);
+	public GenericClassInstance(Class class1, Signature s) {
+		super(class1, s);
 		theType = class1;
 		this.signature = s;
 		paramMap = new TypeParamMapping(theType.typeParams,signature);

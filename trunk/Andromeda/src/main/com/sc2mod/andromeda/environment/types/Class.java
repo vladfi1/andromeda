@@ -39,6 +39,8 @@ import com.sc2mod.andromeda.environment.scopes.Scope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.MethodSet;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
+import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
+import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
@@ -86,9 +88,6 @@ public class Class extends ReferentialType implements IIdentifiable , SemanticsV
 	protected int classIndex;
 	protected int minInstanceofIndex;
 	
-	//TODO: Put this into the classNameProvider? After all, it is heavily related to name generation and code generation.
-	private String allocatorName;
-	
 	//TODO: Factor out, this is heavily related with code generation.
 	private ArrayList<VarDecl> hierarchyFields;
 	
@@ -119,6 +118,30 @@ public class Class extends ReferentialType implements IIdentifiable , SemanticsV
 	protected TypeParameter[] typeParams;
 	
 	private static HashSet<String> allowedAnnotations = new HashSet<String>();
+	
+	public Class(ClassDeclNode declaration, Scope scope) {
+		super(declaration, scope);
+		this.nameProvider = new IndexClassNameProvider(this);
+		interfacesTransClosure = new HashMap<String,Interface>();
+		this.declaration = declaration;
+		
+		//XPilot: moved from GenericClass
+		TypeParamListNode tl = declaration.getTypeParams();
+		int size = tl == null ? 0 : tl.size();
+		typeParams = new TypeParameter[size];
+		for(int i=0;i<size;i++){
+			typeParams[i] = new TypeParameter(this, tl.elementAt(i));
+		}
+	}
+	
+	/**
+	 * Constructor for generic instances
+	 * @param genericParent the class for which to create a generic instance.
+	 */
+	protected Class(Class genericParent){
+		super(genericParent);
+	}
+	
 	
 	@Override
 	public ClassDeclNode getDefinition() {
@@ -175,7 +198,6 @@ public class Class extends ReferentialType implements IIdentifiable , SemanticsV
 		this.virtualCallTable = virtualCallTable;
 	}
 
-	private String deallocatorName;
 
 	private String metaClassName;
 	
@@ -185,25 +207,6 @@ public class Class extends ReferentialType implements IIdentifiable , SemanticsV
 	
 	public int getInstanceLimit() {
 		return instanceLimit;
-	}
-
-	public String getAllocatorName() {
-		return allocatorName;
-	}
-	
-	public void setAllocatorName(String allocatorName) {
-		this.allocatorName = allocatorName;
-	}
-	
-	public String getDeallocatorName(){
-		return deallocatorName;
-	}
-
-	public void setDeallocatorName(String deallocatorName) {
-		this.deallocatorName = deallocatorName;
-		if(destructor instanceof Deallocator){
-			destructor.setGeneratedName(deallocatorName);
-		}
 	}
 
 	public int getClassIndex() {
@@ -218,24 +221,7 @@ public class Class extends ReferentialType implements IIdentifiable , SemanticsV
 		this.hierarchyFields = hierarchyFields;
 	}
 
-	public Class(ClassDeclNode declaration, Scope scope) {
-		super(declaration, scope);
-		this.nameProvider = new IndexClassNameProvider(this);
-		interfacesTransClosure = new HashMap<String,Interface>();
-		this.declaration = declaration;
-		
-		//XPilot: moved from GenericClass
-		TypeParamListNode tl = declaration.getTypeParams();
-		int size = tl == null ? 0 : tl.size();
-		typeParams = new TypeParameter[size];
-		for(int i=0;i<size;i++){
-			typeParams[i] = new TypeParameter(this, tl.elementAt(i));
-		}
-	}
-	
-//	protected Class(Class genericParent){
-//		super(genericParent);
-//	}
+
 
 	@Override
 	public String getDescription() {
@@ -442,4 +428,9 @@ public class Class extends ReferentialType implements IIdentifiable , SemanticsV
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	@Override
+	protected NamedType createGenericInstance(Signature s) {
+		return new GenericClassInstance(this, s);
+	}
 }

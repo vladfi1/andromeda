@@ -327,7 +327,7 @@ public class CodeGenVisitor extends CodeGenerator {
 				functionBuffer.newLine(curIndent);
 				Destructor d = (Destructor)curFunction;
 				Operation overridden = d.getOverrideInformation().getOverridenMethod();
-				String destrName = overridden==null?((Class)d.getContainingType()).getDeallocatorName():overridden.getGeneratedName();
+				String destrName = overridden==null?((Class)d.getContainingType()).getNameProvider().getDeallocatorName():overridden.getGeneratedName();
 				curBuffer.append(destrName).append("(").append(classGen.getThisName()).append(");");
 				if(newLines) curBuffer.newLine(curIndent);
 				break;
@@ -549,6 +549,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		invokeRValueVisitor(f.getDeclarator(), true, true);
 		curBuffer = curBufferBefore;
 	}
+
 
 	@Override
 	public void visit(GlobalVarDeclNode gvd) {
@@ -988,7 +989,7 @@ public class CodeGenVisitor extends CodeGenerator {
 			case DESTRUCTOR:
 				Destructor d = (Destructor)curFunction;
 				Operation overridden = d.getOverrideInformation().getOverridenMethod();
-				String destrName = overridden==null?((Class)d.getContainingType()).getDeallocatorName():overridden.getGeneratedName();
+				String destrName = overridden==null?((Class)d.getContainingType()).getNameProvider().getDeallocatorName():overridden.getGeneratedName();
 				curBuffer.append(destrName).append("(").append(classGen.getThisName()).append(");");
 				if(newLines) curBuffer.newLine(curIndent);
 				curBuffer.append("return;");

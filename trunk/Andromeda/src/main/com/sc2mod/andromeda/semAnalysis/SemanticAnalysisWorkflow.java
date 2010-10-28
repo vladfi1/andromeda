@@ -98,7 +98,7 @@ public class SemanticAnalysisWorkflow {
 		//+++++++++++++++++++++++++++++++++++++++++++
 		//+++ 2.) Resolve and check class hierarchy
 		
-		//Resolve inheritance (extends and implements)
+		//Resolve inheritance (extends, implements and type parameters)
 		resolveClassTypes(env.typeProvider,new ResolveAndCheckTypesVisitor(env));
 		
 		//Build and check type hierarchy

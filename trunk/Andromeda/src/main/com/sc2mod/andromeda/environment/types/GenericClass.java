@@ -21,6 +21,7 @@ import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
  */
 import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;

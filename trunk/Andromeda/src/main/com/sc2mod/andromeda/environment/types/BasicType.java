@@ -18,7 +18,7 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
-public class BasicType extends SimpleType {
+public class BasicType extends NamedType {
 	
 	
 	
@@ -93,6 +93,14 @@ public class BasicType extends SimpleType {
 		if(this.getCategory()==TypeCategory.BASIC)
 			basicTypeList.add(this);
 		this.name = name;
+	}
+	
+	/**
+	 * Constructor for generic instances of a type.
+	 * @param genericParent the type for which to create a generic instance.
+	 */
+	protected BasicType(BasicType genericParent){
+		super(GENERIC,genericParent);
 	}
 	
 

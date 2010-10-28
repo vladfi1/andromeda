@@ -9,12 +9,36 @@
  */
 package com.sc2mod.andromeda.classes;
 
+import com.sc2mod.andromeda.environment.operations.Deallocator;
+import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.types.Class;
 public abstract class ClassNameProvider {
 
 	protected Class clazz;
 	protected String memoryName;
+	protected String allocatorName;
+	protected String deallocatorName;
 	
+	public String getDeallocatorName() {
+		return deallocatorName;
+	}
+
+	public void setDeallocatorName(String deallocatorName) {
+		this.deallocatorName = deallocatorName;
+		Destructor destructor = clazz.getDestructor();
+		if(destructor instanceof Deallocator){
+			destructor.setGeneratedName(deallocatorName);
+		}
+	}
+
+	public String getAllocatorName() {
+		return allocatorName;
+	}
+
+	public void setAllocatorName(String allocatorName) {
+		this.allocatorName = allocatorName;
+	}
+
 	public String getMemoryName() {
 		return memoryName;
 	}

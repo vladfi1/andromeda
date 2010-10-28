@@ -24,6 +24,7 @@ import com.sc2mod.andromeda.vm.data.DataObject;
 
 public abstract class Type extends BlockScope implements ScopedElement{
 
+	
 
 	/**
 	 * Types are always a static construct

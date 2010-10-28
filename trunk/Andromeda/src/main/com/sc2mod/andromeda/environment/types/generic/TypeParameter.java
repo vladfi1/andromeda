@@ -7,35 +7,37 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.generic;
 
-//XPilot: what is this? :)
-//import javax.management.relation.RoleUnresolved;
-
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.TypeParamNode;
-
-/**
- * A generic type parameter.
- * @author J. 'gex' Finis
- *
- */
 import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.environment.types.BasicType;
+import com.sc2mod.andromeda.environment.types.NamedType;
+import com.sc2mod.andromeda.environment.types.RuntimeType;
+import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeParamMapping;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.syntaxNodes.TypeParamNode;
 
 public class TypeParameter extends Type {
 
 	private TypeParamNode decl;
 	private String name;
-	private Class forClass;
+	private NamedType forType;
+	private int index;
+	private Type typeBound;
 	
-	public TypeParameter(Class forClass, TypeParamNode elementAt) {
-		super(forClass);
-		decl = elementAt;
-		this.forClass = forClass;
-		name = elementAt.getName();
+	public TypeParameter(NamedType forType, TypeParamNode node, int index, Type typeBound) {
+		super(forType);
+		//FIXME: Check that the type bound is a valid type bound (i.e. something based off int)
+		
+		this.index = index;
+		this.typeBound = typeBound;
+		decl = node;
+		this.forType = forType;
+		name = node.getName();
 	}
 
 	@Override
@@ -45,8 +47,7 @@ public class TypeParameter extends Type {
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+		return "type parameter";
 	}
 
 	@Override
@@ -56,7 +57,7 @@ public class TypeParameter extends Type {
 	
 	@Override
 	public String getFullName() {
-		return forClass.getUid() + "::" + name;
+		return forType.getUid() + "::" + name;
 	}
 	
 
@@ -103,6 +104,9 @@ public class TypeParameter extends Type {
 		return 4;
 	}
 	
+	/**
+	 * Type parameters are always accessible in their class only
+	 */
 	@Override
 	public Visibility getVisibility() {
 		return Visibility.PROTECTED;

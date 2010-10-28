@@ -11,16 +11,20 @@ import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.Class;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.Extension;
 import com.sc2mod.andromeda.environment.types.Interface;
+import com.sc2mod.andromeda.environment.types.NamedType;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
+import com.sc2mod.andromeda.environment.types.Struct;
 import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.variables.AccessorDecl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
@@ -36,6 +40,8 @@ import com.sc2mod.andromeda.syntaxNodes.ParameterNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeAliasDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeListNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeParamListNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeParamNode;
 import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
 import com.sc2mod.andromeda.util.Pair;
 
@@ -175,9 +181,39 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 
 	//*************************************************************
 	//***														***
+	//***						TYPES & ENRICHMENTS				***
+	//***														***
+	//*************************************************************
+	private void resolveTypeParams(NamedType type, TypeParamListNode paramList) {
+		if(paramList == null) return;
+		
+		int size = paramList.size();
+		TypeParameter[] params = new TypeParameter[size];
+		ScopeContentSet content = type.getContent();
+		for(int i = 0;i<size;i++){
+			TypeParamNode paramNode = paramList.elementAt(i);
+			//FIXME: Implement type bounds
+			paramNode.getTypeBound();
+			TypeParameter param = new TypeParameter(type, paramNode, i, null);
+			params[i] = param;
+			
+			//Add to the type as scope content
+			content.add(param.getUid(), param);
+		}
+		type.setTypeParameters(params);
+	}
+	
+	@Override
+	public void visit(Struct struct) {
+		resolveTypeParams(struct, struct.getDefinition().getTypeParams());
+	}
+	
+	//*************************************************************
+	//***														***
 	//***						INTERFACES						***
 	//***														***
 	//*************************************************************
+
 	
 	protected void resolveInterfaceExtends(Interface interfac) {
 		TypeListNode tl = interfac.getDefinition().getInterfaces();
@@ -197,9 +233,13 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	
 	@Override
 	public void visit(Interface interface1) {
+		resolveTypeParams(interface1, interface1.getDefinition().getTypeParams());
 		resolveInterfaceExtends(interface1);
 	}
 	
+	
+
+
 	//*************************************************************
 	//***														***
 	//***						CLASSES							***
@@ -240,6 +280,9 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	@Override
 	public void visit(Class class1) {
 		GlobalStructureNode decl = class1.getDefinition();
+		//Type parameters
+		resolveTypeParams(class1, decl.getTypeParams());
+		
 		TypeListNode in =decl.getInterfaces();
 		if(in!=null&&!in.isEmpty())
 			resolveClassImplements(class1);
@@ -290,6 +333,9 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 		
 		//Entry the results into the extension
 		extension.setResolvedExtendedType(extendedType,extendedBaseType,hierarchyLevel);
+		
+		//Type parameters
+		resolveTypeParams(extension, extension.getDefinition().getTypeParams());
 		
 	}
 	

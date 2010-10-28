@@ -8,6 +8,9 @@
  *  
  */
 package com.sc2mod.andromeda.test.misc;
+
+import java.util.ArrayList;
+
 class DFS{
 	public DFS e(){ return null; }
 }
@@ -22,6 +25,14 @@ public class classTest extends DFS{
 
 	public DFS e(){ return null; }
 	
+}
+
+class Z<T>{
+	
+	public T bla(){
+		new ArrayList<T>();
+		new T();
+	}
 }
 
 class A{

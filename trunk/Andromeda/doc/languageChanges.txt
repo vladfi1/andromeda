@@ -1,7 +1,8 @@
+-Packages should now work correctly and you should be able to use qualified names, if necessary
+-Scoping and visibility now works correctly
 -You only have one namespace for fields, accessors and methods now,
 	so you cannot have a method x() if you have a field x.
 	This solves some ambiguities.
--Packages should now work correctly and you should be able to use qualified names, if necessary
 -You can now enrich almost any type.
 -Changes to the visibility system:
 		=> things without any visibility modifier are now considered public.
@@ -14,29 +15,5 @@
 		=> the private modifier is the same as in java and most other languages:
 			Only the same scope can access the values.
 			Even enrichments of a class cannot use the classes private fields.
--
-
-
-if a parameterless method is defined without parenthesis, then it can be
-called without parenthesis. Only methods that just return some value should be defined this way
-Example:
-
-public abstract get x();
-get int x(){
-	return 4;
-}
-
-x;
-
-how to get function pointers?
-
-accessors:
-x.get
-x.set
-
-
-
-.get
-
-	
-		
+-Improved the generic type system. Now you can not only have generic classes, also structs,
+	interfaces and even extensions can be generic.	

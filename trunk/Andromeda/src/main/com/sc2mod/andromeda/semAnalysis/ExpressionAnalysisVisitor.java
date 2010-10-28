@@ -222,15 +222,12 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		c.setInferedType(t = parent.typeProvider.resolveType(c.getType(),parent.curScope));
 		
 		
-		switch (t.getCategory()) {
-		case CLASS:
-			
+		if(t.getCategory() == TypeCategory.CLASS){
 			ConstructorInvocation ci = parent.resolveConstructorCall(c,(Class) t,
 					new Signature(c.getArguments()), parent.curScope, false,
 					false);
 			c.setSemantics(ci);
-			break;
-		default:
+		} else {
 			throw Problem.ofType(ProblemId.NEW_NON_CLASS).at(c)
 					.raiseUnrecoverable();
 		}

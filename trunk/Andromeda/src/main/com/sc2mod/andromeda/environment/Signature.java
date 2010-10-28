@@ -11,7 +11,7 @@ package com.sc2mod.andromeda.environment;
 
 import com.sc2mod.andromeda.environment.types.Type;
 import com.sc2mod.andromeda.environment.types.TypeParamMapping;
-import com.sc2mod.andromeda.environment.types.TypeParameter;
+import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 

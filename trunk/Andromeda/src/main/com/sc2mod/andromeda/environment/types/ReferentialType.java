@@ -18,5 +18,13 @@ public abstract class ReferentialType extends RecordType {
 	public ReferentialType(GlobalStructureNode g, Scope s) {
 		super(g, s);
 	}
+	
+	/**
+	 * Constructor for generic instances of a type.
+	 * @param genericParent the type for which to create a generic instance.
+	 */
+	protected ReferentialType(ReferentialType genericParent){
+		super(genericParent);
+	}
 
 }
