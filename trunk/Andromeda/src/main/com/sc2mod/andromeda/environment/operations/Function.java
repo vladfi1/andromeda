@@ -17,35 +17,28 @@ import java.util.List;
 import com.sc2mod.andromeda.environment.Annotations;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.Util;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.semAnalysis.ResolveAndCheckTypesVisitor;
-import com.sc2mod.andromeda.semAnalysis.SemanticsCheckerAndResolver;
-import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
-import com.sc2mod.andromeda.syntaxNodes.MemberDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.MethodHeaderNode;
-import com.sc2mod.andromeda.syntaxNodes.ParameterNode;
-import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.StmtNode;
-import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-
-import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.notifications.Problem;
+import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.MemberDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodHeaderNode;
+import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class Function extends Operation {
 
@@ -396,9 +389,9 @@ public class Function extends Operation {
 	}
 	
 
+
+
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
-
-
 }

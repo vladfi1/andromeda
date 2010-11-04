@@ -66,7 +66,7 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 				IType t = args.elementAt(i).accept(this,scope);
 				typeArgs[i]=t;				
 			}
-			return ((RecordTypeImpl)result).getGenericInstance(new Signature(typeArgs));
+			return ((INamedType)result).getGenericInstance(new Signature(typeArgs));
 		} else{
 			if(args != null)
 				throw Problem.ofType(ProblemId.NON_GENERIC_TYPE_HAS_TYPE_ARGUMENTS).at(args)

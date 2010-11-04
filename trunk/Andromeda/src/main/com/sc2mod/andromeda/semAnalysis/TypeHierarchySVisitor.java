@@ -5,10 +5,11 @@ import java.util.HashSet;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
-import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.IStruct;
-import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
+import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
+import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -16,7 +17,7 @@ import com.sc2mod.andromeda.notifications.ProblemId;
 public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 
 	private TypeProvider tprov;
-	private HashSet<RecordTypeImpl> alreadyChecked = new HashSet<RecordTypeImpl>();
+	private HashSet<IRecordType> alreadyChecked = new HashSet<IRecordType>();
 	
 	public TypeHierarchySVisitor(Environment env) {
 		this.tprov = env.typeProvider;
@@ -24,7 +25,7 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 	
 	
 	public void execute(){
-		for(RecordTypeImpl t: tprov.getRecordTypes()){
+		for(IRecordType t: tprov.getRecordTypes()){
 			t.accept(this);
 		}
 	}
@@ -35,7 +36,7 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 	 * @param t type to be checked
 	 * @param marked the set of types already in that hierarchy
 	 */
-	private void doCircleCheck(RecordTypeImpl t,HashSet<RecordTypeImpl> marked){
+	private void doCircleCheck(IRecordType t,HashSet<IRecordType> marked){
 		alreadyChecked.add(t);
 		if(marked.contains(t)){
 			throw Problem.ofType(ProblemId.INHERITANCE_CYCLE).at(t.getDefinition())
@@ -51,13 +52,13 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 	 * Structs currently have no hierarchy, so just add them to the root types.
 	 */
 	@Override
-	public void visit(IStruct struct) {
+	public void visit(StructImpl struct) {
 		tprov.registerRootRecord(struct);
 	}
 	
 	//****** Classes *******
 
-	protected void buildClassHierarchy(IClass clazz, TypeProvider typeProvider,HashSet<RecordTypeImpl> marked) {
+	protected void buildClassHierarchy(IClass clazz, TypeProvider typeProvider,HashSet<IRecordType> marked) {
 		IClass superClass = clazz.getSuperClass();
 		
 		//Build hierarchy
@@ -97,15 +98,15 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 	}
 
 	@Override
-	public void visit(IClass class1) {
+	public void visit(ClassImpl class1) {
 		if(alreadyChecked.contains(class1)) return;
-		buildClassHierarchy(class1,tprov,new HashSet<RecordTypeImpl>());
+		buildClassHierarchy(class1,tprov,new HashSet<IRecordType>());
 	}
 
 	
 	//****** Interfaces *******
 	
-	protected void buildInterfaceHierarchy(IInterface interfac, TypeProvider typeProvider,HashSet<RecordTypeImpl> marked) {
+	protected void buildInterfaceHierarchy(IInterface interfac, TypeProvider typeProvider,HashSet<IRecordType> marked) {
 		HashSet<IInterface> interfaces = interfac.getInterfaces();
 		if(!alreadyChecked.contains(interfac)){
 			if(!interfaces.isEmpty()){
@@ -123,8 +124,8 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 	}
 
 	@Override
-	public void visit(IInterface interface1) {
+	public void visit(InterfaceImpl interface1) {
 		if(alreadyChecked.contains(interface1)) return;
-		buildInterfaceHierarchy(interface1,tprov,new HashSet<RecordTypeImpl>());
+		buildInterfaceHierarchy(interface1,tprov,new HashSet<IRecordType>());
 	}
 }

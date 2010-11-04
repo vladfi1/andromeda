@@ -13,10 +13,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import com.sc2mod.andromeda.environment.IAnnotatable;
-import com.sc2mod.andromeda.environment.IGlobal;
-import com.sc2mod.andromeda.environment.IModifiable;
-import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.Util;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;

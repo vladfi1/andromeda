@@ -13,27 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sc2mod.andromeda.environment.IAnnotatable;
-import com.sc2mod.andromeda.environment.IDefined;
-import com.sc2mod.andromeda.environment.IGlobal;
-import com.sc2mod.andromeda.environment.IIdentifiable;
 import com.sc2mod.andromeda.environment.IModifiable;
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
-import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
-import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.StmtNode;
-
 import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
+import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
 
-public abstract class Operation extends SemanticsElement implements IScopedElement, IModifiable, IAnnotatable , SemanticsVisitorNode {
+public abstract class Operation implements SemanticsElement, IScopedElement, IModifiable, IAnnotatable , SemanticsVisitorNode {
 
 	private static int curHashCode = 1;
 	private int hashCode = curHashCode++;

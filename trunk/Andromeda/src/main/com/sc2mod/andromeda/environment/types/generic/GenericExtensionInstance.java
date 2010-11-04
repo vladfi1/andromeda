@@ -8,7 +8,7 @@ import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Extension;
+import com.sc2mod.andromeda.environment.types.IExtension;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
@@ -17,11 +17,15 @@ import com.sc2mod.andromeda.environment.types.TypeParamMapping;
 import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+
 public class GenericExtensionInstance extends GenericTypeInstance {
 
-	private final Extension genericType;
+	private final IExtension genericType;
 
-	public GenericExtensionInstance(Extension i, Signature s){
+	public GenericExtensionInstance(IExtension i, Signature s){
 		super(i,s);
 		this.genericType = i;
 		
@@ -266,4 +270,7 @@ public class GenericExtensionInstance extends GenericTypeInstance {
 	
 	
 	
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 }

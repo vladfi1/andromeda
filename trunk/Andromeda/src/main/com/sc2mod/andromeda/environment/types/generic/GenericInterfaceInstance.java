@@ -23,6 +23,10 @@ import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+
 public class GenericInterfaceInstance extends GenericTypeInstance implements IInterface{
 
 	private IInterface genericParent;
@@ -678,4 +682,7 @@ public class GenericInterfaceInstance extends GenericTypeInstance implements IIn
 
 	
 	
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 }

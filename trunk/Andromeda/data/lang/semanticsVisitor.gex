@@ -30,7 +30,6 @@ Enrichment
 FunctionPointer
 NonReferentialType
 PointerType
-SimpleType
 SpecialType
 StaticDecl
 TypeBool

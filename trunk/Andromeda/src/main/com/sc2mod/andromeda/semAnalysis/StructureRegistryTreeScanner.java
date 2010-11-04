@@ -5,14 +5,13 @@ import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Method;
-import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.ScopeUtil;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
-import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.scopes.ScopeUtil;
 import com.sc2mod.andromeda.environment.types.Enrichment;
-import com.sc2mod.andromeda.environment.types.RecordType;
+import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.variables.AccessorDecl;
@@ -70,20 +69,20 @@ public class StructureRegistryTreeScanner extends
 
 	@Override
 	public void visit(ClassDeclNode classDeclNode, Pair<IScope, IType> scopes) {
-		RecordTypeImpl t = classDeclNode.getSemantics();
+		IRecordType t = classDeclNode.getSemantics();
 		classDeclNode.childrenAccept(this, new Pair<IScope, IType>(t, t));
 	}
 
 	@Override
 	public void visit(StructDeclNode structDeclNode, Pair<IScope, IType> scopes) {
-		RecordTypeImpl t = structDeclNode.getSemantics();
+		IRecordType t = structDeclNode.getSemantics();
 		structDeclNode.childrenAccept(this, new Pair<IScope, IType>(t, t));
 	}
 
 	@Override
 	public void visit(InterfaceDeclNode interfaceDeclNode,
 			Pair<IScope, IType> scopes) {
-		RecordTypeImpl t = interfaceDeclNode.getSemantics();
+		IRecordType t = interfaceDeclNode.getSemantics();
 		interfaceDeclNode.childrenAccept(this, new Pair<IScope, IType>(t, t));
 	}
 

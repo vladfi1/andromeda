@@ -1,10 +1,6 @@
 package com.sc2mod.andromeda.semAnalysis;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
@@ -13,18 +9,20 @@ import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.Enrichment;
-import com.sc2mod.andromeda.environment.types.Extension;
+import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.IExtension;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.INamedType;
-import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.SpecialType;
-import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
+import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
+import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
+import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
+import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.environment.variables.AccessorDecl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
@@ -34,16 +32,12 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
-import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.ParameterListNode;
 import com.sc2mod.andromeda.syntaxNodes.ParameterNode;
-import com.sc2mod.andromeda.syntaxNodes.TypeAliasDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeListNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeParamListNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeParamNode;
-import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
-import com.sc2mod.andromeda.util.Pair;
 
 /**
  * This semantics visitor resolves the types for a given semantics element.
@@ -204,7 +198,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	}
 	
 	@Override
-	public void visit(IStruct struct) {
+	public void visit(StructImpl struct) {
 		resolveTypeParams(struct, struct.getDefinition().getTypeParams());
 	}
 	
@@ -232,7 +226,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	}
 	
 	@Override
-	public void visit(IInterface interface1) {
+	public void visit(InterfaceImpl interface1) {
 		resolveTypeParams(interface1, interface1.getDefinition().getTypeParams());
 		resolveInterfaceExtends(interface1);
 	}
@@ -278,7 +272,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	
 
 	@Override
-	public void visit(IClass class1) {
+	public void visit(ClassImpl class1) {
 		GlobalStructureNode decl = class1.getDefinition();
 		//Type parameters
 		resolveTypeParams(class1, decl.getTypeParams());
@@ -298,7 +292,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	//*************************************************************
 	
 	@Override
-	public void visit(Extension extension) {
+	public void visit(ExtensionImpl extension) {
 		IType extendedType = tprov.resolveType(extension.getDefinition().getEnrichedType(), extension.getScope());
 		BasicType extendedBaseType;
 		int hierarchyLevel;
@@ -308,7 +302,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 			hierarchyLevel = 0;
 			break;
 		case EXTENSION:
-			Extension e = ((Extension)extendedType);
+			IExtension e = ((IExtension)extendedType);
 			extendedBaseType = e.getBaseType();
 			hierarchyLevel = e.getExtensionHierachryLevel()+1;
 			if(extension.isDistinct())

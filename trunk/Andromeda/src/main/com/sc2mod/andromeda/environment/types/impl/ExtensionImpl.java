@@ -9,23 +9,24 @@
  */
 package com.sc2mod.andromeda.environment.types.impl;
 
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
+import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.Visibility;
+import com.sc2mod.andromeda.environment.types.BasicType;
+import com.sc2mod.andromeda.environment.types.IExtension;
+import com.sc2mod.andromeda.environment.types.INamedType;
+import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.generic.GenericExtensionInstance;
+import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
 import com.sc2mod.andromeda.vm.data.StringObject;
 
-import com.sc2mod.andromeda.environment.IDefined;
-import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.types.generic.GenericExtensionInstance;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
-
-public class ExtensionImpl extends BasicType implements IDefined{
+public class ExtensionImpl extends NamedTypeImpl implements IExtension{
 	
 	
 	
@@ -38,6 +39,9 @@ public class ExtensionImpl extends BasicType implements IDefined{
 	private boolean isKey;
 	private int hierarchyLevel;
 	
+	//TODO: Factor to type provider or something like that
+	private static int curKey = 0;
+	
 	/**
 	 * Standardconstructor. Does not resolve the extended type.
 	 * This is done later in the inheritance analysis and added
@@ -45,7 +49,7 @@ public class ExtensionImpl extends BasicType implements IDefined{
 	 * @param def the definition
 	 */
 	public ExtensionImpl(TypeExtensionDeclNode def, IScope scope) {
-		super(scope,def.getName());
+		super(scope);
 		isDistinct = def.isDisjoint();
 		this.definition = def;
 		this.isKey = def.isKey();
@@ -213,7 +217,7 @@ public class ExtensionImpl extends BasicType implements IDefined{
 	}
 
 	@Override
-	protected INamedType createGenericInstance(Signature s) {
+	public INamedType createGenericInstance(Signature s) {
 		return new GenericExtensionInstance(this, s);
 	}
 	
@@ -228,4 +232,28 @@ public class ExtensionImpl extends BasicType implements IDefined{
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public int getByteSize() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public Visibility getVisibility() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public String getUid() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
 }

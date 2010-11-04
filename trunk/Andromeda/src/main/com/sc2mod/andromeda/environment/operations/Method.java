@@ -9,22 +9,14 @@
  */
 package com.sc2mod.andromeda.environment.operations;
 
-import java.util.ArrayList;
-
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.semAnalysis.ResolveAndCheckTypesVisitor;
-import com.sc2mod.andromeda.semAnalysis.SemanticsCheckerAndResolver;
-import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
-
-import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.types.IInterface;
-import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.notifications.Problem;
+import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 
 public class Method extends Function {
 

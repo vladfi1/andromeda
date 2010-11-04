@@ -17,7 +17,7 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.parsing.CompilerThread;
 
-public class Invocation extends SemanticsElement {
+public class Invocation implements SemanticsElement {
 
 
 	private Operation whichFunction;

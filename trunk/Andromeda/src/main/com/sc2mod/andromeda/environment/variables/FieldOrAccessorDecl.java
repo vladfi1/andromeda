@@ -11,9 +11,7 @@ package com.sc2mod.andromeda.environment.variables;
 
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.MemberDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;

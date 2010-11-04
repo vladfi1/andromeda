@@ -12,9 +12,9 @@ package com.sc2mod.andromeda.environment.scopes
 SourceFileNode : FileScope 
 
 package com.sc2mod.andromeda.environment.types
-ClassDeclNode : Class
-InterfaceDeclNode : Interface
-StructDeclNode : Struct
+ClassDeclNode : IClass
+InterfaceDeclNode : IInterface
+StructDeclNode : IStruct
 EnrichDeclNode : Enrichment
 
 package com.sc2mod.andromeda.environment.variables

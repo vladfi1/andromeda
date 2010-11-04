@@ -29,9 +29,8 @@ public class classTest extends DFS{
 
 class Z<T>{
 	
-	public T bla(){
+	public void bla(){
 		new ArrayList<T>();
-		new T();
 	}
 }
 

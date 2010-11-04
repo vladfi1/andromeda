@@ -14,11 +14,9 @@ import java.util.ArrayList;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.operations.GenericFunctionProxy;
-import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.OverrideInformation;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.RecordType;
+import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.parsing.TransientCompilationData;
 
@@ -102,7 +100,7 @@ public class VirtualCallTable {
 		if(m != null && m.getContainingType() == clazz) processMethod(m,transientData);
 		
 		//Generate tables for subclasses
-		for(RecordTypeImpl r : clazz.getDecendants()) {
+		for(IRecordType r : clazz.getDecendants()) {
 			new VirtualCallTable((IClass) r, env, transientData);
 		}
 	}

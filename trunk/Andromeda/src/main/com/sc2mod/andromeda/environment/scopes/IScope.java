@@ -28,8 +28,6 @@ import com.sc2mod.andromeda.notifications.InternalProgramError;
 public interface IScope extends SemanticsElement {
 
 	
-	ScopeContentSet createContentSet();
-	
 	IScope getParentScope();
 	Package getPackage();
 	

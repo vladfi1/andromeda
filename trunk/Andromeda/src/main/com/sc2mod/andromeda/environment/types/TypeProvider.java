@@ -25,6 +25,10 @@ import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.GlobalScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
+import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
+import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
+import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
+import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -46,8 +50,8 @@ public class TypeProvider {
 	//*** TYPE COLLECTIONS***
 	//private LinkedHashMap<String,Type> types = new LinkedHashMap<String,Type>();
 	
-	private ArrayList<RecordTypeImpl> rootRecordTypes = new ArrayList<RecordTypeImpl>();
-	private ArrayList<RecordTypeImpl> recordTypes = new ArrayList<RecordTypeImpl>();
+	private ArrayList<IRecordType> rootRecordTypes = new ArrayList<IRecordType>();
+	private ArrayList<IRecordType> recordTypes = new ArrayList<IRecordType>();
 	private ArrayList<IClass> classes = new ArrayList<IClass>();
 	private LinkedHashMap<Signature,LinkedHashMap<IType,FunctionPointer>> funcPointers = new LinkedHashMap<Signature, LinkedHashMap<IType,FunctionPointer>>();
 	private ArrayList<Pair<TypeAliasDeclNode, IScope>> typeAliases = new ArrayList<Pair<TypeAliasDeclNode,IScope>>();
@@ -59,7 +63,7 @@ public class TypeProvider {
 	private HashMap<IType,HashMap<Integer,IType>> arrayTypes = new HashMap<IType,HashMap<Integer,IType>>();
 	
 	private GlobalScope globalScope;
-	private ArrayList<Extension> extensions = new ArrayList<Extension>();
+	private ArrayList<IExtension> extensions = new ArrayList<IExtension>();
 	
 	private TypeResolver resolver = new TypeResolver(this);
 	
@@ -93,7 +97,7 @@ public class TypeProvider {
 	 * Getters: Allow accessing some of the gathered data
 	 */
 	
-	public ArrayList<RecordTypeImpl> getRecordTypes() {
+	public ArrayList<IRecordType> getRecordTypes() {
 		return recordTypes;
 	}
 	
@@ -101,7 +105,7 @@ public class TypeProvider {
 		return classes;
 	}
 	
-	public ArrayList<Extension> getExtensionType() {
+	public ArrayList<IExtension> getExtensionType() {
 		return extensions ;
 	}
 	
@@ -130,31 +134,27 @@ public class TypeProvider {
 		globalScope.addContent(t.getName(), t);
 	}
 	
-	private void registerRecordType(RecordTypeImpl r){
+	private void registerRecordType(IRecordType r){
 		recordTypes.add(r);
 		registerSimpleType(r);
 	}
 	
 	public void registerStruct(StructDeclNode d, IScope scope) {
-		registerRecordType(new IStruct(d,scope));
+		registerRecordType(new StructImpl(d,scope));
 	}
 
 	public void registerClass(ClassDeclNode d, IScope scope) {
 		IClass c;		
-		if(d.getTypeParams()!=null){
-			c = new GenericClass(d,scope);
-		} else {
-			c = new IClass(d,scope);
-		}
+		c = new ClassImpl(d,scope);
 		registerRecordType(c);
 		classes.add(c);
 	}
 
 	public void registerInterface(InterfaceDeclNode d, IScope scope) {
-		registerRecordType(new IInterface(d,scope));
+		registerRecordType(new InterfaceImpl(d,scope));
 	}
 	
-	public void registerRootRecord(RecordTypeImpl class1) {
+	public void registerRootRecord(IRecordType class1) {
 		rootRecordTypes.add(class1);
 	}
 	
@@ -167,7 +167,7 @@ public class TypeProvider {
 	public void registerTypeExtension(TypeExtensionDeclNode typeExtension, IScope scope) {
 		
 		//Create it
-		Extension e = new Extension(typeExtension,scope);
+		IExtension e = new ExtensionImpl(typeExtension,scope);
 		
 		//Entry into scope
 		registerSimpleType(e);
@@ -303,24 +303,24 @@ public class TypeProvider {
 
 
 
-
-	public void generateClassAndInterfaceIndex() {
-		for(RecordTypeImpl r: rootRecordTypes){
-			TypeCategory category = r.getCategory();
-			switch(category){
-			case CLASS:
-				IClass c = (IClass)r;
-				c.generateClassIndex(this);
-				c.generateImplementsTransClosure();
-				break;
-			case INTERFACE:
-				((IInterface)r).generateInterfaceIndex(this);
-				break;
-			}
-		}
-		
-	
-	}
+	//TODO: Do this somewhere else
+//	public void generateClassAndInterfaceIndex() {
+//		for(IRecordType r: rootRecordTypes){
+//			TypeCategory category = r.getCategory();
+//			switch(category){
+//			case CLASS:
+//				IClass c = (IClass)r;
+//				c.generateClassIndex(this);
+//				c.generateImplementsTransClosure();
+//				break;
+//			case INTERFACE:
+//				((IInterface)r).generateInterfaceIndex(this);
+//				break;
+//			}
+//		}
+//		
+//	
+//	}
 
 
 

@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -209,7 +210,7 @@ public class ExpressionAnalyzer {
 				//Reference equalty
 				if(!(left.getCategory() == TypeCategory.CLASS)||!(right.getCategory() == TypeCategory.CLASS))error = true;
 				//Error if hierarchy isn't shared
-				if(!IClass.isHierarchyShared((IClass)left,(IClass) right)) error = true;
+				if(!TypeUtil.isHierarchyShared((IClass)left,(IClass) right)) error = true;
 			} else if(lBase == BasicType.BOOL){
 				//Boolean equalty
 				if(rBase != BasicType.BOOL) error = true;

@@ -9,18 +9,15 @@
  */
 package com.sc2mod.andromeda.environment.variables;
 
+import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.FunctionObject;
-
-import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.types.FunctionPointer;
-import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class FuncPointerDecl extends VarDecl{
 

@@ -9,27 +9,19 @@
  */
 package com.sc2mod.andromeda.environment.variables;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.sc2mod.andromeda.environment.operations.Method;
+import com.sc2mod.andromeda.environment.scopes.AccessType;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.notifications.ErrorUtil;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-
-import com.sc2mod.andromeda.environment.operations.Method;
-import com.sc2mod.andromeda.environment.scopes.AccessType;
-import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class AccessorDecl extends FieldOrAccessorDecl{
 
@@ -87,9 +79,6 @@ public class AccessorDecl extends FieldOrAccessorDecl{
 		return false;
 	}
 	
-	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
-	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
-	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 
 	public void doAccessChecks(IScope from, AccessType accessType,
 			SyntaxNode where) {
@@ -130,4 +119,8 @@ public class AccessorDecl extends FieldOrAccessorDecl{
 	private void checkSetter(IScope from, SyntaxNode where) {
 		check(setter,from, where, "write",ProblemId.ACCESSOR_WRITE_ONLY);
 	}
+
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 }

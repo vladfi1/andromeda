@@ -137,11 +137,11 @@ public class Package extends ScopeImpl implements IScopedElement {
 		return "package";
 	}
 	
+
+
+
+
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
-
-
-
-
 }

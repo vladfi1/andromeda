@@ -7,8 +7,9 @@ import com.sc2mod.andromeda.environment.operations.Deallocator;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
-import com.sc2mod.andromeda.environment.types.RecordType;
+import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 
 /**
@@ -42,14 +43,14 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 	}
 	
 	@Override
-	public void visit(IClass class1) {
+	public void visit(ClassImpl class1) {
 		copyDownInheritedMembers(class1);
 		
 		setDestructor(class1);
 		
 		//Recursive call for subclasses
-		LinkedList<RecordTypeImpl> decendants = class1.getDecendants();
-		for(RecordTypeImpl subclass : decendants){
+		LinkedList<IRecordType> decendants = class1.getDecendants();
+		for(IRecordType subclass : decendants){
 			subclass.accept(this);
 		}
 	}

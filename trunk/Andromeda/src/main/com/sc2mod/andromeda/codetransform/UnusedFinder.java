@@ -16,18 +16,16 @@ import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Function;
+import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.RecordType;
+import com.sc2mod.andromeda.environment.types.impl.RecordTypeImpl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.variables.FieldSet;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.InclusionType;
-import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 
 /**

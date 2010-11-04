@@ -25,7 +25,9 @@ import com.sc2mod.andromeda.notifications.InternalProgramError;
  * @author gex
  *
  */
-public abstract class ScopeImpl implements IScope {
+import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
+
+public abstract class ScopeImpl implements IScope , SemanticsVisitorNode {
 
 	
 	protected ScopeImpl(){
@@ -52,6 +54,7 @@ public abstract class ScopeImpl implements IScope {
 	public abstract void addContent(String name, IScopedElement elem);
 	
 
+	protected abstract ScopeContentSet createContentSet();
 
 	
 }

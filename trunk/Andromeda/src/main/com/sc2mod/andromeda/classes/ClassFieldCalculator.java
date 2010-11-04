@@ -13,10 +13,11 @@ import java.util.ArrayList;
 
 import com.sc2mod.andromeda.codegen.INameProvider;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.RecordType;
+import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
+import com.sc2mod.andromeda.environment.types.impl.RecordTypeImpl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
@@ -105,7 +106,7 @@ public abstract class ClassFieldCalculator {
 	 */
 	private void setFieldsForHierarchy(IClass c, ArrayList<VarDecl> fields){
 		c.setHierarchyFields(fields);
-		for(RecordTypeImpl c2: c.getDecendants()){
+		for(IRecordType c2: c.getDecendants()){
 			setFieldsForHierarchy((IClass) c2, fields);
 		}
 	}
@@ -117,7 +118,7 @@ public abstract class ClassFieldCalculator {
 		}
 		//Call for children in the hierarchy
 		int fieldsToSkip = fieldList.size();
-		for(RecordTypeImpl r : c.getDecendants()){
+		for(IRecordType r : c.getDecendants()){
 			calcFields((IClass)r,fieldList,fieldsToSkip);
 		}
 		return fieldList;
@@ -156,7 +157,7 @@ public abstract class ClassFieldCalculator {
 		}
 		
 		//Call for children in the hierarchy
-		for(RecordTypeImpl r : t.getDecendants()){
+		for(IRecordType r : t.getDecendants()){
 			calcFields((IClass)r,fieldList,startAtIndex);
 		}
 		return fieldList;

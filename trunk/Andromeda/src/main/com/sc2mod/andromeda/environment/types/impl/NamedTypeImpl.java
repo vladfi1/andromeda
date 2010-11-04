@@ -36,6 +36,21 @@ public abstract class NamedTypeImpl extends TypeImpl implements INamedType{
 	private Signature typeParamSignature;
 	protected String generatedName;
 	
+	
+	protected NamedTypeImpl(IScope parentScope){
+		super(parentScope);
+	}
+	
+	/**
+	 * Constructor for generic instances of a type.
+	 * @param gen use always the constant GENERIC.
+	 * @param genericParent the type for which to create a generic instance.
+	 */
+	protected NamedTypeImpl(INamedType genericParent, Signature s){
+		super(genericParent.getScope());
+	}
+	
+	
 	public abstract String getName();
 	
 	@Override
@@ -124,38 +139,7 @@ public abstract class NamedTypeImpl extends TypeImpl implements INamedType{
 		//TODO Check if this reflects the documentation
 		return typeParamSignature == null;
 	}
-	
-	protected NamedTypeImpl(IScope parentScope){
-		super(parentScope);
-		initMembers();
-	}
-	
-	/**
-	 * Constructor for generic instances of a type.
-	 * @param gen use always the constant GENERIC.
-	 * @param genericParent the type for which to create a generic instance.
-	 */
-	protected NamedTypeImpl(INamedType genericParent, Signature s){
-		super(genericParent.getScope());
-	}
-	
-	/**
-	 * Method that is called in the constructor
-	 * if a normal (not a generic type instance) type is created.
-	 * 
-	 * 
-	 * Here, all members should be initialized.
-	 * Do not initialize members in the fields themselves, as this will
-	 * be useless overhead for generic instances, which do not use these
-	 * members.
-	 * The only exception is if a member is also needed by the generic instance
-	 * and not delegated.
-	 * 
-	 * The method should be overridden by subtypes that want to init members.
-	 * The overriding definition MUST always call super.initMembers() before doing any init
-	 * to ensure that the superclass fields are inited correctly.
-	 */
-	protected void initMembers() {}
+
 	
 
 }

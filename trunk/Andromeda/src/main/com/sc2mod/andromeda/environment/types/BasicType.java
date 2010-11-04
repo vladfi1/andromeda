@@ -25,9 +25,7 @@ public class BasicType extends NamedTypeImpl {
 	
 	
 	private static ArrayList<BasicType> basicTypeList = new ArrayList<BasicType>(35);
-	
-	protected int curKey = 1;
-	
+
 	public static final BasicType STRING = new TypeString();
 	public static final BasicType INT = new TypeInt();
 	public static final BasicType SHORT = new TypeShort();
@@ -180,12 +178,13 @@ public class BasicType extends NamedTypeImpl {
 		return null;
 	}
 
+
+	@Override
+	public INamedType createGenericInstance(Signature s) {
+		throw new Error("Cannot create a generic instance of a basic type!");
+	}
+
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
-
-	@Override
-	protected INamedType createGenericInstance(Signature s) {
-		throw new Error("Cannot create a generic instance of a basic type!");
-	}
 }

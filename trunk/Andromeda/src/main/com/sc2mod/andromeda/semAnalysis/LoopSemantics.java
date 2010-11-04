@@ -18,7 +18,7 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 
-public class LoopSemantics extends SemanticsElement{
+public class LoopSemantics implements SemanticsElement{
 
 	private List<StmtNode> continues;
 	private List<StmtNode> breaks;

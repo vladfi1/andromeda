@@ -3,30 +3,21 @@ package com.sc2mod.andromeda.environment.operations;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
-import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.StmtNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-
-/**
- * Like GenericFunctionProxy, but for methods.
- * @author XPilot
- */
-import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
+import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 //FIXME Why are here two classes GenericMethodProxz and GenericFunctionProxy??
 public class GenericMethodProxy extends Method {
 

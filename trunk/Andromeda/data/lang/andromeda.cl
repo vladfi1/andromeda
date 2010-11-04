@@ -4,14 +4,14 @@
 package com.sc2mod.andromeda.syntaxNodes;
 
 //Attributes
-attr "com.sc2mod.andromeda.environment.types.Type" inferedType with ExprNode;
-attr "com.sc2mod.andromeda.environment.types.Type" inferedType with IdentifierNode;
+attr "com.sc2mod.andromeda.environment.types.IType" inferedType with ExprNode;
+attr "com.sc2mod.andromeda.environment.types.IType" inferedType with IdentifierNode;
 attr "com.sc2mod.andromeda.parsing.SourceFileInfo" fileInfo with SourceFileNode;
 attr "boolean" constant with ExprNode;
 attr StmtNode successor with StmtNode;
 attr "com.sc2mod.andromeda.semAnalysis.SuccessorList" successors with StmtNode;
-attr "com.sc2mod.andromeda.environment.types.Type" leftExpectedType with BinOpExprNode;
-attr "com.sc2mod.andromeda.environment.types.Type" rightExpectedType with BinOpExprNode;
+attr "com.sc2mod.andromeda.environment.types.IType" leftExpectedType with BinOpExprNode;
+attr "com.sc2mod.andromeda.environment.types.IType" rightExpectedType with BinOpExprNode;
 attr "com.sc2mod.andromeda.vm.data.DataObject" value with ExprNode;
 
 

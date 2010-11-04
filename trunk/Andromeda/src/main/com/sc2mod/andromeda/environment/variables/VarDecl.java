@@ -22,9 +22,7 @@ import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
@@ -41,7 +39,7 @@ import com.sc2mod.andromeda.vm.data.DataObject;
  * @author J. 'gex' Finis
  *
  */
-public abstract class VarDecl extends SemanticsElement implements IScopedElement, IIdentifiable, IDefined, IModifiable{
+public abstract class VarDecl implements SemanticsElement, IScopedElement, IIdentifiable, IDefined, IModifiable{
 
 	public static final int TYPE_LOCAL = 1;
 	public static final int TYPE_FIELD = 2;

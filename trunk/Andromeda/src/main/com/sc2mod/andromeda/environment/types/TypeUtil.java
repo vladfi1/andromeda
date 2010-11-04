@@ -150,6 +150,16 @@ public class TypeUtil {
 			throw new InternalProgramError("Cannot remove from this iterator!");
 		}
 	}
+	
+	/**
+	 * Returns true if and only if the two handed types are classes and
+	 * one is instanceof the other or vice versa.
+	 * @param left a class
+	 * @param right another class
+	 */
+	public static boolean isHierarchyShared(IClass left, IClass right) {
+		return left.isInstanceof(right)||right.isInstanceof(left);
+	}
 
 		
 }

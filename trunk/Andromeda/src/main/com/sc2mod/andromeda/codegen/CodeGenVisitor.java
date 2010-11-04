@@ -23,17 +23,17 @@ import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Invocation;
 import com.sc2mod.andromeda.environment.operations.InvocationType;
-import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.RecordType;
+import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
+import com.sc2mod.andromeda.environment.types.impl.RecordTypeImpl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.InclusionType;
@@ -86,7 +86,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	// SimpleBuffer extraStatementBuffer = new SimpleBuffer(64);
 	public int curIndent;
 	private Function curFunction;
-	private RecordTypeImpl curType;
+	private IRecordType curType;
 	private boolean inLib;
 	
 	
@@ -209,8 +209,8 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	@Override
 	public void visit(ClassDeclNode classDeclaration) {
-		RecordTypeImpl typeBefore = curType;
-		curType = (IClass) classDeclaration.getSemantics();
+		IRecordType typeBefore = curType;
+		curType = classDeclaration.getSemantics();
 		classDeclaration.getBody().childrenAccept(this);
 		curType = typeBefore;
 	}

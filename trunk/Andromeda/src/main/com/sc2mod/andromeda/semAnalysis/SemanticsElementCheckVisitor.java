@@ -1,24 +1,19 @@
 package com.sc2mod.andromeda.semAnalysis;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Constructor;
-import com.sc2mod.andromeda.environment.operations.Deallocator;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
-import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
-import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
+import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 import com.sc2mod.andromeda.notifications.Problem;
@@ -127,7 +122,7 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	 * invoked right before this visitor.
 	 */
 	@Override
-	public void visit(IClass class1) {
+	public void visit(ClassImpl class1) {
 		checkImplicitConstructor(class1);
 		
 		if(class1.isStatic())
@@ -203,7 +198,7 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	 * Struct members are checked so that they contain no modifiers.
 	 */
 	@Override
-	public void visit(IStruct struct) {
+	public void visit(StructImpl struct) {
 		for(IScopedElement s : struct.getContent().viewValues()){
 			//Since the parser anything but fields in structs, we can safely cast to fieldDecl here
 			FieldDecl field = (FieldDecl)s;

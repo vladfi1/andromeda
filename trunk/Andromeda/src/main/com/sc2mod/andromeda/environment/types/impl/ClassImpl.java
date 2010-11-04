@@ -357,22 +357,15 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	public void generateImplementsTransClosure() {
 	}
 
-	/**
-	 * Returns true if and only if the two handed types are classes and
-	 * one is instanceof the other or vice versa.
-	 * @param left a class
-	 * @param right another class
-	 */
-	public static boolean isHierarchyShared(IClass left, IClass right) {
-		return left.isInstanceof(right)||right.isInstanceof(left);
-	}
+	
 	
 	@Override
 	public int calcByteSize() {
+		//FIXME: Class field byte size calculation
 		int result = 0;
-		for(VarDecl f: getTopClass().hierarchyFields){
-			result += f.getType().getMemberByteSize();
-		}
+//		for(VarDecl f: getTopClass().hierarchyFields){
+//			result += f.getType().getMemberByteSize();
+//		}
 		return result;
 	}
 	
@@ -402,12 +395,13 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	}
 
 
-	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
-	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
-	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 
 	@Override
 	public INamedType createGenericInstance(Signature s) {
 		return new GenericClassInstance(this, s);
 	}
+
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 }
