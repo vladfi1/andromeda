@@ -18,9 +18,9 @@ import com.sc2mod.andromeda.environment.operations.InvocationType;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.SpecialType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -65,8 +65,8 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		s.accept(this);
 	}
 	
-	public void surroundTypeCastIfNecessary(ExprNode exp, Type to){
-		Type from = exp.getInferedType();
+	public void surroundTypeCastIfNecessary(ExprNode exp, IType to){
+		IType from = exp.getInferedType();
 		if(to==null||from==to){
 			invokeSelf(exp);
 			return;
@@ -211,7 +211,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		
 		boolean notStatic = !decl.isStatic();
 			if(decl.getDeclType()==VarDecl.TYPE_FIELD){
-			Class c = (Class) decl.getContainingType();
+			IClass c = (IClass) decl.getContainingType();
 			classGen.generateFieldAccessPrefix(curExprBuffer,c);
 			curExprBuffer.append(classGen.getThisName());
 			classGen.generateFieldAccessSuffix(curExprBuffer,c);
@@ -235,9 +235,9 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		//	fieldAccess.childrenAccept(this);
 		
 		if(notStatic){
-			Type t = fieldAccess.getLeftExpression().getInferedType();
+			IType t = fieldAccess.getLeftExpression().getInferedType();
 			if(t.isClass()){
-				Class c = (Class)t;
+				IClass c = (IClass)t;
 				classGen.generateFieldAccessPrefix(curExprBuffer,c);
 				fieldAccess.childrenAccept(this);
 				classGen.generateFieldAccessSuffix(curExprBuffer,c);
@@ -327,10 +327,10 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	
 	@Override
 	public void visit(CastExprNode castExpression) {
-		Type t = castExpression.getInferedType();
+		IType t = castExpression.getInferedType();
 		
 		ExprNode e = castExpression.getRightExpression();
-		Type et = e.getInferedType();
+		IType et = e.getInferedType();
 		if(t!=et){
 			//If this is a cast to byte, check if we actually need it or if a cast to int is sufficient
 			if(t.getBaseType()==BasicType.BYTE){
@@ -408,7 +408,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	@Override
 	public void visit(NewExprNode c) {
 		ConstructorInvocation ci = (ConstructorInvocation) c.getSemantics();
-		Class clazz = (Class)c.getInferedType();
+		IClass clazz = (IClass)c.getInferedType();
 		SimpleBuffer bufferBefore = parent.curBuffer;
 		parent.curBuffer = curExprBuffer;
 		classGen.generateConstructorInvocation(ci, c.getArguments(), clazz);

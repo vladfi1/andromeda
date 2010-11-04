@@ -1,21 +1,21 @@
 package com.sc2mod.andromeda.environment.scopes.content;
 
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 
 public class MethodSet extends OperationSet {
 
-	public MethodSet(Scope owner, Operation op) {
+	public MethodSet(IScope owner, Operation op) {
 		super(owner, op);
 	}
 
-	public MethodSet(Scope owner, OperationSet set) {
+	public MethodSet(IScope owner, OperationSet set) {
 		super(owner, set);
 	}
 	
-	public MethodSet(Scope owner, String uid) {
+	public MethodSet(IScope owner, String uid) {
 		super(owner,uid);
 	}
 	

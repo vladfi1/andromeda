@@ -20,7 +20,7 @@ import com.sc2mod.andromeda.vm.data.DataObject;
 
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -29,15 +29,15 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 public class GenericVarProxy extends VarDecl {
 
 	private VarDecl wrappedDecl;
-	private Type type;
+	private IType type;
 
-	public GenericVarProxy(VarDecl vd, Type type) {
+	public GenericVarProxy(VarDecl vd, IType type) {
 		this.wrappedDecl = vd;
 		this.type = type;
 	}
 
 	@Override
-	public Type getType() {
+	public IType getType() {
 		return type;
 	}
 
@@ -62,7 +62,7 @@ public class GenericVarProxy extends VarDecl {
 	}
 
 	@Override
-	public Type getContainingType() {
+	public IType getContainingType() {
 		return wrappedDecl.getContainingType();
 	}
 

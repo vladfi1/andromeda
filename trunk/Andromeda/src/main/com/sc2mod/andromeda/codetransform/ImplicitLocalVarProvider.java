@@ -12,7 +12,7 @@ package com.sc2mod.andromeda.codetransform;
 import java.util.ArrayList;
 
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
@@ -28,7 +28,7 @@ public class ImplicitLocalVarProvider {
 	private ArrayList<NameExprNode> methodBuffer = new ArrayList<NameExprNode>(); 
 	private ArrayList<LocalVarDecl> methodDeclBuffer = new ArrayList<LocalVarDecl>(); 
 	
-	public NameExprNode getImplicitLocalVar(Type t){
+	public NameExprNode getImplicitLocalVar(IType t){
 		//Try to get one from the method buffer
 		NameExprNode var = null;
 		int size = methodBuffer.size();

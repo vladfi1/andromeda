@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Deallocator;
 import com.sc2mod.andromeda.environment.operations.Destructor;
-import com.sc2mod.andromeda.environment.types.Class;
-import com.sc2mod.andromeda.environment.types.Interface;
+import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
@@ -34,7 +34,7 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 	public void execute(){
 		//Do it just for top classes, all others will be called
 		//recursively by the visit method
-		for(Class c : tprov.getClasses()){
+		for(IClass c : tprov.getClasses()){
 			if(c.isTopClass())
 				c.accept(this);
 		}
@@ -42,14 +42,14 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 	}
 	
 	@Override
-	public void visit(Class class1) {
+	public void visit(IClass class1) {
 		copyDownInheritedMembers(class1);
 		
 		setDestructor(class1);
 		
 		//Recursive call for subclasses
-		LinkedList<RecordType> decendants = class1.getDecendants();
-		for(RecordType subclass : decendants){
+		LinkedList<RecordTypeImpl> decendants = class1.getDecendants();
+		for(RecordTypeImpl subclass : decendants){
 			subclass.accept(this);
 		}
 	}
@@ -60,8 +60,8 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 	 * the super destructor.
 	 * @param class1
 	 */
-	private void setDestructor(Class class1) {
-		Class superClass = class1.getSuperClass();
+	private void setDestructor(IClass class1) {
+		IClass superClass = class1.getSuperClass();
 		Destructor destructor = class1.getDestructor();
 		
 		if(superClass!=null){
@@ -85,9 +85,9 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 	 * Adds non-private members from superclasses to this class
 	 * @param class1
 	 */
-	private void copyDownInheritedMembers(Class class1){
-		Class superClass = class1.getSuperClass();
-		for(Interface i : class1.getInterfaces()){
+	private void copyDownInheritedMembers(IClass class1){
+		IClass superClass = class1.getSuperClass();
+		for(IInterface i : class1.getInterfaces()){
 			class1.addInheritedContent(i);
 		}
 		if(superClass != null){

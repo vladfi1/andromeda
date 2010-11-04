@@ -16,10 +16,10 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
  * @author XPilot
  */
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
@@ -30,24 +30,24 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 //FIXME Why are here two classes GenericMethodProxz and GenericFunctionProxy??
 public class GenericMethodProxy extends Method {
 
-	private Method method;
+	private Operation method;
 	private Signature signature;
-	private Type returnType;
+	private IType returnType;
 	
-	public GenericMethodProxy(Method method, Signature signature, Type returnType) {
+	public GenericMethodProxy(Operation method, Signature signature, IType returnType) {
 		this.method = method;
 		this.signature = signature;
 		this.returnType = returnType;
 	}
 	
 	@Override
-	public Type getReturnType() {
+	public IType getReturnType() {
 		return returnType;
 	}
 	
 	@Override
 	public String getDescription() {
-		Type t = getContainingType();
+		IType t = getContainingType();
 		if(t == null) return "method proxy " + getUid();
 		return "method proxy " + getContainingType().getUid() + "." + getUid();
 	}
@@ -57,7 +57,7 @@ public class GenericMethodProxy extends Method {
 		return signature;
 	}
 
-	public Method getWrappedMethod() {
+	public Operation getWrappedMethod() {
 		return method;
 	}
 
@@ -83,7 +83,7 @@ public class GenericMethodProxy extends Method {
 	}
 
 	@Override
-	public Type getContainingType() {
+	public IType getContainingType() {
 		return method.getContainingType();
 	}
 
@@ -200,7 +200,7 @@ public class GenericMethodProxy extends Method {
 	}
 
 	@Override
-	public Scope getScope() {
+	public IScope getScope() {
 		return method.getScope();
 	}
 
@@ -320,7 +320,7 @@ public class GenericMethodProxy extends Method {
 	}
 
 	@Override
-	public void setReturnType(Type returnType) {
+	public void setReturnType(IType returnType) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}

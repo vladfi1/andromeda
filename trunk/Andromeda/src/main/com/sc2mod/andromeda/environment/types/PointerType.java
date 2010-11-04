@@ -15,9 +15,9 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class PointerType extends UnscopedType {
 
-	private Type pointsTo;
+	private IType pointsTo;
 	private String uid;
-	public PointerType(Type child) {
+	public PointerType(IType child) {
 		pointsTo = child;
 		uid = child.getUid() + "*";
 	}
@@ -42,12 +42,12 @@ public class PointerType extends UnscopedType {
 		return pointsTo.getGeneratedName().concat("*");
 	}
 	
-	public Type pointsTo(){
+	public IType pointsTo(){
 		return pointsTo;
 	}
 
 	@Override
-	public Type getWrappedType() {
+	public IType getWrappedType() {
 		return pointsTo;
 	}
 	

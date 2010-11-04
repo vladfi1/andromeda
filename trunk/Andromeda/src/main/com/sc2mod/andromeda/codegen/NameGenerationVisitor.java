@@ -16,11 +16,11 @@ import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Struct;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IStruct;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
@@ -52,7 +52,7 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 	private INameProvider nameProvider;
 	private Configuration options;
 
-	private Type curType;
+	private IType curType;
 	private boolean inLib;
 	
 	private boolean shortenVarNames;
@@ -116,9 +116,9 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 	}
 	
 	private void visitTypedef(GlobalStructureNode g){
-		RecordType r = (RecordType)g.getSemantics();
+		RecordTypeImpl r = (RecordTypeImpl)g.getSemantics();
 		r.setGeneratedName(nameProvider.getTypeName(r));
-		Type typeBefore = curType;
+		IType typeBefore = curType;
 		curType = r;
 		g.childrenAccept(this);
 		curType = typeBefore;
@@ -126,14 +126,14 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 	
 	@Override
 	public void visit(StructDeclNode structDeclaration) {
-		RecordType r = (RecordType)structDeclaration.getSemantics();
+		RecordTypeImpl r = (RecordTypeImpl)structDeclaration.getSemantics();
 		r.setGeneratedName(nameProvider.getTypeName(r));
-		nameProvider.assignFieldNames((Struct)structDeclaration.getSemantics());
+		nameProvider.assignFieldNames((IStruct)structDeclaration.getSemantics());
 	}
 	
 	@Override
 	public void visit(ClassDeclNode classDeclaration) {
-		Class c = (Class)classDeclaration.getSemantics();
+		IClass c = (IClass)classDeclaration.getSemantics();
 		ClassNameProvider className = c.getNameProvider();
 		//If this is a top class we need a name for its alloc method
 		if(c.isTopClass()){
@@ -154,7 +154,7 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 	
 	@Override
 	public void visit(EnrichDeclNode enrichDeclaration) {
-		Type typeBefore = curType;
+		IType typeBefore = curType;
 		curType = ((Enrichment)enrichDeclaration.getSemantics()).getEnrichedType();
 		enrichDeclaration.childrenAccept(this);
 		curType = typeBefore;

@@ -6,10 +6,10 @@ import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 
-public class BlockScope extends Scope {
+public class BlockScope extends ScopeImpl {
 
-	private Scope parentScope;
-	protected BlockScope(Scope parentScope){
+	private IScope parentScope;
+	protected BlockScope(IScope parentScope){
 		this.parentScope = parentScope;
 	}
 	/**
@@ -17,7 +17,7 @@ public class BlockScope extends Scope {
 	 * scopes.
 	 */
 	@Override
-	public void addContent(String name, ScopedElement elem){
+	public void addContent(String name, IScopedElement elem){
 		getContent().add(name, elem);
 	}
 
@@ -27,7 +27,7 @@ public class BlockScope extends Scope {
 	}
 
 	@Override
-	public Scope getParentScope() {
+	public IScope getParentScope() {
 		return parentScope;
 	}
 

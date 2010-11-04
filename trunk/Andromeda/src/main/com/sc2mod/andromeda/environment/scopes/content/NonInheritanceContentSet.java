@@ -1,12 +1,12 @@
 package com.sc2mod.andromeda.environment.scopes.content;
 
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 
 public class NonInheritanceContentSet extends ScopeContentSet {
 
-	public NonInheritanceContentSet(Scope scope) {
+	public NonInheritanceContentSet(IScope scope) {
 		super(scope);
 	}
 
@@ -21,8 +21,8 @@ public class NonInheritanceContentSet extends ScopeContentSet {
 	}
 
 	@Override
-	protected ScopedElement doHandleDuplicate(ScopedElement oldElem,
-			ScopedElement newElem) {
+	protected IScopedElement doHandleDuplicate(IScopedElement oldElem,
+			IScopedElement newElem) {
 		
 		//No duplicate elements permitted
 		//FIXME: Proper problem handling

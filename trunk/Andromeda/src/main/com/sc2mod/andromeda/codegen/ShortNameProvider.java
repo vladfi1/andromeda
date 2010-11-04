@@ -12,8 +12,8 @@ package com.sc2mod.andromeda.codegen;
 import java.util.HashSet;
 
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.types.Struct;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IStruct;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
@@ -176,12 +176,12 @@ public class ShortNameProvider implements INameProvider{
 
 		
 	@Override
-	public String getTypeName(Type type) {
+	public String getTypeName(IType type) {
 		return generateCheckDisallowed();
 	}
 
 	@Override
-	public void assignFieldNames(Struct struct) {
+	public void assignFieldNames(IStruct struct) {
 		int index=0;
 		Iterable<VarDecl> fields = TypeUtil.getNonStaticTypeFields(struct, false);
 		for (VarDecl field : fields) {
@@ -191,7 +191,7 @@ public class ShortNameProvider implements INameProvider{
 
 
 	@Override
-	public String getFieldName(FieldDecl decl, Type clazz) {
+	public String getFieldName(FieldDecl decl, IType clazz) {
 		if(decl.isStatic()){
 			return generateCheckDisallowed();
 		} else {

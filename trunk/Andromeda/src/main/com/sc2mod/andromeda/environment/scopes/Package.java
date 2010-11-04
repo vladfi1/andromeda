@@ -18,12 +18,12 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.environment.scopes.content.NonInheritanceContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class Package extends Scope implements ScopedElement {
+public class Package extends ScopeImpl implements IScopedElement {
 
 	private Package parent;
 	private String name;
@@ -76,7 +76,7 @@ public class Package extends Scope implements ScopedElement {
 	 * parent packages, since packages are not looked up recursively.
 	 */
 	@Override
-	public Scope getParentScope() {
+	public IScope getParentScope() {
 		return env.getTheGlobalScope();
 	}
 
@@ -86,7 +86,7 @@ public class Package extends Scope implements ScopedElement {
 	}
 
 	@Override
-	public Scope getScope() {
+	public IScope getScope() {
 		return getParentPackage();
 	}
 
@@ -115,9 +115,9 @@ public class Package extends Scope implements ScopedElement {
 	 * Only add content also to the parent, if it is public
 	 */
 	@Override
-	public void addContent(String name, ScopedElement elem) {
+	public void addContent(String name, IScopedElement elem) {
 		getContent().add(name, elem);
-		Scope parentScope = getParentScope();
+		IScope parentScope = getParentScope();
 		if(parentScope != null && elem.getVisibility()==Visibility.PUBLIC) parentScope.addContent(name, elem);
 		
 	}
@@ -128,7 +128,7 @@ public class Package extends Scope implements ScopedElement {
 	}
 	
 	@Override
-	public Type getContainingType() {
+	public IType getContainingType() {
 		return null;
 	}
 	

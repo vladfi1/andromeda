@@ -11,10 +11,10 @@ package com.sc2mod.andromeda.classes;
 
 import com.sc2mod.andromeda.environment.operations.Deallocator;
 import com.sc2mod.andromeda.environment.operations.Destructor;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 public abstract class ClassNameProvider {
 
-	protected Class clazz;
+	protected IClass clazz;
 	protected String memoryName;
 	protected String allocatorName;
 	protected String deallocatorName;
@@ -47,7 +47,7 @@ public abstract class ClassNameProvider {
 		this.memoryName = memoryName;
 	}
 
-	public ClassNameProvider(Class c){
+	public ClassNameProvider(IClass c){
 		this.clazz = c;
 	}
 	

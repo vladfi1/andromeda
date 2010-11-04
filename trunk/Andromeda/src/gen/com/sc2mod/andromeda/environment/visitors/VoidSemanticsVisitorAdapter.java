@@ -15,17 +15,17 @@ import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.types.ArrayType;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.Extension;
 import com.sc2mod.andromeda.environment.types.FunctionPointer;
 import com.sc2mod.andromeda.environment.types.GenericClass;
-import com.sc2mod.andromeda.environment.types.Interface;
+import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.NonReferentialType;
 import com.sc2mod.andromeda.environment.types.PointerType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.StaticDecl;
-import com.sc2mod.andromeda.environment.types.Struct;
+import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.TypeBool;
 import com.sc2mod.andromeda.environment.types.TypeByte;
 import com.sc2mod.andromeda.environment.types.TypeChar;
@@ -65,18 +65,18 @@ public abstract class VoidSemanticsVisitorAdapter implements VoidSemanticsVisito
 	public void visit(StaticInit staticInit) { visitDefault(staticInit); }
 	public void visit(ArrayType arrayType) { visitDefault(arrayType); }
 	public void visit(BasicType basicType) { visitDefault(basicType); }
-	public void visit(Class _class) { visitDefault(_class); }
+	public void visit(IClass _class) { visitDefault(_class); }
 	public void visit(Enrichment enrichment) { visitDefault(enrichment); }
 	public void visit(Extension extension) { visitDefault(extension); }
 	public void visit(FunctionPointer functionPointer) { visitDefault(functionPointer); }
 	public void visit(GenericClass genericClass) { visitDefault(genericClass); }
 	public void visit(GenericClassInstance genericClassInstance) { visitDefault(genericClassInstance); }
-	public void visit(Interface _interface) { visitDefault(_interface); }
+	public void visit(IInterface _interface) { visitDefault(_interface); }
 	public void visit(NonReferentialType nonReferentialType) { visitDefault(nonReferentialType); }
 	public void visit(PointerType pointerType) { visitDefault(pointerType); }
 	public void visit(SpecialType specialType) { visitDefault(specialType); }
 	public void visit(StaticDecl staticDecl) { visitDefault(staticDecl); }
-	public void visit(Struct struct) { visitDefault(struct); }
+	public void visit(IStruct struct) { visitDefault(struct); }
 	public void visit(TypeBool typeBool) { visitDefault(typeBool); }
 	public void visit(TypeByte typeByte) { visitDefault(typeByte); }
 	public void visit(TypeChar typeChar) { visitDefault(typeChar); }

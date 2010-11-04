@@ -17,7 +17,7 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class FileScope extends Scope {
+public class FileScope extends ScopeImpl {
 
 	
 	private Package pkg;
@@ -50,7 +50,7 @@ public class FileScope extends Scope {
 	}
 
 	@Override
-	public Scope getParentScope() {
+	public IScope getParentScope() {
 		return pkg;
 	}
 
@@ -60,9 +60,9 @@ public class FileScope extends Scope {
 	 * if it is not private
 	 */
 	@Override
-	public void addContent(String name, ScopedElement elem){
+	public void addContent(String name, IScopedElement elem){
 		getContent().add(name, elem);
-		Scope parentScope = getParentScope();
+		IScope parentScope = getParentScope();
 		if(parentScope != null && elem.getVisibility()!=Visibility.PRIVATE) parentScope.addContent(name, elem);
 	}
 	

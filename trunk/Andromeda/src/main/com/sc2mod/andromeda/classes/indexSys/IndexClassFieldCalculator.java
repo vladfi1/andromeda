@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import com.sc2mod.andromeda.classes.ClassFieldCalculator;
 import com.sc2mod.andromeda.codegen.INameProvider;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
@@ -38,7 +38,7 @@ public class IndexClassFieldCalculator extends ClassFieldCalculator {
 	}
 
 	@Override
-	protected ArrayList<VarDecl> generateImplicitFields(Class c) {
+	protected ArrayList<VarDecl> generateImplicitFields(IClass c) {
 		ArrayList<VarDecl> result = new ArrayList<VarDecl>();
 		if(c.isTopClass()){
 			result.add(createField(c,BasicType.INT,"__id"));

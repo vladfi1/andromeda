@@ -9,10 +9,10 @@
  */
 package com.sc2mod.andromeda.environment.variables;
 
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.MemberDeclNode;
@@ -22,21 +22,21 @@ public abstract class FieldOrAccessorDecl extends NonParamDecl {
 
 
 	private boolean isStatic;
-	private Type containingType;
+	private IType containingType;
 	
-	public FieldOrAccessorDecl(MemberDeclNode f, Type containingType, VarDeclNode varDecl, Scope scope) {
+	public FieldOrAccessorDecl(MemberDeclNode f, IType containingType, VarDeclNode varDecl, IScope scope) {
 		super(f.getFieldModifiers(),f.getType(),varDecl, scope);
 		this.containingType = containingType;
 		
 	}
 	
-	public FieldOrAccessorDecl(MemberDeclNode f, Type containingType, IdentifierNode varDeclId, Scope scope) {
+	public FieldOrAccessorDecl(MemberDeclNode f, IType containingType, IdentifierNode varDeclId, IScope scope) {
 		super(f.getFieldModifiers(),f.getType(),varDeclId, scope);
 		this.containingType = containingType;
 	}
 
 
-	public Type getContainingType(){
+	public IType getContainingType(){
 		return containingType;
 	}
 	

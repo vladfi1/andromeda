@@ -12,8 +12,8 @@ package com.sc2mod.andromeda.codegen;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Method;
-import com.sc2mod.andromeda.environment.types.Struct;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IStruct;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -67,7 +67,7 @@ public interface INameProvider {
 	 * @param type Type for which to generate the name.
 	 * @return the generated name
 	 */
-	public String getTypeName(Type type);
+	public String getTypeName(IType type);
 	
 	/**
 	 * Retrieves a field name from a field declaration and its containing type
@@ -76,7 +76,7 @@ public interface INameProvider {
 	 * @param containingType the type for which the field was declared
 	 * @return
 	 */
-	public String getFieldName(FieldDecl decl, Type containingType);
+	public String getFieldName(FieldDecl decl, IType containingType);
 	
 	/**
 	 * Assigns names for parameters and local variables of a function / method
@@ -91,7 +91,7 @@ public interface INameProvider {
 	 * Should assign a name to each field of the struct
 	 * @param struct the struct for which to assign the field names
 	 */
-	void assignFieldNames(Struct struct);
+	void assignFieldNames(IStruct struct);
 	
 	/**
 	 * Generates a global name for a name.

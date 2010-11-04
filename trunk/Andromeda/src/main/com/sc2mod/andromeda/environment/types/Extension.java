@@ -18,7 +18,9 @@ import com.sc2mod.andromeda.vm.data.IntObject;
 import com.sc2mod.andromeda.vm.data.StringObject;
 
 import com.sc2mod.andromeda.environment.IDefined;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.types.generic.GenericExtensionInstance;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -29,7 +31,7 @@ public class Extension extends BasicType implements IDefined{
 	
 
 	private TypeExtensionDeclNode definition;
-	private Type extendedType;
+	private IType extendedType;
 	private BasicType extendedBaseType;
 	private boolean isDistinct;
 	
@@ -42,14 +44,23 @@ public class Extension extends BasicType implements IDefined{
 	 * via the setResolvedExtendedType method.
 	 * @param def the definition
 	 */
-	public Extension(TypeExtensionDeclNode def, Scope scope) {
+	public Extension(TypeExtensionDeclNode def, IScope scope) {
 		super(scope,def.getName());
 		isDistinct = def.isDisjoint();
 		this.definition = def;
 		this.isKey = def.isKey();
 	}
 	
-	public void setResolvedExtendedType(Type extendedType2,
+	/**
+	 * Generic instance constructor
+	 * @param ext
+	 * @param sig
+	 */
+	protected Extension(Extension ext, Signature sig){
+		super(ext,sig);
+	}
+	
+	public void setResolvedExtendedType(IType extendedType2,
 			BasicType extendedBaseType2, int hierarchyLevel2) {
 		this.extendedType = extendedType2;
 		this.extendedBaseType = extendedBaseType2;
@@ -82,7 +93,7 @@ public class Extension extends BasicType implements IDefined{
 	}
 	
 	@Override
-	public Type getReachableBaseType() {
+	public IType getReachableBaseType() {
 		if(isDistinct) return this;
 		return extendedBaseType;
 	}
@@ -125,7 +136,7 @@ public class Extension extends BasicType implements IDefined{
 	}
 	
 	@Override
-	public Type getGeneratedType() {
+	public IType getGeneratedType() {
 		return extendedBaseType;
 	}
 	
@@ -141,19 +152,19 @@ public class Extension extends BasicType implements IDefined{
 	}
 	
 	@Override
-	public boolean canConcatenateCastTo(Type toType) {
+	public boolean canConcatenateCastTo(IType toType) {
 		return extendedBaseType.canConcatenateCastTo(toType);
 	}
 	
 	@Override
-	public boolean canImplicitCastTo(Type toType) {
+	public boolean canImplicitCastTo(IType toType) {
 		if(toType==this) return true;
 		if(isDistinct) return false;
 		return extendedType.canImplicitCastTo(toType);
 	}
 	
 	@Override
-	public boolean canExplicitCastTo(Type toType) {
+	public boolean canExplicitCastTo(IType toType) {
 		return extendedBaseType.canExplicitCastTo(toType);
 	}
 	
@@ -164,7 +175,7 @@ public class Extension extends BasicType implements IDefined{
 	
 	
 	@Override
-	public Type getCommonSupertype(Type t) {
+	public IType getCommonSupertype(IType t) {
 
 		if(t == this) return this;
 		switch(t.getCategory()){
@@ -178,7 +189,7 @@ public class Extension extends BasicType implements IDefined{
 		throw new Error("Common supertype error");
 	}
 	
-	private Type getCommonInternal(Type t, int hierarchyLevel2) {
+	private IType getCommonInternal(IType t, int hierarchyLevel2) {
 
 		if(hierarchyLevel2 == hierarchyLevel){
 			return getCommonInternal2(this,t);
@@ -189,19 +200,22 @@ public class Extension extends BasicType implements IDefined{
 		}
 	}
 
-	private static Type getCommonInternal2(Type  t1, Type t2) {
+	private static IType getCommonInternal2(IType  t1, IType t2) {
 		if(t1 == t2) return t1;
-		Type sup = t1.getSuperType();
+		IType sup = t1.getSuperType();
 		if(sup == t1) return t1;
 		return getCommonInternal2(sup, t2.getSuperType());
 	}
 
 	@Override
-	public Type getSuperType() {
+	public IType getSuperType() {
 		return extendedType;
 	}
 
-	
+	@Override
+	protected INamedType createGenericInstance(Signature s) {
+		return new GenericExtensionInstance(this, s);
+	}
 	
 	
 	

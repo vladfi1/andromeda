@@ -15,17 +15,17 @@ import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.types.ArrayType;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.Extension;
 import com.sc2mod.andromeda.environment.types.FunctionPointer;
 import com.sc2mod.andromeda.environment.types.GenericClass;
-import com.sc2mod.andromeda.environment.types.Interface;
+import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.NonReferentialType;
 import com.sc2mod.andromeda.environment.types.PointerType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.StaticDecl;
-import com.sc2mod.andromeda.environment.types.Struct;
+import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.TypeBool;
 import com.sc2mod.andromeda.environment.types.TypeByte;
 import com.sc2mod.andromeda.environment.types.TypeChar;
@@ -65,18 +65,18 @@ public abstract class NoResultSemanticsVisitorAdapter<P> implements NoResultSema
 	public void visit(StaticInit staticInit,P state) { visitDefault(staticInit,state); }
 	public void visit(ArrayType arrayType,P state) { visitDefault(arrayType,state); }
 	public void visit(BasicType basicType,P state) { visitDefault(basicType,state); }
-	public void visit(Class _class,P state) { visitDefault(_class,state); }
+	public void visit(IClass _class,P state) { visitDefault(_class,state); }
 	public void visit(Enrichment enrichment,P state) { visitDefault(enrichment,state); }
 	public void visit(Extension extension,P state) { visitDefault(extension,state); }
 	public void visit(FunctionPointer functionPointer,P state) { visitDefault(functionPointer,state); }
 	public void visit(GenericClass genericClass,P state) { visitDefault(genericClass,state); }
 	public void visit(GenericClassInstance genericClassInstance,P state) { visitDefault(genericClassInstance,state); }
-	public void visit(Interface _interface,P state) { visitDefault(_interface,state); }
+	public void visit(IInterface _interface,P state) { visitDefault(_interface,state); }
 	public void visit(NonReferentialType nonReferentialType,P state) { visitDefault(nonReferentialType,state); }
 	public void visit(PointerType pointerType,P state) { visitDefault(pointerType,state); }
 	public void visit(SpecialType specialType,P state) { visitDefault(specialType,state); }
 	public void visit(StaticDecl staticDecl,P state) { visitDefault(staticDecl,state); }
-	public void visit(Struct struct,P state) { visitDefault(struct,state); }
+	public void visit(IStruct struct,P state) { visitDefault(struct,state); }
 	public void visit(TypeBool typeBool,P state) { visitDefault(typeBool,state); }
 	public void visit(TypeByte typeByte,P state) { visitDefault(typeByte,state); }
 	public void visit(TypeChar typeChar,P state) { visitDefault(typeChar,state); }

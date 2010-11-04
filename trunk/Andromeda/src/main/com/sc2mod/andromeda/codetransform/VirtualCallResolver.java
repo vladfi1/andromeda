@@ -17,7 +17,7 @@ import com.sc2mod.andromeda.environment.operations.InvocationType;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Invocation;
 import com.sc2mod.andromeda.environment.operations.Method;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 
 /**
@@ -77,7 +77,7 @@ public class VirtualCallResolver {
 	 */
 	private boolean calledVirtually(Method method) {
 		for(Operation f : method.getOverrideInformation().getOverridingMethods()) {
-			if(((Class)f.getContainingType()).isUsed()) {
+			if(((IClass)f.getContainingType()).isUsed()) {
 				return true;
 			}
 		}
@@ -95,7 +95,7 @@ public class VirtualCallResolver {
 		if(overriders != null) {
 			for(Operation f : overriders) {
 				Method m = (Method)f;
-				Class cl = (Class)m.getContainingType();
+				IClass cl = (IClass)m.getContainingType();
 				if(!cl.isUsed()) {
 //					System.out.println(cl + " is not used.");
 					continue;

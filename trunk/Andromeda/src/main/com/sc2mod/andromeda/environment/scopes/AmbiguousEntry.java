@@ -1,9 +1,9 @@
 package com.sc2mod.andromeda.environment.scopes;
 
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
-public class AmbiguousEntry implements ScopedElement{
+public class AmbiguousEntry implements IScopedElement{
 
 	@Override
 	public ScopedElementType getElementType() {
@@ -12,7 +12,7 @@ public class AmbiguousEntry implements ScopedElement{
 	}
 
 	@Override
-	public Scope getScope() {
+	public IScope getScope() {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
@@ -42,7 +42,7 @@ public class AmbiguousEntry implements ScopedElement{
 	}
 
 	@Override
-	public Type getContainingType() {
+	public IType getContainingType() {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}

@@ -13,7 +13,7 @@ import java.util.Iterator;
 
 import com.sc2mod.andromeda.environment.scopes.GlobalScope;
 import com.sc2mod.andromeda.environment.scopes.Package;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 
 /**
@@ -31,11 +31,11 @@ public final class Environment {
 	private Package defaultPackage = new Package(this, "<default>", null);
 	public final TypeProvider typeProvider = new TypeProvider(this);
 	
-	public Iterable<ScopedElement> iterateOverContent(final boolean stepIntoOperations,final boolean stepIntoPackages){
-		return new Iterable<ScopedElement>() {
+	public Iterable<IScopedElement> iterateOverContent(final boolean stepIntoOperations,final boolean stepIntoPackages){
+		return new Iterable<IScopedElement>() {
 			
 			@Override
-			public Iterator<ScopedElement> iterator() {
+			public Iterator<IScopedElement> iterator() {
 				return defaultPackage.getContent().getDeepIterator(stepIntoOperations, stepIntoPackages);
 			}
 		};

@@ -3,15 +3,15 @@ package com.sc2mod.andromeda.environment.scopes.content;
 import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 
 public class InheritableContentSet extends ScopeContentSet {
 
-	public InheritableContentSet(Scope scope) {
+	public InheritableContentSet(IScope scope) {
 		super(scope);
 	}
 
@@ -31,13 +31,13 @@ public class InheritableContentSet extends ScopeContentSet {
 	}
 	
 	@Override
-	public boolean isElementInherited(ScopedElement value) {
+	public boolean isElementInherited(IScopedElement value) {
 		return value.getContainingType()!=scope;
 	}
 	
 	public void addInheritedContent(ScopeContentSet parentSet) {
-		for(Entry<String, ScopedElement> e : parentSet.contentSet.entrySet()){
-			ScopedElement elem = e.getValue();
+		for(Entry<String, IScopedElement> e : parentSet.contentSet.entrySet()){
+			IScopedElement elem = e.getValue();
 			
 			//Operation set handling
 			if(elem.getElementType() == ScopedElementType.OP_SET){
@@ -56,7 +56,7 @@ public class InheritableContentSet extends ScopeContentSet {
 	}
 	
 	private void addInheritedOpSet(String name, OperationSet set){
-		ScopedElement o = contentSet.get(name);
+		IScopedElement o = contentSet.get(name);
 		if(o != null){
 			//Op set present, add the method to it
 			if(o.getElementType() != ScopedElementType.OP_SET){
@@ -71,7 +71,7 @@ public class InheritableContentSet extends ScopeContentSet {
 	}
 
 	@Override
-	protected ScopedElement doHandleDuplicate(ScopedElement oldElem, ScopedElement newElem) {
+	protected IScopedElement doHandleDuplicate(IScopedElement oldElem, IScopedElement newElem) {
 		// Both methods defined in the same scope? Fail!
 		boolean oldInherited = isElementInherited(oldElem);
 		boolean newInherited = isElementInherited(newElem);
@@ -99,7 +99,7 @@ public class InheritableContentSet extends ScopeContentSet {
 	 * @param superElem
 	 * @param subElem
 	 */
-	private ScopedElement handleInheritance(ScopedElement superElem, ScopedElement subElem) {
+	private IScopedElement handleInheritance(IScopedElement superElem, IScopedElement subElem) {
 		//Different types? Fail
 		if(superElem.getElementType() != subElem.getElementType()){
 			//FIXME Proper problem handling

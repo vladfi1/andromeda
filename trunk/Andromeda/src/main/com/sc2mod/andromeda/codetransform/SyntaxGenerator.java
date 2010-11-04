@@ -14,9 +14,9 @@ import com.sc2mod.andromeda.environment.operations.InvocationType;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.SpecialType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.AccessorDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -94,14 +94,14 @@ public class SyntaxGenerator {
 		return genExpressionStatement(createAccessorSetExpr(ad,lValuePrefix,funcName,setTo));
 	}
 	
-	ExprNode genFieldAccess(ExprNode prefix, String name, Type inferedType, VarDecl semantics){
+	ExprNode genFieldAccess(ExprNode prefix, String name, IType inferedType, VarDecl semantics){
 		FieldAccessExprNode f = new FieldAccessExprNode(prefix, name);
 		f.setInferedType(inferedType);
 		f.setSemantics(semantics);
 		return f;
 	}
 	
-	ExprNode genBinaryExpression(ExprNode left, ExprNode right, BinOpSE binOp, Type result, Type leftExpect, Type rightExpect){
+	ExprNode genBinaryExpression(ExprNode left, ExprNode right, BinOpSE binOp, IType result, IType leftExpect, IType rightExpect){
 		BinOpExprNode binary = new BinOpExprNode(left, right, binOp);
 		binary.setInferedType(result);
 		binary.setLeftExpectedType(leftExpect);
@@ -201,7 +201,7 @@ public class SyntaxGenerator {
 
 
 	public ExprNode genArrayAccess(ExprNode prefix, ExprNode arrayIndex,
-			Type inferedType, VarDecl semantics) {
+			IType inferedType, VarDecl semantics) {
 		ArrayAccessExprNode sn = new ArrayAccessExprNode(prefix,arrayIndex);
 		sn.setSemantics(semantics);
 		sn.setInferedType(inferedType);
@@ -211,7 +211,7 @@ public class SyntaxGenerator {
 
 	public StmtNode genDeleteStatement(ExprNode expression) {
 		DeleteStmtNode s = new DeleteStmtNode(expression);
-		Invocation in = ResolveUtil.registerDelete(((Class)expression.getInferedType()),s);
+		Invocation in = ResolveUtil.registerDelete(((IClass)expression.getInferedType()),s);
 		s.setSemantics(in);	
 		return s;
 	}

@@ -20,18 +20,18 @@ public class TypeFixed extends NonReferentialType{
 	}
 	
 	 @Override
-	public boolean canImplicitCastTo(Type toType) {
+	public boolean canImplicitCastTo(IType toType) {
 		 if(toType == this) return true;
 		 return false;
 	}
 	 
 	 @Override
-	public boolean canExplicitCastTo(Type toType) {
+	public boolean canExplicitCastTo(IType toType) {
 		 return super.canExplicitCastTo(toType) || toType == INT || canConcatenateCastTo(toType);
 	}
 	 
 	 @Override
-	public boolean canConcatenateCastTo(Type toType) {
+	public boolean canConcatenateCastTo(IType toType) {
 		if(toType == this || toType == STRING || toType == TEXT) return true;
 		return false;
 	}

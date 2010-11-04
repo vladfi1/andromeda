@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.Extension;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -57,19 +57,19 @@ public class SemanticAnalysisWorkflow {
 	 * @param alias
 	 * @param scope
 	 */
-	private static void resolveTypeAlias(TypeProvider tprov, TypeAliasDeclNode alias, Scope scope) {
-		Type t = tprov.resolveType(alias.getEnrichedType(),scope);
+	private static void resolveTypeAlias(TypeProvider tprov, TypeAliasDeclNode alias, IScope scope) {
+		IType t = tprov.resolveType(alias.getEnrichedType(),scope);
 		scope.addContent(alias.getName(),t);
 	}
 
 	private static void resolveClassTypes(TypeProvider tprov, ResolveAndCheckTypesVisitor resolver){
-			ArrayList<Pair<TypeAliasDeclNode, Scope>> typeAliases = tprov.getTypeAliases();
-			for(Pair<TypeAliasDeclNode, Scope> i : typeAliases){
+			ArrayList<Pair<TypeAliasDeclNode, IScope>> typeAliases = tprov.getTypeAliases();
+			for(Pair<TypeAliasDeclNode, IScope> i : typeAliases){
 				resolveTypeAlias(tprov, i._1,i._2);
 			}
 			
-			List<RecordType> recordTypes = tprov.getRecordTypes();
-			for(RecordType r : recordTypes){
+			List<RecordTypeImpl> recordTypes = tprov.getRecordTypes();
+			for(RecordTypeImpl r : recordTypes){
 				r.accept(resolver);
 			}
 			
@@ -113,7 +113,7 @@ public class SemanticAnalysisWorkflow {
 		//Check some additional things for classes and other record types, which can only be
 		//checked after their type hierarchy was built and their members have been registered and copied down
 		SemanticsElementCheckVisitor classChecks = new SemanticsElementCheckVisitor(env);
-		for(RecordType c : env.typeProvider.getRecordTypes()){
+		for(RecordTypeImpl c : env.typeProvider.getRecordTypes()){
 			c.accept(classChecks);
 		}
 		

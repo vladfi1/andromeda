@@ -21,15 +21,15 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 @Deprecated
 public class StaticDecl extends SpecialType {
 
-	private Type wrappedType;
-	public StaticDecl(Type wrappedType) {
+	private IType wrappedType;
+	public StaticDecl(IType wrappedType) {
 		super("type");
 		this.wrappedType = wrappedType;
 		
 	}
 	
 	@Override
-	public Type getWrappedType() {
+	public IType getWrappedType() {
 		return wrappedType;
 	}
 	

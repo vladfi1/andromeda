@@ -23,9 +23,9 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.scopes.AccessType;
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -45,7 +45,7 @@ public class AccessorDecl extends FieldOrAccessorDecl{
 
 	private Method setter;
 	
-	public AccessorDecl(AccessorDeclNode a, Type containingType, Scope scope) {
+	public AccessorDecl(AccessorDeclNode a, IType containingType, IScope scope) {
 		super(a,containingType,a.getAccessorName(), scope);
 		a.setSemantics(this);
 		this.declaration = a;
@@ -91,7 +91,7 @@ public class AccessorDecl extends FieldOrAccessorDecl{
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 
-	public void doAccessChecks(Scope from, AccessType accessType,
+	public void doAccessChecks(IScope from, AccessType accessType,
 			SyntaxNode where) {
 		
 		switch(accessType){
@@ -110,7 +110,7 @@ public class AccessorDecl extends FieldOrAccessorDecl{
 		}
 	}
 	
-	private void check(Method toCheck, Scope from, SyntaxNode where,String accessName, ProblemId onlyProblem ){
+	private void check(Method toCheck, IScope from, SyntaxNode where,String accessName, ProblemId onlyProblem ){
 		if(toCheck == null){
 			throw Problem.ofType(onlyProblem).at(where)
 				.details(getUid())
@@ -123,11 +123,11 @@ public class AccessorDecl extends FieldOrAccessorDecl{
 		}
 	}
 
-	private void checkGetter(Scope from, SyntaxNode where) {
+	private void checkGetter(IScope from, SyntaxNode where) {
 		check(getter,from, where, "read",ProblemId.ACCESSOR_WRITE_ONLY);
 	}
 
-	private void checkSetter(Scope from, SyntaxNode where) {
+	private void checkSetter(IScope from, SyntaxNode where) {
 		check(setter,from, where, "write",ProblemId.ACCESSOR_WRITE_ONLY);
 	}
 }

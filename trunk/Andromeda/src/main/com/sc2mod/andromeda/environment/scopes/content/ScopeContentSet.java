@@ -17,8 +17,8 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.AccessType;
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.variables.AccessorDecl;
@@ -32,12 +32,12 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public abstract class ScopeContentSet {
 	
-	public final Scope scope;
+	public final IScope scope;
 	
 	
 	
 	
-	protected HashMap<String, ScopedElement> contentSet = new LinkedHashMap<String, ScopedElement>();
+	protected HashMap<String, IScopedElement> contentSet = new LinkedHashMap<String, IScopedElement>();
 	private ArrayList<StaticInit> staticInits = null;
 	
 	/**
@@ -47,28 +47,28 @@ public abstract class ScopeContentSet {
 	protected abstract OperationSet createInheritedOperationSet(OperationSet copyFrom);
 	
 	
-	public ScopeContentSet(Scope scope){
+	public ScopeContentSet(IScope scope){
 		this.scope = scope;
 	}
 	
-	public Set<Entry<String, ScopedElement>> viewEntries(){
+	public Set<Entry<String, IScopedElement>> viewEntries(){
 		return Collections.unmodifiableSet(contentSet.entrySet());
 	}
 	
-	public Collection<ScopedElement> viewValues(){
+	public Collection<IScopedElement> viewValues(){
 		return Collections.unmodifiableCollection(contentSet.values());
 	}
 	
 	
-	public Iterator<ScopedElement> getDeepIterator(boolean includeOperations, boolean includeSubpackaes){
+	public Iterator<IScopedElement> getDeepIterator(boolean includeOperations, boolean includeSubpackaes){
 		return new DeepIterator(includeOperations,includeSubpackaes);
 	}
 	
 	
-	ScopedElement resolve(String name, Scope from, AccessType accessType, Signature sig, SyntaxNode where, EnumSet<ScopedElementType> allowedTypes){
+	IScopedElement resolve(String name, IScope from, AccessType accessType, Signature sig, SyntaxNode where, EnumSet<ScopedElementType> allowedTypes){
 		
 		//Get the entry
-		ScopedElement result = contentSet.get(name);
+		IScopedElement result = contentSet.get(name);
 		if(result == null) return null;
 		
 		//Disallowed type found? Return null
@@ -106,7 +106,7 @@ public abstract class ScopeContentSet {
 	
 
 	
-	protected abstract ScopedElement doHandleDuplicate(ScopedElement oldElem, ScopedElement newElem);
+	protected abstract IScopedElement doHandleDuplicate(IScopedElement oldElem, IScopedElement newElem);
 	
 	/**
 	 * An own add method for operations, since these might have more 
@@ -116,7 +116,7 @@ public abstract class ScopeContentSet {
 	 */
 	private void addOperation(String name, Operation elem){
 		
-		ScopedElement o = contentSet.get(name);
+		IScopedElement o = contentSet.get(name);
 		if(o != null){
 			//Op set present, add the method to it
 			if(o.getElementType() != ScopedElementType.OP_SET){
@@ -132,7 +132,7 @@ public abstract class ScopeContentSet {
 	
 
 	
-	public void add(String name, ScopedElement elem){
+	public void add(String name, IScopedElement elem){
 		switch(elem.getElementType()){
 		case OPERATION:
 			addOperation(name, (Operation) elem);
@@ -146,11 +146,11 @@ public abstract class ScopeContentSet {
 		}
 	}
 	
-	private void addElement(String uid, ScopedElement elem){
+	private void addElement(String uid, IScopedElement elem){
 		
 	
 	
-		ScopedElement old = contentSet.put(uid, elem);
+		IScopedElement old = contentSet.put(uid, elem);
 	
 		if(old != null){
 			//Handle duplicate elements
@@ -188,15 +188,15 @@ public abstract class ScopeContentSet {
 		return false;
 	}
 	
-	public boolean isElementInherited(ScopedElement value) {
+	public boolean isElementInherited(IScopedElement value) {
 		return false;
 	}
 
 
-	public class DeepIterator implements Iterator<ScopedElement> {
+	public class DeepIterator implements Iterator<IScopedElement> {
 
-		private Iterator<ScopedElement> it;
-		private Iterator<? extends ScopedElement> nestedIterator;
+		private Iterator<IScopedElement> it;
+		private Iterator<? extends IScopedElement> nestedIterator;
 		boolean inNestedIteration;
 		private boolean doOps;
 		private boolean doPackages;
@@ -220,7 +220,7 @@ public abstract class ScopeContentSet {
 		}
 
 		@Override
-		public ScopedElement next() {
+		public IScopedElement next() {
 			if(inNestedIteration){
 				if(nestedIterator.hasNext()){
 					return nestedIterator.next();
@@ -231,7 +231,7 @@ public abstract class ScopeContentSet {
 			if(!it.hasNext()){
 				return null;
 			}
-			ScopedElement elem = it.next();
+			IScopedElement elem = it.next();
 			switch(elem.getElementType()){
 			case OP_SET:
 				if(doOps){

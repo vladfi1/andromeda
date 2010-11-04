@@ -5,10 +5,10 @@ import java.util.HashMap;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 
 /**
  * Does the indexing which creates indices for methods with the same name.
@@ -22,14 +22,14 @@ public class FunctionIndexProvider {
 	
 	public FunctionIndexProvider(Environment env){
 		//Normal methods.
-		for(ScopedElement elem : env.iterateOverContent(false,true)){
+		for(IScopedElement elem : env.iterateOverContent(false,true)){
 			if(elem.getElementType() == ScopedElementType.OP_SET){
 				indexOpSet((OperationSet)elem);
 			}
 		}
 		
 		//Constructors.
-		for(Class c : env.typeProvider.getClasses()){
+		for(IClass c : env.typeProvider.getClasses()){
 			indexOpSet(c.getConstructors());
 		}
 		

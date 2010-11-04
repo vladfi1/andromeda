@@ -21,7 +21,7 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -45,12 +45,12 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 	private boolean insertDescriptionComments;
 	private String deciderName;
 	private INameProvider nameProvider;
-	private Class metaClass;
+	private IClass metaClass;
 	private String virtualCallerName;
 	private ClassGenerator classGen;
 
 	
-	public IndexVirtualCallTableGenerator(ClassGenerator classGen,Class metaClass,INameProvider nameProvider, CodeGenerator generator, SimpleBuffer flushTo, Configuration options) {
+	public IndexVirtualCallTableGenerator(ClassGenerator classGen,IClass metaClass,INameProvider nameProvider, CodeGenerator generator, SimpleBuffer flushTo, Configuration options) {
 		super(metaClass,nameProvider,generator,flushTo,options);
 		this.flushTo = flushTo;
 		this.newLine = options.getParamBool(Parameter.CODEGEN_NEW_LINES);
@@ -62,7 +62,7 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 		this.insertDescriptionComments = options.getParamBool(Parameter.CODEGEN_DESCRIPTION_COMMENTS);
 	}
 	
-	public void generateTable(Class clazz){
+	public void generateTable(IClass clazz){
 		VirtualCallTable vct = clazz.getVirtualCallTable();
 		
 		generateTable(vct,0);
@@ -136,9 +136,9 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 		if(newLine)buffer.newLine(useIndent?1:0);
 		buffer.append(BasicType.INT.getGeneratedName()).append(" ").append(deciderName).append("=");
 		buffer.append(metaClass.getNameProvider().getMemoryName()).append("[");
-		buffer.append(((Class)m.getContainingType()).getTopClass().getNameProvider().getMemoryName()).append("[");
+		buffer.append(((IClass)m.getContainingType()).getTopClass().getNameProvider().getMemoryName()).append("[");
 		buffer.append(nameProvider.getLocalNameRaw("this", numParams)).append("].");
-		buffer.append(((Class)m.getContainingType()).getHierarchyFields().get(1).getGeneratedName()).append("].");
+		buffer.append(((IClass)m.getContainingType()).getHierarchyFields().get(1).getGeneratedName()).append("].");
 		buffer.append(ResolveUtil.rawResolveField(metaClass, "vct", null, false).getGeneratedName());
 		buffer.append("[").append(m.getOverrideInformation().getVirtualTableIndex()).append("];");
 		

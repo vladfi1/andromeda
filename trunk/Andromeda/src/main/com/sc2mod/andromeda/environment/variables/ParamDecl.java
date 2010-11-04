@@ -12,14 +12,14 @@ package com.sc2mod.andromeda.environment.variables;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class ParamDecl extends VarDecl{
 
-	public ParamDecl(ModifierListNode mods, Type type, IdentifierNode def) {
+	public ParamDecl(ModifierListNode mods, IType type, IdentifierNode def) {
 		super(mods, type, def, null);
 	}
 

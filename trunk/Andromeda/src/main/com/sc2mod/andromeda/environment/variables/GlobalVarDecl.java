@@ -15,7 +15,7 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -24,11 +24,11 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 public class GlobalVarDecl extends NonParamDecl implements IGlobal{
 
 	private VarDeclNode declaration;
-	private Scope scope;
+	private IScope scope;
 	private int index;
 	static int curIndex;
 	
-	public GlobalVarDecl(FieldDeclNode globalVarDeclaration, VarDeclNode declNode, Scope scope) {
+	public GlobalVarDecl(FieldDeclNode globalVarDeclaration, VarDeclNode declNode, IScope scope) {
 		super(globalVarDeclaration.getFieldModifiers(),globalVarDeclaration.getType(),declNode,scope);
 		this.declaration = declNode;
 		this.scope = scope;
@@ -39,7 +39,7 @@ public class GlobalVarDecl extends NonParamDecl implements IGlobal{
 	}
 
 	@Override
-	public Scope getScope() {
+	public IScope getScope() {
 		return scope;
 	}
 	

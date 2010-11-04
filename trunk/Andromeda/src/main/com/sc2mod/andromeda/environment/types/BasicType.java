@@ -11,14 +11,16 @@ package com.sc2mod.andromeda.environment.types;
 
 import java.util.ArrayList;
 
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
+import com.sc2mod.andromeda.environment.types.impl.NamedTypeImpl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
-public class BasicType extends NamedType {
+public class BasicType extends NamedTypeImpl {
 	
 	
 	
@@ -88,7 +90,7 @@ public class BasicType extends NamedType {
 	 * Constructor for types that do have a scope.
 	 * @param scope
 	 */
-	protected BasicType(Scope scope, String name){
+	protected BasicType(IScope scope, String name){
 		super(scope);
 		if(this.getCategory()==TypeCategory.BASIC)
 			basicTypeList.add(this);
@@ -99,8 +101,8 @@ public class BasicType extends NamedType {
 	 * Constructor for generic instances of a type.
 	 * @param genericParent the type for which to create a generic instance.
 	 */
-	protected BasicType(BasicType genericParent){
-		super(GENERIC,genericParent);
+	protected BasicType(BasicType genericParent, Signature sig){
+		super(genericParent,sig);
 	}
 	
 
@@ -135,7 +137,7 @@ public class BasicType extends NamedType {
 	}
 	
 	@Override
-	public boolean canExplicitCastTo(Type toType) {
+	public boolean canExplicitCastTo(IType toType) {
 		if(toType == this) return true;
 		if(toType.getCategory()==TypeCategory.EXTENSION){
 			return toType.getBaseType()==this;
@@ -181,4 +183,9 @@ public class BasicType extends NamedType {
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	@Override
+	protected INamedType createGenericInstance(Signature s) {
+		throw new Error("Cannot create a generic instance of a basic type!");
+	}
 }

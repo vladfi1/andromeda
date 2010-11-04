@@ -14,8 +14,8 @@ import java.util.Hashtable;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.types.Struct;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IStruct;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
@@ -104,7 +104,7 @@ public class LongNameProvider implements INameProvider {
 			break;
 		case STATIC_INIT:
 			builder.append("init___");
-			Type r = function.getContainingType();
+			IType r = function.getContainingType();
 			if(r != null){
 				builder.append(r.getUid()).append("__");
 			} else {
@@ -133,12 +133,12 @@ public class LongNameProvider implements INameProvider {
 
 
 	@Override
-	public String getTypeName(Type type) {
+	public String getTypeName(IType type) {
 		return type.getUid();
 	}
 
 	@Override
-	public void assignFieldNames(Struct struct) {
+	public void assignFieldNames(IStruct struct) {
 		Iterable<VarDecl> fields = TypeUtil.getNonStaticTypeFields(struct, false);
 		for (VarDecl field : fields) {
 			field.setGeneratedName(field.getUid());
@@ -146,7 +146,7 @@ public class LongNameProvider implements INameProvider {
 	}
 
 	@Override
-	public String getFieldName(FieldDecl decl, Type clazz) {
+	public String getFieldName(FieldDecl decl, IType clazz) {
 		StringBuilder b = new StringBuilder(24);
 		if(decl.isStatic()){
 			b.append("s_");

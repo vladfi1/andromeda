@@ -2,13 +2,13 @@ package com.sc2mod.andromeda.environment.scopes;
 
 import com.sc2mod.andromeda.environment.IDefined;
 import com.sc2mod.andromeda.environment.IIdentifiable;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 
-public interface ScopedElement extends IIdentifiable, IDefined {
+public interface IScopedElement extends IIdentifiable, IDefined {
 
 	public abstract Visibility getVisibility();
-	public abstract Scope getScope();
-	public abstract Type getContainingType();
+	public abstract IScope getScope();
+	public abstract IType getContainingType();
 	
 	public abstract boolean isStatic();
 	

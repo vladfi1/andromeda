@@ -11,8 +11,8 @@ public class BinOpExprNode extends ExprNode {
   private ExprNode leftExpression;
   private ExprNode rightExpression;
   private BinOpSE binOp;
-  private com.sc2mod.andromeda.environment.types.Type leftExpectedType;
-  private com.sc2mod.andromeda.environment.types.Type rightExpectedType;
+  private com.sc2mod.andromeda.environment.types.IType leftExpectedType;
+  private com.sc2mod.andromeda.environment.types.IType rightExpectedType;
 
   public BinOpExprNode (ExprNode leftExpression, ExprNode rightExpression, BinOpSE binOp) {
     this.leftExpression = leftExpression;
@@ -49,19 +49,19 @@ public class BinOpExprNode extends ExprNode {
     this.binOp = binOp;
   }
 
-  public com.sc2mod.andromeda.environment.types.Type getLeftExpectedType() {
+  public com.sc2mod.andromeda.environment.types.IType getLeftExpectedType() {
     return leftExpectedType;
   }
 
-  public void setLeftExpectedType(com.sc2mod.andromeda.environment.types.Type leftExpectedType) {
+  public void setLeftExpectedType(com.sc2mod.andromeda.environment.types.IType leftExpectedType) {
     this.leftExpectedType = leftExpectedType;
   }
 
-  public com.sc2mod.andromeda.environment.types.Type getRightExpectedType() {
+  public com.sc2mod.andromeda.environment.types.IType getRightExpectedType() {
     return rightExpectedType;
   }
 
-  public void setRightExpectedType(com.sc2mod.andromeda.environment.types.Type rightExpectedType) {
+  public void setRightExpectedType(com.sc2mod.andromeda.environment.types.IType rightExpectedType) {
     this.rightExpectedType = rightExpectedType;
   }
 

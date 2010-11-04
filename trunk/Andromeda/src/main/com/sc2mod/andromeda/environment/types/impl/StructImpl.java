@@ -7,7 +7,7 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.impl;
 
 import java.util.HashSet;
 
@@ -17,20 +17,25 @@ import com.sc2mod.andromeda.parsing.CompilationFileManager;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 
+import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
+import com.sc2mod.andromeda.environment.types.INamedType;
+import com.sc2mod.andromeda.environment.types.IStruct;
+import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.generic.GenericStructInstance;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class Struct extends RecordType {
+public class StructImpl extends RecordTypeImpl implements IStruct{
 
 	private StructDeclNode declaration;
 
-	public Struct(StructDeclNode declaration, Scope scope) {
+	public StructImpl(StructDeclNode declaration, IScope scope) {
 		super(declaration, scope);
 		this.declaration = declaration;
 	}
@@ -60,9 +65,9 @@ public class Struct extends RecordType {
 	}
 	
 	@Override
-	protected int calcByteSize() {
+	public int calcByteSize() {
 		int result = 0;
-		for(ScopedElement elem : getContent().viewValues()){
+		for(IScopedElement elem : getContent().viewValues()){
 			//We can cast do var decl here since structs only contain fields.
 			VarDecl f = (VarDecl) elem;
 			result += f.getType().getMemberByteSize();
@@ -73,4 +78,9 @@ public class Struct extends RecordType {
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	@Override
+	public INamedType createGenericInstance(Signature s) {
+		return new GenericStructInstance(this,s);
+	}
 }

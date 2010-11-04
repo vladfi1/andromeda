@@ -5,7 +5,7 @@ import java.util.HashMap;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
@@ -20,8 +20,8 @@ public abstract class SystemTypes {
 
 	private TypeProvider typeProvider;
 	private Environment env;
-	private Scope rootScope;
-	private HashMap<String, Type> resolvedSystemTypes = new HashMap<String, Type>();
+	private IScope rootScope;
+	private HashMap<String, IType> resolvedSystemTypes = new HashMap<String, IType>();
 	private HashMap<String, Operation> resolvedSystemFuncs = new HashMap<String, Operation>();
 	
 	private boolean resolved = false;
@@ -46,12 +46,12 @@ public abstract class SystemTypes {
 		resolved = true;
 	}
 	
-	public Class getSystemClass(String identifier){
+	public IClass getSystemClass(String identifier){
 		checkResolved();
-		return (Class) resolvedSystemTypes.get(identifier);
+		return (IClass) resolvedSystemTypes.get(identifier);
 	}
 
-	public Type getSystemType(String identifier){
+	public IType getSystemType(String identifier){
 		checkResolved();
 		return resolvedSystemTypes.get(identifier);
 	}
@@ -73,14 +73,14 @@ public abstract class SystemTypes {
 	 * @param name
 	 * @return
 	 */
-	protected Class resolveSystemClass(String identifier, String[] qualifiedName){
-		Type t = resolveSystemType(identifier, qualifiedName);
-		if(!(t instanceof Class)){
+	protected IClass resolveSystemClass(String identifier, String[] qualifiedName){
+		IType t = resolveSystemType(identifier, qualifiedName);
+		if(!(t instanceof IClass)){
 			throw Problem.ofType(ProblemId.SYSTEM_CLASS_NOT_DEFINED_AS_CLASS).at(t.getDefinition())
 						.details(t.getUid())
 						.raiseUnrecoverable();
 		}
-		return (Class)t;
+		return (IClass)t;
 	}
 	
 	/**
@@ -89,8 +89,8 @@ public abstract class SystemTypes {
 	 * @param name
 	 * @return
 	 */
-	protected Type resolveSystemType(String identifier, String[] qualifiedName){
-		Type t = ResolveUtil.resolveQualifiedType(rootScope, qualifiedName);
+	protected IType resolveSystemType(String identifier, String[] qualifiedName){
+		IType t = ResolveUtil.resolveQualifiedType(rootScope, qualifiedName);
 		if(t == null) 
 			throw Problem.ofType(ProblemId.SYSTEM_TYPE_MISSING)
 					.details(Strings.mkString(qualifiedName, "."))
@@ -101,7 +101,7 @@ public abstract class SystemTypes {
 	}
 	
 	
-	protected Operation resolveSystemMethod(String identifier, Class clas, String name, Signature sig, boolean isStatic){
+	protected Operation resolveSystemMethod(String identifier, IClass clas, String name, Signature sig, boolean isStatic){
 		Operation func = ResolveUtil.resolvePrefixedOperation(clas, name, sig, clas, null, isStatic);
 		if(func == null){
 			throw Problem.ofType(ProblemId.SYSTEM_TYPE_MISSING_MEMBER).at(clas.getDefinition())
@@ -112,7 +112,7 @@ public abstract class SystemTypes {
 		return func;
 	}
 	
-	protected Operation resolveSystemConstructor(String identifier, Class clas, Signature sig){
+	protected Operation resolveSystemConstructor(String identifier, IClass clas, Signature sig){
 		Operation func = clas.getConstructors().get(sig, clas.getDefinition());
 		if(func == null){
 			throw Problem.ofType(ProblemId.SYSTEM_TYPE_MISSING_MEMBER).at(clas.getDefinition())

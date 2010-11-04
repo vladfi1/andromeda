@@ -20,18 +20,18 @@ public class TypeShort extends NonReferentialType{
 	}
 	
 	 @Override
-	public boolean canImplicitCastTo(Type toType) {
+	public boolean canImplicitCastTo(IType toType) {
 		 if(toType == this|| toType == FLOAT) return true;
 		 return false;
 	}
 	 
 	 @Override
-	public boolean canExplicitCastTo(Type type) {
+	public boolean canExplicitCastTo(IType type) {
 		 return canConcatenateCastTo(type);
 	}
 	 
 	 @Override
-	public boolean canConcatenateCastTo(Type toType) {
+	public boolean canConcatenateCastTo(IType toType) {
 		if(toType == this|| toType == FLOAT || toType == STRING || toType == TEXT) return true;
 		return false;
 	}

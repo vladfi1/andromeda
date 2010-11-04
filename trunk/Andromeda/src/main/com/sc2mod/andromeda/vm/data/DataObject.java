@@ -9,7 +9,7 @@
  */
 package com.sc2mod.andromeda.vm.data;
 
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
@@ -17,7 +17,7 @@ import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
 
 public abstract class DataObject {
 	
-	public abstract Type getType();
+	public abstract IType getType();
 
 	public void setBoolValue(boolean b){
 		throw new ExecutionError("Cannot set to this type!");
@@ -71,7 +71,7 @@ public abstract class DataObject {
 		return le;
 	}
 
-	public DataObject castTo(Type type) {
+	public DataObject castTo(IType type) {
 		if(type == getType()) return this;
 		throw new ExecutionError("Cannot cast from " + getType().getFullName() + " to " + type.getFullName());
 	}

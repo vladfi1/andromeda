@@ -1,11 +1,11 @@
 package com.sc2mod.andromeda.util.visitors;
 
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.SourceFileInfo;
@@ -18,14 +18,14 @@ import com.sc2mod.andromeda.vm.data.DataObject;
 public class TraceScopeScanVisitor extends VoidTreeScanVisitor{
 
 	
-	public Scope curScope;
+	public IScope curScope;
 	public SourceFileInfo curFileInfo;
-	public Type curType;
+	public IType curType;
 
 	@Override
 	public void visit(SourceFileNode andromedaFile) {
 		//An included file brings a new scope
-		Scope scopeBefore = curScope;
+		IScope scopeBefore = curScope;
 		curScope = andromedaFile.getSemantics();
 		
 		SourceFileInfo infoBefore = curFileInfo;
@@ -42,8 +42,8 @@ public class TraceScopeScanVisitor extends VoidTreeScanVisitor{
 	@Override
 	public void visit(ClassDeclNode classDeclaration) {
 		//Remember old type (in case we have nested classes)
-		Scope scopeBefore = curScope;
-		Type typeBefore = curType;
+		IScope scopeBefore = curScope;
+		IType typeBefore = curType;
 		
 		//Set current type
 		curType = classDeclaration.getSemantics();
@@ -63,8 +63,8 @@ public class TraceScopeScanVisitor extends VoidTreeScanVisitor{
 	@Override
 	public void visit(EnrichDeclNode enrichDeclaration) {
 		//Remember old type (in case we have nested classes)
-		Type typeBefore = curType;
-		Scope scopeBefore = curScope;
+		IType typeBefore = curType;
+		IScope scopeBefore = curScope;
 		
 		//Set current type
 		Enrichment en = enrichDeclaration.getSemantics();

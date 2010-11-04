@@ -7,11 +7,11 @@ import java.util.Map.Entry;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -32,24 +32,24 @@ import com.sc2mod.andromeda.util.Debug;
  * @author gex
  *
  */
-public abstract class OperationSet implements ScopedElement, Iterable<Operation>{
+public abstract class OperationSet implements IScopedElement, Iterable<Operation>{
 
 	private final String uid;
-	protected final Scope scope;
+	protected final IScope scope;
 	
 	
-	public OperationSet(Scope scope, String uid){
+	public OperationSet(IScope scope, String uid){
 		this.uid = uid;
 		this.scope = scope;
 	}
 	
-	public OperationSet(Scope scope, Operation op){
+	public OperationSet(IScope scope, Operation op){
 		this.uid = op.getUid();
 		this.scope = scope;
 		add(op);
 	}
 
-	public OperationSet(Scope scope, OperationSet set) {
+	public OperationSet(IScope scope, OperationSet set) {
 		this.uid = set.getUid();
 		this.scope = scope;
 		addAllInherited(set);
@@ -74,6 +74,10 @@ public abstract class OperationSet implements ScopedElement, Iterable<Operation>
 	
 	public Iterator<Operation> iterator(){
 		return opSet.values().iterator();
+	}
+	
+	public Iterable<Entry<Signature,Operation>> viewEntries(){
+		return opSet.entrySet();
 	}
 	
 	/**
@@ -184,7 +188,7 @@ public abstract class OperationSet implements ScopedElement, Iterable<Operation>
 	 * Does visibility checking and returns null if an operation is present but not visible
 	 * @return
 	 */
-	public Operation get(Signature s, SyntaxNode where, Scope from) {
+	public Operation get(Signature s, SyntaxNode where, IScope from) {
 		Operation op = get(s,where);
 		if(op == null) return null;
 		
@@ -225,11 +229,11 @@ public abstract class OperationSet implements ScopedElement, Iterable<Operation>
 	 * Since an OpSet may not escape from an ScopeContentSet, only the content set must ensure that these are not called.
 	 */
 	
-	@Override public Scope getScope() { return scope; }
+	@Override public IScope getScope() { return scope; }
 	@Override public Visibility getVisibility() { throw new InternalProgramError("Cannot get the visibility of an op set!"); }
 	@Override public boolean isStatic() {	throw new InternalProgramError("Cannot decide if a operation set is static"); }
 	@Override public SyntaxNode getDefinition() {	throw new InternalProgramError("Cannot get the definition of an operation set"); }
-	@Override public Type getContainingType() { throw new InternalProgramError("Cannot get the containing type of an op set"); }
+	@Override public IType getContainingType() { throw new InternalProgramError("Cannot get the containing type of an op set"); }
 	@Override public String getElementTypeName() { return "operation set"; }
 	
 	public boolean isEmpty() {
@@ -239,7 +243,6 @@ public abstract class OperationSet implements ScopedElement, Iterable<Operation>
 	public int size() {
 		return opSet.size();
 	}
-
 
 
 

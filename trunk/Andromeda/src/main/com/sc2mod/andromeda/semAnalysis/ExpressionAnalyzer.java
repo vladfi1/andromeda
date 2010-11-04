@@ -10,10 +10,10 @@
 package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.PointerType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
@@ -44,8 +44,8 @@ public class ExpressionAnalyzer {
 		ExprNode rExpr = binaryExpression.getRightExpression();
 		//System.out.println(binaryExpression);
 		
-		Type left = lExpr.getInferedType();
-		Type right = rExpr.getInferedType();
+		IType left = lExpr.getInferedType();
+		IType right = rExpr.getInferedType();
 		
 		if(left == SpecialType.VOID) 
 			throw Problem.ofType(ProblemId.BINOP_ON_VOID).at(lExpr)
@@ -63,8 +63,8 @@ public class ExpressionAnalyzer {
 			rExpr.setInferedType(left);
 		}
 		
-		Type lBase = left.getReachableBaseType();
-		Type rBase = right.getReachableBaseType();
+		IType lBase = left.getReachableBaseType();
+		IType rBase = right.getReachableBaseType();
 		
 		
 		switch (op) {
@@ -209,7 +209,7 @@ public class ExpressionAnalyzer {
 				//Reference equalty
 				if(!(left.getCategory() == TypeCategory.CLASS)||!(right.getCategory() == TypeCategory.CLASS))error = true;
 				//Error if hierarchy isn't shared
-				if(!Class.isHierarchyShared((Class)left,(Class) right)) error = true;
+				if(!IClass.isHierarchyShared((IClass)left,(IClass) right)) error = true;
 			} else if(lBase == BasicType.BOOL){
 				//Boolean equalty
 				if(rBase != BasicType.BOOL) error = true;
@@ -267,14 +267,14 @@ public class ExpressionAnalyzer {
 	}
 
 	public void analyze(UnOpExprNode unaryExpression) {
-		Type type = unaryExpression.getExpression().getInferedType();
+		IType type = unaryExpression.getExpression().getInferedType();
 		UnOpSE op = unaryExpression.getUnOp();
 		ExprNode expr = unaryExpression.getExpression();
 		if(type == SpecialType.VOID) 
 			throw Problem.ofType(ProblemId.UNOP_ON_VOID).at(unaryExpression)
 				.raiseUnrecoverable();
 			
-		Type base = type.getBaseType();
+		IType base = type.getBaseType();
 		
 		switch (op) {
 		case POSTMINUSMINUS:

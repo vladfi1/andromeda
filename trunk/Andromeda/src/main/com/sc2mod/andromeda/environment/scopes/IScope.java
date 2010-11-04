@@ -4,7 +4,7 @@ import java.util.EnumSet;
 
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
@@ -25,26 +25,15 @@ import com.sc2mod.andromeda.notifications.InternalProgramError;
  * @author gex
  *
  */
-public abstract class Scope extends SemanticsElement {
+public interface IScope extends SemanticsElement {
 
 	
-	protected Scope(){
-		this(false);
-	}
+	ScopeContentSet createContentSet();
 	
-	protected Scope(boolean mayHaveDuplicates){
-		content = createContentSet();
-	}
+	IScope getParentScope();
+	Package getPackage();
 	
-	protected abstract ScopeContentSet createContentSet();
-	
-	public abstract Scope getParentScope();
-	public abstract Package getPackage();
-	
-	public ScopeContentSet getContent(){
-		return content;
-	}
-	private final ScopeContentSet content;
+	ScopeContentSet getContent();
 	
 	/**
 	 * Adds content to this scope. Also adds
@@ -54,7 +43,7 @@ public abstract class Scope extends SemanticsElement {
 	 * @param name
 	 * @param elem
 	 */
-	public abstract void addContent(String name, ScopedElement elem);
+	void addContent(String name, IScopedElement elem);
 	
 
 

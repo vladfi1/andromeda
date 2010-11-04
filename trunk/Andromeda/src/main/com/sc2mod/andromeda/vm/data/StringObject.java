@@ -11,7 +11,7 @@ package com.sc2mod.andromeda.vm.data;
 
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
@@ -45,7 +45,7 @@ public class StringObject extends DataObject{
 
 	
 	@Override
-	public DataObject castTo(Type type) {
+	public DataObject castTo(IType type) {
 		switch(type.getRuntimeType()){
 		case RuntimeType.STRING: return this;
 		case RuntimeType.TEXT: return new TextObject(val);
@@ -57,7 +57,7 @@ public class StringObject extends DataObject{
 	
 	
 	@Override
-	public Type getType() {
+	public IType getType() {
 		return BasicType.STRING;
 	}
 }

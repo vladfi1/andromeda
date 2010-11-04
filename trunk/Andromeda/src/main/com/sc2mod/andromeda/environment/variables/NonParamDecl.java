@@ -9,8 +9,8 @@
  */
 package com.sc2mod.andromeda.environment.variables;
 
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
@@ -34,7 +34,7 @@ public abstract class NonParamDecl extends VarDecl {
 		return constant;
 	}
 	
-	public NonParamDecl(ModifierListNode mods,Type type, VarDeclNode decl, Scope scope){
+	public NonParamDecl(ModifierListNode mods,IType type, VarDeclNode decl, IScope scope){
 		super(mods,type,decl.getName(), scope);
 		this.declarator = decl;
 		
@@ -44,12 +44,12 @@ public abstract class NonParamDecl extends VarDecl {
 		}
 	}
 	
-	public NonParamDecl(ModifierListNode mods,Type type, IdentifierNode decl, Scope scope, boolean isInited){
+	public NonParamDecl(ModifierListNode mods,IType type, IdentifierNode decl, IScope scope, boolean isInited){
 		super(mods,type,decl, scope);
 		isInitedField = isInited;
 	}
 	
-	public NonParamDecl(ModifierListNode mods,com.sc2mod.andromeda.syntaxNodes.TypeNode type,VarDeclNode decl, Scope scope){
+	public NonParamDecl(ModifierListNode mods,com.sc2mod.andromeda.syntaxNodes.TypeNode type,VarDeclNode decl, IScope scope){
 		super(mods,type,decl.getName(), scope);
 		this.declarator = decl;
 		
@@ -61,7 +61,7 @@ public abstract class NonParamDecl extends VarDecl {
 	
 	public NonParamDecl(ModifierListNode fieldModifiers,
 			com.sc2mod.andromeda.syntaxNodes.TypeNode type,
-			IdentifierNode varDeclId, Scope scope) {
+			IdentifierNode varDeclId, IScope scope) {
 		super(fieldModifiers,type,varDeclId, scope);
 		this.declarator = null;
 	}

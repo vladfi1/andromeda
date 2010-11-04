@@ -10,7 +10,7 @@
 package com.sc2mod.andromeda.vm.data;
 
 import com.sc2mod.andromeda.environment.types.FunctionPointer;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
@@ -29,7 +29,7 @@ public class FunctionObject extends DataObject{
 	}
 
 	@Override
-	public Type getType() {
+	public IType getType() {
 		return funcDecl.getType();
 	}
 	

@@ -11,7 +11,7 @@ package com.sc2mod.andromeda.vm.data;
 
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
@@ -46,7 +46,7 @@ public class IntObject extends DataObject {
 	}
 	
 	@Override
-	public DataObject castTo(Type type) {
+	public DataObject castTo(IType type) {
 		switch(type.getRuntimeType()){
 		case RuntimeType.INT:{
 			if(type.getBaseType() == BasicType.BYTE){
@@ -65,7 +65,7 @@ public class IntObject extends DataObject {
 	}
 	
 	@Override
-	public Type getType() {
+	public IType getType() {
 		return BasicType.INT;
 	}
 }

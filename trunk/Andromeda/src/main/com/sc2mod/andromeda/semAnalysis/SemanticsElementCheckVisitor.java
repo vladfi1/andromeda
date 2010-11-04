@@ -11,13 +11,13 @@ import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.types.Class;
-import com.sc2mod.andromeda.environment.types.Interface;
+import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Struct;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IStruct;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
@@ -63,9 +63,9 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	
 	@Override
 	public void visit(Method method) {
-		Type containingType = method.getContainingType();
+		IType containingType = method.getContainingType();
 		if(!method.hasBody()) {
-			if(containingType instanceof Interface) {
+			if(containingType instanceof IInterface) {
 				if(method.isAbstract()) {
 					throw Problem.ofType(ProblemId.ABSTRACT_INTERFACE_METHOD).at(method.getHeader())
 								.raiseUnrecoverable();
@@ -127,7 +127,7 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	 * invoked right before this visitor.
 	 */
 	@Override
-	public void visit(Class class1) {
+	public void visit(IClass class1) {
 		checkImplicitConstructor(class1);
 		
 		if(class1.isStatic())
@@ -141,7 +141,7 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	 * Checks that non abstract classes contain no unimplemented methods
 	 * @param class1
 	 */
-	private void checkForUnimplementedMethods(Class class1) {
+	private void checkForUnimplementedMethods(IClass class1) {
 		//FIXME: Check for unimplemented methods again
 //		if(methods.containsUnimplementedMethods()&&!this.isAbstract()){
 //			List<Operation> meths = methods.getUnimplementedMethods();
@@ -161,7 +161,7 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	 * Checks about static classes
 	 * @param class1
 	 */
-	private void checkStaticClass(Class class1){
+	private void checkStaticClass(IClass class1){
 		if(!class1.getConstructors().isEmpty())
 			throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_CONSTRUCTOR).at(class1.getConstructors().getAny().getDefinition())
 						.raiseUnrecoverable();
@@ -177,12 +177,12 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	 * constructor acutally defines a constructor.
 	 * @param c
 	 */
-	private void checkImplicitConstructor(Class c) {
+	private void checkImplicitConstructor(IClass c) {
 		//If we are in a top class or we have constructors, everything is fine
 		if(c.isTopClass()) return;
 		if(c.hasConstructors()) return;
 		
-		Class superClass = c.getSuperClass();
+		IClass superClass = c.getSuperClass();
 		
 		//If the super class has no constructors, then it has the 
 		//implicit default constructor, which is fine, too.
@@ -203,8 +203,8 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	 * Struct members are checked so that they contain no modifiers.
 	 */
 	@Override
-	public void visit(Struct struct) {
-		for(ScopedElement s : struct.getContent().viewValues()){
+	public void visit(IStruct struct) {
+		for(IScopedElement s : struct.getContent().viewValues()){
 			//Since the parser anything but fields in structs, we can safely cast to fieldDecl here
 			FieldDecl field = (FieldDecl)s;
 			if(!field.getFieldDeclaration().getFieldModifiers().isEmpty()){

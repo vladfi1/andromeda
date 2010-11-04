@@ -18,12 +18,12 @@ import com.sc2mod.andromeda.environment.IIdentifiable;
 import com.sc2mod.andromeda.environment.IModifiable;
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.Util;
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -41,7 +41,7 @@ import com.sc2mod.andromeda.vm.data.DataObject;
  * @author J. 'gex' Finis
  *
  */
-public abstract class VarDecl extends SemanticsElement implements ScopedElement, IIdentifiable, IDefined, IModifiable{
+public abstract class VarDecl extends SemanticsElement implements IScopedElement, IIdentifiable, IDefined, IModifiable{
 
 	public static final int TYPE_LOCAL = 1;
 	public static final int TYPE_FIELD = 2;
@@ -57,20 +57,20 @@ public abstract class VarDecl extends SemanticsElement implements ScopedElement,
 	protected Visibility visibility = Visibility.DEFAULT;	
 	private IdentifierNode declaration;
 	private TypeNode typeNode;
-	protected Type type;
+	protected IType type;
 	private String generatedName;
 	private String name;
 	private ModifierListNode mods;
 	private DataObject value;
 	protected LocalVarDecl overrides;
-	private Scope scope;
+	private IScope scope;
 	private int numReads;
 	private int numWrites;
 	private int numInlines;
 	private boolean createCode = true;
 	private List<StmtNode> initCode;
 	
-	public VarDecl(ModifierListNode mods,Type type,IdentifierNode def, Scope scope) {
+	public VarDecl(ModifierListNode mods,IType type,IdentifierNode def, IScope scope) {
 		this.declaration = def;
 		this.name = def.getId();
 		this.mods = mods;
@@ -80,7 +80,7 @@ public abstract class VarDecl extends SemanticsElement implements ScopedElement,
 		setResolvedType(type);
 	}
 	
-	public VarDecl(ModifierListNode mods,com.sc2mod.andromeda.syntaxNodes.TypeNode type,IdentifierNode def, Scope scope) {
+	public VarDecl(ModifierListNode mods,com.sc2mod.andromeda.syntaxNodes.TypeNode type,IdentifierNode def, IScope scope) {
 		this.declaration = def;
 		this.scope = scope;
 		this.name = def.getId();
@@ -90,7 +90,7 @@ public abstract class VarDecl extends SemanticsElement implements ScopedElement,
 		Util.processModifiers(this, mods);
 	}
 	
-	public VarDecl() {
+	protected VarDecl() {
 		//Constructor only for special var decls used by the name resolver
 	}
 
@@ -105,7 +105,7 @@ public abstract class VarDecl extends SemanticsElement implements ScopedElement,
 	}
 	
 	@Override
-	public Scope getScope() {
+	public IScope getScope() {
 		return scope;
 	}
 	
@@ -136,7 +136,7 @@ public abstract class VarDecl extends SemanticsElement implements ScopedElement,
 	 * the type is resolved to entry it.
 	 * @param t
 	 */
-	public void setResolvedType(Type t){
+	public void setResolvedType(IType t){
 		this.type = t;
 		if(declaration != null)
 			declaration.setInferedType(t);
@@ -165,11 +165,11 @@ public abstract class VarDecl extends SemanticsElement implements ScopedElement,
 		return declaration;
 	}
 	
-	public Type getType(){
+	public IType getType(){
 		return type;
 	}
 	
-	public void setType(Type type) {
+	public void setType(IType type) {
 		this.type = type;
 	}
 	
@@ -297,7 +297,7 @@ public abstract class VarDecl extends SemanticsElement implements ScopedElement,
 	 * even make a native type contain accessors.
 	 * @return the containing type
 	 */
-	public Type getContainingType(){
+	public IType getContainingType(){
 		return null;
 	}
 	

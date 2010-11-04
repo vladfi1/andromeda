@@ -22,15 +22,15 @@ public class TypeParamMapping {
 	private final ParamMapEntry[] entries;
 	
 	private static class ParamMapEntry{
-		public final Type from;
-		public final Type to;
-		public ParamMapEntry(Type from, Type to) {
+		public final IType from;
+		public final IType to;
+		public ParamMapEntry(IType from, IType to) {
 			this.from = from;
 			this.to = to;
 		}
 	}
 	
-	public TypeParamMapping(Type[] from, Signature to){
+	public TypeParamMapping(IType[] from, Signature to){
 		int size = from.length;
 		entries = new ParamMapEntry[size];
 		for(int i=0;i<size;i++){
@@ -42,7 +42,7 @@ public class TypeParamMapping {
 		return entries.length;
 	}
 
-	public Type getReplacement(Type typeParameter) {
+	public IType getReplacement(IType typeParameter) {
 		int size = entries.length;
 		for(int i=0;i < size; i++){
 			if(entries[i].from == typeParameter){

@@ -1,10 +1,10 @@
 package com.sc2mod.andromeda.environment.types;
 
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
-public abstract class UnscopedType extends Type {
+public abstract class UnscopedType extends IType {
 
 	/**
 	 * Unscoped types have no scope...

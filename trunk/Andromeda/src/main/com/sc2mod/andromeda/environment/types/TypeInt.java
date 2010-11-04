@@ -20,13 +20,13 @@ public class TypeInt extends NonReferentialType {
 	}
 	
 	@Override
-	public boolean canImplicitCastTo(Type toType) {
+	public boolean canImplicitCastTo(IType toType) {
 		if(toType == this|| toType == FLOAT) return true;
 		return false;
 	}
 	 
 	@Override
-	public boolean canExplicitCastTo(Type type) {
+	public boolean canExplicitCastTo(IType type) {
 		if(super.canExplicitCastTo(type)) return true;
 		if(type.getBaseType()==BasicType.BYTE) return true;
 		if(type.getCategory()==TypeCategory.CLASS) return true;
@@ -35,7 +35,7 @@ public class TypeInt extends NonReferentialType {
 	}
 	 
 	@Override
-	public boolean canConcatenateCastTo(Type toType) {
+	public boolean canConcatenateCastTo(IType toType) {
 		if(toType == this|| toType == FLOAT || toType == STRING || toType == TEXT) return true;
 		return false;
 	}
@@ -56,8 +56,8 @@ public class TypeInt extends NonReferentialType {
 	}
 	
 	@Override
-	public Type getCommonSupertype(Type t) {
-		Type base = t.getBaseType();
+	public IType getCommonSupertype(IType t) {
+		IType base = t.getBaseType();
 		if(base==BasicType.FLOAT) return t;
 		return super.getCommonSupertype(t);
 	}

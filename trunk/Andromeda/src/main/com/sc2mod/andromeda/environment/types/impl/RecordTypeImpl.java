@@ -7,7 +7,7 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.impl;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,8 +18,11 @@ import com.sc2mod.andromeda.environment.IGlobal;
 import com.sc2mod.andromeda.environment.IModifiable;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.Util;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
+import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.IRecordType;
+import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -31,7 +34,7 @@ import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
  * A class or interface.
  * @author J. 'gex' Finis
  */
-public abstract class RecordType extends NamedType implements IModifiable, IGlobal, IAnnotatable {
+public abstract class RecordTypeImpl extends NamedTypeImpl implements IRecordType {
 
 	private String name;
 	protected GlobalStructureNode declaration;
@@ -40,9 +43,9 @@ public abstract class RecordType extends NamedType implements IModifiable, IGlob
 	public abstract GlobalStructureNode getDefinition();
 
 	//Hierarchy for topologic sorting and stuff
-	protected LinkedList<RecordType> descendants;
+	protected LinkedList<IRecordType> descendants = new LinkedList<IRecordType>();
 
-	public LinkedList<RecordType> getDescendants() {
+	public LinkedList<IRecordType> getDescendants() {
 		return descendants;
 	}
 
@@ -52,7 +55,7 @@ public abstract class RecordType extends NamedType implements IModifiable, IGlob
 	
 	//Members
 	protected boolean hierarchyChecked;
-	private Scope scope;
+	private IScope scope;
 	private int numStatics;
 	private int numNonStatics;
 	protected boolean membersResolved;
@@ -98,7 +101,7 @@ public abstract class RecordType extends NamedType implements IModifiable, IGlob
 		return numStatics;
 	}
 
-	public LinkedList<RecordType> getDecendants() {
+	public LinkedList<IRecordType> getDecendants() {
 		return descendants;
 	}
 
@@ -158,10 +161,7 @@ public abstract class RecordType extends NamedType implements IModifiable, IGlob
 	public TypeParameter[] getTypeParams(){
 		throw new Error("Trying to call getTypeParams for record type!");
 	}
-	
-	public GenericClass getGenericInstance(Signature s){
-		throw new Error("Trying to call getGenericInstance for record type!");
-	}
+
 
 	@Override
 	public String getFullName() {
@@ -173,9 +173,8 @@ public abstract class RecordType extends NamedType implements IModifiable, IGlob
 		return getFullName();
 	}
 
-	public RecordType(GlobalStructureNode g, Scope s) {
+	public RecordTypeImpl(GlobalStructureNode g, IScope s) {
 		super(s);
-		createMembers();
 		this.declaration = g;
 		//Ugly but necessary :(
 		if(!(g instanceof EnrichDeclNode))
@@ -184,19 +183,6 @@ public abstract class RecordType extends NamedType implements IModifiable, IGlob
 		g.setSemantics(this);
 		Util.processModifiers(this,g.getModifiers());
 		Util.processAnnotations(this, g.getAnnotations());
-	}
-	
-	/**
-	 * Constructor for generic instances of a type.
-	 * @param genericParent the type for which to create a generic instance.
-	 */
-	protected RecordType(RecordType genericParent){
-		super(GENERIC,genericParent);
-	}
-	
-	private void createMembers() {
-		descendants = new LinkedList<RecordType>();
-		
 	}
 
 
@@ -210,7 +196,7 @@ public abstract class RecordType extends NamedType implements IModifiable, IGlob
 	}
 
 	@Override
-	public Scope getScope() {
+	public IScope getScope() {
 		return scope;
 	}
 	
@@ -244,7 +230,7 @@ public abstract class RecordType extends NamedType implements IModifiable, IGlob
 		return true;
 	}
 
-	public boolean isInstanceof(Class curClass) {
+	public boolean isInstanceof(IClass curClass) {
 		return false;
 	}
 	
@@ -252,7 +238,7 @@ public abstract class RecordType extends NamedType implements IModifiable, IGlob
 	@Override
 	public void afterAnnotationsProcessed() {}
 	
-	protected int calcByteSize(){
+	public int calcByteSize(){
 		throw new Error("Cannot calculate record type bytesize");
 	}
 	

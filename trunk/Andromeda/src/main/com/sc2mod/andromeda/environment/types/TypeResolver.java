@@ -1,7 +1,7 @@
 package com.sc2mod.andromeda.environment.types;
 
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
@@ -24,7 +24,7 @@ import com.sc2mod.andromeda.syntaxNodes.util.VisitorAdapter;
  * @author gex
  *
  */
-public class TypeResolver extends VisitorAdapter<Scope,Type>{
+public class TypeResolver extends VisitorAdapter<IScope,IType>{
 
 	private TypeProvider tprov;
 
@@ -32,7 +32,7 @@ public class TypeResolver extends VisitorAdapter<Scope,Type>{
 		this.tprov = tprov;
 	}
 	
-	public Type raiseUnknownType(SyntaxNode type, String name){
+	public IType raiseUnknownType(SyntaxNode type, String name){
 		throw Problem.ofType(ProblemId.UNKNOWN_TYPE).at(type)
 		.details(name)
 		.raiseUnrecoverable();
@@ -41,12 +41,12 @@ public class TypeResolver extends VisitorAdapter<Scope,Type>{
 	}
 	
 	@Override
-	public Type visit(SimpleTypeNode type, Scope scope) {
+	public IType visit(SimpleTypeNode type, IScope scope) {
 		
 		//Resolve type name
 		String name = type.getName();
 		
-		Type result = ResolveUtil.resolveUnprefixedType(name, scope, type);
+		IType result = ResolveUtil.resolveUnprefixedType(name, scope, type);
 		if(result == null){
 			return raiseUnknownType(type, name);
 		}
@@ -60,13 +60,13 @@ public class TypeResolver extends VisitorAdapter<Scope,Type>{
 							.raiseUnrecoverable();
 			//We have a generic type, so resolve the type arguments
 			int size  = args.size();
-			Type[] typeArgs = new Type[size];
+			IType[] typeArgs = new IType[size];
 			for(int i=0;i<size;i++){
 				//Resolve arguments
-				Type t = args.elementAt(i).accept(this,scope);
+				IType t = args.elementAt(i).accept(this,scope);
 				typeArgs[i]=t;				
 			}
-			return ((RecordType)result).getGenericInstance(new Signature(typeArgs));
+			return ((RecordTypeImpl)result).getGenericInstance(new Signature(typeArgs));
 		} else{
 			if(args != null)
 				throw Problem.ofType(ProblemId.NON_GENERIC_TYPE_HAS_TYPE_ARGUMENTS).at(args)
@@ -77,9 +77,9 @@ public class TypeResolver extends VisitorAdapter<Scope,Type>{
 	}
 	
 	@Override
-	public Type visit(BasicTypeNode type, Scope scope) {
+	public IType visit(BasicTypeNode type, IScope scope) {
 		String name = type.getName();
-		Type result = ResolveUtil.resolveUnprefixedType(name, scope, type);
+		IType result = ResolveUtil.resolveUnprefixedType(name, scope, type);
 		if(result == null){
 			return raiseUnknownType(type, name);
 		}
@@ -87,22 +87,22 @@ public class TypeResolver extends VisitorAdapter<Scope,Type>{
 	}
 	
 	@Override
-	public Type visit(QualifiedTypeNode qualifiedTypeNode, Scope state) {
+	public IType visit(QualifiedTypeNode qualifiedTypeNode, IScope state) {
 		throw new Error("Qualified type names not possible yet!");
 	}
 	
 	@Override
-	public Type visit(PointerTypeNode type, Scope scope) {
+	public IType visit(PointerTypeNode type, IScope scope) {
 		return tprov.getPointerType(type.getWrappedType().accept(this,scope));
 	}
 	
 	@Override
-	public Type visit(ArrayTypeNode type, Scope scope) {
+	public IType visit(ArrayTypeNode type, IScope scope) {
 		return tprov.getArrayType(type.getWrappedType().accept(this,scope),type.getDimensions());
 	}
 	
 	@Override
-	public Type visit(FuncPointerTypeNode type, Scope scope) {
+	public IType visit(FuncPointerTypeNode type, IScope scope) {
 		return tprov.getFunctionPointerType(type, scope);
 	}
 	

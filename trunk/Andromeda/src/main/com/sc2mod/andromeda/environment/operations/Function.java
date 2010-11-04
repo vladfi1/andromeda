@@ -33,11 +33,11 @@ import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
@@ -85,22 +85,22 @@ public class Function extends Operation {
 	protected ParamDecl[] params;
 	protected List<ImplicitParamDecl> implicitParams;
 	private List<ReturnStmtNode> returnStmts = new ArrayList<ReturnStmtNode>(4);
-	private Type returnType;
+	private IType returnType;
 	
 	private FuncPointerDecl pointerDecl;
 	
-	private Scope scope;
+	private IScope scope;
 
 	private Signature signature;
 
 	private Visibility visibility = Visibility.DEFAULT;
 	private HashMap<String, AnnotationNode> annotationTable;
 
-	public Function(GlobalFuncDeclNode functionDeclaration, Scope scope) {
+	public Function(GlobalFuncDeclNode functionDeclaration, IScope scope) {
 		this(functionDeclaration.getFuncDecl(),scope);
 	}
 	
-	protected Function(MethodDeclNode decl, Scope scope){
+	protected Function(MethodDeclNode decl, IScope scope){
 		this.declaration = decl;
 		this.header = decl.getHeader();
 		this.name = header.getName();
@@ -115,7 +115,7 @@ public class Function extends Operation {
 	//XPilot: for function proxies
 	protected Function() {}
 	
-	protected Function(StaticInitDeclNode decl, Scope scope){
+	protected Function(StaticInitDeclNode decl, IScope scope){
 		this.declaration = decl;
 		this.name = "static init";
 		this.body = decl.getBody();
@@ -135,7 +135,7 @@ public class Function extends Operation {
 		locals = newLocals;
 	}
 
-	public void addImplicitParam(Type type, String name){
+	public void addImplicitParam(IType type, String name){
 		if(implicitParams == null){
 			implicitParams = new ArrayList<ImplicitParamDecl>(3);
 		}
@@ -171,7 +171,7 @@ public class Function extends Operation {
 	 * Functions are not contained in any type
 	 * @return null
 	 */
-	public Type getContainingType() {
+	public IType getContainingType() {
 		return null;
 	}
 
@@ -210,12 +210,12 @@ public class Function extends Operation {
 		return implicitParams;
 	}
 
-	public Type getReturnType() {
+	public IType getReturnType() {
 		return returnType;
 	}
 
 	@Override
-	public Scope getScope() {
+	public IScope getScope() {
 		return scope;
 	}
 
@@ -354,7 +354,7 @@ public class Function extends Operation {
 	}
 	
 	@Override
-	public void setReturnType(Type returnType) {
+	public void setReturnType(IType returnType) {
 		this.returnType = returnType;
 	}
 

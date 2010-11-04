@@ -12,7 +12,7 @@ package com.sc2mod.andromeda.codegen;
 import java.util.HashMap;
 
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.AssignOpSE;
 import com.sc2mod.andromeda.syntaxNodes.BinOpSE;
@@ -25,11 +25,11 @@ public final class CodegenUtil {
 	 */
 	private CodegenUtil(){}
 
-	private static HashMap<Type,HashMap<Type,StringPair>> typeCasts = new HashMap<Type,HashMap<Type,StringPair>>();
+	private static HashMap<IType,HashMap<IType,StringPair>> typeCasts = new HashMap<IType,HashMap<IType,StringPair>>();
 	static{
-		HashMap<Type,StringPair> cur;
+		HashMap<IType,StringPair> cur;
 		//Casts from fixed
-		typeCasts.put(BasicType.FLOAT, cur = new HashMap<Type, StringPair>());
+		typeCasts.put(BasicType.FLOAT, cur = new HashMap<IType, StringPair>());
 		cur.put(BasicType.INT, new StringPair("FixedToInt(",")"));
 		cur.put(BasicType.BYTE, new StringPair("(FixedToInt(",")&0xff)"));
 		cur.put(BasicType.STRING, new StringPair("FixedToString(",",3)"));
@@ -37,7 +37,7 @@ public final class CodegenUtil {
 		cur.put(BasicType.BOOL, new StringPair("(","!=0.0)"));
 		
 		//Casts from int
-		typeCasts.put(BasicType.INT, cur = new HashMap<Type, StringPair>());
+		typeCasts.put(BasicType.INT, cur = new HashMap<IType, StringPair>());
 		cur.put(BasicType.BYTE, new StringPair("((",")&0xff)"));
 		cur.put(BasicType.FLOAT, new StringPair("IntToFixed(",")"));
 		cur.put(BasicType.STRING, new StringPair("IntToString(",")"));
@@ -45,7 +45,7 @@ public final class CodegenUtil {
 		cur.put(BasicType.BOOL, new StringPair("(","!=0)"));
 		
 		//Casts from string
-		typeCasts.put(BasicType.STRING, cur = new HashMap<Type, StringPair>());
+		typeCasts.put(BasicType.STRING, cur = new HashMap<IType, StringPair>());
 		cur.put(BasicType.FLOAT, new StringPair("StringToFixed(",")"));
 		cur.put(BasicType.INT, new StringPair("StringToInt(",")"));
 		cur.put(BasicType.BYTE, new StringPair("(StringToInt(",")&0xff)"));
@@ -53,7 +53,7 @@ public final class CodegenUtil {
 		cur.put(BasicType.BOOL, new StringPair("(","!=null)"));
 		
 		//Casts from text
-		typeCasts.put(BasicType.TEXT, cur = new HashMap<Type, StringPair>());
+		typeCasts.put(BasicType.TEXT, cur = new HashMap<IType, StringPair>());
 		cur.put(BasicType.FLOAT, new StringPair("StringToFixed(TextToString(","))"));
 		cur.put(BasicType.INT, new StringPair("StringToInt(TextToString(","))"));
 		cur.put(BasicType.STRING, new StringPair("TextToString(",")"));
@@ -62,8 +62,8 @@ public final class CodegenUtil {
 		//XPilot: Casts from bool?
 	}
 	
-	public static StringPair getCastOp(Type fromType, Type toType){
-		HashMap<Type, StringPair> tcs = typeCasts.get(fromType);
+	public static StringPair getCastOp(IType fromType, IType toType){
+		HashMap<IType, StringPair> tcs = typeCasts.get(fromType);
 		if(tcs==null) return null;
 		return tcs.get(toType);
 	}

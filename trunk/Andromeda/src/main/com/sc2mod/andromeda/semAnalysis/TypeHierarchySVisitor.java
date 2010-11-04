@@ -3,11 +3,11 @@ package com.sc2mod.andromeda.semAnalysis;
 import java.util.HashSet;
 
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.environment.types.Class;
-import com.sc2mod.andromeda.environment.types.Interface;
+import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Struct;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IStruct;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 import com.sc2mod.andromeda.notifications.Problem;
@@ -16,7 +16,7 @@ import com.sc2mod.andromeda.notifications.ProblemId;
 public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 
 	private TypeProvider tprov;
-	private HashSet<RecordType> alreadyChecked = new HashSet<RecordType>();
+	private HashSet<RecordTypeImpl> alreadyChecked = new HashSet<RecordTypeImpl>();
 	
 	public TypeHierarchySVisitor(Environment env) {
 		this.tprov = env.typeProvider;
@@ -24,7 +24,7 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 	
 	
 	public void execute(){
-		for(RecordType t: tprov.getRecordTypes()){
+		for(RecordTypeImpl t: tprov.getRecordTypes()){
 			t.accept(this);
 		}
 	}
@@ -35,7 +35,7 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 	 * @param t type to be checked
 	 * @param marked the set of types already in that hierarchy
 	 */
-	private void doCircleCheck(RecordType t,HashSet<RecordType> marked){
+	private void doCircleCheck(RecordTypeImpl t,HashSet<RecordTypeImpl> marked){
 		alreadyChecked.add(t);
 		if(marked.contains(t)){
 			throw Problem.ofType(ProblemId.INHERITANCE_CYCLE).at(t.getDefinition())
@@ -51,19 +51,19 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 	 * Structs currently have no hierarchy, so just add them to the root types.
 	 */
 	@Override
-	public void visit(Struct struct) {
+	public void visit(IStruct struct) {
 		tprov.registerRootRecord(struct);
 	}
 	
 	//****** Classes *******
 
-	protected void buildClassHierarchy(Class clazz, TypeProvider typeProvider,HashSet<RecordType> marked) {
-		Class superClass = clazz.getSuperClass();
+	protected void buildClassHierarchy(IClass clazz, TypeProvider typeProvider,HashSet<RecordTypeImpl> marked) {
+		IClass superClass = clazz.getSuperClass();
 		
 		//Build hierarchy
 		if(!alreadyChecked.contains(clazz)){
 			boolean hasParents = false;
-			for(Interface i : clazz.getInterfaces()){
+			for(IInterface i : clazz.getInterfaces()){
 				i.getDecendants().add(clazz);
 				hasParents = true;
 			}
@@ -87,7 +87,7 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 		
 		//Do circle checking
 		doCircleCheck(clazz, marked);
-		for(Interface i : clazz.getInterfaces()){
+		for(IInterface i : clazz.getInterfaces()){
 			buildInterfaceHierarchy(i,typeProvider,marked);
 		}
 		if(superClass!=null){
@@ -97,19 +97,19 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 	}
 
 	@Override
-	public void visit(Class class1) {
+	public void visit(IClass class1) {
 		if(alreadyChecked.contains(class1)) return;
-		buildClassHierarchy(class1,tprov,new HashSet<RecordType>());
+		buildClassHierarchy(class1,tprov,new HashSet<RecordTypeImpl>());
 	}
 
 	
 	//****** Interfaces *******
 	
-	protected void buildInterfaceHierarchy(Interface interfac, TypeProvider typeProvider,HashSet<RecordType> marked) {
-		HashSet<Interface> interfaces = interfac.getInterfaces();
+	protected void buildInterfaceHierarchy(IInterface interfac, TypeProvider typeProvider,HashSet<RecordTypeImpl> marked) {
+		HashSet<IInterface> interfaces = interfac.getInterfaces();
 		if(!alreadyChecked.contains(interfac)){
 			if(!interfaces.isEmpty()){
-				for(Interface i: interfaces){
+				for(IInterface i: interfaces){
 					i.getDecendants().add(interfac);
 				}
 			} else {
@@ -117,14 +117,14 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 			}
 		}
 		doCircleCheck(interfac, marked);
-		for(Interface i : interfaces){
+		for(IInterface i : interfaces){
 			buildInterfaceHierarchy(i,typeProvider,marked);
 		}
 	}
 
 	@Override
-	public void visit(Interface interface1) {
+	public void visit(IInterface interface1) {
 		if(alreadyChecked.contains(interface1)) return;
-		buildInterfaceHierarchy(interface1,tprov,new HashSet<RecordType>());
+		buildInterfaceHierarchy(interface1,tprov,new HashSet<RecordTypeImpl>());
 	}
 }

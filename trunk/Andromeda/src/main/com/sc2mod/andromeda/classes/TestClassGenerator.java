@@ -17,7 +17,7 @@ import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.ConstructorInvocation;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 
@@ -29,7 +29,7 @@ public class TestClassGenerator extends ClassGenerator {
 	}
 
 	@Override
-	public void generateClasses(ArrayList<Class> arrayList) {
+	public void generateClasses(ArrayList<IClass> arrayList) {
 
 	}
 
@@ -40,17 +40,17 @@ public class TestClassGenerator extends ClassGenerator {
 
 	@Override
 	public void generateConstructorInvocation(ConstructorInvocation inv,
-			ExprListNode arguments, Class forClass) {
+			ExprListNode arguments, IClass forClass) {
 
 	}
 
 	@Override
-	public void generateFieldAccessPrefix(SimpleBuffer curExprBuffer, Class c) {
+	public void generateFieldAccessPrefix(SimpleBuffer curExprBuffer, IClass c) {
 
 	}
 
 	@Override
-	public void generateFieldAccessSuffix(SimpleBuffer curExprBuffer, Class c) {
+	public void generateFieldAccessSuffix(SimpleBuffer curExprBuffer, IClass c) {
 
 	}
 

@@ -9,7 +9,7 @@ import com.sc2mod.andromeda.syntaxNodes.util.*;
 
 public abstract class ExprNode extends SyntaxNode {
 
-  private com.sc2mod.andromeda.environment.types.Type inferedType;
+  private com.sc2mod.andromeda.environment.types.IType inferedType;
   private boolean constant;
   private com.sc2mod.andromeda.vm.data.DataObject value;
   private SyntaxNode parent;
@@ -174,11 +174,11 @@ public abstract class ExprNode extends SyntaxNode {
     throw new ClassCastException("tried to call abstract method");
   }
 
-  public com.sc2mod.andromeda.environment.types.Type getInferedType() {
+  public com.sc2mod.andromeda.environment.types.IType getInferedType() {
     return inferedType;
   }
 
-  public void setInferedType(com.sc2mod.andromeda.environment.types.Type inferedType) {
+  public void setInferedType(com.sc2mod.andromeda.environment.types.IType inferedType) {
     this.inferedType = inferedType;
   }
 

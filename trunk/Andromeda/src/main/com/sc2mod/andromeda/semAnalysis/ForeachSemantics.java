@@ -10,7 +10,7 @@
 package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.operations.Invocation;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
@@ -19,10 +19,10 @@ import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 
 public class ForeachSemantics extends LoopSemantics {
 
-	private Type nextType;
-	private Type iteratorType;
-	private Type itereeType;
-	private Type iterVarType;
+	private IType nextType;
+	private IType iteratorType;
+	private IType itereeType;
+	private IType iterVarType;
 	private LocalVarDecl iterVarDecl;
 	private NameExprNode iterator;
 
@@ -53,10 +53,10 @@ public class ForeachSemantics extends LoopSemantics {
 	public void setDelStatement(StmtNode delStatemetn) {
 		this.delStatement = delStatemetn;
 	}
-	public Type getIterVarType() {
+	public IType getIterVarType() {
 		return iterVarType;
 	}
-	public void setIterVarType(Type iterVarType) {
+	public void setIterVarType(IType iterVarType) {
 		this.iterVarType = iterVarType;
 	}
 	public Invocation getGetIterator() {
@@ -66,22 +66,22 @@ public class ForeachSemantics extends LoopSemantics {
 		this.getIterator = getIterator;
 	}
 	private boolean destroyAfter;
-	public Type getNextType() {
+	public IType getNextType() {
 		return nextType;
 	}
-	public void setNextType(Type nextType) {
+	public void setNextType(IType nextType) {
 		this.nextType = nextType;
 	}
-	public Type getIteratorType() {
+	public IType getIteratorType() {
 		return iteratorType;
 	}
-	public void setIteratorType(Type iteratorType) {
+	public void setIteratorType(IType iteratorType) {
 		this.iteratorType = iteratorType;
 	}
-	public Type getItereeType() {
+	public IType getItereeType() {
 		return itereeType;
 	}
-	public void setItereeType(Type itereeType) {
+	public void setItereeType(IType itereeType) {
 		this.itereeType = itereeType;
 	}
 	public Invocation getHasNext() {

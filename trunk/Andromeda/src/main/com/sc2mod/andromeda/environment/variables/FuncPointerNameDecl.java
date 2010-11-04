@@ -16,7 +16,7 @@ import com.sc2mod.andromeda.vm.data.FunctionObject;
 import com.sc2mod.andromeda.vm.data.StringObject;
 
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -24,7 +24,7 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class FuncPointerNameDecl extends ImplicitFieldDecl{
 
-	private Type pointerType;
+	private IType pointerType;
 	private ExprNode leftSide;
 	public FuncPointerNameDecl(ExprNode leftSide, TypeProvider typeProvider) {
 		this.pointerType = leftSide.getInferedType();

@@ -14,7 +14,7 @@ public class IdentifierNode extends SyntaxNode {
 
   private SyntaxNode parent;
   private String id;
-  private com.sc2mod.andromeda.environment.types.Type inferedType;
+  private com.sc2mod.andromeda.environment.types.IType inferedType;
 
   public IdentifierNode (String id) {
     this.id = id;
@@ -31,11 +31,11 @@ public class IdentifierNode extends SyntaxNode {
     this.id = id;
   }
 
-  public com.sc2mod.andromeda.environment.types.Type getInferedType() {
+  public com.sc2mod.andromeda.environment.types.IType getInferedType() {
     return inferedType;
   }
 
-  public void setInferedType(com.sc2mod.andromeda.environment.types.Type inferedType) {
+  public void setInferedType(com.sc2mod.andromeda.environment.types.IType inferedType) {
     this.inferedType = inferedType;
   }
 

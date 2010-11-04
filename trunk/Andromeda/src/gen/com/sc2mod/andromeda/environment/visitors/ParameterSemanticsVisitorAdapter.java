@@ -15,17 +15,17 @@ import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.types.ArrayType;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.Extension;
 import com.sc2mod.andromeda.environment.types.FunctionPointer;
 import com.sc2mod.andromeda.environment.types.GenericClass;
-import com.sc2mod.andromeda.environment.types.Interface;
+import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.NonReferentialType;
 import com.sc2mod.andromeda.environment.types.PointerType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.StaticDecl;
-import com.sc2mod.andromeda.environment.types.Struct;
+import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.TypeBool;
 import com.sc2mod.andromeda.environment.types.TypeByte;
 import com.sc2mod.andromeda.environment.types.TypeChar;
@@ -65,18 +65,18 @@ public abstract class ParameterSemanticsVisitorAdapter<P,R> implements Parameter
 	public R visit(StaticInit staticInit,P state) { return visitDefault(staticInit,state); }
 	public R visit(ArrayType arrayType,P state) { return visitDefault(arrayType,state); }
 	public R visit(BasicType basicType,P state) { return visitDefault(basicType,state); }
-	public R visit(Class _class,P state) { return visitDefault(_class,state); }
+	public R visit(IClass _class,P state) { return visitDefault(_class,state); }
 	public R visit(Enrichment enrichment,P state) { return visitDefault(enrichment,state); }
 	public R visit(Extension extension,P state) { return visitDefault(extension,state); }
 	public R visit(FunctionPointer functionPointer,P state) { return visitDefault(functionPointer,state); }
 	public R visit(GenericClass genericClass,P state) { return visitDefault(genericClass,state); }
 	public R visit(GenericClassInstance genericClassInstance,P state) { return visitDefault(genericClassInstance,state); }
-	public R visit(Interface _interface,P state) { return visitDefault(_interface,state); }
+	public R visit(IInterface _interface,P state) { return visitDefault(_interface,state); }
 	public R visit(NonReferentialType nonReferentialType,P state) { return visitDefault(nonReferentialType,state); }
 	public R visit(PointerType pointerType,P state) { return visitDefault(pointerType,state); }
 	public R visit(SpecialType specialType,P state) { return visitDefault(specialType,state); }
 	public R visit(StaticDecl staticDecl,P state) { return visitDefault(staticDecl,state); }
-	public R visit(Struct struct,P state) { return visitDefault(struct,state); }
+	public R visit(IStruct struct,P state) { return visitDefault(struct,state); }
 	public R visit(TypeBool typeBool,P state) { return visitDefault(typeBool,state); }
 	public R visit(TypeByte typeByte,P state) { return visitDefault(typeByte,state); }
 	public R visit(TypeChar typeChar,P state) { return visitDefault(typeChar,state); }

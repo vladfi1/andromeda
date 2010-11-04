@@ -6,14 +6,14 @@ import com.sc2mod.andromeda.environment.operations.Invocation;
 import com.sc2mod.andromeda.environment.operations.InvocationType;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.AccessType;
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.SpecialType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
@@ -53,7 +53,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	private final NameResolver nameResolver;
 	private final ExpressionAnalyzer exprResolver;
 	
-	private Scope staticPrefixScope;
+	private IScope staticPrefixScope;
 	
 	public ExpressionAnalysisVisitor(StatementAnalysisVisitor parent){
 		this.parent = parent;
@@ -168,11 +168,11 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	@Override
 	public void visit(CastExprNode castExpression, ExpressionContext context) {
 		//Get the type to cast to
-		Type type = parent.typeProvider.resolveType(castExpression.getType(),parent.curScope);
+		IType type = parent.typeProvider.resolveType(castExpression.getType(),parent.curScope);
 		
 		//Infere right expression type
 		castExpression.getRightExpression().accept(this,ExpressionContext.DEFAULT);
-		Type rightType = castExpression.getRightExpression().getInferedType();
+		IType rightType = castExpression.getRightExpression().getInferedType();
 		
 		//Is cast possible
 		if(rightType.canExplicitCastTo(type)){
@@ -195,7 +195,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	public void visit(ArrayAccessExprNode arrayAccess, ExpressionContext context) {
 		arrayAccess.childrenAccept(this,ExpressionContext.DEFAULT);
 		//Check if an array access is possible
-		Type t = arrayAccess.getLeftExpression().getInferedType();
+		IType t = arrayAccess.getLeftExpression().getInferedType();
 		if(t.getCategory()!=TypeCategory.ARRAY){
 			Problem.ofType(ProblemId.ARRAY_ACCESS_ON_NONARRAY).at(arrayAccess)
 					.details(t.getUid())
@@ -218,12 +218,12 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	@Override
 	public void visit(NewExprNode c, ExpressionContext context) {
 		c.getArguments().accept(this,ExpressionContext.DEFAULT);
-		Type t;
+		IType t;
 		c.setInferedType(t = parent.typeProvider.resolveType(c.getType(),parent.curScope));
 		
 		
 		if(t.getCategory() == TypeCategory.CLASS){
-			ConstructorInvocation ci = parent.resolveConstructorCall(c,(Class) t,
+			ConstructorInvocation ci = parent.resolveConstructorCall(c,(IClass) t,
 					new Signature(c.getArguments()), parent.curScope, false,
 					false);
 			c.setSemantics(ci);
@@ -245,8 +245,8 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 							.details(conditionalExpression.getLeftExpression().getInferedType())
 							.raiseUnrecoverable();
 		}
-		Type type1 = conditionalExpression.getRightExpression().getInferedType();
-		Type type2 = conditionalExpression.getRightExpression2().getInferedType();
+		IType type1 = conditionalExpression.getRightExpression().getInferedType();
+		IType type2 = conditionalExpression.getRightExpression2().getInferedType();
 		if(!type2.canImplicitCastTo(type1)){
 			throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_CONDITIONAL).at(conditionalExpression)
 				.details(type1,type2)
@@ -271,8 +271,8 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		}
 	}
 	
-	private Scope getPrefixScope(ExprNode prefix){
-		Scope prefixScope = prefix.getInferedType();
+	private IScope getPrefixScope(ExprNode prefix){
+		IScope prefixScope = prefix.getInferedType();
 		
 		if(prefixScope == null){
 			/* 
@@ -288,9 +288,9 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		return prefixScope;
 	}
 	
-	private VarDecl checkResolvedVar(ScopedElement elem, ExprNode where, ExpressionContext context){
+	private VarDecl checkResolvedVar(IScopedElement elem, ExprNode where, ExpressionContext context){
 		VarDecl vd = null;
-		Type t = null;
+		IType t = null;
 		switch(elem.getElementType()){
 		case ERROR: //FIXME: Error handling
 			throw new Error("!");
@@ -307,7 +307,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 			//If this is a type or package prefix, we set it as static
 			//field scope so it can be used to look up its content in a field access
 			//or method invocation expression.
-			staticPrefixScope = (Scope) elem;
+			staticPrefixScope = (IScope) elem;
 		}
 		
 		//Set semantics
@@ -341,7 +341,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		//FIXME: Use correct access type
 		
 		//Resolve the name
-		ScopedElement elem = nameResolver.resolveName(nameExprNode.getName(), parent.curScope, AccessType.RVALUE, nameExprNode);
+		IScopedElement elem = nameResolver.resolveName(nameExprNode.getName(), parent.curScope, AccessType.RVALUE, nameExprNode);
 
 		if(elem == null) 
 			throw Problem.ofType(ProblemId.VAR_NAME_NOT_FOUND).at(nameExprNode).details(nameExprNode.getName())
@@ -361,12 +361,12 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		prefix.accept(this,ExpressionContext.SCOPE_PREFIX);
 		
 		boolean staticAccess = isPrefixStatic(prefix);
-		Scope prefixScope = getPrefixScope(prefix);
+		IScope prefixScope = getPrefixScope(prefix);
 		
 		//FIXME: Use correct access type
 		
 		//Resolve the name
-		ScopedElement elem = ResolveUtil.resolvePrefixedName(prefixScope, fieldAccess.getName(), parent.curScope, AccessType.RVALUE, fieldAccess,staticAccess);
+		IScopedElement elem = ResolveUtil.resolvePrefixedName(prefixScope, fieldAccess.getName(), parent.curScope, AccessType.RVALUE, fieldAccess,staticAccess);
 		
 		//FIXME correct error response
 		if(elem == null) throw new Error("Could not resolve (see copyOfNameResolver)");
@@ -413,7 +413,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 			//Visit prefix
 			prefix.accept(this,ExpressionContext.SCOPE_PREFIX);
 			boolean staticAccess = isPrefixStatic(prefix);
-			Scope prefixScope = getPrefixScope(prefix);
+			IScope prefixScope = getPrefixScope(prefix);
 			
 			//Do we have a super prefix? If so, the invocation cannot be virtual
 			disallowVirtualInvocation = prefix instanceof SuperExprNode;
@@ -442,7 +442,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		}
 		
 		//Set semantics and type
-		Type type = inv.getReturnType();
+		IType type = inv.getReturnType();
 		methodInvocation.setSemantics(inv);
 		methodInvocation.setInferedType(type);
 	}
@@ -450,7 +450,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 
 	@Override
 	public void visit(KeyOfExprNode keyOfExpression, ExpressionContext context) {
-		Type t = parent.typeProvider.resolveType(keyOfExpression.getType(),parent.curScope);
+		IType t = parent.typeProvider.resolveType(keyOfExpression.getType(),parent.curScope);
 		keyOfExpression.setInferedType(t);
 		keyOfExpression.setConstant(true);
 		keyOfExpression.accept(parent.constResolve);
@@ -481,11 +481,11 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	
 	@Override
 	public void visit(SuperExprNode superExprNode, ExpressionContext context) {
-		Type curType = parent.curType;
+		IType curType = parent.curType;
 		if(curType == null  || !curType.isClass())
 			throw Problem.ofType(ProblemId.SUPER_OUTSIDE_OF_CLASS).at(superExprNode)
 				.raiseUnrecoverable();
-		Class curClass = ((Class) curType).getSuperClass();
+		IClass curClass = ((IClass) curType).getSuperClass();
 		if(curClass == null)
 			throw Problem.ofType(ProblemId.SUPER_IN_TOP_CLASS).at(superExprNode)
 				.raiseUnrecoverable();

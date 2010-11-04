@@ -8,7 +8,7 @@ import com.sc2mod.andromeda.syntaxNodes.util.*;
 
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.environment.SemanticsElement;
-import com.sc2mod.andromeda.environment.types.Struct;
+import com.sc2mod.andromeda.environment.types.IStruct;
 
 public class StructDeclNode extends GlobalStructureNode {
 
@@ -62,15 +62,15 @@ public class StructDeclNode extends GlobalStructureNode {
     this.body = body;
   }
 
-  private Struct semantics;
+  private IStruct semantics;
   @Override
   public void setSemantics(SemanticsElement semantics){
-  	if(!(semantics instanceof Struct)) throw new InternalProgramError(this,"Trying to assign semantics of type "
+  	if(!(semantics instanceof IStruct)) throw new InternalProgramError(this,"Trying to assign semantics of type "
   				+ semantics.getClass().getSimpleName() + " to node " + this.getClass().getSimpleName());
-  	this.semantics = (Struct)semantics;
+  	this.semantics = (IStruct)semantics;
   }
   @Override
-  public Struct getSemantics(){
+  public IStruct getSemantics(){
   	return semantics;
   }
 

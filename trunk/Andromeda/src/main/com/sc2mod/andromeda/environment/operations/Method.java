@@ -18,10 +18,10 @@ import com.sc2mod.andromeda.semAnalysis.SemanticsCheckerAndResolver;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.types.Interface;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -30,10 +30,10 @@ public class Method extends Function {
 
 	private boolean isAbstract;
 	private boolean isStatic;
-	private Type containingType;
+	private IType containingType;
 	private OverrideInformation overrideInformation;
 	
-	public Method( MethodDeclNode functionDeclaration, Type containingType, Scope scope) {
+	public Method( MethodDeclNode functionDeclaration, IType containingType, IScope scope) {
 		super(functionDeclaration,scope);
 		this.containingType = containingType;
 		if(!isStatic){
@@ -53,7 +53,7 @@ public class Method extends Function {
 	
 	@Override
 	public String getDescription() {
-		Type t = getContainingType();
+		IType t = getContainingType();
 		if(t == null) return "method " + getUid();
 		return "method " + t.getFullName() + "." + getUid();
 	}
@@ -67,7 +67,7 @@ public class Method extends Function {
 	}
 	
 	@Override
-	public Type getContainingType() {
+	public IType getContainingType() {
 		return containingType;
 	}
 	

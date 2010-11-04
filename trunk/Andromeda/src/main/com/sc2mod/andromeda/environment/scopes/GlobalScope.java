@@ -26,7 +26,7 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class GlobalScope extends Scope {
+public class GlobalScope extends ScopeImpl {
 
 	/**
 	 * Creates a global scope. Should only be created
@@ -45,7 +45,7 @@ public class GlobalScope extends Scope {
 	}
 
 	@Override
-	public Scope getParentScope() {
+	public IScope getParentScope() {
 		return null;
 	}
 
@@ -55,7 +55,7 @@ public class GlobalScope extends Scope {
 	 * the global scope has no ancestor anyway.
 	 */
 	@Override
-	public void addContent(String name, ScopedElement elem){
+	public void addContent(String name, IScopedElement elem){
 		getContent().add(name, elem);
 	}
 

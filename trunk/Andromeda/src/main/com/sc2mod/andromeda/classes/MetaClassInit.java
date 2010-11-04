@@ -12,7 +12,7 @@ package com.sc2mod.andromeda.classes;
 import com.sc2mod.andromeda.codetransform.SyntaxGenerator;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.parsing.TransientCompilationData;
@@ -37,7 +37,7 @@ public class MetaClassInit {
 		TypeProvider tprov = env.typeProvider;
 		if(tprov.getClasses().isEmpty()) return;
 		
-		Class metaClass = tprov.getSystemClass(AndromedaSystemTypes.T_CLASS);
+		IClass metaClass = tprov.getSystemClass(AndromedaSystemTypes.T_CLASS);
 		
 		//We need as many meta classes as classes exist
 		metaClass.setInstanceLimit(tprov.getClasses().size());

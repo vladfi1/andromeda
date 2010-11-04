@@ -18,9 +18,9 @@ import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
@@ -47,7 +47,7 @@ public class Constructor extends Method {
 		this.invokedConstructor = invokedConstructor;
 	}
 
-	public Constructor(MethodDeclNode functionDeclaration, Class clazz, Scope scope) {
+	public Constructor(MethodDeclNode functionDeclaration, IClass clazz, IScope scope) {
 		super(functionDeclaration,clazz, scope);
 	}
 	

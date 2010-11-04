@@ -11,6 +11,6 @@ package com.sc2mod.andromeda.environment;
 
 import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
 
-public abstract class SemanticsElement implements SemanticsVisitorNode {
+public interface SemanticsElement extends SemanticsVisitorNode {
 
 }

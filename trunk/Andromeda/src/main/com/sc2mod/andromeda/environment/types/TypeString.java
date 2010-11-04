@@ -20,13 +20,13 @@ public class TypeString extends BasicType{
 	}
 	
 	 @Override
-	public boolean canImplicitCastTo(Type toType) {
+	public boolean canImplicitCastTo(IType toType) {
 		 if(toType == this|| toType == TEXT) return true;
 		 return false;
 	}
 	 
 	 @Override
-	public boolean canExplicitCastTo(Type type) {
+	public boolean canExplicitCastTo(IType type) {
 		 return super.canExplicitCastTo(type) || canImplicitCastTo(type);
 	}
 	 

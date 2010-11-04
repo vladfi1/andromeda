@@ -17,7 +17,7 @@ import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Invocation;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.scopes.ScopeUtil;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.SourceFileInfo;
@@ -132,7 +132,7 @@ public class CallHierarchyExpressionVisitor extends TransformationExprVisitor {
 		
 		//Register class instantiation
 		ConstructorInvocation ci = (ConstructorInvocation) c.getSemantics();
-		Class cl = (Class)c.getInferedType();
+		IClass cl = (IClass)c.getInferedType();
 		cl.registerInstantiation();
 		
 		//Register the constructor invocation

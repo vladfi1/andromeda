@@ -10,7 +10,7 @@
 package com.sc2mod.andromeda.codetransform;
 
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.semAnalysis.SimplicityDecisionVisitor;
@@ -69,7 +69,7 @@ public class ComplexExpressionChopper {
 			
 			
 			ExprNode e = f.getLeftExpression();
-			Type t = e.getInferedType();
+			IType t = e.getInferedType();
 			if(t.isValidAsParameter()){
 				NameExprNode z = varProvider.getImplicitLocalVar(t);					
 				addStatementsTo.addStatementBefore(syntaxGenerator.genAssignStatement(z, e, AssignOpSE.EQ));

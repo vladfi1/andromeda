@@ -3,7 +3,7 @@ package com.sc2mod.andromeda.environment
 top SemanticsElement
 
 package com.sc2mod.andromeda.environment.scopes
-Scope
+ScopeImpl
 FileScope
 GlobalScope
 BlockScope
@@ -25,31 +25,40 @@ StaticInit
 package com.sc2mod.andromeda.environment.types
 ArrayType
 BasicType
-Class
 UnscopedType
 Enrichment
-Extension
 FunctionPointer
-GenericClass
-GenericClassInstance
-Interface
 NonReferentialType
 PointerType
-RecordType
 SimpleType
 SpecialType
 StaticDecl
-Struct
-Type
 TypeBool
 TypeByte
 TypeChar
 TypeFixed
 TypeInt
-TypeParameter
 TypeShort
 TypeString
 TypeUnknown
+
+package com.sc2mod.andromeda.environment.types.impl
+ClassImpl
+InterfaceImpl
+NamedTypeImpl
+RecordTypeImpl
+ReferentialTypeImpl
+StructImpl
+ExtensionImpl
+TypeImpl
+
+package com.sc2mod.andromeda.environment.types.generic
+GenericClassInstance
+GenericExtensionInstance
+GenericInterfaceInstance
+GenericStructInstance
+GenericTypeInstance
+TypeParameter
 
 package com.sc2mod.andromeda.environment.variables
 AccessorDecl

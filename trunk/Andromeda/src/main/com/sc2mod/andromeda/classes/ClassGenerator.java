@@ -21,7 +21,7 @@ import com.sc2mod.andromeda.environment.operations.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 
@@ -37,7 +37,7 @@ public abstract class ClassGenerator {
 	protected int generationCount;
 	protected String curClassIdName;
 	protected String curThisName;
-	protected Class metaClass;
+	protected IClass metaClass;
 
 	
 	/**
@@ -72,12 +72,12 @@ public abstract class ClassGenerator {
 
 	}
 	
-	public abstract void generateClasses(ArrayList<Class> arrayList);
+	public abstract void generateClasses(ArrayList<IClass> arrayList);
 	
 
-	public abstract void generateFieldAccessPrefix(SimpleBuffer curExprBuffer, Class c);
+	public abstract void generateFieldAccessPrefix(SimpleBuffer curExprBuffer, IClass c);
 	
-	public abstract void generateFieldAccessSuffix(SimpleBuffer curExprBuffer, Class c);
+	public abstract void generateFieldAccessSuffix(SimpleBuffer curExprBuffer, IClass c);
 
 	
 	/**
@@ -94,7 +94,7 @@ public abstract class ClassGenerator {
 	 * @param arguments the argument list
 	 * @param forClass the class for which the constructor was called
 	 */
-	public abstract void generateConstructorInvocation(ConstructorInvocation inv, ExprListNode arguments,Class forClass);
+	public abstract void generateConstructorInvocation(ConstructorInvocation inv, ExprListNode arguments,IClass forClass);
 
 	public void generateImplicitCidParam(Operation m, int indexOffset) {		
 		//Generate the implicit parameter

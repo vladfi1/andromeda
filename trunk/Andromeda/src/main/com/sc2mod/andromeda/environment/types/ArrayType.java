@@ -20,11 +20,11 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 public class ArrayType extends UnscopedType {
 
 	
-	private Type wrappedType;
+	private IType wrappedType;
 	private int dimension;
 	private String uid;
 
-	public ArrayType(Type wrappedType, int dimension){
+	public ArrayType(IType wrappedType, int dimension){
 		this.wrappedType = wrappedType;
 		this.dimension = dimension;
 		this.uid = new StringBuffer().append(wrappedType.getUid()).append("[").append(dimension).append("]").toString();
@@ -59,7 +59,7 @@ public class ArrayType extends UnscopedType {
 	}
 	
 	@Override
-	public Type getWrappedType() {
+	public IType getWrappedType() {
 		return wrappedType;
 	}
 	

@@ -23,7 +23,7 @@ import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.GlobalScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.notifications.Problem;
@@ -46,17 +46,17 @@ public class TypeProvider {
 	//*** TYPE COLLECTIONS***
 	//private LinkedHashMap<String,Type> types = new LinkedHashMap<String,Type>();
 	
-	private ArrayList<RecordType> rootRecordTypes = new ArrayList<RecordType>();
-	private ArrayList<RecordType> recordTypes = new ArrayList<RecordType>();
-	private ArrayList<Class> classes = new ArrayList<Class>();
-	private LinkedHashMap<Signature,LinkedHashMap<Type,FunctionPointer>> funcPointers = new LinkedHashMap<Signature, LinkedHashMap<Type,FunctionPointer>>();
-	private ArrayList<Pair<TypeAliasDeclNode, Scope>> typeAliases = new ArrayList<Pair<TypeAliasDeclNode,Scope>>();
+	private ArrayList<RecordTypeImpl> rootRecordTypes = new ArrayList<RecordTypeImpl>();
+	private ArrayList<RecordTypeImpl> recordTypes = new ArrayList<RecordTypeImpl>();
+	private ArrayList<IClass> classes = new ArrayList<IClass>();
+	private LinkedHashMap<Signature,LinkedHashMap<IType,FunctionPointer>> funcPointers = new LinkedHashMap<Signature, LinkedHashMap<IType,FunctionPointer>>();
+	private ArrayList<Pair<TypeAliasDeclNode, IScope>> typeAliases = new ArrayList<Pair<TypeAliasDeclNode,IScope>>();
 	
 	
 	private SystemTypes systemTypes;
 	
-	private HashMap<Type,Type> pointerTypes = new HashMap<Type,Type>();
-	private HashMap<Type,HashMap<Integer,Type>> arrayTypes = new HashMap<Type,HashMap<Integer,Type>>();
+	private HashMap<IType,IType> pointerTypes = new HashMap<IType,IType>();
+	private HashMap<IType,HashMap<Integer,IType>> arrayTypes = new HashMap<IType,HashMap<Integer,IType>>();
 	
 	private GlobalScope globalScope;
 	private ArrayList<Extension> extensions = new ArrayList<Extension>();
@@ -77,11 +77,11 @@ public class TypeProvider {
 		systemTypes.resolveSystemTypes();
 	}
 
-	public Type getSystemType(String id) {
+	public IType getSystemType(String id) {
 		return systemTypes.getSystemType(id);
 	}
 	
-	public Class getSystemClass(String id){
+	public IClass getSystemClass(String id){
 		return systemTypes.getSystemClass(id);
 	}
 	
@@ -93,11 +93,11 @@ public class TypeProvider {
 	 * Getters: Allow accessing some of the gathered data
 	 */
 	
-	public ArrayList<RecordType> getRecordTypes() {
+	public ArrayList<RecordTypeImpl> getRecordTypes() {
 		return recordTypes;
 	}
 	
-	public ArrayList<Class> getClasses() {
+	public ArrayList<IClass> getClasses() {
 		return classes;
 	}
 	
@@ -105,7 +105,7 @@ public class TypeProvider {
 		return extensions ;
 	}
 	
-	public ArrayList<Pair<TypeAliasDeclNode, Scope>> getTypeAliases(){
+	public ArrayList<Pair<TypeAliasDeclNode, IScope>> getTypeAliases(){
 		return typeAliases;
 	}
 
@@ -114,7 +114,7 @@ public class TypeProvider {
 	//			REGISTRATION METHODS 			
 	//==========================================
 
-	void registerSimpleType(NamedType t){
+	void registerSimpleType(INamedType t){
 		//Add the type to all scopes to which it belongs
 		t.getScope().addContent(t.getName(), t);
 		
@@ -130,41 +130,41 @@ public class TypeProvider {
 		globalScope.addContent(t.getName(), t);
 	}
 	
-	private void registerRecordType(RecordType r){
+	private void registerRecordType(RecordTypeImpl r){
 		recordTypes.add(r);
 		registerSimpleType(r);
 	}
 	
-	public void registerStruct(StructDeclNode d, Scope scope) {
-		registerRecordType(new Struct(d,scope));
+	public void registerStruct(StructDeclNode d, IScope scope) {
+		registerRecordType(new IStruct(d,scope));
 	}
 
-	public void registerClass(ClassDeclNode d, Scope scope) {
-		Class c;		
+	public void registerClass(ClassDeclNode d, IScope scope) {
+		IClass c;		
 		if(d.getTypeParams()!=null){
 			c = new GenericClass(d,scope);
 		} else {
-			c = new Class(d,scope);
+			c = new IClass(d,scope);
 		}
 		registerRecordType(c);
 		classes.add(c);
 	}
 
-	public void registerInterface(InterfaceDeclNode d, Scope scope) {
-		registerRecordType(new Interface(d,scope));
+	public void registerInterface(InterfaceDeclNode d, IScope scope) {
+		registerRecordType(new IInterface(d,scope));
 	}
 	
-	public void registerRootRecord(RecordType class1) {
+	public void registerRootRecord(RecordTypeImpl class1) {
 		rootRecordTypes.add(class1);
 	}
 	
-	public void registerTypeAlias(TypeAliasDeclNode typeAlias, Scope scope) {
+	public void registerTypeAlias(TypeAliasDeclNode typeAlias, IScope scope) {
 		//Only added to the alias list, the rest is done later, since we cannot
 		//resolve the aliased type at this point (since it could be defined below the alias)
-		typeAliases.add(new Pair<TypeAliasDeclNode, Scope>(typeAlias,scope));
+		typeAliases.add(new Pair<TypeAliasDeclNode, IScope>(typeAlias,scope));
 	}
 
-	public void registerTypeExtension(TypeExtensionDeclNode typeExtension, Scope scope) {
+	public void registerTypeExtension(TypeExtensionDeclNode typeExtension, IScope scope) {
 		
 		//Create it
 		Extension e = new Extension(typeExtension,scope);
@@ -192,15 +192,15 @@ public class TypeProvider {
 	//			TYPE RESOLVING			
 	//==========================================
 
-	public Type resolveType(com.sc2mod.andromeda.syntaxNodes.TypeNode type, Scope scope){
+	public IType resolveType(com.sc2mod.andromeda.syntaxNodes.TypeNode type, IScope scope){
 		return type.accept(resolver,scope);
 	}
 	
 
-	private FunctionPointer getFunctionPointerType(Signature params, Type returnType){
-		LinkedHashMap<Type, FunctionPointer> funcs = funcPointers.get(params);
+	private FunctionPointer getFunctionPointerType(Signature params, IType returnType){
+		LinkedHashMap<IType, FunctionPointer> funcs = funcPointers.get(params);
 		if(funcs == null){
-			funcs = new LinkedHashMap<Type, FunctionPointer>();
+			funcs = new LinkedHashMap<IType, FunctionPointer>();
 			funcPointers.put(params, funcs);
 		}
 		
@@ -212,22 +212,22 @@ public class TypeProvider {
 		return fp;
 	}
 	
-	Type getFunctionPointerType(com.sc2mod.andromeda.syntaxNodes.TypeNode type, Scope scope) {
+	IType getFunctionPointerType(com.sc2mod.andromeda.syntaxNodes.TypeNode type, IScope scope) {
 		if(true)throw new Error("What is this?");
 		TypeListNode tl = type.getTypeArguments();
 		int size = tl.size();
-		Type[] types = new Type[size];
+		IType[] types = new IType[size];
 		for(int i=0; i<size ; i++){
 			types[i] = resolveType(tl.elementAt(i), scope);
 		}
-		Type t = resolveType(type.getReturnType(), scope);
+		IType t = resolveType(type.getReturnType(), scope);
 		Signature sig = new Signature(types);
 
 		return getFunctionPointerType(sig, t);
 		
 	}
 
-	private Type getSingleArrayType(Type wrappedType,ExprNode dimension){
+	private IType getSingleArrayType(IType wrappedType,ExprNode dimension){
 		ToDo.println("Array dims check");
 //		Type ty = dimension.getInferedType();
 //		if(ty == null)
@@ -250,19 +250,19 @@ public class TypeProvider {
 //						.raiseUnrecoverable();
 		int dim = 0;
 		
-		HashMap<Integer, Type> t = arrayTypes.get(wrappedType);
+		HashMap<Integer, IType> t = arrayTypes.get(wrappedType);
 		if(t == null){
-			arrayTypes.put(wrappedType, t = new HashMap<Integer, Type>());
+			arrayTypes.put(wrappedType, t = new HashMap<Integer, IType>());
 		}
 		
-		Type type = t.get(dim);
+		IType type = t.get(dim);
 		if(type == null){
 			t.put(dim,type = new ArrayType(wrappedType, dim));
 		}
 		return type;
 	}
 	
-	Type getArrayType(Type wrappedType, ExprListNode dimensions) {
+	IType getArrayType(IType wrappedType, ExprListNode dimensions) {
 		int size= dimensions.size();
 		for(int i=0;i<size;i++){
 			wrappedType = getSingleArrayType(wrappedType, dimensions.elementAt(i));
@@ -270,8 +270,8 @@ public class TypeProvider {
 		return wrappedType;
 	}
 
-	public Type getPointerType(Type pointsTo){
-		Type result = pointerTypes.get(pointsTo);
+	public IType getPointerType(IType pointsTo){
+		IType result = pointerTypes.get(pointsTo);
 		//Type does not exist yet? Create and register
 		if(result == null){
 			pointerTypes.put(pointsTo, result = new PointerType(pointsTo));
@@ -305,16 +305,16 @@ public class TypeProvider {
 
 
 	public void generateClassAndInterfaceIndex() {
-		for(RecordType r: rootRecordTypes){
+		for(RecordTypeImpl r: rootRecordTypes){
 			TypeCategory category = r.getCategory();
 			switch(category){
 			case CLASS:
-				Class c = (Class)r;
+				IClass c = (IClass)r;
 				c.generateClassIndex(this);
 				c.generateImplementsTransClosure();
 				break;
 			case INTERFACE:
-				((Interface)r).generateInterfaceIndex(this);
+				((IInterface)r).generateInterfaceIndex(this);
 				break;
 			}
 		}
@@ -326,8 +326,8 @@ public class TypeProvider {
 
 
 	public void calcFuncPointerIndices() {
-		for(Entry<Signature, LinkedHashMap<Type, FunctionPointer>> fps: funcPointers.entrySet()){
-			for(Entry<Type, FunctionPointer> fp : fps.getValue().entrySet()){
+		for(Entry<Signature, LinkedHashMap<IType, FunctionPointer>> fps: funcPointers.entrySet()){
+			for(Entry<IType, FunctionPointer> fp : fps.getValue().entrySet()){
 				fp.getValue().calcIndices();
 			}
 		}

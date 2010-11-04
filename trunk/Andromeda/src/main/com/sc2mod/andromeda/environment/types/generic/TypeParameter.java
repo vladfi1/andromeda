@@ -11,25 +11,26 @@ package com.sc2mod.andromeda.environment.types.generic;
 
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.NamedType;
+import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeParamMapping;
+import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.TypeParamNode;
 
-public class TypeParameter extends Type {
+public class TypeParameter extends TypeImpl {
 
 	private TypeParamNode decl;
 	private String name;
-	private NamedType forType;
+	private INamedType forType;
 	private int index;
-	private Type typeBound;
+	private IType typeBound;
 	
-	public TypeParameter(NamedType forType, TypeParamNode node, int index, Type typeBound) {
+	public TypeParameter(INamedType forType, TypeParamNode node, int index, IType typeBound) {
 		super(forType);
 		//FIXME: Check that the type bound is a valid type bound (i.e. something based off int)
 		
@@ -70,7 +71,7 @@ public class TypeParameter extends Type {
 	}
 	
 	@Override
-	public Type replaceTypeParameters(TypeParamMapping paramMap) {
+	public IType replaceTypeParameters(TypeParamMapping paramMap) {
 		return paramMap.getReplacement(this);
 	}
 	
@@ -80,7 +81,7 @@ public class TypeParameter extends Type {
 	}
 	
 	@Override
-	public boolean canExplicitCastTo(Type toType) {
+	public boolean canExplicitCastTo(IType toType) {
 		if(toType==this) return true;
 		if(toType.isTypeOrExtension(BasicType.INT)) return true; 
 		if(toType.getCategory()==TypeCategory.TYPE_PARAM)return true;

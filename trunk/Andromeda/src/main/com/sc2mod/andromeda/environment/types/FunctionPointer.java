@@ -24,11 +24,11 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 public class FunctionPointer extends UnscopedType{
 
 	private Signature sig;
-	private Type returnType;
+	private IType returnType;
 	private String uid;
 	private LinkedHashSet<FuncPointerDecl> usages;
 	
-	public FunctionPointer(Signature sig2, Type returnType) {
+	public FunctionPointer(Signature sig2, IType returnType) {
 		this.sig = sig2;
 		this.returnType = returnType;
 	}

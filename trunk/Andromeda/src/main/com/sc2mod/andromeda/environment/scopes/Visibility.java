@@ -17,23 +17,23 @@ public abstract class Visibility {
 	
 	public static final Visibility PUBLIC = new Visibility("public",0){
 		@Override
-		public boolean checkAccessible(Scope from, Scope target) {
+		public boolean checkAccessible(IScope from, IScope target) {
 			return true;
 		}
 	};
 	public static final Visibility PROTECTED = new Visibility("protected",1){
 		@Override
-		public boolean checkAccessible(Scope from, Scope target) {
+		public boolean checkAccessible(IScope from, IScope target) {
 			throw new Error("TODO check protected accessibility");
 		}
 	};
 	public static final Visibility INTERNAL = new Visibility("internal",2){
-		public boolean checkAccessible(Scope from, Scope target) {
+		public boolean checkAccessible(IScope from, IScope target) {
 			return ScopeUtil.isInSubpackageOf(from, target);
 		}
 	};
 	public static final Visibility PRIVATE = new Visibility("private",3){
-		public boolean checkAccessible(Scope from, Scope target) {
+		public boolean checkAccessible(IScope from, IScope target) {
 			return ScopeUtil.isChildOf(from,target);
 		}
 		
@@ -52,7 +52,7 @@ public abstract class Visibility {
 		this.name = name;
 	}
 	
-	public abstract boolean checkAccessible(Scope from, Scope target);
+	public abstract boolean checkAccessible(IScope from, IScope target);
 //	public static final int DEFAULT = 0;
 //	public static final int PUBLIC = 1;
 //	public static final int PROTECTED = 2;

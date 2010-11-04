@@ -17,7 +17,7 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.GenericFunctionProxy;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.OverrideInformation;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.parsing.TransientCompilationData;
@@ -36,7 +36,7 @@ public class VirtualCallTable {
 	 * @param env the environment for whose classes to generate VCTs for
 	 */
 	public static void generateVCTs(TransientCompilationData transientData, Environment env) {
-		for(Class clazz : env.typeProvider.getClasses()) {
+		for(IClass clazz : env.typeProvider.getClasses()) {
 			//Create a class table for all top classes, these will
 			//then recursively create VCTs for child classes.
 			if(clazz.isTopClass()) {
@@ -58,7 +58,7 @@ public class VirtualCallTable {
 	 */
 	VirtualCallTable superTable;
 	
-	public Class clazz;
+	public IClass clazz;
 	
 	/**
 	 * VCTs of direct descendant classes.
@@ -71,7 +71,7 @@ public class VirtualCallTable {
 	 * @param env the environment
 	 * @param transientData 
 	 */
-	private VirtualCallTable(Class clazz, Environment env, TransientCompilationData transientData) {
+	private VirtualCallTable(IClass clazz, Environment env, TransientCompilationData transientData) {
 		this.clazz = clazz;
 		
 //		System.out.println("Generating VCT for " + clazz.getFullName());
@@ -80,7 +80,7 @@ public class VirtualCallTable {
 		clazz.setVirtualCallTable(this);
 		
 		//Add the table from the superclass
-		Class superClass = clazz.getSuperClass();
+		IClass superClass = clazz.getSuperClass();
 		if(superClass != null) {
 			//XPilot: make sure we are not using the GenericClassInstance
 //			superClass = (Class) superClass.getWrappedType();
@@ -102,8 +102,8 @@ public class VirtualCallTable {
 		if(m != null && m.getContainingType() == clazz) processMethod(m,transientData);
 		
 		//Generate tables for subclasses
-		for(RecordType r : clazz.getDecendants()) {
-			new VirtualCallTable((Class) r, env, transientData);
+		for(RecordTypeImpl r : clazz.getDecendants()) {
+			new VirtualCallTable((IClass) r, env, transientData);
 		}
 	}
 

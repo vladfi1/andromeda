@@ -20,13 +20,13 @@ import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
  * @author J. 'gex' Finis
  */
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class GenericClass extends Class{
+public class GenericClass extends IClass{
 
 	protected HashMap<Signature,GenericClassInstance> genericInstances;
 
@@ -37,7 +37,7 @@ public class GenericClass extends Class{
 	 * @param declaration
 	 * @param scope
 	 */
-	public GenericClass(ClassDeclNode declaration, Scope scope) {
+	public GenericClass(ClassDeclNode declaration, IScope scope) {
 		super(declaration, scope);
 		genericInstances = new HashMap<Signature, GenericClassInstance>();
 		sig = new Signature(typeParams);
@@ -68,7 +68,7 @@ public class GenericClass extends Class{
 	}
 
 	@Override
-	public Type getWrappedType() {
+	public IType getWrappedType() {
 		return this;
 	}
 
@@ -100,7 +100,7 @@ public class GenericClass extends Class{
 	}
 	
 	@Override
-	public Type replaceTypeParameters(TypeParamMapping paramMap) {
+	public IType replaceTypeParameters(TypeParamMapping paramMap) {
 		if(!containsTypeParams()) return this;
 		return getGenericInstance(sig.replaceTypeParameters(paramMap));
 	}

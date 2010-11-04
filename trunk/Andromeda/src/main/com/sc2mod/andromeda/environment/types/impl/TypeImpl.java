@@ -7,24 +7,34 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.impl;
 
 import com.sc2mod.andromeda.environment.IDefined;
 import com.sc2mod.andromeda.environment.IIdentifiable;
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.scopes.BlockScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
+import com.sc2mod.andromeda.environment.types.BasicType;
+import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeParamMapping;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
-public abstract class Type extends BlockScope implements ScopedElement{
+public abstract class TypeImpl extends BlockScope implements IType{
 
+	private static int curCount = 1;
+	private int hashCode;
 	
+	protected TypeImpl(IScope parentScope) {
+		super(parentScope);
+		hashCode = curCount++;
+	}
 
 	/**
 	 * Types are always a static construct
@@ -40,19 +50,10 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	}
 	
 	@Override
-	public Scope getScope() {
+	public IScope getScope() {
 		return getParentScope();
 	}
-	
-	
-	protected Type(Scope parentScope) {
-		super(parentScope);
-		hashCode = curCount++;
-	}
-	
-	private static int curCount = 1;
-	private int hashCode;
-	
+		
 	@Override
 	public int hashCode() {
 		return hashCode;
@@ -64,23 +65,30 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * Returns the description of this type's category. (Not for the type itself)
 	 * @return description of the type category.
 	 */
+	@Override
 	public abstract String getDescription();
 	
+	@Override
 	public abstract TypeCategory getCategory();
 
 
 	
+	@Override
+	public boolean canConcatenateCastTo(IType toType){if(toType==this) return true; return canImplicitCastTo(toType);}
 	
-	public boolean canConcatenateCastTo(Type toType){if(toType==this) return true; return canImplicitCastTo(toType);}
-	
-	public boolean canImplicitCastTo(Type toType){if(toType==this) return true; return false;}
+	@Override
+	public boolean canImplicitCastTo(IType toType){if(toType==this) return true; return false;}
 
-	public boolean canExplicitCastTo(Type toType) {if(toType==this) return true; return canImplicitCastTo(toType);}
+	@Override
+	public boolean canExplicitCastTo(IType toType) {if(toType==this) return true; return canImplicitCastTo(toType);}
 	
+	@Override
 	public boolean canBeNull(){ return true;}
 	
+	@Override
 	public abstract int getRuntimeType();
 	
+	@Override
 	public String getGeneratedName(){ return getUid();}
 	
 	/**
@@ -89,10 +97,13 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * However, for classes, this is not a pointer to a class.
 	 * @return
 	 */
+	@Override
 	public String getGeneratedDefinitionName(){ return getGeneratedName();}
 
+	@Override
 	public String getDefaultValueStr() { return "null"; }
 
+	@Override
 	public boolean canHaveFields() {
 		return false;
 	}
@@ -103,6 +114,7 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * This is true for classes and interfaces.
 	 * @return if this type is an implicit reference type.
 	 */
+	@Override
 	public boolean isImplicitReferenceType(){
 		return false;
 	}
@@ -111,10 +123,12 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * Returns if this type can be used as parameter (structs and arrays cannot)
 	 * @return
 	 */
+	@Override
 	public boolean isValidAsParameter(){
 		return true;
 	}
 
+	@Override
 	public boolean canHaveMethods() {
 		return false;
 	}
@@ -124,11 +138,13 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * itself. For classes, it is the top class of the hierarchy.
 	 * @return
 	 */
-	public Type getGeneratedType(){
+	@Override
+	public IType getGeneratedType(){
 		return this;
 	}
 
-	public Type getWrappedType() {
+	@Override
+	public IType getWrappedType() {
 		return null;
 	}
 	
@@ -138,7 +154,8 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * For all other types this function is the identity.
 	 * @return the base type for extensions
 	 */
-	public Type getBaseType(){
+	@Override
+	public IType getBaseType(){
 		return this;
 	}
 	
@@ -148,19 +165,23 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * I.e. if this is a disjoint type, then the type itself is returned, otherwise the base type
 	 * @return
 	 */
-	public Type getReachableBaseType(){
+	@Override
+	public IType getReachableBaseType(){
 		return this;
 	}
 	
 	
+	@Override
 	public boolean isClass() {
 		return false;
 	}
 
+	@Override
 	public boolean isGeneric() {
 		return false;
 	}
 	
+	@Override
 	public String getFullName(){
 		return getUid();
 	}
@@ -170,15 +191,19 @@ public abstract class Type extends BlockScope implements ScopedElement{
 		return getFullName();
 	}
 
+	@Override
 	public boolean containsTypeParams() {
 		return false;
 	}
 
-	public Type replaceTypeParameters(TypeParamMapping paramMap) {
+	//TODO: Factor out into visitor
+	@Override
+	public IType replaceTypeParameters(TypeParamMapping paramMap) {
 		return this;
 	}
 
 	
+	@Override
 	public boolean isTypeOrExtension(BasicType i) {
 		return this == i;
 	}
@@ -190,7 +215,8 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * @param t the other type
 	 * @return
 	 */
-	public Type getCommonSupertype(Type t){
+	@Override
+	public IType getCommonSupertype(IType t){
 		return this;
 	}
 	
@@ -198,13 +224,14 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * Returns the super type of this type or this type if it has no super type.
 	 * @return super type or self
 	 */
-	public Type getSuperType(){
+	@Override
+	public IType getSuperType(){
 		return this;
 	}
 	
-	
-	protected Type getNthAncestor(int n){
-		Type result = this;
+	@Override
+	public IType getNthAncestor(int n){
+		IType result = this;
 		for(;n>0;n--){
 			result = result.getSuperType();
 		}
@@ -216,15 +243,18 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * Returns true if this type is the given type or a subtype of it
 	 * @return
 	 */
+	@Override
 	public boolean isTypeOrSubtype(BasicType t){
 		return this == t;
 	}
-
+	
+	@Override
 	public abstract int getByteSize();
 
 	/**
 	 * Returns the byte size that this type has when being a member of a struct
-	 */
+	 */	
+	@Override
 	public int getMemberByteSize() {
 		return getByteSize();
 	}
@@ -233,6 +263,7 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * Returns true iff this is an integer type (currently only int and byte).
 	 * @return
 	 */
+	@Override
 	public boolean isIntegerType(){
 		return false;
 	}
@@ -241,10 +272,12 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	 * Returns true iff this is a type extension declared with the iskey attribute.
 	 * @return
 	 */
+	@Override
 	public boolean isKeyType(){
 		return false;		
 	}
 
+	@Override
 	public DataObject getNextKey() {
 		throw new Error("Keyof is not defined for the type " + this.getFullName());
 	}
@@ -252,7 +285,7 @@ public abstract class Type extends BlockScope implements ScopedElement{
 	//*** SCOPING METHODS ***
 	
 	@Override
-	public Type getContainingType() {
+	public TypeImpl getContainingType() {
 		//TODO: Once types are allowed in other types, this needs to return the correct value
 		return null;
 	}
@@ -262,7 +295,8 @@ public abstract class Type extends BlockScope implements ScopedElement{
 		return new InheritableContentSet(this);
 	}
 	
-	public void addInheritedContent(Scope parentScope) {
+	@Override
+	public void addInheritedContent(IScope parentScope) {
 		((InheritableContentSet)getContent()).addInheritedContent(parentScope.getContent());
 	}
 	

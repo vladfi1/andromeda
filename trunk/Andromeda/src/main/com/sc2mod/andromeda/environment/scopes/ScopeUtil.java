@@ -7,7 +7,7 @@ public final class ScopeUtil {
 
 	private ScopeUtil(){}
 
-	public static boolean isChildOf(Scope tis, Scope target){
+	public static boolean isChildOf(IScope tis, IScope target){
 		if(tis == null) return false;
 		if(target == tis) return true;
 		return isChildOf(tis.getParentScope(),target);
@@ -15,12 +15,12 @@ public final class ScopeUtil {
 	
 	
 	
-	public static boolean isInSubpackageOf(Scope tis, Scope target){
+	public static boolean isInSubpackageOf(IScope tis, IScope target){
 		return tis.getPackage().isSubpackageOf(target.getPackage());
 		
 	}
 	
-	public static void addStaticInit(Scope scope, StaticInit si){
+	public static void addStaticInit(IScope scope, StaticInit si){
 		scope.getContent().addStaticInit(si);
 	}
 	
@@ -32,7 +32,7 @@ public final class ScopeUtil {
 	 * @param scope Scope for which to get the file scope
 	 * @return the file scope in which this scope is embedded or null
 	 */
-	public static FileScope getFileScopeOfScope(Scope scope){
+	public static FileScope getFileScopeOfScope(IScope scope){
 		if(scope == null) return null;
 		if(scope instanceof FileScope) return (FileScope)scope;
 		return getFileScopeOfScope(scope.getParentScope());

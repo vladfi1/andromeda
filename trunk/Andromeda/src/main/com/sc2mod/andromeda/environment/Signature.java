@@ -9,7 +9,7 @@
  */
 package com.sc2mod.andromeda.environment;
 
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeParamMapping;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
@@ -19,7 +19,7 @@ public class Signature {
 
 	public static final Signature EMPTY_SIGNATURE = new Signature(new ExprListNode());
 	
-	private Type[] sig;
+	private IType[] sig;
 	private int hashCode;
 	private byte containsTypeParams;
 	
@@ -30,14 +30,14 @@ public class Signature {
 	}
 	
 	
-	public Signature(Type... sig) {
+	public Signature(IType... sig) {
 		this.sig = sig;
 		calcHashcode();
 	}
 	
 	public Signature(ExprListNode e){
 		int size = e.size();
-		sig = new Type[size];
+		sig = new IType[size];
 		for(int i=size-1;i>=0;i--){
 			sig[i] = e.elementAt(i).getInferedType();
 		}
@@ -50,7 +50,7 @@ public class Signature {
 	 */
 	public Signature(ParamDecl[] params) {
 		int size = params.length;
-		sig = new Type[size];
+		sig = new IType[size];
 		for(int i=size-1;i>=0;i--){
 			sig[i] = params[i].getType();
 		}
@@ -70,7 +70,7 @@ public class Signature {
 		if(obj instanceof Signature){
 			//Same length?
 			Signature s = (Signature)obj;
-			Type[] otherSig = s.sig;
+			IType[] otherSig = s.sig;
 			if(otherSig.length!= sig.length) return false;
 			
 			//Parameters differ?
@@ -85,9 +85,9 @@ public class Signature {
 	}
 	
 	public boolean canImplicitCastTo(Signature castTo){
-		Type[] otherSig = castTo.sig;
+		IType[] otherSig = castTo.sig;
 		int size = otherSig.length;
-		Type[] sig = this.sig;
+		IType[] sig = this.sig;
 		if(size!=sig.length) return false;
 		
 		for(int i=size-1;i>=0;i--){
@@ -120,13 +120,13 @@ public class Signature {
 		return b.toString();
 	}
 
-	public Type[] getTypeArrayCopy() {
-		Type[] result = new Type[sig.length];
+	public IType[] getTypeArrayCopy() {
+		IType[] result = new IType[sig.length];
 		System.arraycopy(sig, 0, result, 0, sig.length);
 		return result;
 	}
 
-	public Type get(int j) {
+	public IType get(int j) {
 		return sig[j];
 	}
 
@@ -151,11 +151,11 @@ public class Signature {
 
 	public Signature replaceTypeParameters(TypeParamMapping paramMap) {
 		if(!containsTypeParams()) return this;
-		Type[] result = getTypeArrayCopy();
+		IType[] result = getTypeArrayCopy();
 		
 		int size = size();
 		for(int i=0;i<size;i++){
-			Type t = result[i].replaceTypeParameters(paramMap);			
+			IType t = result[i].replaceTypeParameters(paramMap);			
 			result[i] = t;
 		}
 		Signature sig = new Signature(result);

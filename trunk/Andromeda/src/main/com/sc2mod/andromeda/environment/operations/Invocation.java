@@ -11,7 +11,7 @@ package com.sc2mod.andromeda.environment.operations;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.SemanticsElement;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
@@ -48,7 +48,7 @@ public class Invocation extends SemanticsElement {
 		}
 	}
 	
-	public Type getReturnType(){
+	public IType getReturnType(){
 		return whichFunction.getReturnType();
 	}
 

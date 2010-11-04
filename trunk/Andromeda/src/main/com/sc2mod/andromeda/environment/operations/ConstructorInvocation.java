@@ -12,7 +12,7 @@ package com.sc2mod.andromeda.environment.operations;
 import java.util.ArrayList;
 
 
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -20,24 +20,24 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 public class ConstructorInvocation extends Invocation {
 
 	private boolean implicit;
-	private ArrayList<Class> wrappedFieldInits;
-	private Class classToAlloc;
+	private ArrayList<IClass> wrappedFieldInits;
+	private IClass classToAlloc;
 	
-	public ArrayList<Class> getWrappedFieldInits() {
+	public ArrayList<IClass> getWrappedFieldInits() {
 		return wrappedFieldInits;
 	}
 
-	public Class getClassToAlloc() {
-		return classToAlloc==null?(Class)getWhichFunction().getContainingType():classToAlloc;
+	public IClass getClassToAlloc() {
+		return classToAlloc==null?(IClass)getWhichFunction().getContainingType():classToAlloc;
 	}
 
-	public ConstructorInvocation(Function whichFunction, boolean implicit, ArrayList<Class> wrappedFieldInits){
+	public ConstructorInvocation(Function whichFunction, boolean implicit, ArrayList<IClass> wrappedFieldInits){
 		super(whichFunction,InvocationType.METHOD);
 		this.implicit = implicit;
 		this.wrappedFieldInits = wrappedFieldInits;
 	}
 	
-	public ConstructorInvocation(Class classToAlloc, boolean implicit, ArrayList<Class> wrappedFieldInits){
+	public ConstructorInvocation(IClass classToAlloc, boolean implicit, ArrayList<IClass> wrappedFieldInits){
 		super(null,InvocationType.METHOD);
 		this.implicit = implicit;
 		this.classToAlloc = classToAlloc;

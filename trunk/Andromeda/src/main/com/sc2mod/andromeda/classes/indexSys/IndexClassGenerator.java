@@ -28,9 +28,9 @@ import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.SpecialType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
@@ -65,10 +65,10 @@ public class IndexClassGenerator extends ClassGenerator {
 		
 	}
 	
-	public void generateClasses(ArrayList<Class> arrayList){
+	public void generateClasses(ArrayList<IClass> arrayList){
 		generateClassInitHeader(arrayList);
 		
-		for(Class r: arrayList){
+		for(IClass r: arrayList){
 			generateClass(r);
 		}
 		
@@ -88,7 +88,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	
 
 
-	private void generateClassInitHeader(ArrayList<Class> arrayList) {
+	private void generateClassInitHeader(ArrayList<IClass> arrayList) {
 		classInitLocal = nameProvider.getLocalNameRaw("A__class", 0);
 		SimpleBuffer buffer = codeGenVisitor.classInitBuffer;
 		classInitFunctionName = nameProvider.getGlobalNameRaw("classInit");
@@ -100,7 +100,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		
 	}
 
-	private void generateClass(Class c){
+	private void generateClass(IClass c){
 		VirtualCallTableGenerator vctg = new IndexVirtualCallTableGenerator(this,metaClass,nameProvider,codeGenVisitor,codeGenVisitor.fileBuffer.functions, options);
 
 		
@@ -130,7 +130,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		generateClassInit(c);
 	}
 	
-	private void generateClassInit(Class c){
+	private void generateClassInit(IClass c){
 		SimpleBuffer buffer = codeGenVisitor.classInitBuffer;
 		Configuration options = this.options;
 		boolean newLines = this.newLines;
@@ -190,7 +190,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	 * Creates the struct that will hold the class instances
 	 * @param c
 	 */
-	private void generateClassStruct(Class c){
+	private void generateClassStruct(IClass c){
 		ArrayList<VarDecl> fields = c.getHierarchyFields();
 		SimpleBuffer buffer = codeGenVisitor.structBuffer;
 		int indent = codeGenVisitor.curIndent;
@@ -221,7 +221,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	private String nameMemory;
 	private String nameFreeStack;
 	
-	private void generateAllocation(Class c){
+	private void generateAllocation(IClass c){
 		String className = c.getNameProvider().getStructName();
 		
 		
@@ -237,7 +237,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		generateDeallocator(c);
 	}
 	
-	private void generateAllocator(Class c){
+	private void generateAllocator(IClass c){
 		ArrayList<VarDecl> fields = c.getHierarchyFields();
 		SimpleBuffer buffer = codeGenVisitor.functionBuffer;
 		Configuration options = this.options;
@@ -295,13 +295,13 @@ public class IndexClassGenerator extends ClassGenerator {
 	}
 
 
-	private void generateAllocCode(Class c, SimpleBuffer buffer) {
+	private void generateAllocCode(IClass c, SimpleBuffer buffer) {
 		boolean newLines = this.newLines;
 		boolean useIndent = this.useIndent;
 		int maxAlloc = (c.getInstanceLimit()+1);
 		int indent = codeGenVisitor.curIndent;
 		String className = c.getGeneratedDefinitionName();
-		Type typeInt = BasicType.INT;
+		IType typeInt = BasicType.INT;
 		
 
 		
@@ -366,7 +366,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	
 	}
 	
-	private void generateDeallocator(Class c){
+	private void generateDeallocator(IClass c){
 		ArrayList<VarDecl> fields = c.getHierarchyFields();
 		SimpleBuffer buffer = codeGenVisitor.functionBuffer;
 		curThisName = nameProvider.getLocalNameRaw("this", 1);
@@ -436,7 +436,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	}
 	
 
-	private void generateFieldInit(Class c){
+	private void generateFieldInit(IClass c){
 		Iterable<VarDecl> fields = TypeUtil.getNonStaticTypeFields(c, false);
 		SimpleBuffer buffer = codeGenVisitor.functionBuffer;
 		curThisName = nameProvider.getLocalNameRaw("this", 1);
@@ -484,7 +484,7 @@ public class IndexClassGenerator extends ClassGenerator {
 
 	public void generateConstructorHead(Constructor m) {
 		SimpleBuffer buffer = codeGenVisitor.functionBuffer;
-		Class c = (Class) m.getContainingType();
+		IClass c = (IClass) m.getContainingType();
 		ConstructorInvocation i = m.getInvokedConstructor();
 
 		//No construct or invoked? This must be a top class, so call the allocator
@@ -497,12 +497,12 @@ public class IndexClassGenerator extends ClassGenerator {
 		
 	}
 	
-	public void generateConstructorInvocation(ConstructorInvocation inv, ExprListNode arguments,Class forClass){
+	public void generateConstructorInvocation(ConstructorInvocation inv, ExprListNode arguments,IClass forClass){
 		SimpleBuffer buffer = codeGenVisitor.curBuffer;
 		
 		
 		//Wrap field inits around
-		ArrayList<Class> fieldInits = inv.getWrappedFieldInits();
+		ArrayList<IClass> fieldInits = inv.getWrappedFieldInits();
 		int size = fieldInits==null?0:fieldInits.size();
 		for(int i=size-1;i>=0;i--){
 			buffer.append(fieldInits.get(i).getNameProvider().getAllocatorName()).append("(");		
@@ -511,7 +511,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		Operation f = inv.getWhichFunction();
 		if(f == null){
 			//We have an allocator call
-			Class c = inv.getClassToAlloc();
+			IClass c = inv.getClassToAlloc();
 			buffer.append(c.getNameProvider().getAllocatorName());
 		} else {
 			//We have a constructor call
@@ -556,13 +556,13 @@ public class IndexClassGenerator extends ClassGenerator {
 	}
 
 	@Override
-	public void generateFieldAccessPrefix(SimpleBuffer curExprBuffer, Class c) {
+	public void generateFieldAccessPrefix(SimpleBuffer curExprBuffer, IClass c) {
 		curExprBuffer.append(c.getNameProvider().getMemoryName()).append("[");
 		
 	}
 
 	@Override
-	public void generateFieldAccessSuffix(SimpleBuffer curExprBuffer, Class c) {
+	public void generateFieldAccessSuffix(SimpleBuffer curExprBuffer, IClass c) {
 		curExprBuffer.append("].");
 	}
 

@@ -22,10 +22,10 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 //XPilot: added signature to GenericFunctionProxy
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
@@ -39,16 +39,16 @@ public class GenericFunctionProxy extends Operation {
 
 	private Operation function;
 	private Signature signature;
-	private Type returnType;
+	private IType returnType;
 	
-	public GenericFunctionProxy(Operation vd, Signature signature, Type returnType) {
+	public GenericFunctionProxy(Operation vd, Signature signature, IType returnType) {
 		function = vd;
 		this.signature = signature;
 		this.returnType = returnType;
 	}
 	
 	@Override
-	public Type getReturnType() {
+	public IType getReturnType() {
 		return returnType;
 	}
 	
@@ -78,7 +78,7 @@ public class GenericFunctionProxy extends Operation {
 	}
 
 	@Override
-	public Type getContainingType() {
+	public IType getContainingType() {
 		return function.getContainingType();
 	}
 
@@ -160,7 +160,7 @@ public class GenericFunctionProxy extends Operation {
 	}
 
 	@Override
-	void setReturnType(Type returnType) {
+	void setReturnType(IType returnType) {
 		throw new Error("Setting returntype of a proxy not possible!");
 	}
 
@@ -250,7 +250,7 @@ public class GenericFunctionProxy extends Operation {
 	}
 
 	@Override
-	public Scope getScope() {
+	public IScope getScope() {
 		return function.getScope();
 	}
 

@@ -15,9 +15,9 @@ import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -30,7 +30,7 @@ public class FieldDecl extends FieldOrAccessorDecl {
 	private FieldDecl usesField;
 	private ArrayList<FieldDecl> usedByFields;
 	
-	public FieldDecl(FieldDeclNode f, VarDeclNode declNode, Type containingType, Scope scope) {
+	public FieldDecl(FieldDeclNode f, VarDeclNode declNode, IType containingType, IScope scope) {
 		super(f,containingType,declNode,scope);
 		this.fieldDeclaration = f;
 		this.index = GlobalVarDecl.curIndex++;		

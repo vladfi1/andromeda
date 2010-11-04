@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -101,7 +101,7 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 	
 	@Override
 	public void visit(KeyOfExprNode keyOfExpression) {
-		Type t = keyOfExpression.getInferedType();
+		IType t = keyOfExpression.getInferedType();
 		if(!t.isKeyType()){
 			throw Problem.ofType(ProblemId.KEYOF_USED_ON_NONKEY).at(keyOfExpression).details(t.getFullName())
 				.raiseUnrecoverable();
@@ -113,7 +113,7 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 	
 	@Override
 	public void visit(UnOpExprNode unaryExpression) {	
-		Type type = unaryExpression.getExpression().getInferedType();
+		IType type = unaryExpression.getExpression().getInferedType();
 		UnOpSE op = unaryExpression.getUnOp();
 		ExprNode expr = unaryExpression.getExpression();
 		DataObject val = expr.getValue();
@@ -219,14 +219,14 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 	@Override
 	public void visit(BinOpExprNode binaryExpression) {
 		
-		Type resultType = binaryExpression.getInferedType();
+		IType resultType = binaryExpression.getInferedType();
 		
 		//The type of a binop is related to the operator
 		BinOpSE op = binaryExpression.getBinOp();
 		ExprNode lExpr = binaryExpression.getLeftExpression();
 		ExprNode rExpr = binaryExpression.getRightExpression();
-		Type left = lExpr.getInferedType().getBaseType();
-		Type right = rExpr.getInferedType().getBaseType();
+		IType left = lExpr.getInferedType().getBaseType();
+		IType right = rExpr.getInferedType().getBaseType();
 		DataObject lVal = lExpr.getValue();
 		DataObject rVal = rExpr.getValue();
 		

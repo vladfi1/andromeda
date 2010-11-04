@@ -19,10 +19,10 @@ import com.sc2mod.andromeda.classes.VirtualCallTable;
 import com.sc2mod.andromeda.environment.Signature;
 
 import com.sc2mod.andromeda.environment.operations.Constructor;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.GenericClass;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeParamMapping;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
@@ -30,14 +30,14 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class GenericClassInstance extends Class {
+public class GenericClassInstance extends GenericTypeInstance implements IClass {
 
-	private Class theType;
+	private IClass theType;
 	private Signature signature;
 	private boolean genericMembersResolved;
 	private TypeParamMapping paramMap;
 	
-	public GenericClassInstance(Class class1, Signature s) {
+	public GenericClassInstance(IClass class1, Signature s) {
 		super(class1, s);
 		theType = class1;
 		this.signature = s;
@@ -84,7 +84,7 @@ public class GenericClassInstance extends Class {
 	}
 	
 	@Override
-	public Type getWrappedType() {
+	public IType getWrappedType() {
 		return theType.getWrappedType();
 	}
 
@@ -112,7 +112,7 @@ public class GenericClassInstance extends Class {
 	 * XPilot: now works for generic types
 	 */
 	@Override
-	public boolean isInstanceof(Class c) {
+	public boolean isInstanceof(IClass c) {
 		if(this == c) return true;
 		if(c.isGeneric()) {
 			if(c instanceof GenericClassInstance) {
@@ -158,7 +158,7 @@ public class GenericClassInstance extends Class {
 		if(theType.superClass == null) {
 			superClass = null;
 		} else {
-			superClass = (Class) theType.superClass.replaceTypeParameters(paramMap);
+			superClass = (IClass) theType.superClass.replaceTypeParameters(paramMap);
 		}
 		topClass = theType.topClass;
 		
@@ -193,7 +193,7 @@ public class GenericClassInstance extends Class {
 		if(sig.isEmpty()) return sig;
 		if(!sig.containsTypeParams()) return sig;
 		
-		Type[] types = sig.getTypeArrayCopy();
+		IType[] types = sig.getTypeArrayCopy();
 		//int numTypeParams = theType.typeParams.length;
 		int sigSize = types.length;
 		for(int i=0;i<sigSize;i++) {
@@ -212,28 +212,9 @@ public class GenericClassInstance extends Class {
 	}
 	
 	@Override
-	public Type replaceTypeParameters(TypeParamMapping paramMap) {
+	public IType replaceTypeParameters(TypeParamMapping paramMap) {
 		if(!containsTypeParams()) return this;
 		return theType.getGenericInstance(signature.replaceTypeParameters(paramMap));
-	}
-	
-	@Override
-	public boolean isGenericInstance() {
-		return true;
-	}
-
-	@Override
-	void resolveMembers(TypeProvider t) {
-		//XPilot: should not happen for GenericClassInstances? The base GenericClass does this for us
-		//System.out.println("GenericClass.resolveMembers(TypeProvider) called on a GenericClassInstance: " + getFullName());
-		throw new Error("GenericClass.resolveMembers(TypeProvider) called on a GenericClassInstance: " + getFullName());
-	}
-	
-	@Override
-	protected void checkForHierarchyCircle(TypeProvider typeProvider,HashSet<RecordType> marked) {
-		//XPilot: should not happen for GenericClassInstances? The base GenericClass does this for us
-		//throw new Error("GenericClass.checkForHierarchyCircle(TypeProvider, HashSet<Record>) called on a GenericClassInstance: " + getFullName());
-		theType.checkForHierarchyCircle(typeProvider, marked);
 	}
 	
 	/**
@@ -254,14 +235,9 @@ public class GenericClassInstance extends Class {
 		theType.registerInstantiation();
 	}
 
-	@Override
-	protected void registerIndirectInstantiation() {
-		theType.registerIndirectInstantiation();
-	}
-
 
 	@Override
-	public Type getGeneratedType() {
+	public IType getGeneratedType() {
 		return theType.getGeneratedType();
 	}
 
@@ -284,19 +260,13 @@ public class GenericClassInstance extends Class {
 	}
 
 	@Override
-	public boolean canConcatenateCastTo(Type toType) {
+	public boolean canConcatenateCastTo(IType toType) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
 
 	@Override
-	public boolean canExplicitCastTo(Type toType) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	void generateClassIndex(TypeProvider tp) {
+	public boolean canExplicitCastTo(IType toType) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
@@ -326,7 +296,7 @@ public class GenericClassInstance extends Class {
 	}
 
 	@Override
-	public Class getTopClass() {
+	public IClass getTopClass() {
 		throw new Error("Not implemented!");
 	}
 
@@ -349,18 +319,6 @@ public class GenericClassInstance extends Class {
 
 	@Override
 	public boolean isUsed() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setAllocatorName(String allocatorName) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setDeallocatorName(String deallocatorName) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}

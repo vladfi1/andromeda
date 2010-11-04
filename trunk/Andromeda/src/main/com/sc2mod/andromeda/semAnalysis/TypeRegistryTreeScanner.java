@@ -12,7 +12,7 @@ package com.sc2mod.andromeda.semAnalysis;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.Package;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
@@ -46,7 +46,7 @@ import com.sc2mod.andromeda.util.visitors.VoidTreeScanVisitor;
  * @author J. 'gex' Finis
  *
  */
-public class TypeRegistryTreeScanner extends NoResultTreeScanVisitor<Scope>{
+public class TypeRegistryTreeScanner extends NoResultTreeScanVisitor<IScope>{
 
 	private TypeProvider tprov;
 	private Environment env;
@@ -96,7 +96,7 @@ public class TypeRegistryTreeScanner extends NoResultTreeScanVisitor<Scope>{
 
 
 	@Override
-	public void visit(SourceFileNode andromedaFile, Scope s) {
+	public void visit(SourceFileNode andromedaFile, IScope s) {
 		PackageDeclNode packageDecl = andromedaFile.getPackageDecl();
 		Package p;
 		if(packageDecl == null){
@@ -112,17 +112,17 @@ public class TypeRegistryTreeScanner extends NoResultTreeScanVisitor<Scope>{
 
 
 	@Override
-	public void visit(ClassDeclNode classDeclaration, Scope scope) {
+	public void visit(ClassDeclNode classDeclaration, IScope scope) {
 		tprov.registerClass(classDeclaration,scope);
 	}
 	
 	@Override
-	public void visit(InterfaceDeclNode interfaceDeclaration, Scope scope) {
+	public void visit(InterfaceDeclNode interfaceDeclaration, IScope scope) {
 		tprov.registerInterface(interfaceDeclaration,scope);
 	}
 	
 	@Override
-	public void visit(StructDeclNode structDeclaration, Scope scope) {
+	public void visit(StructDeclNode structDeclaration, IScope scope) {
 		tprov.registerStruct(structDeclaration,scope);
 	}
 	
@@ -131,12 +131,12 @@ public class TypeRegistryTreeScanner extends NoResultTreeScanVisitor<Scope>{
 
 	
 	@Override
-	public void visit(TypeAliasDeclNode typeAlias, Scope scope) {
+	public void visit(TypeAliasDeclNode typeAlias, IScope scope) {
 		tprov.registerTypeAlias(typeAlias,scope);
 	}
 	
 	@Override
-	public void visit(TypeExtensionDeclNode typeExtension, Scope scope) {
+	public void visit(TypeExtensionDeclNode typeExtension, IScope scope) {
 		tprov.registerTypeExtension(typeExtension,scope);
 	}
 	

@@ -7,6 +7,6 @@ package com.sc2mod.andromeda.environment.scopes;
  */
 public interface IPrefix {
 
-	public Scope getPrefixScope();
+	public IScope getPrefixScope();
 	
 }

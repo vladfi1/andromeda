@@ -28,16 +28,16 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.environment.IDefined;
 import com.sc2mod.andromeda.environment.scopes.BlockScope;
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class Enrichment extends BlockScope implements IDefined {
 
-	private Type enrichedType;
+	private IType enrichedType;
 	private EnrichDeclNode decl;
-	public Enrichment(EnrichDeclNode decl, Scope scope) {
+	public Enrichment(EnrichDeclNode decl, IScope scope) {
 		super(scope);
 		this.decl = decl;
 	}
@@ -47,12 +47,12 @@ public class Enrichment extends BlockScope implements IDefined {
 		return decl;
 	}
 	
-	public void setResolvedEnrichedType(Type enricType){
+	public void setResolvedEnrichedType(IType enricType){
 		this.enrichedType = enricType;
 	}
 	
 	
-	public Type getEnrichedType() {
+	public IType getEnrichedType() {
 		return enrichedType;
 	}
 	

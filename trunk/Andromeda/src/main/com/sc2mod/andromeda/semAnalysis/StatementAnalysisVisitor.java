@@ -24,16 +24,16 @@ import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.AccessType;
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
@@ -241,7 +241,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		analyzeExpression(variableAssignDecl.getInitializer());
 		ExprNode init = variableAssignDecl.getInitializer();
 		
-		Type t = init.getInferedType();
+		IType t = init.getInferedType();
 		IdentifierNode identifier = variableAssignDecl.getName();
 		VarDecl decl = identifier.getSemantics();
 		identifier.setSemantics(decl);
@@ -278,12 +278,12 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	
 
 	
-	ConstructorInvocation resolveConstructorCall(SyntaxNode def, Class c, Signature sig, Scope from, boolean implicit, boolean useSuper){
-		ArrayList<Class> wrappedFieldInits = null;
+	ConstructorInvocation resolveConstructorCall(SyntaxNode def, IClass c, Signature sig, IScope from, boolean implicit, boolean useSuper){
+		ArrayList<IClass> wrappedFieldInits = null;
 		
 		if(useSuper){
 			if(TypeUtil.hasTypeFieldInits(c)){
-				wrappedFieldInits = new ArrayList<Class>(4);
+				wrappedFieldInits = new ArrayList<IClass>(4);
 				wrappedFieldInits.add(c);
 			}
 			c = c.getSuperClass();
@@ -306,7 +306,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 				.details(c.getFullName(),sig.getFullName())
 				.raiseUnrecoverable();
 		
-		Class superClass = c;
+		IClass superClass = c;
 		if(c.getSuperClass()!=null){
 			
 			
@@ -319,7 +319,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 					} else {
 						//If it is no topclass we add the field init and try the next class
 						if(TypeUtil.hasTypeFieldInits(superClass)){
-							if(wrappedFieldInits==null)wrappedFieldInits = new ArrayList<Class>(4);
+							if(wrappedFieldInits==null)wrappedFieldInits = new ArrayList<IClass>(4);
 							wrappedFieldInits.add(superClass);
 						}
 						
@@ -349,8 +349,8 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	}
 	
 	private void checkConstructor(Constructor c, StmtNode body){
-		Class clazz = (Class) c.getContainingType();
-		Class superClass = clazz.getSuperClass();
+		IClass clazz = (IClass) c.getContainingType();
+		IClass superClass = clazz.getSuperClass();
 		
 		StmtListNode stmts = body.getStatements();
 			
@@ -650,7 +650,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		analyzeExpression(iteree);
 		
 		//Register local var for iterator
-		Type iterVarType = typeProvider.resolveType(forEachStmt.getIteratorType(),curScope);
+		IType iterVarType = typeProvider.resolveType(forEachStmt.getIteratorType(),curScope);
 		LocalVarDecl iterVarDecl = new LocalVarDecl(null, iterVarType, forEachStmt.getIterator(), false, curScope, true);
 		nameResolver.registerLocalVar(iterVarDecl);
 		semantics.setIterVarDecl(iterVarDecl);
@@ -676,7 +676,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 
 		
 		//Check iter type
-		Type itereeType = iteree.getInferedType();
+		IType itereeType = iteree.getInferedType();
 		
 		
 		switch(itereeType.getCategory()){
@@ -698,7 +698,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 			semantics.setGetIterator(iv);
 			
 			//Get iterator type and check if it has all needed methods
-			Type iteratorType = iv.getReturnType();
+			IType iteratorType = iv.getReturnType();
 			
 			// hasNext()
 			iv = ResolveUtil.resolvePrefixedInvocation(iteratorType, "hasNext", Signature.EMPTY_SIGNATURE, curScope, iteree, false, false);
@@ -722,7 +722,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 					.details(iteratorType.getUid())
 					.raiseUnrecoverable();
 			}
-			Type nextType = iv.getReturnType();			
+			IType nextType = iv.getReturnType();			
 			if(!nextType.canImplicitCastTo(iterVarType)){
 				Problem.ofType(ProblemId.FOREACH_INCOMPATIBLE_ITERATION_TYPE).at(forEachStmt)
 					.details(iv.getWhichFunction().getReturnType().getUid(),iterVarType.getUid())
@@ -732,8 +732,8 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 			
 			boolean destroyAfter = false;
 			//destroy after foreach
-			if(iteratorType instanceof Class){
-				Class c = (Class)iteratorType;
+			if(iteratorType instanceof IClass){
+				IClass c = (IClass)iteratorType;
 				if(!c.hasAnnotation("KeepAfterForeach")){
 					destroyAfter = true;
 				}
@@ -825,7 +825,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	public void visit(DeleteStmtNode deleteStatement) {
 		ExprNode expr = deleteStatement.getExpression();
 		analyzeExpression(expr);
-		Type type = expr.getInferedType();
+		IType type = expr.getInferedType();
 		//made generic class delete-able
 		if(type.getCategory()!=TypeCategory.CLASS){
 			Problem.ofType(ProblemId.DELETE_NON_CLASS).at(expr)
@@ -834,7 +834,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		}
 
 		//Register destructor invocation
-		Invocation in = ResolveUtil.registerDelete((Class)type,deleteStatement);
+		Invocation in = ResolveUtil.registerDelete((IClass)type,deleteStatement);
 		deleteStatement.setSemantics(in);
 		
 		execPathStack.pushSingleStatementFrame(deleteStatement);
@@ -876,7 +876,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		execPathStack.mergeTopFrames();
 		
 		//Check condition type
-		Type t = ifThenElseStatement.getCondition().getInferedType();
+		IType t = ifThenElseStatement.getCondition().getInferedType();
 		if(!t.canImplicitCastTo(BasicType.BOOL)&&!t.canBeNull())
 			Problem.ofType(ProblemId.TYPE_ERROR_NONBOOL_IF_CONDITION).at(ifThenElseStatement.getCondition())
 					.details(ifThenElseStatement.getCondition().getInferedType().getUid())
@@ -900,7 +900,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		l.getVarDeclaration().getType().accept(this);
 		
 		VarDeclListNode decls = l.getVarDeclaration().getDeclarators();
-		Type t = typeProvider.resolveType(l.getVarDeclaration().getType(),curScope);
+		IType t = typeProvider.resolveType(l.getVarDeclaration().getType(),curScope);
 		
 		//Register and init all variables in the correct order
 		int size = decls.size();

@@ -11,12 +11,12 @@ package com.sc2mod.andromeda.classes.indexSys;
 
 import com.sc2mod.andromeda.classes.ClassNameProvider;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 
 public class IndexClassNameProvider extends ClassNameProvider{
 
 	private String structName;
-	public IndexClassNameProvider(Class c) {
+	public IndexClassNameProvider(IClass c) {
 		super(c);
 	}
 

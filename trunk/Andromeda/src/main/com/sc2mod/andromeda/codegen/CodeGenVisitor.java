@@ -29,10 +29,10 @@ import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Struct;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IStruct;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
@@ -86,7 +86,7 @@ public class CodeGenVisitor extends CodeGenerator {
 	// SimpleBuffer extraStatementBuffer = new SimpleBuffer(64);
 	public int curIndent;
 	private Function curFunction;
-	private RecordType curType;
+	private RecordTypeImpl curType;
 	private boolean inLib;
 	
 	
@@ -114,7 +114,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		invokeRValueVisitor(toVisit, flushBuffers, false);
 	}
 	
-	public void invokeExprSurroundCast(ExprNode toVisit, Type castTo, boolean flushBuffers){
+	public void invokeExprSurroundCast(ExprNode toVisit, IType castTo, boolean flushBuffers){
 		expressionVisitor.surroundTypeCastIfNecessary(toVisit,castTo);
 		if (flushBuffers) {
 			if (!expressionVisitor.curExprBuffer.isEmpty()) {
@@ -209,15 +209,15 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	@Override
 	public void visit(ClassDeclNode classDeclaration) {
-		RecordType typeBefore = curType;
-		curType = (Class) classDeclaration.getSemantics();
+		RecordTypeImpl typeBefore = curType;
+		curType = (IClass) classDeclaration.getSemantics();
 		classDeclaration.getBody().childrenAccept(this);
 		curType = typeBefore;
 	}
 
 	@Override
 	public void visit(StructDeclNode structDeclaration) {
-		Struct struct = (Struct) structDeclaration.getSemantics();
+		IStruct struct = (IStruct) structDeclaration.getSemantics();
 		Configuration options = this.options;
 		int curIndent = this.curIndent;
 		SimpleBuffer structBuffer = this.structBuffer;
@@ -327,7 +327,7 @@ public class CodeGenVisitor extends CodeGenerator {
 				functionBuffer.newLine(curIndent);
 				Destructor d = (Destructor)curFunction;
 				Operation overridden = d.getOverrideInformation().getOverridenMethod();
-				String destrName = overridden==null?((Class)d.getContainingType()).getNameProvider().getDeallocatorName():overridden.getGeneratedName();
+				String destrName = overridden==null?((IClass)d.getContainingType()).getNameProvider().getDeallocatorName():overridden.getGeneratedName();
 				curBuffer.append(destrName).append("(").append(classGen.getThisName()).append(");");
 				if(newLines) curBuffer.newLine(curIndent);
 				break;
@@ -525,7 +525,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		globalVarBuffer.flushTo(fileBuffer.variables, true);
 	}
 
-	public void generateFieldInit(SimpleBuffer buffer,Class c,VarDecl f) {
+	public void generateFieldInit(SimpleBuffer buffer,IClass c,VarDecl f) {
 		
 		SimpleBuffer curBufferBefore = curBuffer;
 		curBuffer = buffer;
@@ -989,7 +989,7 @@ public class CodeGenVisitor extends CodeGenerator {
 			case DESTRUCTOR:
 				Destructor d = (Destructor)curFunction;
 				Operation overridden = d.getOverrideInformation().getOverridenMethod();
-				String destrName = overridden==null?((Class)d.getContainingType()).getNameProvider().getDeallocatorName():overridden.getGeneratedName();
+				String destrName = overridden==null?((IClass)d.getContainingType()).getNameProvider().getDeallocatorName():overridden.getGeneratedName();
 				curBuffer.append(destrName).append("(").append(classGen.getThisName()).append(");");
 				if(newLines) curBuffer.newLine(curIndent);
 				curBuffer.append("return;");

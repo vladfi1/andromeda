@@ -10,7 +10,7 @@
 package com.sc2mod.andromeda.codetransform;
 
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.AccessorDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
@@ -111,7 +111,7 @@ public class UglyExprTransformer {
 			//No inc dec adjustment necessary?
 			return toSurround;
 		}
-		Type t = toSurround.getInferedType();
+		IType t = toSurround.getInferedType();
 		
 		ExprNode binExpr = syntaxGenerator.genBinaryExpression(toSurround, incDecExpr, binOp, t, t, incDecExpr.getInferedType());
 		return syntaxGenerator.genParenthesisExpression(binExpr);

@@ -16,7 +16,7 @@ import com.sc2mod.andromeda.vm.data.FunctionObject;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.types.FunctionPointer;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -52,7 +52,7 @@ public class FuncPointerDecl extends VarDecl{
 	}
 
 	@Override
-	public Type getContainingType() {
+	public IType getContainingType() {
 		return func.getContainingType();
 	}
 	

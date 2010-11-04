@@ -39,7 +39,7 @@ import com.sc2mod.andromeda.syntaxNodes.VisitorAdaptor;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.variables.AccessorDecl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
@@ -127,7 +127,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 		
 
 		
-		Class c = (Class)classDeclaration.getSemantics();
+		IClass c = (IClass)classDeclaration.getSemantics();
 		writer.writeAttribute("name", c.getName());
 		writePosition(classDeclaration);
 		writer.writeAttribute("visibility", Visibility.getName(c.getVisibility()));

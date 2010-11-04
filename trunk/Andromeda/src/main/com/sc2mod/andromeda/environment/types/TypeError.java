@@ -1,10 +1,10 @@
 package com.sc2mod.andromeda.environment.types;
 
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
-public class TypeError extends Type {
+public class TypeError extends IType {
 	
 	public static final TypeError INSTANCE = new TypeError();
 

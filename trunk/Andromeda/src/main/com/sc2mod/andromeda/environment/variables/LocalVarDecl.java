@@ -14,8 +14,8 @@ import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -25,12 +25,12 @@ public class LocalVarDecl extends NonParamDecl {
 
 	private boolean isOnTop;
 	
-	public LocalVarDecl(ModifierListNode mods,Type type, IdentifierNode decl, boolean isOnTop, Scope scope, boolean isInited){
+	public LocalVarDecl(ModifierListNode mods,IType type, IdentifierNode decl, boolean isOnTop, IScope scope, boolean isInited){
 		super(mods,type,decl,scope,isInited);
 		this.isOnTop = isOnTop;
 	}
 	
-	public LocalVarDecl(ModifierListNode mods,Type type, VarDeclNode decl, boolean isOnTop, Scope scope){
+	public LocalVarDecl(ModifierListNode mods,IType type, VarDeclNode decl, boolean isOnTop, IScope scope){
 		super(mods,type,decl,scope);
 		this.isOnTop = isOnTop;
 	}

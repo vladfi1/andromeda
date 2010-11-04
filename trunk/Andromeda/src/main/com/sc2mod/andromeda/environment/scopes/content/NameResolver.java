@@ -14,8 +14,8 @@ import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Invocation;
 import com.sc2mod.andromeda.environment.scopes.AccessType;
-import com.sc2mod.andromeda.environment.scopes.Scope;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.semAnalysis.LocalVarStack;
@@ -50,7 +50,7 @@ public class NameResolver {
 	 * @param where a syntax node to be mentioned in problems raised by this method
 	 * @return the resolved ScopedElement or null
 	 */
-	public ScopedElement resolveName(String name, Scope from, AccessType accessType, SyntaxNode where){
+	public IScopedElement resolveName(String name, IScope from, AccessType accessType, SyntaxNode where){
 		return ResolveUtil.resolveUnprefixedName(localVars, name, from, accessType, where);
 	}
 	
@@ -72,7 +72,7 @@ public class NameResolver {
 	 * @param where a syntax node to be mentioned in problems raised by this method
 	 * @return the resolved ScopedElement or null
 	 */
-	public Invocation resolveInvocation(String name, Signature sig, Scope from, SyntaxNode where, boolean allowFuncPointer){
+	public Invocation resolveInvocation(String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer){
 		return ResolveUtil.resolveUnprefixedInvocation(localVars, name, sig, from, where, allowFuncPointer);
 	}
 	

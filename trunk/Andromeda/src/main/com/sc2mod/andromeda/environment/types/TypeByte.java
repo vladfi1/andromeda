@@ -39,14 +39,14 @@ public class TypeByte extends NonReferentialType {
 	}
 	
 	@Override
-	public boolean canImplicitCastTo(Type toType) {
+	public boolean canImplicitCastTo(IType toType) {
 		if(toType.getBaseType().isIntegerType()) return true;
 		return super.canImplicitCastTo(toType);
 	}
 	
 	@Override
-	public Type getCommonSupertype(Type t) {
-		Type base = t.getBaseType();
+	public IType getCommonSupertype(IType t) {
+		IType base = t.getBaseType();
 		if(base==BasicType.INT||base==BasicType.FLOAT) return t;
 		return super.getCommonSupertype(t);
 	}

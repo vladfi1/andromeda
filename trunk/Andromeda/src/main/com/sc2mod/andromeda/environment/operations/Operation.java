@@ -19,10 +19,10 @@ import com.sc2mod.andromeda.environment.IIdentifiable;
 import com.sc2mod.andromeda.environment.IModifiable;
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
@@ -33,7 +33,7 @@ import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 
 import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
 
-public abstract class Operation extends SemanticsElement implements ScopedElement, IModifiable, IAnnotatable , SemanticsVisitorNode {
+public abstract class Operation extends SemanticsElement implements IScopedElement, IModifiable, IAnnotatable , SemanticsVisitorNode {
 
 	private static int curHashCode = 1;
 	private int hashCode = curHashCode++;
@@ -53,7 +53,7 @@ public abstract class Operation extends SemanticsElement implements ScopedElemen
 	 * Functions are not contained in any type
 	 * @return null
 	 */
-	public abstract Type getContainingType();
+	public abstract IType getContainingType();
 
 	public abstract boolean isStrcall();
 	
@@ -66,7 +66,7 @@ public abstract class Operation extends SemanticsElement implements ScopedElemen
 	
 	public abstract ParamDecl[] getParams();
 
-	public abstract Type getReturnType();
+	public abstract IType getReturnType();
 
 	public abstract Signature getSignature();
 	
@@ -92,7 +92,7 @@ public abstract class Operation extends SemanticsElement implements ScopedElemen
 
 	public abstract void setName(String name);
 	
-	abstract void setReturnType(Type returnType);
+	abstract void setReturnType(IType returnType);
 
 	public abstract OperationType getOperationType();
 	

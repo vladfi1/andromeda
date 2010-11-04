@@ -7,13 +7,13 @@ import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.ScopeUtil;
-import com.sc2mod.andromeda.environment.scopes.ScopedElement;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.variables.AccessorDecl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
@@ -49,7 +49,7 @@ import com.sc2mod.andromeda.util.visitors.NoResultTreeScanVisitor;
  * 
  */
 public class StructureRegistryTreeScanner extends
-		NoResultTreeScanVisitor<Pair<Scope, Type>> {
+		NoResultTreeScanVisitor<Pair<IScope, IType>> {
 
 	private Environment env;
 	private SemanticsCheckerAndResolver resolver;
@@ -63,32 +63,32 @@ public class StructureRegistryTreeScanner extends
 
 	// ***** Scope givers ****
 	@Override
-	public void visit(SourceFileNode andromedaFile, Pair<Scope, Type> scopes) {
-		andromedaFile.childrenAccept(this, new Pair<Scope, Type>(andromedaFile
+	public void visit(SourceFileNode andromedaFile, Pair<IScope, IType> scopes) {
+		andromedaFile.childrenAccept(this, new Pair<IScope, IType>(andromedaFile
 				.getSemantics(), null));
 	}
 
 	@Override
-	public void visit(ClassDeclNode classDeclNode, Pair<Scope, Type> scopes) {
-		RecordType t = classDeclNode.getSemantics();
-		classDeclNode.childrenAccept(this, new Pair<Scope, Type>(t, t));
+	public void visit(ClassDeclNode classDeclNode, Pair<IScope, IType> scopes) {
+		RecordTypeImpl t = classDeclNode.getSemantics();
+		classDeclNode.childrenAccept(this, new Pair<IScope, IType>(t, t));
 	}
 
 	@Override
-	public void visit(StructDeclNode structDeclNode, Pair<Scope, Type> scopes) {
-		RecordType t = structDeclNode.getSemantics();
-		structDeclNode.childrenAccept(this, new Pair<Scope, Type>(t, t));
+	public void visit(StructDeclNode structDeclNode, Pair<IScope, IType> scopes) {
+		RecordTypeImpl t = structDeclNode.getSemantics();
+		structDeclNode.childrenAccept(this, new Pair<IScope, IType>(t, t));
 	}
 
 	@Override
 	public void visit(InterfaceDeclNode interfaceDeclNode,
-			Pair<Scope, Type> scopes) {
-		RecordType t = interfaceDeclNode.getSemantics();
-		interfaceDeclNode.childrenAccept(this, new Pair<Scope, Type>(t, t));
+			Pair<IScope, IType> scopes) {
+		RecordTypeImpl t = interfaceDeclNode.getSemantics();
+		interfaceDeclNode.childrenAccept(this, new Pair<IScope, IType>(t, t));
 	}
 
 	@Override
-	public void visit(EnrichDeclNode enrichDeclaration, Pair<Scope, Type> scopes) {
+	public void visit(EnrichDeclNode enrichDeclaration, Pair<IScope, IType> scopes) {
 		// Enrichments are created in this step, since there is no need to
 		// create
 		// them earlier. Since they are no own types, they do not need to be
@@ -96,7 +96,7 @@ public class StructureRegistryTreeScanner extends
 		// By registering them this late, the type they enrich can be resolved
 		// right away.
 		Enrichment enrichment = new Enrichment(enrichDeclaration, scopes._1);
-		enrichDeclaration.childrenAccept(this, new Pair<Scope, Type>(
+		enrichDeclaration.childrenAccept(this, new Pair<IScope, IType>(
 				enrichment, enrichment.getEnrichedType()));
 	}
 
@@ -108,7 +108,7 @@ public class StructureRegistryTreeScanner extends
 
 	@Override
 	public void visit(GlobalStaticInitDeclNode globalInitDeclaration,
-			Pair<Scope, Type> scopes) {
+			Pair<IScope, IType> scopes) {
 			StaticInitDeclNode sid = globalInitDeclaration.getInitDecl();
 			StaticInit s = new StaticInit(sid,scopes._1);
 			resolver.checkAndResolve(s);
@@ -118,9 +118,9 @@ public class StructureRegistryTreeScanner extends
 
 	@Override
 	public void visit(InstanceLimitSetterNode instanceLimitSetter,
-			Pair<Scope, Type> scopes) {
+			Pair<IScope, IType> scopes) {
 		//Resolve type of instance limit setter and check that it may only be applied on classes
-		Type t = env.typeProvider.resolveType(instanceLimitSetter.getEnrichedType(), scopes._1);
+		IType t = env.typeProvider.resolveType(instanceLimitSetter.getEnrichedType(), scopes._1);
 		if(t.getCategory() != TypeCategory.CLASS) {
 			throw Problem.ofType(ProblemId.SETINSTANCELIMIT_ON_NONCLASS).at(instanceLimitSetter)
 						.raiseUnrecoverable();
@@ -128,12 +128,12 @@ public class StructureRegistryTreeScanner extends
 	
 		
 		//Save for later usage by the InstanceLimitChecker
-		analysisData.getInstanceLimits().add(new Pair<InstanceLimitSetterNode, Type>(instanceLimitSetter, t));
+		analysisData.getInstanceLimits().add(new Pair<InstanceLimitSetterNode, IType>(instanceLimitSetter, t));
 	}
 
 	@Override
 	public void visit(GlobalFuncDeclNode functionDeclaration,
-			Pair<Scope, Type> scopes) {
+			Pair<IScope, IType> scopes) {
 		Function f = new Function(functionDeclaration, scopes._1);
 		//resolve types and do other checks
 		resolver.checkAndResolve(f);
@@ -141,7 +141,7 @@ public class StructureRegistryTreeScanner extends
 	}
 
 	@Override
-	public void visit(GlobalVarDeclNode g, Pair<Scope, Type> scopes) {
+	public void visit(GlobalVarDeclNode g, Pair<IScope, IType> scopes) {
 		FieldDeclNode field = g.getFieldDecl();
 		VarDeclListNode list = field.getDeclaredVariables();
 
@@ -159,10 +159,10 @@ public class StructureRegistryTreeScanner extends
 	 * Entries a member into the scope in which it is defined and into the
 	 * enriched type if we are in an enrichment.
 	 */
-	private void entry(Pair<Scope, Type> scopes, ScopedElement elem) {
+	private void entry(Pair<IScope, IType> scopes, IScopedElement elem) {
 		String uid = elem.getUid();
-		Scope scope = scopes._1;
-		Type type = scopes._2;
+		IScope scope = scopes._1;
+		IType type = scopes._2;
 		scope.addContent(uid, elem);
 		if (type != scope) {
 			type.addContent(uid, elem);
@@ -170,7 +170,7 @@ public class StructureRegistryTreeScanner extends
 	}
 
 	@Override
-	public void visit(FieldDeclNode field, Pair<Scope, Type> scopes) {
+	public void visit(FieldDeclNode field, Pair<IScope, IType> scopes) {
 		VarDeclListNode list = field.getDeclaredVariables();
 
 		for (int i = 0, size = list.size(); i < size; i++) {
@@ -184,25 +184,25 @@ public class StructureRegistryTreeScanner extends
 	}
 
 	@Override
-	public void visit(AccessorDeclNode accessorDeclNode, Pair<Scope, Type> state) {
+	public void visit(AccessorDeclNode accessorDeclNode, Pair<IScope, IType> state) {
 		AccessorDecl ad = new AccessorDecl(accessorDeclNode, state._2, state._1);
 		resolver.checkAndResolve(ad);
 		entry(state, ad);
 	}
 
 	@Override
-	public void visit(MethodDeclNode methodDeclNode, Pair<Scope, Type> state) {
+	public void visit(MethodDeclNode methodDeclNode, Pair<IScope, IType> state) {
 
 		switch(methodDeclNode.getMethodType()){
 		case CONSTRUCTOR:
 		{
-			Class c = (Class)state._2;
+			IClass c = (IClass)state._2;
 			Constructor con = new Constructor(methodDeclNode,c,state._1);
 			resolver.checkAndResolve(con);
 			c.addConstructor(con);
 		}	break;
 		case DESTRUCTOR:
-		{	Class c = (Class)state._2;
+		{	IClass c = (IClass)state._2;
 			Destructor destr = new Destructor(methodDeclNode,c,state._1);
 			resolver.checkAndResolve(destr);
 			c.setDestructor(destr);
@@ -218,7 +218,7 @@ public class StructureRegistryTreeScanner extends
 
 	@Override
 	public void visit(StaticInitDeclNode staticInitDeclNode,
-			Pair<Scope, Type> state) {
+			Pair<IScope, IType> state) {
 		StaticInit s = new StaticInit(staticInitDeclNode,state._1);
 		resolver.checkAndResolve(s);
 		

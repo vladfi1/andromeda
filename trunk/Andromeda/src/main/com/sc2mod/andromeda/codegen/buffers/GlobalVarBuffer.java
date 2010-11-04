@@ -9,7 +9,7 @@
  */
 package com.sc2mod.andromeda.codegen.buffers;
 
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 
 public class GlobalVarBuffer extends SimpleBuffer{
 
@@ -21,7 +21,7 @@ public class GlobalVarBuffer extends SimpleBuffer{
 	
 
 	
-	public GlobalVarBuffer beginVarDecl(Type varType, String varName){
+	public GlobalVarBuffer beginVarDecl(IType varType, String varName){
 		//System.out.println(varName);
 		append(varType.getGeneratedDefinitionName()).append(" ").append(varName);
 		bytes+=varType.getGeneratedType().getByteSize();
@@ -36,13 +36,13 @@ public class GlobalVarBuffer extends SimpleBuffer{
 //		return this;
 //	}
 	
-	public GlobalVarBuffer beginArrayDecl(Type varType,String typeName, int size, String varName){
+	public GlobalVarBuffer beginArrayDecl(IType varType,String typeName, int size, String varName){
 		append(typeName).append("[").append(size).append("] ").append(varName);
 		bytes+=varType.getByteSize()*size;
 		return this;
 	}
 	
-	public GlobalVarBuffer beginArrayDecl(Type varType, int size, String varName){
+	public GlobalVarBuffer beginArrayDecl(IType varType, int size, String varName){
 		append(varType.getGeneratedDefinitionName()).append("[").append(size).append("] ").append(varName);
 		bytes+=varType.getGeneratedType().getByteSize()*size;
 		return this;

@@ -10,8 +10,8 @@ import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.IType;
 
 public class InstanceLimitChecker {
 
@@ -25,12 +25,12 @@ public class InstanceLimitChecker {
 	
 	public void doChecks(){
 		//First check instance limits in classes
-		for(Class c : env.typeProvider.getClasses()){
+		for(IClass c : env.typeProvider.getClasses()){
 			checkLimit(c);
 		}
 		
 		//Then do explicit setters
-		for(Pair<InstanceLimitSetterNode, Type> tuple : analysisData.getInstanceLimits()){
+		for(Pair<InstanceLimitSetterNode, IType> tuple : analysisData.getInstanceLimits()){
 			checkLimit(tuple._1,tuple._2);
 		}
 		
@@ -43,7 +43,7 @@ public class InstanceLimitChecker {
 	 * @param instanceLimit the instance limit expression
 	 * @return
 	 */
-	private int doCommonChecks(Class c, ExprNode instanceLimit){
+	private int doCommonChecks(IClass c, ExprNode instanceLimit){
 		if(c.isStatic())
 			throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_INSTANCELIMIT).at(instanceLimit)
 				.raiseUnrecoverable();
@@ -64,7 +64,7 @@ public class InstanceLimitChecker {
 		return v;
 	}
 
-	private void checkLimit(Class c){
+	private void checkLimit(IClass c){
 		ClassDeclNode classDeclaration = c.getDefinition();
 		ExprNode instanceLimit = classDeclaration.getInstanceLimit();
 		if(instanceLimit!=null){
@@ -74,10 +74,10 @@ public class InstanceLimitChecker {
 		
 	}
 	
-	private void checkLimit(InstanceLimitSetterNode ils, Type t){
+	private void checkLimit(InstanceLimitSetterNode ils, IType t){
 		ExprNode instanceLimitExpr = ils.getInstanceLimit();
 		
-		Class c = (Class)t;
+		IClass c = (IClass)t;
 		if(!c.isTopClass()) {
 			throw Problem.ofType(ProblemId.CHILD_CLASS_HAS_INSTANCELIMIT).at(ils)
 				.raiseUnrecoverable();

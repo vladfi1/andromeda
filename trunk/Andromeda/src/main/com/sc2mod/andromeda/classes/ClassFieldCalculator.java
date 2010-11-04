@@ -12,9 +12,9 @@ package com.sc2mod.andromeda.classes;
 import java.util.ArrayList;
 
 import com.sc2mod.andromeda.codegen.INameProvider;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.RecordType;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
@@ -48,7 +48,7 @@ public abstract class ClassFieldCalculator {
 	 * @param c the class for which to generate the implicit fields
 	 * @return a list of implicit fields
 	 */
-	protected abstract ArrayList<VarDecl> generateImplicitFields(Class c);
+	protected abstract ArrayList<VarDecl> generateImplicitFields(IClass c);
 	
 	public ClassFieldCalculator(TypeProvider tp, INameProvider snv) {
 		this.typeProvider = tp;
@@ -62,7 +62,7 @@ public abstract class ClassFieldCalculator {
 	 * @param name Name of the field (not the generated one, the native one)
 	 * @return the generated field
 	 */
-	protected FieldDecl createField(Class c, Type type,String name){
+	protected FieldDecl createField(IClass c, IType type,String name){
 		VarDeclNode vdn = new UninitedVarDeclNode(new IdentifierNode(name));
 		VarDeclListNode vd = new VarDeclListNode();
 		FieldDeclNode fd = new FieldDeclNode(null, null, null, vd );
@@ -75,7 +75,7 @@ public abstract class ClassFieldCalculator {
 	
 
 	public void calcFields(){
-		for(Class c : typeProvider.getClasses()){
+		for(IClass c : typeProvider.getClasses()){
 			if(!c.isTopClass()) continue;
 			
 			ArrayList<VarDecl> fields = calcHierarchyFields(c, generateImplicitFields(c));
@@ -103,27 +103,27 @@ public abstract class ClassFieldCalculator {
 	 * @param c
 	 * @param fields
 	 */
-	private void setFieldsForHierarchy(Class c, ArrayList<VarDecl> fields){
+	private void setFieldsForHierarchy(IClass c, ArrayList<VarDecl> fields){
 		c.setHierarchyFields(fields);
-		for(RecordType c2: c.getDecendants()){
-			setFieldsForHierarchy((Class) c2, fields);
+		for(RecordTypeImpl c2: c.getDecendants()){
+			setFieldsForHierarchy((IClass) c2, fields);
 		}
 	}
 
-	private ArrayList<VarDecl> calcHierarchyFields(Class c, ArrayList<VarDecl> fieldList) {
+	private ArrayList<VarDecl> calcHierarchyFields(IClass c, ArrayList<VarDecl> fieldList) {
 		//Add all fields from top class without checking (they cannot be reused)
 		for(VarDecl field : TypeUtil.getNonStaticTypeFields(c, false)){
 			fieldList.add(field);
 		}
 		//Call for children in the hierarchy
 		int fieldsToSkip = fieldList.size();
-		for(RecordType r : c.getDecendants()){
-			calcFields((Class)r,fieldList,fieldsToSkip);
+		for(RecordTypeImpl r : c.getDecendants()){
+			calcFields((IClass)r,fieldList,fieldsToSkip);
 		}
 		return fieldList;
 	}
 
-	private ArrayList<VarDecl> calcFields(Class t, ArrayList<VarDecl> fieldList, int startAtIndex) {
+	private ArrayList<VarDecl> calcFields(IClass t, ArrayList<VarDecl> fieldList, int startAtIndex) {
 		outer: for(VarDecl field : TypeUtil.getNonStaticTypeFields(t, false)){
 			
 			//Check if there is a field that could be used
@@ -133,14 +133,14 @@ public abstract class ClassFieldCalculator {
 			//We start not at zero but skip all fields of the top class
 			middle: for(int i=startAtIndex;i<size;i++){
 				VarDecl f = fieldList.get(i);
-				if(f.getType().getGeneratedType()== field.getType().getGeneratedType()&&!t.isInstanceof((Class) f.getContainingType())){
+				if(f.getType().getGeneratedType()== field.getType().getGeneratedType()&&!t.isInstanceof((IClass) f.getContainingType())){
 					//Field can be reused if it is not yet used in this hierarchy
 					//FIXME: Dirty hack, factor usedBy out from field and remove the type casts
 					ArrayList<FieldDecl> usedBy = ((FieldDecl) f).getUsedByFields();
 					if(usedBy != null){
 						for(FieldDecl f2: usedBy){
 							//Field is already used in this hierarchy, skip!
-							if(t.isInstanceof((Class)f2.getContainingType())) continue middle;
+							if(t.isInstanceof((IClass)f2.getContainingType())) continue middle;
 						}
 					}
 					
@@ -156,8 +156,8 @@ public abstract class ClassFieldCalculator {
 		}
 		
 		//Call for children in the hierarchy
-		for(RecordType r : t.getDecendants()){
-			calcFields((Class)r,fieldList,startAtIndex);
+		for(RecordTypeImpl r : t.getDecendants()){
+			calcFields((IClass)r,fieldList,startAtIndex);
 		}
 		return fieldList;
 	}

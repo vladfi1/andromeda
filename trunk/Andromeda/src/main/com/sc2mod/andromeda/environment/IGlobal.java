@@ -10,9 +10,9 @@
 package com.sc2mod.andromeda.environment;
 
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 
 public interface IGlobal {
 
-	public Scope getScope();
+	public IScope getScope();
 }

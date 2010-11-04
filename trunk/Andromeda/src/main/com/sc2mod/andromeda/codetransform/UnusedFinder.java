@@ -18,7 +18,7 @@ import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.FieldSet;
@@ -92,7 +92,7 @@ public class UnusedFinder {
 		}
 		
 		//Methods
-		for(RecordType r: env.typeProvider.getRecordTypes()){
+		for(RecordTypeImpl r: env.typeProvider.getRecordTypes()){
 			InclusionType inclusionType = r.getScope().getInclusionType();
 			if(inclusionType==InclusionType.NATIVE) continue;
 			LinkedHashMap<String, LinkedHashMap<Signature, Operation>> methods = r.getMethods().getMethodTable();
@@ -155,7 +155,7 @@ public class UnusedFinder {
 										.raise();
 						if(p.wantRemove())decl.setCreateCode(false);
 					}
-				} else if(decl.getNumWriteAccesses()==0&&decl.getType().getCategory()!=com.sc2mod.andromeda.environment.types.Type.ARRAY){
+				} else if(decl.getNumWriteAccesses()==0&&decl.getType().getCategory()!=com.sc2mod.andromeda.environment.types.Type.TypeImpl){
 					Problem.ofType(ProblemId.UNINITIALIZED_VARIABLE).at(decl.getDefinition())
 							.details("global variable", decl.getUid())
 							.raise();
@@ -168,7 +168,7 @@ public class UnusedFinder {
 	private static void checkUnusedFields(Configuration options, Environment env) {
 
 		//Fields
-		for(RecordType r: env.typeProvider.getRecordTypes()){
+		for(RecordTypeImpl r: env.typeProvider.getRecordTypes()){
 			InclusionType inclusionType = r.getScope().getInclusionType();
 			boolean isLib;
 			switch(inclusionType){
@@ -216,7 +216,7 @@ public class UnusedFinder {
 					}
 				} else if(decl.getNumWriteAccesses()==0){
 					//XPilot: containing class may not be used
-					if(decl.getContainingType().isClass() && ((Class)decl.getContainingType()).isUsed())
+					if(decl.getContainingType().isClass() && ((IClass)decl.getContainingType()).isUsed())
 						
 						Problem.ofType(ProblemId.UNINITIALIZED_VARIABLE).at(decl.getDefinition())
 							.details("field", decl.getUid())

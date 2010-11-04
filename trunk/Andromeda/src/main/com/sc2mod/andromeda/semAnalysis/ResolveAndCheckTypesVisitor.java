@@ -10,18 +10,18 @@ import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.BasicType;
-import com.sc2mod.andromeda.environment.types.Class;
+import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.Extension;
-import com.sc2mod.andromeda.environment.types.Interface;
-import com.sc2mod.andromeda.environment.types.NamedType;
+import com.sc2mod.andromeda.environment.types.IInterface;
+import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
-import com.sc2mod.andromeda.environment.types.Struct;
-import com.sc2mod.andromeda.environment.types.Type;
+import com.sc2mod.andromeda.environment.types.IStruct;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
@@ -86,7 +86,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 		if(typeNode == null)
 			return;
 		
-		Type t = tprov.resolveType(typeNode, varDecl.getScope());
+		IType t = tprov.resolveType(typeNode, varDecl.getScope());
 		varDecl.setResolvedType(t);
 	}
 	
@@ -122,15 +122,15 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	
 	
 	private void resolveFuncParams(Function function){
-		Scope scope = function.getScope();
+		IScope scope = function.getScope();
 		ParameterListNode paramList = function.getHeader().getParameters();
 		int size = paramList.size();
-		Type[] sig = new Type[size];
+		IType[] sig = new IType[size];
 		ParamDecl[] params = new ParamDecl[size];
 
 		for(int i=0;i<size;i++){
 			ParameterNode param = paramList.elementAt(i);
-			Type type = tprov.resolveType(param.getType(),scope);
+			IType type = tprov.resolveType(param.getType(),scope);
 			if(!type.isValidAsParameter()) 
 				throw Problem.ofType(ProblemId.ARRAY_OR_STRUCT_AS_PARAMETER).at(param)
 						.raiseUnrecoverable();
@@ -142,7 +142,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	}
 	
 	private void resolveReturnType(Function function){
-		Type returnType = tprov.resolveType(function.getHeader().getReturnType(),function.getScope());
+		IType returnType = tprov.resolveType(function.getHeader().getReturnType(),function.getScope());
 		if(!returnType.isValidAsParameter()) 
 			throw Problem.ofType(ProblemId.ARRAY_OR_STRUCT_RETURNED).at(function.getHeader().getReturnType())
 						.raiseUnrecoverable();
@@ -184,7 +184,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	//***						TYPES & ENRICHMENTS				***
 	//***														***
 	//*************************************************************
-	private void resolveTypeParams(NamedType type, TypeParamListNode paramList) {
+	private void resolveTypeParams(INamedType type, TypeParamListNode paramList) {
 		if(paramList == null) return;
 		
 		int size = paramList.size();
@@ -204,7 +204,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	}
 	
 	@Override
-	public void visit(Struct struct) {
+	public void visit(IStruct struct) {
 		resolveTypeParams(struct, struct.getDefinition().getTypeParams());
 	}
 	
@@ -215,16 +215,16 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	//*************************************************************
 
 	
-	protected void resolveInterfaceExtends(Interface interfac) {
+	protected void resolveInterfaceExtends(IInterface interfac) {
 		TypeListNode tl = interfac.getDefinition().getInterfaces();
 		int size = tl.size();
 		for(int i=0;i<size;i++){
-			Type in = tprov.resolveType(tl.elementAt(i),interfac);
+			IType in = tprov.resolveType(tl.elementAt(i),interfac);
 			if(in.getCategory()!=TypeCategory.INTERFACE){
 				throw Problem.ofType(ProblemId.INTERFACE_EXTENDING_NON_INTERFACE).at(tl.elementAt(i))
 							.raiseUnrecoverable();
 			}
-			if(!interfac.getInterfaces().add((Interface)in)){
+			if(!interfac.getInterfaces().add((IInterface)in)){
 				throw Problem.ofType(ProblemId.DUPLICATE_EXTENDS).at(tl.elementAt(i))
 						.raiseUnrecoverable();
 			}
@@ -232,7 +232,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	}
 	
 	@Override
-	public void visit(Interface interface1) {
+	public void visit(IInterface interface1) {
 		resolveTypeParams(interface1, interface1.getDefinition().getTypeParams());
 		resolveInterfaceExtends(interface1);
 	}
@@ -249,24 +249,24 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	/**
 	 * XPilot: enabled extending of generic classes.
 	 */
-	protected void resolveClassExtends(Class clazz) {
-		Type type = tprov.resolveType(clazz.getDefinition().getSuperClass(),clazz);
+	protected void resolveClassExtends(IClass clazz) {
+		IType type = tprov.resolveType(clazz.getDefinition().getSuperClass(),clazz);
 		if(!type.isClass())
 			throw Problem.ofType(ProblemId.CLASS_EXTENDS_NON_CLASS).at(clazz.getDefinition().getSuperClass())
 							.raiseUnrecoverable();
-		clazz.setSuperClass((Class)type);
+		clazz.setSuperClass((IClass)type);
 	}
 
-	protected void resolveClassImplements(Class clazz) {
+	protected void resolveClassImplements(IClass clazz) {
 		TypeListNode tl = clazz.getDefinition().getInterfaces();
 		int size = tl.size();
 		for(int i=0;i<size;i++){
-			Type in = tprov.resolveType(tl.elementAt(i),clazz);
+			IType in = tprov.resolveType(tl.elementAt(i),clazz);
 			if(in.getCategory()!=TypeCategory.INTERFACE){
 				throw Problem.ofType(ProblemId.CLASS_IMPLEMENTS_NON_INTERFACE).at(tl.elementAt(i))
 						.raiseUnrecoverable();
 			}
-			if(!clazz.getInterfaces().add((Interface)in)){
+			if(!clazz.getInterfaces().add((IInterface)in)){
 					throw Problem.ofType(ProblemId.DUPLICATE_IMPLEMENTS).at(tl.elementAt(i))
 						.raiseUnrecoverable();
 			}
@@ -278,7 +278,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	
 
 	@Override
-	public void visit(Class class1) {
+	public void visit(IClass class1) {
 		GlobalStructureNode decl = class1.getDefinition();
 		//Type parameters
 		resolveTypeParams(class1, decl.getTypeParams());
@@ -299,7 +299,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	
 	@Override
 	public void visit(Extension extension) {
-		Type extendedType = tprov.resolveType(extension.getDefinition().getEnrichedType(), extension.getScope());
+		IType extendedType = tprov.resolveType(extension.getDefinition().getEnrichedType(), extension.getScope());
 		BasicType extendedBaseType;
 		int hierarchyLevel;
 		switch(extendedType.getCategory()){
@@ -347,7 +347,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 
 	@Override
 	public void visit(Enrichment enrichment) {
-		Type enrichedType = tprov.resolveType(enrichment.getDefinition().getEnrichedType(), enrichment.getParentScope());
+		IType enrichedType = tprov.resolveType(enrichment.getDefinition().getEnrichedType(), enrichment.getParentScope());
 		enrichment.setResolvedEnrichedType(enrichedType);
 	}
 }

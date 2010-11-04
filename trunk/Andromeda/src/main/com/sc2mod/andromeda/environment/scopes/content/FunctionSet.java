@@ -3,17 +3,17 @@ package com.sc2mod.andromeda.environment.scopes.content;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;
-import com.sc2mod.andromeda.environment.scopes.Scope;
+import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 
 public class FunctionSet extends OperationSet {
 
-	public FunctionSet(Scope owner, Operation op) {
+	public FunctionSet(IScope owner, Operation op) {
 		super(owner, op);
 	}
 
-	public FunctionSet(Scope owner, OperationSet set) {
+	public FunctionSet(IScope owner, OperationSet set) {
 		super(owner, set);
 	}
 
