@@ -9,6 +9,9 @@
  */
 package com.sc2mod.andromeda.environment.types.impl;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
@@ -21,6 +24,7 @@ import com.sc2mod.andromeda.environment.types.generic.GenericExtensionInstance;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
@@ -229,9 +233,6 @@ public class ExtensionImpl extends NamedTypeImpl implements IExtension{
 	}
 
 
-	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
-	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
-	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 
 	@Override
 	public String getName() {
@@ -253,6 +254,108 @@ public class ExtensionImpl extends NamedTypeImpl implements IExtension{
 
 	@Override
 	public String getUid() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	
+	//FIXME: Implement those methods for extensions (or pull up to namedTypeImpl)
+	@Override
+	public boolean isAbstract() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public boolean isConst() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public boolean isFinal() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public boolean isNative() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public boolean isOverride() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setAbstract() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setConst() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setFinal() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setNative() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setOverride() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setStatic() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setVisibility(Visibility visibility) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void afterAnnotationsProcessed() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public HashSet<String> getAllowedAnnotations() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public boolean hasAnnotation(String name) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+	@Override
+	public void setAnnotationTable(HashMap<String, AnnotationNode> annotations) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}

@@ -12,10 +12,9 @@ package com.sc2mod.andromeda.environment.types.generic;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.INamedType;
-import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
-import com.sc2mod.andromeda.environment.types.TypeParamMapping;
 import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -28,6 +27,7 @@ public class TypeParameter extends TypeImpl {
 	private String name;
 	private INamedType forType;
 	private int index;
+
 	private IType typeBound;
 	
 	public TypeParameter(INamedType forType, TypeParamNode node, int index, IType typeBound) {
@@ -39,6 +39,10 @@ public class TypeParameter extends TypeImpl {
 		decl = node;
 		this.forType = forType;
 		name = node.getName();
+	}
+	
+	public int getIndex() {
+		return index;
 	}
 
 	@Override
@@ -59,20 +63,6 @@ public class TypeParameter extends TypeImpl {
 	@Override
 	public String getFullName() {
 		return forType.getUid() + "::" + name;
-	}
-	
-
-	/**
-	 * A type parameter always contains type parameters (itself)
-	 */
-	@Override
-	public boolean containsTypeParams() {
-		return true;
-	}
-	
-	@Override
-	public IType replaceTypeParameters(TypeParamMapping paramMap) {
-		return paramMap.getReplacement(this);
 	}
 	
 	@Override
@@ -110,7 +100,7 @@ public class TypeParameter extends TypeImpl {
 	 */
 	@Override
 	public Visibility getVisibility() {
-		return Visibility.PROTECTED;
+		return Visibility.PRIVATE;
 	}
 
 	@Override

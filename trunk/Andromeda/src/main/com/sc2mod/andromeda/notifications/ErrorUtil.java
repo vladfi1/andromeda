@@ -13,11 +13,17 @@ public final class ErrorUtil {
 		return new InternalProgramError("Illegal value " + String.valueOf(value));
 	}
 	
+	public static InternalProgramError defaultInternalError(){
+		return new InternalProgramError("!");
+	}
+	
 	public static UnrecoverableProblem raiseInternalProblem(Throwable t){
 		String errorMessage = Debug.getStackTrace(t);
 		throw Problem.ofType(ProblemId.INTERNAL_PROBLEM).details(errorMessage)
 			.raiseUnrecoverable();
 	}
+	
+	
 	
 	public static Problem raiseIOProblem(IOException t, boolean unrecoverable){
 		Problem p = Problem.ofType(ProblemId.EXTERNAL_IO_EXCEPTION).details(t.getMessage());

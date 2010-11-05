@@ -21,18 +21,26 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class FunctionPointer extends UnscopedType{
+public class ClosureType extends UnscopedType{
 
 	private Signature sig;
 	private IType returnType;
 	private String uid;
 	private LinkedHashSet<FuncPointerDecl> usages;
 	
-	public FunctionPointer(Signature sig2, IType returnType) {
+	public ClosureType(Signature sig2, IType returnType) {
 		this.sig = sig2;
 		this.returnType = returnType;
 	}
 
+	public Signature getSignature(){
+		return sig;
+	}
+	
+	public IType getReturnType(){
+		return returnType;
+	}
+	
 	@Override
 	public TypeCategory getCategory() {
 		return TypeCategory.FUNCTION;

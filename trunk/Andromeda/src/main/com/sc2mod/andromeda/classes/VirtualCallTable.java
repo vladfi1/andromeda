@@ -100,7 +100,7 @@ public class VirtualCallTable {
 		if(m != null && m.getContainingType() == clazz) processMethod(m,transientData);
 		
 		//Generate tables for subclasses
-		for(IRecordType r : clazz.getDecendants()) {
+		for(IRecordType r : clazz.getDescendants()) {
 			new VirtualCallTable((IClass) r, env, transientData);
 		}
 	}

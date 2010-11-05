@@ -9,8 +9,10 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,11 +27,14 @@ import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.GlobalScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
+import com.sc2mod.andromeda.environment.types.generic.GenericMemberGenerationVisitor;
+import com.sc2mod.andromeda.environment.types.generic.TypeParamInstanciationVisitor;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
 import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
+import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.program.ToDo;
@@ -53,19 +58,23 @@ public class TypeProvider {
 	private ArrayList<IRecordType> rootRecordTypes = new ArrayList<IRecordType>();
 	private ArrayList<IRecordType> recordTypes = new ArrayList<IRecordType>();
 	private ArrayList<IClass> classes = new ArrayList<IClass>();
-	private LinkedHashMap<Signature,LinkedHashMap<IType,FunctionPointer>> funcPointers = new LinkedHashMap<Signature, LinkedHashMap<IType,FunctionPointer>>();
+	private LinkedHashMap<Signature,LinkedHashMap<IType,ClosureType>> funcPointers = new LinkedHashMap<Signature, LinkedHashMap<IType,ClosureType>>();
 	private ArrayList<Pair<TypeAliasDeclNode, IScope>> typeAliases = new ArrayList<Pair<TypeAliasDeclNode,IScope>>();
 	
 	
 	private SystemTypes systemTypes;
 	
+	private boolean resolveGenerics;
+
 	private HashMap<IType,IType> pointerTypes = new HashMap<IType,IType>();
 	private HashMap<IType,HashMap<Integer,IType>> arrayTypes = new HashMap<IType,HashMap<Integer,IType>>();
+	private HashMap<INamedType,HashMap<Signature,INamedType>> genericInstances = new HashMap<INamedType, HashMap<Signature,INamedType>>();
 	
 	private GlobalScope globalScope;
 	private ArrayList<IExtension> extensions = new ArrayList<IExtension>();
 	
 	private TypeResolver resolver = new TypeResolver(this);
+	private TypeParamInstanciationVisitor paramInstanciator = new TypeParamInstanciationVisitor(this);
 	
 	public TypeProvider(Environment env){
 		globalScope = env.getTheGlobalScope();
@@ -111,6 +120,14 @@ public class TypeProvider {
 	
 	public ArrayList<Pair<TypeAliasDeclNode, IScope>> getTypeAliases(){
 		return typeAliases;
+	}
+	
+	public boolean doResolveGenerics() {
+		return resolveGenerics;
+	}
+
+	public void setResolveGenerics(boolean resolveGenerics) {
+		this.resolveGenerics = resolveGenerics;
 	}
 
 	
@@ -181,9 +198,9 @@ public class TypeProvider {
 	 * @param funcPointerDecl
 	 * @return
 	 */
-	public FunctionPointer registerFunctionPointerUsage(FuncPointerDecl funcPointerDecl) {
+	public ClosureType registerFunctionPointerUsage(FuncPointerDecl funcPointerDecl) {
 		Operation af = funcPointerDecl.getFunction();
-		FunctionPointer fpt = getFunctionPointerType(af.getSignature(),af.getReturnType());
+		ClosureType fpt = getFunctionPointerType(af.getSignature(),af.getReturnType());
 		fpt.registerUsage(funcPointerDecl);
 		return fpt;
 	}
@@ -197,16 +214,16 @@ public class TypeProvider {
 	}
 	
 
-	private FunctionPointer getFunctionPointerType(Signature params, IType returnType){
-		LinkedHashMap<IType, FunctionPointer> funcs = funcPointers.get(params);
+	private ClosureType getFunctionPointerType(Signature params, IType returnType){
+		LinkedHashMap<IType, ClosureType> funcs = funcPointers.get(params);
 		if(funcs == null){
-			funcs = new LinkedHashMap<IType, FunctionPointer>();
+			funcs = new LinkedHashMap<IType, ClosureType>();
 			funcPointers.put(params, funcs);
 		}
 		
-		FunctionPointer fp = funcs.get(returnType);
+		ClosureType fp = funcs.get(returnType);
 		if(fp == null){
-			fp = new FunctionPointer(params,returnType);
+			fp = new ClosureType(params,returnType);
 			funcs.put(returnType, fp);
 		}
 		return fp;
@@ -225,6 +242,19 @@ public class TypeProvider {
 
 		return getFunctionPointerType(sig, t);
 		
+	}
+	
+	public IType getArrayType(IType wrappedType, int dim){
+		HashMap<Integer, IType> t = arrayTypes.get(wrappedType);
+		if(t == null){
+			arrayTypes.put(wrappedType, t = new HashMap<Integer, IType>());
+		}
+		
+		IType type = t.get(dim);
+		if(type == null){
+			t.put(dim,type = new ArrayType(wrappedType, dim));
+		}
+		return type;
 	}
 
 	private IType getSingleArrayType(IType wrappedType,ExprNode dimension){
@@ -250,16 +280,7 @@ public class TypeProvider {
 //						.raiseUnrecoverable();
 		int dim = 0;
 		
-		HashMap<Integer, IType> t = arrayTypes.get(wrappedType);
-		if(t == null){
-			arrayTypes.put(wrappedType, t = new HashMap<Integer, IType>());
-		}
-		
-		IType type = t.get(dim);
-		if(type == null){
-			t.put(dim,type = new ArrayType(wrappedType, dim));
-		}
-		return type;
+		return getArrayType(wrappedType, 0);
 	}
 	
 	IType getArrayType(IType wrappedType, ExprListNode dimensions) {
@@ -277,6 +298,63 @@ public class TypeProvider {
 			pointerTypes.put(pointsTo, result = new PointerType(pointsTo));
 		}
 		return result;
+	}
+	
+	/**
+	 * Gets a generic instance of a generic type. Tries to get a cached type before creating a new one.
+	 * @param s the signature of the type values to replace the parameters.
+	 * @return
+	 */
+	public INamedType getGenericInstance(INamedType t, Signature s){
+		if(!t.isGenericDecl()){
+			throw new InternalProgramError("Trying to create a generic instance of the non generic type " + t.getName());
+		}
+		
+		if(s.size() != t.getTypeParameters().length){
+			throw new InternalProgramError("Trying to create a generic instance with the wrong number of type values");
+		}
+		
+		//Lazily instanciate generic instance map
+		HashMap<Signature, INamedType> instances = genericInstances.get(t);
+		if(instances == null){
+			instances = new HashMap<Signature, INamedType>();
+			genericInstances.put(t, instances);
+		}
+		
+		//Get the generic instance from the map. If we haven't got it yet, then create and put into map.
+		INamedType g = instances.get(s);
+		if(g == null){
+			g = t.createGenericInstance(s);
+			instances.put(s, g);
+		}
+		return g;
+	}
+	
+	private static Iterable<INamedType> EMPTY = new ArrayList<INamedType>(0);
+	
+	public Iterable<INamedType> getGenericInstances(INamedType t){
+		HashMap<Signature, INamedType> instances = genericInstances.get(t);
+		if(instances == null){
+			return EMPTY;
+		}
+		return instances.values();
+	}
+	
+	public IType insertTypeArgs(IType forType, Signature typeArguments){
+		return forType.accept(paramInstanciator,typeArguments);
+	}
+	
+	public Signature insertTypeArgsInSignature(Signature inSignature, Signature typeArguments){
+		if(!inSignature.containsTypeParams()) return inSignature;
+		IType[] result = inSignature.getTypeArrayCopy();
+		
+		int size = result.length;
+		for(int i=0;i<size;i++){
+			IType t = insertTypeArgs(result[i], typeArguments);			
+			result[i] = t;
+		}
+		Signature sig = new Signature(result);
+		return sig;
 	}
 	
 	//==========================================
@@ -326,8 +404,8 @@ public class TypeProvider {
 
 
 	public void calcFuncPointerIndices() {
-		for(Entry<Signature, LinkedHashMap<IType, FunctionPointer>> fps: funcPointers.entrySet()){
-			for(Entry<IType, FunctionPointer> fp : fps.getValue().entrySet()){
+		for(Entry<Signature, LinkedHashMap<IType, ClosureType>> fps: funcPointers.entrySet()){
+			for(Entry<IType, ClosureType> fp : fps.getValue().entrySet()){
 				fp.getValue().calcIndices();
 			}
 		}

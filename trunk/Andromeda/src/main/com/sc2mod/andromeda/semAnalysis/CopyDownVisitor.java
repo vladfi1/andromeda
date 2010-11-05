@@ -7,8 +7,10 @@ import com.sc2mod.andromeda.environment.operations.Deallocator;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
+import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.types.generic.GenericMemberGenerationVisitor;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 
@@ -22,9 +24,11 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 
 	private TypeProvider tprov;
+	private GenericMemberGenerationVisitor genericsVisitor;
 	
 	public CopyDownVisitor(Environment env) {
 		this.tprov = env.typeProvider;
+		this.genericsVisitor = new GenericMemberGenerationVisitor(tprov);
 	}
 	
 	/**
@@ -48,6 +52,13 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 		
 		setDestructor(class1);
 		
+		//Copy generic members for all generic instances that are already present at this point
+		if(class1.isGenericDecl()){
+			for(INamedType genericInstance : tprov.getGenericInstances(class1)){
+				copyGenericMembers(genericInstance);
+			}
+		}
+		
 		//Recursive call for subclasses
 		LinkedList<IRecordType> decendants = class1.getDecendants();
 		for(IRecordType subclass : decendants){
@@ -55,6 +66,10 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 		}
 	}
 	
+	private void copyGenericMembers(INamedType genericInstance) {
+		genericInstance.accept(genericsVisitor);
+	}
+
 	/**
 	 * Sets the destructor for this class appropriately, if it has
 	 * no own destructor. If it has one, add an override for

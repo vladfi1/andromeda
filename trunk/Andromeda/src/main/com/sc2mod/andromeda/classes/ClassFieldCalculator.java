@@ -106,7 +106,7 @@ public abstract class ClassFieldCalculator {
 	 */
 	private void setFieldsForHierarchy(IClass c, ArrayList<VarDecl> fields){
 		c.setHierarchyFields(fields);
-		for(IRecordType c2: c.getDecendants()){
+		for(IRecordType c2: c.getDescendants()){
 			setFieldsForHierarchy((IClass) c2, fields);
 		}
 	}
@@ -118,7 +118,7 @@ public abstract class ClassFieldCalculator {
 		}
 		//Call for children in the hierarchy
 		int fieldsToSkip = fieldList.size();
-		for(IRecordType r : c.getDecendants()){
+		for(IRecordType r : c.getDescendants()){
 			calcFields((IClass)r,fieldList,fieldsToSkip);
 		}
 		return fieldList;
@@ -157,7 +157,7 @@ public abstract class ClassFieldCalculator {
 		}
 		
 		//Call for children in the hierarchy
-		for(IRecordType r : t.getDecendants()){
+		for(IRecordType r : t.getDescendants()){
 			calcFields((IClass)r,fieldList,startAtIndex);
 		}
 		return fieldList;

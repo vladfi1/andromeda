@@ -9,26 +9,19 @@
  */
 package com.sc2mod.andromeda.environment.types.generic;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import com.sc2mod.andromeda.classes.ClassNameProvider;
 import com.sc2mod.andromeda.classes.VirtualCallTable;
 import com.sc2mod.andromeda.environment.Signature;
-
 import com.sc2mod.andromeda.environment.operations.Constructor;
+import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.GenericClass;
-import com.sc2mod.andromeda.environment.types.RecordType;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.types.TypeParamMapping;
-import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 
 public class GenericClassInstance extends GenericTypeInstance implements IClass {
 
@@ -36,6 +29,10 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 	private Signature signature;
 	private boolean genericMembersResolved;
 	private TypeParamMapping paramMap;
+	
+	private OperationSet constructors;
+	
+	
 	
 	public GenericClassInstance(IClass class1, Signature s) {
 		super(class1, s);
@@ -59,54 +56,11 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 	}
 	
 	@Override
-	public String getAllocatorName() {
-		return theType.getAllocatorName();
-	}
-	
-	@Override
-	public String getDeallocatorName() {
-		return theType.getDeallocatorName();
-	}
-	
-	@Override
-	public String getMetaClassName() {
-		return theType.getMetaClassName();
-	}
-	
-	@Override
-	public String getGeneratedName() {
-		return theType.getGeneratedName();
-	}
-	
-	@Override
-	public ClassNameProvider getNameProvider() {
-		return theType.getNameProvider();
-	}
-	
-	@Override
-	public IType getWrappedType() {
-		return theType.getWrappedType();
-	}
-
-	@Override
-	public String getDescription() {
-		return "generic class";
-	}
-	
-	@Override
 	public String getFullName() {
 		return new StringBuilder().append(theType.getUid()).append("<").append(signature.getFullName()).append(">").toString();
 	}
-		
-	@Override
-	public Signature getSignature() {
-		return signature;
-	}
-	
-	@Override
-	public String getUid() {
-		return theType.getUid();
-	}
+
+
 	
 	/**
 	 * XPilot: now works for generic types
@@ -131,22 +85,6 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 		if(superClass == null) return false;
 		return superClass.isInstanceof(c);
 	}
-	
-	/* XPilot: Not needed, can use Class.canImplicitCastTo
-	@Override
-	public boolean canImplicitCastTo(Type toType) {
-		if(toType == this) return true;
-		//XPilot: Can now cast to a non-generic class
-		if(toType.getCategory() == CLASS) {
-			return theType.canImplicitCastTo(toType);
-		}
-		if(toType.getCategory() != GENERIC_CLASS) return false;
-		
-		//We can cast if the signature is okay and the non-generic prefix can be cast implicitly
-		if(!theType.canImplicitCastTo(toType.getWrappedType())) return false;
-		return signature.equals(((GenericClassInstance)toType).getSignature());
-	}
-	*/
 	
 	public void generateGenericMembers() {
 		if(genericMembersResolved) return;
@@ -356,4 +294,13 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	public void setConstructors(OperationSet genericOperationSet) {
+		constructors = genericOperationSet;
+	}
+	
+	@Override
+	public OperationSet getConstructors() {
+		return constructors;
+	}
 }

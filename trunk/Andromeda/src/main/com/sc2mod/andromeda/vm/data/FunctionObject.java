@@ -9,7 +9,7 @@
  */
 package com.sc2mod.andromeda.vm.data;
 
-import com.sc2mod.andromeda.environment.types.FunctionPointer;
+import com.sc2mod.andromeda.environment.types.ClosureType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;

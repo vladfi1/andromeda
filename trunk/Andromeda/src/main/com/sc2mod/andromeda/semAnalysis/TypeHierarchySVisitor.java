@@ -65,7 +65,7 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 		if(!alreadyChecked.contains(clazz)){
 			boolean hasParents = false;
 			for(IInterface i : clazz.getInterfaces()){
-				i.getDecendants().add(clazz);
+				i.getDescendants().add(clazz);
 				hasParents = true;
 			}
 			if(superClass != null){
@@ -111,7 +111,7 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 		if(!alreadyChecked.contains(interfac)){
 			if(!interfaces.isEmpty()){
 				for(IInterface i: interfaces){
-					i.getDecendants().add(interfac);
+					i.getDescendants().add(interfac);
 				}
 			} else {
 				tprov.registerRootRecord(interfac);

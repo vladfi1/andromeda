@@ -102,7 +102,6 @@ public enum ProblemId {
 	STRUCT_MEMBER_WITH_MODIFIER("Struct fields cannot have modifiers."),
 	
 	DUPLICATE_TYPE_DEFINITION("Duplicate definition of type %s."),
-	GENERIC_TYPE_MISSING_TYPE_ARGUMENTS("The generic type %s must have type arguments."),
 	NON_GENERIC_TYPE_HAS_TYPE_ARGUMENTS("The non-generic type %s cannot have type arguments"),
 	
 	INTERFACE_EXTENDING_NON_INTERFACE("Interfaces can only extend other interfaces"),

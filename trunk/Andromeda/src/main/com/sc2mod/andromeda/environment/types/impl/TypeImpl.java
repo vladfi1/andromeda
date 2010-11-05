@@ -17,7 +17,6 @@ import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
-import com.sc2mod.andromeda.environment.types.TypeParamMapping;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
 public abstract class TypeImpl extends BlockScope implements IType{
@@ -171,7 +170,11 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	}
 
 	@Override
-	public boolean isGeneric() {
+	public boolean isGenericInstance() {
+		return false;
+	}
+	
+	public boolean isGenericDecl(){
 		return false;
 	}
 	
@@ -183,17 +186,6 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	@Override
 	public String toString() {
 		return getFullName();
-	}
-
-	@Override
-	public boolean containsTypeParams() {
-		return false;
-	}
-
-	//TODO: Factor out into visitor
-	@Override
-	public IType replaceTypeParameters(TypeParamMapping paramMap) {
-		return this;
 	}
 
 	
@@ -279,13 +271,13 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	//*** SCOPING METHODS ***
 	
 	@Override
-	public TypeImpl getContainingType() {
+	public IType getContainingType() {
 		//TODO: Once types are allowed in other types, this needs to return the correct value
 		return null;
 	}
 	
 	@Override
-	public ScopeContentSet createContentSet() {
+	protected ScopeContentSet createContentSet() {
 		return new InheritableContentSet(this);
 	}
 	

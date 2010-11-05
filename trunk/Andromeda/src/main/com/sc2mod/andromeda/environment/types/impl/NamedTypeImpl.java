@@ -32,9 +32,8 @@ import com.sc2mod.andromeda.notifications.InternalProgramError;
  */
 public abstract class NamedTypeImpl extends TypeImpl implements INamedType{
 	
-	protected HashMap<Signature,INamedType> genericInstances;
-	private Signature typeParamSignature;
 	protected String generatedName;
+	private TypeParameter[] typeParams;
 	
 	
 	protected NamedTypeImpl(IScope parentScope){
@@ -50,7 +49,6 @@ public abstract class NamedTypeImpl extends TypeImpl implements INamedType{
 		super(genericParent.getScope());
 	}
 	
-	
 	public abstract String getName();
 	
 	@Override
@@ -61,37 +59,6 @@ public abstract class NamedTypeImpl extends TypeImpl implements INamedType{
 	public void setGeneratedName(String generatedName) {
 		this.generatedName = generatedName;
 	}
-
-	/**
-	 * Gets a generic instance of this type. Tries to get a cached type before creating a new one.
-	 * @param s the signature of the type values to replace the parameters.
-	 * @return
-	 */
-	public INamedType getGenericInstance(Signature s){
-		if(!isGeneric()){
-			throw new InternalProgramError("Trying to create a generic instance of the non generic type " + this.getName());
-		}
-		
-		if(s.size() != typeParamSignature.size()){
-			throw new InternalProgramError("Trying to create a generic instance with the wrong number of type values");
-		}
-		
-		//No new type, just the type itself.
-		if(s.equals(typeParamSignature)) return this;
-		
-		//Lazily instanciate generic instance map
-		if(genericInstances == null){
-			genericInstances = new HashMap<Signature, INamedType>();
-		}
-		
-		//Get the generic instance from the map. If we haven't got it yet, then create and put into map.
-		INamedType g = genericInstances.get(s);
-		if(g == null){
-			g = createGenericInstance(s);
-			genericInstances.put(s, g);
-		}
-		return g;
-	}
 	
 	/**
 	 * Sets the type parameters for this type, hence making it generic.
@@ -99,47 +66,23 @@ public abstract class NamedTypeImpl extends TypeImpl implements INamedType{
 	 * @param types
 	 */
 	public void setTypeParameters(TypeParameter[] types){
-		typeParamSignature = new Signature(types);
+		typeParams = types;
 	}
 	
-	/**
-	 * Returns true iff this is a generic type.
-	 * Generic type means, that this is a type
-	 * which has type parameters in its declaration.
-	 * Also a concrete instance is considered to be generic.
-	 * <br/>
-	 * What is not considered generic is a type that is extended from a
-	 * generic type but replaces all parameters by concrete types.
-	 * Examples:
-	 * <p><code>
-	 * List&lt;T&gt; // true<br/>
-	 * List&lt;Integer&gt; // true<br/>
-	 * class X extends ListList&lt;Integer&gt; // false
-	 * </code></p>
-	 * 
-	 * 
-	 **/
-	public boolean isGeneric(){
-		//TODO Check if this reflects the documentation
-		return typeParamSignature == null;			
-	}
-	
-	/**
-	 * Returns true iff this is a generic type without concrete parameters.
-	 * Examples:
-	 * <p><code>
-	 * List&lt;T&gt; // true<br/>
-	 * List&lt;Integer&gt; // false<br/>
-	 * class X extends ListList&lt;Integer&gt; // false
-	 * </code></p>
-	 * 
-	 * @return
-	 */
-	public boolean isGenericDecl(){
-		//TODO Check if this reflects the documentation
-		return typeParamSignature == null;
+	@Override
+	public TypeParameter[] getTypeParameters() {
+		return typeParams;
 	}
 
+	@Override
+	public boolean isGenericDecl(){
+		return typeParams != null;
+	}
+
+	@Override
+	public Signature getTypeArguments() {
+		return null;
+	}
 	
 
 }

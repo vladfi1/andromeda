@@ -161,9 +161,10 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 			throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_CONSTRUCTOR).at(class1.getConstructors().getAny().getDefinition())
 						.raiseUnrecoverable();
 		
-		if(class1.getNumNonStatics()!=0)
-			throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_NON_STATIC_MEMBER).at(class1.getDefinition())
-						.raiseUnrecoverable();
+		//FIXME: Numstatics count in typeUtil machen und hier usen
+//		if(class1.getNumNonStatics()!=0)
+//			throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_NON_STATIC_MEMBER).at(class1.getDefinition())
+//						.raiseUnrecoverable();
 	}
 	
 

@@ -11,6 +11,8 @@ package com.sc2mod.andromeda.environment.types;
 
 import java.util.HashMap;
 
+import com.sc2mod.andromeda.environment.IAnnotatable;
+import com.sc2mod.andromeda.environment.IModifiable;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
@@ -29,7 +31,7 @@ import com.sc2mod.andromeda.notifications.InternalProgramError;
  * @author gex
  *
  */
-public interface INamedType extends IType{
+public interface INamedType extends IType, IModifiable, IAnnotatable{
 	
 	String getName();
 
@@ -43,54 +45,30 @@ public interface INamedType extends IType{
 	 * generic related calls.
 	 * @return the created instance
 	 */
+	//TODO: Factor into visitor
+	@Deprecated
 	INamedType createGenericInstance(Signature s);
-	
-	
-	/**
-	 * Gets a generic instance of this type. Tries to get a cached type before creating a new one.
-	 * @param s the signature of the type values to replace the parameters.
-	 * @return
-	 */
-	INamedType getGenericInstance(Signature s);
+
 	
 	/**
-	 * Sets the type parameters for this type, hence making it generic.
+	 * Sets the type parameters for this type, hence making it a generic declaration.
 	 * This is called by the semantic analysis after the types of the type parameters can be assigned.
 	 * @param types
 	 */
 	void setTypeParameters(TypeParameter[] types);
 	
-	/**
-	 * Returns true iff this is a generic type.
-	 * Generic type means, that this is a type
-	 * which has type parameters in its declaration.
-	 * Also a concrete instance is considered to be generic.
-	 * <br/>
-	 * What is not considered generic is a type that is extended from a
-	 * generic type but replaces all parameters by concrete types.
-	 * Examples:
-	 * <p><code>
-	 * List&lt;T&gt; // true<br/>
-	 * List&lt;Integer&gt; // true<br/>
-	 * class X extends ListList&lt;Integer&gt; // false
-	 * </code></p>
-	 * 
-	 * 
-	 **/
-	boolean isGeneric();
+	TypeParameter[] getTypeParameters();
+	
 	
 	/**
-	 * Returns true iff this is a generic type without concrete parameters.
-	 * Examples:
-	 * <p><code>
-	 * List&lt;T&gt; // true<br/>
-	 * List&lt;Integer&gt; // false<br/>
-	 * class X extends ListList&lt;Integer&gt; // false
-	 * </code></p>
-	 * 
+	 * Returns the type arguments of this type or null if this
+	 * is no generic type or a generic declaration (only generic instances have type arguments)
 	 * @return
 	 */
-	boolean isGenericDecl();
+	Signature getTypeArguments();
+	
+	
+
 	
 	
 

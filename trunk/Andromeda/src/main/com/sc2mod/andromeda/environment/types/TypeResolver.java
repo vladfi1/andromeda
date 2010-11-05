@@ -5,6 +5,7 @@ import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
+import com.sc2mod.andromeda.environment.types.generic.GenericMemberGenerationVisitor;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
@@ -26,10 +27,13 @@ import com.sc2mod.andromeda.syntaxNodes.util.VisitorAdapter;
  */
 public class TypeResolver extends VisitorAdapter<IScope,IType>{
 
-	private TypeProvider tprov;
+	private TypeProvider tprov;	
+	private GenericMemberGenerationVisitor genericsResolver;
+
 
 	public TypeResolver(TypeProvider tprov){
 		this.tprov = tprov;
+		this.genericsResolver = new GenericMemberGenerationVisitor(tprov);
 	}
 	
 	public IType raiseUnknownType(SyntaxNode type, String name){
@@ -53,12 +57,13 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 		
 		//Generics
 		TypeListNode args = type.getTypeArguments();
-		if(result.isGeneric()){
+		if(result.isGenericDecl()){
+			
+			//If no arguments were stated, we return the declaration of the generic type itself
 			if(args == null)
-				throw Problem.ofType(ProblemId.GENERIC_TYPE_MISSING_TYPE_ARGUMENTS).at(type)
-							.details(result.getFullName())
-							.raiseUnrecoverable();
-			//We have a generic type, so resolve the type arguments
+				return result;
+			
+			//We have a generic type with type arguments, i.e. a generic type instance. Resolve arguments
 			int size  = args.size();
 			IType[] typeArgs = new IType[size];
 			for(int i=0;i<size;i++){
@@ -66,7 +71,11 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 				IType t = args.elementAt(i).accept(this,scope);
 				typeArgs[i]=t;				
 			}
-			return ((INamedType)result).getGenericInstance(new Signature(typeArgs));
+			INamedType genericInstance = tprov.getGenericInstance(((INamedType)result),new Signature(typeArgs));
+			//If immediate generic resolving is activated, then the generic instance members are copied down
+			if(tprov.doResolveGenerics() && !genericInstance.isGenericDecl()){
+				genericInstance.accept(genericsResolver);
+			}
 		} else{
 			if(args != null)
 				throw Problem.ofType(ProblemId.NON_GENERIC_TYPE_HAS_TYPE_ARGUMENTS).at(args)

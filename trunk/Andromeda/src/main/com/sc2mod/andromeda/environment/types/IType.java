@@ -106,14 +106,29 @@ public interface IType extends IScope, IScopedElement{
 	
 	 boolean isClass();
 
-	 boolean isGeneric();
+	/**
+	 * Returns true iff this is a generic type without concrete parameters.
+	 * Examples:
+	 * <p><code>
+	 * List&lt;T&gt; // true<br/>
+	 * List&lt;Integer&gt; // false<br/>
+	 * class X extends ListList&lt;Integer&gt; // false
+	 * </code></p>
+	 * 
+	 * @return
+	 */
+	boolean isGenericDecl();
+	
+	
+	/**
+	 * Returns true if this is a generic instance of a type. I.e a generic type with
+	 * type arguments.
+	 * @return
+	 */
+	boolean isGenericInstance();
+	 
 	
 	 String getFullName();
-
-	 boolean containsTypeParams();
-
-	//TODO: Factor out into visitor
-	 IType replaceTypeParameters(TypeParamMapping paramMap);
 
 	
 	 boolean isTypeOrExtension(BasicType i);

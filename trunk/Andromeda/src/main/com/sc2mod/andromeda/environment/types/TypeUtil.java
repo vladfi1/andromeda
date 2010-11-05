@@ -3,11 +3,15 @@ package com.sc2mod.andromeda.environment.types;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
+import com.sc2mod.andromeda.environment.types.generic.TypeParamIdentificationVisitor;
+import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitorAdapter;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 
 public class TypeUtil {
@@ -159,6 +163,12 @@ public class TypeUtil {
 	 */
 	public static boolean isHierarchyShared(IClass left, IClass right) {
 		return left.isInstanceof(right)||right.isInstanceof(left);
+	}
+	
+	
+	private static TypeParamIdentificationVisitor paramIdentificationVisitor = new TypeParamIdentificationVisitor();
+	public static boolean containsTypeParameters(IType t){
+		return t.accept(paramIdentificationVisitor,null);
 	}
 
 		

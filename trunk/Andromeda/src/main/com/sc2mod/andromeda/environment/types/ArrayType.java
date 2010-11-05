@@ -35,6 +35,12 @@ public class ArrayType extends UnscopedType {
 		return RuntimeType.ARRAY;
 	}
 	
+	
+	
+	public int getDimension() {
+		return dimension;
+	}
+
 	@Override
 	public TypeCategory getCategory() {
 		return TypeCategory.ARRAY;

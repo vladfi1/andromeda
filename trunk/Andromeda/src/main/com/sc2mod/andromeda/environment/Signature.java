@@ -9,13 +9,16 @@
  */
 package com.sc2mod.andromeda.environment;
 
+import java.lang.reflect.Type;
+import java.util.Iterator;
+
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.types.TypeParamMapping;
-import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
+import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.util.ArrayIterator;
 
-public class Signature {
+public class Signature implements Iterable<IType> {
 
 	public static final Signature EMPTY_SIGNATURE = new Signature(new ExprListNode());
 	
@@ -61,6 +64,18 @@ public class Signature {
 	@Override
 	public int hashCode() {
 		return hashCode;
+	}
+	
+	public boolean equalsArray(IType[] array){
+		if(array == sig)
+			return true;
+		if(array.length != sig.length)
+			return false;
+		
+		for(int i=array.length-1;i>=0;i--){
+			if(sig[i]!=array[i]) return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -140,7 +155,7 @@ public class Signature {
 		}
 		int size = sig.length;
 		for(int i=0;i<size;i++){
-			if(sig[i].containsTypeParams()){
+			if(TypeUtil.containsTypeParameters(sig[i])){
 				containsTypeParams = 1;
 				return true;
 			}
@@ -149,24 +164,17 @@ public class Signature {
 		return false;
 	}
 
-	public Signature replaceTypeParameters(TypeParamMapping paramMap) {
-		if(!containsTypeParams()) return this;
-		IType[] result = getTypeArrayCopy();
-		
-		int size = size();
-		for(int i=0;i<size;i++){
-			IType t = result[i].replaceTypeParameters(paramMap);			
-			result[i] = t;
-		}
-		Signature sig = new Signature(result);
-		return sig;
-	}
-	
 	/**
 	 * XPilot: Added for type bounds (future)
 	 */
 	public boolean fits(Signature bounds) {
 		//TODO: implement TypeParameter bounds!
 		return equals(bounds);
+	}
+
+
+	@Override
+	public Iterator<IType> iterator() {
+		return new ArrayIterator<IType>(sig);
 	}
 }

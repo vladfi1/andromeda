@@ -87,6 +87,9 @@ public class SemanticAnalysisWorkflow {
 		SourceFileNode syntax = compEnv.getSyntaxTree();
 		TransientAnalysisData analysisData = new TransientAnalysisData();
 		
+		//Cannot resolve generics until members have copied down
+		env.typeProvider.setResolveGenerics(false);
+		
 		//--- ConstantResolveVisitor constResolve = new ConstantResolveVisitor();
 		
 		//+++++++++++++++++++++++++++++++++++++++++++
@@ -107,6 +110,9 @@ public class SemanticAnalysisWorkflow {
 		
 		//Copy down members from super to subclasses
 		new CopyDownVisitor(env).execute();
+		
+		//Now, the type provider can resolve generics right away
+		env.typeProvider.setResolveGenerics(true);
 		
 		//Check some additional things for classes and other record types, which can only be
 		//checked after their type hierarchy was built and their members have been registered and copied down

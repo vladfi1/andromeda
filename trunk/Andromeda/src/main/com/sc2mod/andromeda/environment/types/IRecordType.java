@@ -31,20 +31,12 @@ import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
  * A class or interface.
  * @author J. 'gex' Finis
  */
-public interface IRecordType extends INamedType, IModifiable, IGlobal, IAnnotatable {
+public interface IRecordType extends INamedType {
 	
 	@Override
 	abstract GlobalStructureNode getDefinition();
 
 	LinkedList<IRecordType> getDescendants();
-	
-	int getNumNonStatics();
-
-	int getNumStatics();
-
-	LinkedList<IRecordType> getDecendants();
-	
-	TypeParameter[] getTypeParams();
 	
 	boolean isInstanceof(IClass curClass);
 	
