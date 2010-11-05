@@ -134,14 +134,14 @@ public abstract class ClassFieldCalculator {
 			//We start not at zero but skip all fields of the top class
 			middle: for(int i=startAtIndex;i<size;i++){
 				VarDecl f = fieldList.get(i);
-				if(f.getType().getGeneratedType()== field.getType().getGeneratedType()&&!t.isInstanceof((IClass) f.getContainingType())){
+				if(f.getType().getGeneratedType()== field.getType().getGeneratedType()&&!t.isSubtypeOf(f.getContainingType())){
 					//Field can be reused if it is not yet used in this hierarchy
 					//FIXME: Dirty hack, factor usedBy out from field and remove the type casts
 					ArrayList<FieldDecl> usedBy = ((FieldDecl) f).getUsedByFields();
 					if(usedBy != null){
 						for(FieldDecl f2: usedBy){
 							//Field is already used in this hierarchy, skip!
-							if(t.isInstanceof((IClass)f2.getContainingType())) continue middle;
+							if(t.isSubtypeOf(f2.getContainingType())) continue middle;
 						}
 					}
 					

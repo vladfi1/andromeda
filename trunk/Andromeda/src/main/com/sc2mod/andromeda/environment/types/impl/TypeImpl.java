@@ -66,14 +66,46 @@ public abstract class TypeImpl extends BlockScope implements IType{
 
 
 	
+	/**
+	 * Returns iff a type can be concatenate cast to another type.
+	 * 
+	 * The basic implementation allows this if the type can be cast implicitly
+	 */
 	@Override
-	public boolean canConcatenateCastTo(IType toType){if(toType==this) return true; return canImplicitCastTo(toType);}
+	public boolean canConcatenateCastTo(IType toType){
+		return canImplicitCastTo(toType);
+	}
 	
+	/**
+	 * Returns iff a type can be cast implicitly to antoher type (i.e. without an explicit type cast).
+	 * 
+	 * The basic implementation for types returns true iff the
+	 * type to be cast to is this type or if this type is a 
+	 * subtype of the type.
+	 */
 	@Override
-	public boolean canImplicitCastTo(IType toType){if(toType==this) return true; return false;}
+	public boolean canImplicitCastTo(IType toType){
+		if(toType==this) 
+			return true;
+		if(isSubtypeOf(toType))
+			return true;
+		return false;
+	}
 
+	/**
+	 * Returns true, if this type can be explicitly cast to the given type (with an explicit cast expression)
+	 * The basic implementation allows this if one of the types is a subtype of the other one or the types are the same.
+	 */
 	@Override
-	public boolean canExplicitCastTo(IType toType) {if(toType==this) return true; return canImplicitCastTo(toType);}
+	public boolean canExplicitCastTo(IType toType) {
+		if(toType==this) 
+			return true;
+		if(isSubtypeOf(toType))
+			return true;
+		if(toType.isSubtypeOf(toType))
+			return true;
+		return false;
+	}
 	
 	@Override
 	public boolean canBeNull(){ return true;}
@@ -163,12 +195,6 @@ public abstract class TypeImpl extends BlockScope implements IType{
 		return this;
 	}
 	
-	
-	@Override
-	public boolean isClass() {
-		return false;
-	}
-
 	@Override
 	public boolean isGenericInstance() {
 		return false;
@@ -230,7 +256,7 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	 * @return
 	 */
 	@Override
-	public boolean isTypeOrSubtype(BasicType t){
+	public boolean isSubtypeOf(IType t){
 		return this == t;
 	}
 	

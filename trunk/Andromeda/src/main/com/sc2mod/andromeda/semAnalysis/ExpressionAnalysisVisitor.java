@@ -15,6 +15,7 @@ import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
@@ -482,7 +483,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	@Override
 	public void visit(SuperExprNode superExprNode, ExpressionContext context) {
 		IType curType = parent.curType;
-		if(curType == null  || !curType.isClass())
+		if(curType == null  || !TypeUtil.isClass(curType))
 			throw Problem.ofType(ProblemId.SUPER_OUTSIDE_OF_CLASS).at(superExprNode)
 				.raiseUnrecoverable();
 		IClass curClass = ((IClass) curType).getSuperClass();

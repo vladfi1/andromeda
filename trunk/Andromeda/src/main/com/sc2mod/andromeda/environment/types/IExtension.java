@@ -25,7 +25,7 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public interface IExtension extends INamedType{
+public interface IExtension extends IDeclaredType{
 	
 	@Override
 	public BasicType getBaseType();

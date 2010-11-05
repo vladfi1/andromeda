@@ -31,7 +31,7 @@ import com.sc2mod.andromeda.notifications.InternalProgramError;
  * @author gex
  *
  */
-public interface INamedType extends IType, IModifiable, IAnnotatable{
+public interface INamedType extends IType{
 	
 	String getName();
 

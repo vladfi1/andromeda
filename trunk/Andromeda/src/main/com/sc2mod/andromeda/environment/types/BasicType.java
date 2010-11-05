@@ -70,8 +70,6 @@ public class BasicType extends NamedTypeImpl {
 				};
 
     
-	
-	private String name;
 
 	@Override
 	public int getRuntimeType() {
@@ -92,10 +90,9 @@ public class BasicType extends NamedTypeImpl {
 	 * @param scope
 	 */
 	protected BasicType(IScope scope, String name){
-		super(scope);
+		super(scope,name);
 		if(this.getCategory()==TypeCategory.BASIC)
 			basicTypeList.add(this);
-		this.name = name;
 	}
 	
 	/**
@@ -110,11 +107,6 @@ public class BasicType extends NamedTypeImpl {
 	@Override
 	public boolean canBeNull() {
 		return true;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	/**
@@ -153,11 +145,6 @@ public class BasicType extends NamedTypeImpl {
 	}
 
 	@Override
-	public String getUid() {
-		return name;
-	}
-
-	@Override
 	public TypeCategory getCategory() {
 		return TypeCategory.BASIC;
 	}
@@ -187,104 +174,8 @@ public class BasicType extends NamedTypeImpl {
 		throw new Error("Cannot create a generic instance of a basic type!");
 	}
 
+
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
-
-	//FIXME: Pull up to named type
-	@Override
-	public boolean isAbstract() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean isConst() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean isFinal() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean isNative() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean isOverride() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setAbstract() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setConst() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setFinal() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setNative() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setOverride() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setStatic() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setVisibility(Visibility visibility) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void afterAnnotationsProcessed() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public HashSet<String> getAllowedAnnotations() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean hasAnnotation(String name) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setAnnotationTable(HashMap<String, AnnotationNode> annotations) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
 }

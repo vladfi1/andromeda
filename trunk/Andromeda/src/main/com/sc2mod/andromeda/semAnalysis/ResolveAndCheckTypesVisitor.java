@@ -18,6 +18,7 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
@@ -245,7 +246,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	 */
 	protected void resolveClassExtends(IClass clazz) {
 		IType type = tprov.resolveType(clazz.getDefinition().getSuperClass(),clazz);
-		if(!type.isClass())
+		if(!TypeUtil.isClass(type))
 			throw Problem.ofType(ProblemId.CLASS_EXTENDS_NON_CLASS).at(clazz.getDefinition().getSuperClass())
 							.raiseUnrecoverable();
 		clazz.setSuperClass((IClass)type);

@@ -12,6 +12,7 @@ import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.BasicType;
+import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
@@ -19,15 +20,16 @@ import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
-public abstract class GenericTypeInstance extends TypeImpl implements INamedType , SemanticsVisitorNode {
+public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredType , SemanticsVisitorNode {
 
-	private INamedType genericParent;
+	private IDeclaredType genericParent;
 	private Signature typeArguments;
 	
-	protected GenericTypeInstance(INamedType genericParent, Signature s) {
+	protected GenericTypeInstance(IDeclaredType genericParent, Signature s) {
 		super(genericParent.getScope());
 		this.genericParent = genericParent;
 		this.typeArguments = s;
@@ -130,7 +132,7 @@ public abstract class GenericTypeInstance extends TypeImpl implements INamedType
 		return genericParent.getDefaultValueStr();
 	}
 
-	public SyntaxNode getDefinition() {
+	public GlobalStructureNode getDefinition() {
 		return genericParent.getDefinition();
 	}
 
@@ -211,10 +213,6 @@ public abstract class GenericTypeInstance extends TypeImpl implements INamedType
 	public IType getWrappedType() {
 		return genericParent.getWrappedType();
 	}
-
-	public boolean isClass() {
-		return genericParent.isClass();
-	}
 	
 
 
@@ -238,8 +236,8 @@ public abstract class GenericTypeInstance extends TypeImpl implements INamedType
 		return genericParent.isTypeOrExtension(i);
 	}
 
-	public boolean isTypeOrSubtype(BasicType t) {
-		return genericParent.isTypeOrSubtype(t);
+	public boolean isSubtypeOf(BasicType t) {
+		return genericParent.isSubtypeOf(t);
 	}
 
 	public boolean isValidAsParameter() {

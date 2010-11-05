@@ -34,10 +34,11 @@ public abstract class NamedTypeImpl extends TypeImpl implements INamedType{
 	
 	protected String generatedName;
 	private TypeParameter[] typeParams;
+	private final String name;
 	
-	
-	protected NamedTypeImpl(IScope parentScope){
+	protected NamedTypeImpl(IScope parentScope, String name){
 		super(parentScope);
+		this.name = name;
 	}
 	
 	/**
@@ -46,10 +47,27 @@ public abstract class NamedTypeImpl extends TypeImpl implements INamedType{
 	 * @param genericParent the type for which to create a generic instance.
 	 */
 	protected NamedTypeImpl(INamedType genericParent, Signature s){
-		super(genericParent.getScope());
+		this(genericParent.getScope(), genericParent.getName());
 	}
 	
-	public abstract String getName();
+	public String getName(){
+		return name;
+	}
+	
+	@Override
+	public String getUid() {
+		return getName();
+	}
+	
+	@Override
+	public String getFullName() {
+		return getName();
+	}
+	
+	@Override
+	public String toString() {
+		return getFullName();
+	}
 	
 	@Override
 	public String getGeneratedName() {

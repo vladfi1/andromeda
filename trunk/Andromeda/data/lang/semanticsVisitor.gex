@@ -27,7 +27,7 @@ ArrayType
 BasicType
 UnscopedType
 Enrichment
-FunctionPointer
+ClosureType
 NonReferentialType
 PointerType
 SpecialType

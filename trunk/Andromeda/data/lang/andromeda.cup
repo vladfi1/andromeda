@@ -504,8 +504,8 @@ typeDefinition	::= annotationsOpt:ao modifiersOpt:m TYPEDEF:l type:t IDENTIFIER:
 
 // Type extensions
 
-typeExtension ::= 	annotationsOpt:ao modifiersOpt:m TYPEDEF:l IDENTIFIER:i isKeyOpt:iko USES type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,iko,t,true); RESULT.setPos(lleft,rright); :}
-		|			annotationsOpt:ao modifiersOpt:m TYPEDEF:l IDENTIFIER:i isKeyOpt:iko EXTENDS type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,iko,t,false); RESULT.setPos(lleft,rright); :}
+typeExtension ::= 	annotationsOpt:ao modifiersOpt:m TYPEDEF:l IDENTIFIER:i typeParametersOpt:tp isKeyOpt:iko USES type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,true); RESULT.setPos(lleft,rright); :}
+		|			annotationsOpt:ao modifiersOpt:m TYPEDEF:l IDENTIFIER:i typeParametersOpt:tp isKeyOpt:iko EXTENDS type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,false); RESULT.setPos(lleft,rright); :}
 		;
 		
 isKeyOpt ::= 
@@ -521,8 +521,8 @@ instanceLimit ::= SETINSTANCELIMIT:l classOrInterfaceType:t LBRACK expression:e 
 
 //structs
 structDeclaration ::=
-	annotationsOpt:ao STRUCT:l IDENTIFIER:i LBRACE structBody:b RBRACE:r {: RESULT = new StructDeclNode(ao,new ModifierListNode(),i,b); RESULT.setPos(lleft,rright); :}
-|	annotationsOpt:ao STRUCT:l IDENTIFIER:i LBRACE structBody:b RBRACE SEMICOLON:r {: RESULT = new StructDeclNode(ao,new ModifierListNode(),i,b); RESULT.setPos(lleft,rright); :}
+	annotationsOpt:ao STRUCT:l IDENTIFIER:i typeParametersOpt:tp LBRACE structBody:b RBRACE:r {: RESULT = new StructDeclNode(ao,new ModifierListNode(),i,tp,b); RESULT.setPos(lleft,rright); :}
+|	annotationsOpt:ao STRUCT:l IDENTIFIER:i typeParametersOpt:tp LBRACE structBody:b RBRACE SEMICOLON:r {: RESULT = new StructDeclNode(ao,new ModifierListNode(),i,tp,b); RESULT.setPos(lleft,rright); :}
 
 	;
 	
@@ -695,8 +695,8 @@ explicitConstructorInvocation ::=
 
 // Interface Declarations
 interfaceDeclaration ::=
-		annotationsOpt:ao modifiersOpt:m INTERFACE IDENTIFIER:n extendsInterfacesOpt:i 
-			interfaceBody:b {: RESULT = new InterfaceDeclNode(ao,m,n,i,b); RESULT.setPos(mleft,bright); :}
+		annotationsOpt:ao modifiersOpt:m INTERFACE IDENTIFIER:n typeParametersOpt:tp extendsInterfacesOpt:i 
+			interfaceBody:b {: RESULT = new InterfaceDeclNode(ao,m,n,tp,i,b); RESULT.setPos(mleft,bright); :}
 	;
 extendsInterfacesOpt ::=  {: RESULT = new TypeListNode(); :}
 	|	extendsInterfaces:t {: RESULT = t; :}

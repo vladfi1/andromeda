@@ -60,7 +60,7 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 		}
 		
 		//Recursive call for subclasses
-		LinkedList<IRecordType> decendants = class1.getDecendants();
+		LinkedList<IRecordType> decendants = class1.getDescendants();
 		for(IRecordType subclass : decendants){
 			subclass.accept(this);
 		}

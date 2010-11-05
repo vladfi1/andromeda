@@ -27,11 +27,6 @@ public class GenericInterfaceInstance extends GenericTypeInstance implements IIn
 	}
 
 	@Override
-	public boolean isInstanceof(IClass curClass) {
-		return genericParent.isInstanceof(curClass);
-	}
-
-	@Override
 	public LinkedList<IRecordType> getDescendants() {
 		return genericParent.getDescendants();
 	}
@@ -41,9 +36,6 @@ public class GenericInterfaceInstance extends GenericTypeInstance implements IIn
 		return genericParent.getDefinition();
 	}
 	
-	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
-	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
-	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 
 	@Override
 	public int getIndex() {
@@ -59,4 +51,8 @@ public class GenericInterfaceInstance extends GenericTypeInstance implements IIn
 	public HashSet<IInterface> getInterfaces() {
 		return genericParent.getInterfaces();
 	}
+
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 }

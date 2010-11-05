@@ -38,11 +38,27 @@ public interface IType extends IScope, IScopedElement{
 
 	
 	
-	boolean canConcatenateCastTo(IType toType);
+	/**
+	 * Returns iff a type can be concatenate cast to another type.
+	 * 
+	 * The basic implementation allows this if the type can be cast implicitly
+	 */
+	public boolean canConcatenateCastTo(IType toType);
 	
-	boolean canImplicitCastTo(IType toType);
+	/**
+	 * Returns iff a type can be cast implicitly to antoher type (i.e. without an explicit type cast).
+	 * 
+	 * The basic implementation for types returns true iff the
+	 * type to be cast to is this type or if this type is a 
+	 * subtype of the type.
+	 */
+	public boolean canImplicitCastTo(IType toType);
 
-	boolean canExplicitCastTo(IType toType);
+	/**
+	 * Returns true, if this type can be explicitly cast to the given type (with an explicit cast expression)
+	 * The basic implementation allows this if one of the types is a subtype of the other one or the types are the same.
+	 */
+	public boolean canExplicitCastTo(IType toType);
 	
 	boolean canBeNull();
 	
@@ -102,10 +118,13 @@ public interface IType extends IScope, IScopedElement{
 	 * @return
 	 */
 	 IType getReachableBaseType();
+//	 
+//	 /**
+//	  * Returns all direct ancestors in the type hierarchy of this type
+//	  * @return
+//	  */
+//	 Iterable<IType> getSuperTypes();
 	
-	
-	 boolean isClass();
-
 	/**
 	 * Returns true iff this is a generic type without concrete parameters.
 	 * Examples:
@@ -156,7 +175,7 @@ public interface IType extends IScope, IScopedElement{
 	 * Returns true if this type is the given type or a subtype of it
 	 * @return
 	 */
-	 boolean isTypeOrSubtype(BasicType t);
+	 boolean isSubtypeOf(IType t);
 
 	 int getByteSize();
 

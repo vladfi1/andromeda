@@ -21,6 +21,7 @@ import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -236,7 +237,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		
 		if(notStatic){
 			IType t = fieldAccess.getLeftExpression().getInferedType();
-			if(t.isClass()){
+			if(TypeUtil.isClass(t)){
 				IClass c = (IClass)t;
 				classGen.generateFieldAccessPrefix(curExprBuffer,c);
 				fieldAccess.childrenAccept(this);

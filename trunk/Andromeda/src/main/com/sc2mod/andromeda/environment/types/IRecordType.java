@@ -31,14 +31,10 @@ import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
  * A class or interface.
  * @author J. 'gex' Finis
  */
-public interface IRecordType extends INamedType {
+public interface IRecordType extends IDeclaredType {
 	
-	@Override
-	abstract GlobalStructureNode getDefinition();
 
 	LinkedList<IRecordType> getDescendants();
-	
-	boolean isInstanceof(IClass curClass);
 	
 	int calcByteSize();
 }

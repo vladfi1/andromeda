@@ -51,10 +51,12 @@ GlobalStructureNode ::= {ClassDeclNode} 	AnnotationListNode: annotations
 											ModifierListNode: modifiers
 											string: name
 											TypeListNode: interfaces
+											TypeParamListNode: typeParams
 											MemberDeclListNode: body
 				|   {StructDeclNode}		AnnotationListNode: annotations
 											ModifierListNode: modifiers
 											string: name
+											TypeParamListNode: typeParams
 											MemberDeclListNode: body
 				|	{IncludeNode}			SourceFileNode: includedContent
 				|	{TypeAliasDeclNode}		AnnotationListNode: annotations
@@ -64,6 +66,7 @@ GlobalStructureNode ::= {ClassDeclNode} 	AnnotationListNode: annotations
 				|	{TypeExtensionDeclNode}	AnnotationListNode: annotations
 											ModifierListNode: modifiers
 											string: name
+											TypeParamListNode: typeParams
 											"boolean": key
 											TypeNode: enrichedType
 											"boolean": disjoint

@@ -9,12 +9,8 @@
  */
 package com.sc2mod.andromeda.environment.types.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IExtension;
 import com.sc2mod.andromeda.environment.types.INamedType;
@@ -24,13 +20,14 @@ import com.sc2mod.andromeda.environment.types.generic.GenericExtensionInstance;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
 import com.sc2mod.andromeda.vm.data.StringObject;
 
-public class ExtensionImpl extends NamedTypeImpl implements IExtension{
+import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
+
+public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, SemanticsVisitorNode {
 	
 	
 	
@@ -53,21 +50,14 @@ public class ExtensionImpl extends NamedTypeImpl implements IExtension{
 	 * @param def the definition
 	 */
 	public ExtensionImpl(TypeExtensionDeclNode def, IScope scope) {
-		super(scope);
+		super(def,scope);
 		isDistinct = def.isDisjoint();
 		this.definition = def;
 		this.isKey = def.isKey();
+
 	}
 	
-	/**
-	 * Generic instance constructor
-	 * @param ext
-	 * @param sig
-	 */
-	protected ExtensionImpl(ExtensionImpl ext, Signature sig){
-		super(ext,sig);
-	}
-	
+
 	public void setResolvedExtendedType(IType extendedType2,
 			BasicType extendedBaseType2, int hierarchyLevel2) {
 		this.extendedType = extendedType2;
@@ -154,7 +144,7 @@ public class ExtensionImpl extends NamedTypeImpl implements IExtension{
 	}
 	
 	@Override
-	public boolean isTypeOrSubtype(BasicType t) {
+	public boolean isSubtypeOf(IType t) {
 		if(isDistinct) return false;
 		return extendedBaseType==t;
 	}
@@ -233,130 +223,14 @@ public class ExtensionImpl extends NamedTypeImpl implements IExtension{
 	}
 
 
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
 	@Override
 	public int getByteSize() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+		return extendedBaseType.getByteSize();
 	}
 
-	@Override
-	public Visibility getVisibility() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
 
-	@Override
-	public String getUid() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
-
-	
-	//FIXME: Implement those methods for extensions (or pull up to namedTypeImpl)
-	@Override
-	public boolean isAbstract() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean isConst() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean isFinal() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean isNative() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean isOverride() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setAbstract() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setConst() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setFinal() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setNative() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setOverride() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setStatic() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setVisibility(Visibility visibility) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void afterAnnotationsProcessed() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public HashSet<String> getAllowedAnnotations() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean hasAnnotation(String name) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public void setAnnotationTable(HashMap<String, AnnotationNode> annotations) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
 }

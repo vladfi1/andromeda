@@ -162,7 +162,7 @@ public class TypeUtil {
 	 * @param right another class
 	 */
 	public static boolean isHierarchyShared(IClass left, IClass right) {
-		return left.isInstanceof(right)||right.isInstanceof(left);
+		return left.isSubtypeOf(right)||right.isSubtypeOf(left);
 	}
 	
 	
@@ -171,5 +171,8 @@ public class TypeUtil {
 		return t.accept(paramIdentificationVisitor,null);
 	}
 
+	public static boolean isClass(IType t){
+		return t.getCategory() == TypeCategory.CLASS;
+	}
 		
 }

@@ -89,31 +89,19 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	 */
 	private VirtualCallTable virtualCallTable;
 
-	/**
-	 * Wether this class is declared static
-	 */
+	// Modifiers for classes
 	private boolean isStatic;
-	
-	/**
-	 * The type parameters of this class
-	 */
-	protected TypeParameter[] typeParams;
-	
-	private static HashSet<String> allowedAnnotations = new HashSet<String>();
+	private boolean isFinal;
+	private boolean isAbstract;
+
+	private String metaClassName;
+
 	
 	public ClassImpl(ClassDeclNode declaration, IScope scope) {
 		super(declaration, scope);
 		this.nameProvider = new IndexClassNameProvider(this);
 		interfacesTransClosure = new HashMap<String,IInterface>();
 		this.declaration = declaration;
-		
-		//XPilot: moved from GenericClass
-		TypeParamListNode tl = declaration.getTypeParams();
-		int size = tl == null ? 0 : tl.size();
-		typeParams = new TypeParameter[size];
-		for(int i=0;i<size;i++){
-			typeParams[i] = new TypeParameter(this, tl.elementAt(i),i,null);
-		}
 	}
 	
 	
@@ -122,18 +110,23 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 		return declaration;
 	}
 	
+	@Override
 	public OperationSet getConstructors() {
 		return constructors;
 	}
 	
+	@Override
 	public void addConstructor(Constructor c){
 		constructors.add(c);
 	}
-	
+
+	@Override
 	public Destructor getDestructor() {
 		return destructor;
 	}
 
+
+	@Override
 	public void setDestructor(Destructor destructor) {
 		if(this.destructor != null){
 			throw Problem.ofType(ProblemId.DUPLICATE_DESTRUCTOR).at(this.destructor.getDefinition(),destructor.getDefinition())
@@ -141,11 +134,6 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 		} else {
 			this.destructor = destructor;
 		}
-	}
-	static{
-		if(RecordTypeImpl.allowedAnnotations != null)
-			allowedAnnotations.addAll(RecordTypeImpl.allowedAnnotations);
-		allowedAnnotations.add(Annotations.KEEP_AFTER_FOREACH);
 	}
 	
 	@Override
@@ -159,43 +147,39 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	}
 	
 	@Override
-	public HashSet<String> getAllowedAnnotations() {
-		return allowedAnnotations;
-	}
-	
-
 	public VirtualCallTable getVirtualCallTable() {
 		return virtualCallTable;
 	}
 
+	@Override
 	public void setVirtualCallTable(VirtualCallTable virtualCallTable) {
 		this.virtualCallTable = virtualCallTable;
 	}
 
-
-	private String metaClassName;
-	
+	@Override
 	public void setInstanceLimit(int instanceLimit) {
 		this.instanceLimit = instanceLimit;
 	}
 	
+	@Override
 	public int getInstanceLimit() {
 		return instanceLimit;
 	}
-
+	
+	@Override
 	public int getClassIndex() {
 		return classIndex;
 	}
 	
+	@Override
 	public ArrayList<VarDecl> getHierarchyFields() {
 		return hierarchyFields;
 	}
 
+	@Override
 	public void setHierarchyFields(ArrayList<VarDecl> hierarchyFields) {
 		this.hierarchyFields = hierarchyFields;
 	}
-
-
 
 	@Override
 	public String getDescription() {
@@ -213,13 +197,6 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	public TypeCategory getCategory() {
 		return TypeCategory.CLASS;
 	}
-
-//	@Override
-////	public boolean isSuperclassOf(Class child) {
-////		if(child.superClass==null) return false;
-////		if(child.superClass==this) return true;
-////		return isSuperclassOf(child.superClass);
-////	}
 	
 	@Override
 	public boolean isImplicitReferenceType() {
@@ -243,10 +220,12 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 //		
 //	}
 	
+	@Override
 	public boolean isTopClass(){
 		return superClass == null;
 	}
 
+	@Override
 	public IClass getTopClass() {
 		if(superClass != null) return superClass.getTopClass();
 		return this;
@@ -266,7 +245,8 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	public String getGeneratedDefinitionName() {
 		return nameProvider.getName();
 	}
-	
+
+	@Override
 	public ClassNameProvider getNameProvider(){
 		return nameProvider;
 	}
@@ -275,49 +255,47 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	public void setGeneratedName(String generatedName) {
 		nameProvider.setName(generatedName);
 	}
-	
-	@Override
-	public boolean isClass() {
-		return true;
-	}
 
+	@Override
 	public IClass getSuperClass() {
 		return superClass;
 	}
 	
 	
-
-	
 	@Override
-	public boolean isInstanceof(IClass c){
-		//XPilot: changed implementation here, as it wasn't working properly...
-		//return classIndex >= c.minInstanceofIndex && classIndex <= c.classIndex;
+	public boolean isSubtypeOf(IType c){
 		if(this == c) return true;
-		if(superClass == null) return false;
-		return superClass.isInstanceof(c);
+		switch(c.getCategory()){
+		case CLASS:
+			if(superClass == null) return false;
+			return superClass.isSubtypeOf(c);
+		case INTERFACE:
+			throw new Error("Interface subtyping not implemented yet");
+		default:
+			return false;
+		}
 	}
 	
-	@Override
-	public boolean canImplicitCastTo(IType toType) {
-		if(toType==this) return true;
-		//XPilot: Can now implicit cast to a generic type
-		if(!toType.isClass()) return false;
-		return (this.isInstanceof((IClass)toType));
-	}
-	
+	/**
+	 * In addition to the normal explicit casting rules,
+	 * classes can also be cast to int or its extensions
+	 */
 	@Override
 	public boolean canExplicitCastTo(IType toType) {
-		if(toType==this) return true;
-		if(toType.isTypeOrExtension(BasicType.INT)) return true;
-		if(!toType.isClass()) return false;
-		return ((IClass)toType).isInstanceof(this)||(this.isInstanceof((IClass)toType));
+		if(super.canExplicitCastTo(toType))
+			return true;
+		if(toType.isTypeOrExtension(BasicType.INT))
+			return true;
+		return false;
 	}
 
+	@Override
 	public void registerInstantiation() {
 		instantiationCount++;
 		if(superClass != null) superClass.registerIndirectInstantiation();
 	}
 
+	@Override
 	public void registerIndirectInstantiation() {
 		indirectInstantiationCount++;
 		if(superClass != null) superClass.registerIndirectInstantiation();
@@ -331,14 +309,17 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	 * Any code for them can be omitted and virtual calls might be resolvable at compile time
 	 * @return whether this class is ever used (including subclassing)
 	 */
+	@Override
 	public boolean isUsed() {
 		return (instantiationCount + indirectInstantiationCount) > 0;
 	}
 
+	@Override
 	public void setMetaClassName(String name) {
 		metaClassName = name;
 	}
-
+	
+	@Override
 	public String getMetaClassName() {
 		return metaClassName;
 	}
@@ -352,6 +333,7 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	 * c) the class implements an interface which extends the interface
 	 * d) mixture of b) and c)
 	 */
+	@Override
 	public void generateImplementsTransClosure() {
 	}
 
@@ -371,28 +353,37 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	public int getMemberByteSize() {
 		return 4; //Classes are implicit ints
 	}
-	
-	//XPilot: moved from GenericClass
-	public TypeParameter[] getTypeParams(){
-		return typeParams;
-	}
-	
+
+
 	@Override
-	public boolean isGeneric() {
-		return false;
-	}
-
-
 	public void setSuperClass(IClass type) {
 		superClass = type;
 	}
 
-
+	@Override
 	public boolean hasConstructors() {
 		return !constructors.isEmpty();
 	}
 
+	@Override
+	public boolean isFinal() {
+		return isFinal;
+	}
+	
+	@Override
+	public void setFinal() {
+		this.isFinal = true;
+	}
+	
+	@Override
+	public boolean isAbstract() {
+		return isAbstract;
+	}
 
+	@Override
+	public void setAbstract() {
+		this.isAbstract = true;
+	}
 
 	@Override
 	public INamedType createGenericInstance(Signature s) {

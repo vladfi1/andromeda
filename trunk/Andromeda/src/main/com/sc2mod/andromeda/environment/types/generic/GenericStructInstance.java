@@ -20,18 +20,10 @@ public class GenericStructInstance extends GenericTypeInstance implements IStruc
 		this.genericParent = struct;
 	}
 
-	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
-	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
-	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 
 	@Override
 	public int calcByteSize() {
 		return genericParent.calcByteSize();
-	}
-
-	@Override
-	public boolean isInstanceof(IClass curClass) {
-		return genericParent.isInstanceof(curClass);
 	}
 
 	@Override
@@ -45,4 +37,7 @@ public class GenericStructInstance extends GenericTypeInstance implements IStruc
 	}
 
 	
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 }

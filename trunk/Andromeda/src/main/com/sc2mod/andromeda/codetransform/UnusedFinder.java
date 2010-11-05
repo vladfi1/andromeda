@@ -19,6 +19,7 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.impl.RecordTypeImpl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
@@ -214,7 +215,7 @@ public class UnusedFinder {
 					}
 				} else if(decl.getNumWriteAccesses()==0){
 					//XPilot: containing class may not be used
-					if(decl.getContainingType().isClass() && ((IClass)decl.getContainingType()).isUsed())
+					if(decl.getContainingType().getCategory() == TypeCategory.CLASS && ((IClass)decl.getContainingType()).isUsed())
 						
 						Problem.ofType(ProblemId.UNINITIALIZED_VARIABLE).at(decl.getDefinition())
 							.details("field", decl.getUid())
