@@ -7,35 +7,39 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.basic;
 
+import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.NonReferentialType;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class TypeString extends BasicType{
+public class TypeShort extends NonReferentialType{
 
-	public TypeString() {
-		super("string");
+	public TypeShort() {
+		super("short");
 	}
 	
 	 @Override
 	public boolean canImplicitCastTo(IType toType) {
-		 if(toType == this|| toType == TEXT) return true;
+		 if(toType == this|| toType == FLOAT) return true;
 		 return false;
 	}
 	 
+	 
 	 @Override
-	public boolean canExplicitCastTo(IType type) {
-		 return super.canExplicitCastTo(type) || canImplicitCastTo(type);
+	public boolean canConcatenateCastTo(IType toType) {
+		if(toType == this|| toType == FLOAT || toType == STRING || toType == TEXT) return true;
+		return false;
 	}
 	 
 	 @Override
-	public int getRuntimeType() {
-		 return RuntimeType.STRING;
-	 }
+	public String getDefaultValueStr() {
+		return "0";
+	}
 
-
+	
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }

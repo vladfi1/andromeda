@@ -171,4 +171,9 @@ public class Problem{
 		return problemId;
 	}
 	
+	@Override
+	public String toString() {
+		return problemId.name() + ": " + getMessage(); 
+	}
+	
 }

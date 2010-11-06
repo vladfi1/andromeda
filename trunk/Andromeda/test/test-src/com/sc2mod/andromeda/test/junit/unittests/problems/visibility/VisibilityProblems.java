@@ -10,7 +10,7 @@ public class VisibilityProblems extends AndromedaSingleRunTest {
 	@Test
 	public void visibility1(){
 		callAndromeda("PrivateVisibility.a");
-		assertOnlyProblem(ProblemId.SYNTAX_ILLEGAL_ESCAPE_SEQUENCE);
+		assertOnlyProblem(ProblemId.NOT_VISIBLE);
 	}
 	
 }

@@ -14,9 +14,9 @@ import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
 public abstract class TypeImpl extends BlockScope implements IType{
@@ -97,12 +97,12 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	 * The basic implementation allows this if one of the types is a subtype of the other one or the types are the same.
 	 */
 	@Override
-	public boolean canExplicitCastTo(IType toType) {
+	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
 		if(toType==this) 
 			return true;
 		if(isSubtypeOf(toType))
 			return true;
-		if(toType.isSubtypeOf(toType))
+		if(toType.isSubtypeOf(this))
 			return true;
 		return false;
 	}

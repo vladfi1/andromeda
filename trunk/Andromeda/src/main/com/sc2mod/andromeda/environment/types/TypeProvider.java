@@ -27,6 +27,7 @@ import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.GlobalScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.generic.GenericMemberGenerationVisitor;
 import com.sc2mod.andromeda.environment.types.generic.TypeParamInstanciationVisitor;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
@@ -65,6 +66,7 @@ public class TypeProvider {
 	private SystemTypes systemTypes;
 	
 	private boolean resolveGenerics;
+	private GenericMemberGenerationVisitor genericsResolver = new GenericMemberGenerationVisitor(this);
 
 	private HashMap<IType,IType> pointerTypes = new HashMap<IType,IType>();
 	private HashMap<IType,HashMap<Integer,IType>> arrayTypes = new HashMap<IType,HashMap<Integer,IType>>();
@@ -147,7 +149,7 @@ public class TypeProvider {
 //		}
 	}
 	
-	void registerBasicType(BasicType t){
+	public void registerBasicType(BasicType t){
 		globalScope.addContent(t.getName(), t);
 	}
 	
@@ -325,6 +327,11 @@ public class TypeProvider {
 		INamedType g = instances.get(s);
 		if(g == null){
 			g = t.createGenericInstance(s);
+			//If immediate generic resolving is activated, then the generic instance members are copied down
+			if(doResolveGenerics()){
+				g.accept(genericsResolver);
+			}
+			
 			instances.put(s, g);
 		}
 		return g;

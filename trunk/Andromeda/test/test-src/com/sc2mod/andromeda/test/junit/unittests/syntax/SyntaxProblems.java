@@ -1,4 +1,4 @@
-package com.sc2mod.andromeda.test.junit.unittests.problems.syntax;
+package com.sc2mod.andromeda.test.junit.unittests.syntax;
 
 import org.junit.Test;
 

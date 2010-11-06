@@ -12,8 +12,8 @@ package com.sc2mod.andromeda.semAnalysis;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;

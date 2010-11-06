@@ -9,6 +9,8 @@
  */
 package com.sc2mod.andromeda.environment.scopes;
 
+import com.sc2mod.andromeda.environment.types.IType;
+
 /**
  * Visibility modifier for a class, field, or function.
  * @author J. 'gex' Finis
@@ -24,7 +26,16 @@ public abstract class Visibility {
 	public static final Visibility PROTECTED = new Visibility("protected",1){
 		@Override
 		public boolean checkAccessible(IScope from, IScope target) {
-			throw new Error("TODO check protected accessibility");
+			if(ScopeUtil.isInSubpackageOf(from, target))
+				return true;
+			if(from instanceof IType){
+				//TODO: Insert checks that protected is not used outside of types
+				if(((IType)from).isSubtypeOf((IType)target)){
+					return true;
+				}
+			}
+			return false;
+			
 		}
 	};
 	public static final Visibility INTERNAL = new Visibility("internal",2){

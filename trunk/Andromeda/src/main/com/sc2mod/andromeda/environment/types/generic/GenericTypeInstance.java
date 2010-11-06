@@ -11,11 +11,11 @@ import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
@@ -33,9 +33,15 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 		super(genericParent.getScope());
 		this.genericParent = genericParent;
 		this.typeArguments = s;
+		//We have to recreate the content set here because the first creation
+		//did not work because the generic parent was not yet set.
+		recreateContentSet();
 	}
 	
 	protected ScopeContentSet createContentSet() {
+		if(genericParent == null){
+			return null;
+		}
 		return new InheritableContentSet(genericParent.getScope());
 	}
 	
@@ -80,14 +86,14 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 	public boolean canBeNull() {
 		return genericParent.canBeNull();
 	}
-
-	public boolean canConcatenateCastTo(IType toType) {
-		return genericParent.canConcatenateCastTo(toType);
+	
+	@Override
+	public boolean isSubtypeOf(IType t) {
+		if(t == this|| t == genericParent)
+			return true;
+		return genericParent.isSubtypeOf(t);
 	}
 
-	public boolean canExplicitCastTo(IType toType) {
-		return genericParent.canExplicitCastTo(toType);
-	}
 
 	public boolean canHaveFields() {
 		return genericParent.canHaveFields();
@@ -97,9 +103,7 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 		return genericParent.canHaveMethods();
 	}
 
-	public boolean canImplicitCastTo(IType toType) {
-		return genericParent.canImplicitCastTo(toType);
-	}
+
 
 
 
@@ -234,10 +238,6 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 
 	public boolean isTypeOrExtension(BasicType i) {
 		return genericParent.isTypeOrExtension(i);
-	}
-
-	public boolean isSubtypeOf(BasicType t) {
-		return genericParent.isSubtypeOf(t);
 	}
 
 	public boolean isValidAsParameter() {

@@ -1,4 +1,4 @@
-package com.sc2mod.andromeda.test.junit.unittests.problems.names;
+package com.sc2mod.andromeda.test.junit.unittests.names;
 
 import org.junit.Test;
 

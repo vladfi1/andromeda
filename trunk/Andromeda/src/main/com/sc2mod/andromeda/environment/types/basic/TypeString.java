@@ -7,47 +7,36 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.basic;
 
+import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class TypeBool extends NonReferentialType{
+public class TypeString extends BasicType{
 
-	public TypeBool() {
-		super("bool");
+	public TypeString() {
+		super("string");
 	}
 	
-	//XPilot: these are necessary if we want bool -> string/text casts...
-	/*
-	@Override
-	public boolean canExplicitCastTo(Type type) {
-		if(super.canExplicitCastTo(type)) return true;
-		return canConcatenateCastTo(type);
+	 @Override
+	public boolean canImplicitCastTo(IType toType) {
+		 if(toType == this|| toType == TEXT) return true;
+		 return false;
 	}
 	 
-	@Override
-	public boolean canConcatenateCastTo(Type toType) {
-		if(toType == STRING || toType == TEXT) return true;
-		return false;
+	 @Override
+	public boolean canExplicitCastTo(IType type, boolean unchecked) {
+		 return super.canExplicitCastTo(type, unchecked) || canImplicitCastTo(type);
 	}
-	*/
-	
-	@Override
-	public String getDefaultValueStr() {
-		return "false";
-	}
-	
-	@Override
+	 
+	 @Override
 	public int getRuntimeType() {
-		return RuntimeType.BOOL;
-	}
-	
-	@Override
-	public int getByteSize() {
-		return 1;
-	}
+		 return RuntimeType.STRING;
+	 }
+
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }

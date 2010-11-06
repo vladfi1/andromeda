@@ -11,11 +11,11 @@ package com.sc2mod.andromeda.environment.types.impl;
 
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IExtension;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.generic.GenericExtensionInstance;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -162,8 +162,8 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 	}
 	
 	@Override
-	public boolean canExplicitCastTo(IType toType) {
-		return extendedBaseType.canExplicitCastTo(toType);
+	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
+		return extendedBaseType.canExplicitCastTo(toType, unchecked);
 	}
 	
 	@Override

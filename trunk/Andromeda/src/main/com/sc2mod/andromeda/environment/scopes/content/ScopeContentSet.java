@@ -146,6 +146,8 @@ public abstract class ScopeContentSet {
 		}
 	}
 	
+
+	
 	private void addElement(String uid, IScopedElement elem){
 		
 	

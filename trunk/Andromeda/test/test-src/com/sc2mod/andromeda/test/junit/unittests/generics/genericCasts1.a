@@ -1,0 +1,9 @@
+class X <T,T2> {
+	
+
+}
+static{
+	X<int,int> xx = new X<int,int>();
+	int i = (int)xx;
+	xx = (!! X<int,int>)xx;
+}

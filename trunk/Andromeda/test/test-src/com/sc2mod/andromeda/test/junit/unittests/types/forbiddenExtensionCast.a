@@ -1,0 +1,10 @@
+extension X extends int{
+
+}
+
+
+static{
+	X x = (!! X) 3;
+	int b = x; 	//works
+	X y = 2; 	//error
+}

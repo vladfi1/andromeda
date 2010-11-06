@@ -7,7 +7,7 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.basic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +16,12 @@ import java.util.HashSet;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
+import com.sc2mod.andromeda.environment.types.INamedType;
+import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.RuntimeType;
+import com.sc2mod.andromeda.environment.types.SpecialType;
+import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.impl.NamedTypeImpl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -36,7 +42,7 @@ public class BasicType extends NamedTypeImpl {
 	public static final BasicType BOOL = new TypeBool();
 	public static final BasicType CHAR = new TypeChar();
 	public static final BasicType FLOAT = new TypeFixed();
-	public static final BasicType TEXT = new BasicType("text");
+	public static final BasicType TEXT = new TypeText();
 	private static final String[] additionalBasicTypes = 
 				{
 					"abilcmd",
@@ -114,7 +120,7 @@ public class BasicType extends NamedTypeImpl {
 	 * which do not have to be defined anywhere
 	 * @param t
 	 */
-	static void registerBasicTypes(TypeProvider t) {
+	public static void registerBasicTypes(TypeProvider t) {
 		t.registerBasicType(STRING);
 		t.registerBasicType(INT);
 		t.registerBasicType(SHORT);
@@ -130,9 +136,9 @@ public class BasicType extends NamedTypeImpl {
 	}
 	
 	@Override
-	public boolean canExplicitCastTo(IType toType) {
+	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
 		if(toType == this) return true;
-		if(toType.getCategory()==TypeCategory.EXTENSION){
+		if(unchecked && toType.getCategory()==TypeCategory.EXTENSION){
 			return toType.getBaseType()==this;
 		}
 		return false;

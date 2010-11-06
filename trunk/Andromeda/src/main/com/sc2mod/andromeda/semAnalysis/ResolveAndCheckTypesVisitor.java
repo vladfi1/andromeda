@@ -8,7 +8,6 @@ import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IExtension;
@@ -19,6 +18,7 @@ import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
@@ -342,7 +342,11 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 
 	@Override
 	public void visit(Enrichment enrichment) {
-		IType enrichedType = tprov.resolveType(enrichment.getDefinition().getEnrichedType(), enrichment.getParentScope());
-		enrichment.setResolvedEnrichedType(enrichedType);
+		//Resolve type only if the enrichment does not yet have an enriched type.
+		//(Enrichments attached to type extensions already have their type resolved)
+		if(enrichment.getEnrichedType()==null){
+			IType enrichedType = tprov.resolveType(enrichment.getDefinition().getEnrichedType(), enrichment.getParentScope());
+			enrichment.setResolvedEnrichedType(enrichedType);
+		}
 	}
 }

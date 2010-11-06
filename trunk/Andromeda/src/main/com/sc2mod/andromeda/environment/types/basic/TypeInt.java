@@ -7,46 +7,55 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.basic;
 
+import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.NonReferentialType;
+import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class TypeFixed extends NonReferentialType{
+public class TypeInt extends NonReferentialType {
 
-	public TypeFixed() {
-		super("fixed");
+	public TypeInt() {
+		super("int");
 	}
 	
-	 @Override
+	@Override
 	public boolean canImplicitCastTo(IType toType) {
-		 if(toType == this) return true;
-		 return false;
+		return toType == this
+			|| toType == FLOAT;
 	}
+	
 	 
-	 @Override
-	public boolean canExplicitCastTo(IType toType) {
-		 return super.canExplicitCastTo(toType) || toType == INT || canConcatenateCastTo(toType);
-	}
-	 
-	 @Override
+	@Override
 	public boolean canConcatenateCastTo(IType toType) {
-		if(toType == this || toType == STRING || toType == TEXT) return true;
+		if(toType == this|| toType == FLOAT || toType == STRING || toType == TEXT) return true;
 		return false;
 	}
 	 
-	 @Override
+	@Override
 	public String getDefaultValueStr() {
-		return "0.";
+		return "0";
 	}
 	 
-	 @Override
+	@Override
 	public int getRuntimeType() {
-		 return RuntimeType.FLOAT;
+		 return RuntimeType.INT;
 	}
-	 
 
+	@Override
+	public boolean isIntegerType(){
+		return true;
+	}
+	
+	@Override
+	public IType getCommonSupertype(IType t) {
+		IType base = t.getBaseType();
+		if(base==BasicType.FLOAT) return t;
+		return super.getCommonSupertype(t);
+	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }

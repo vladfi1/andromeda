@@ -3,6 +3,7 @@ package com.sc2mod.andromeda.environment.operations;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScope;
@@ -10,6 +11,7 @@ import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
+import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -19,7 +21,7 @@ import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 //FIXME Why are here two classes GenericMethodProxz and GenericFunctionProxy??
-public class GenericMethodProxy extends Method {
+public class GenericMethodProxy extends Operation {
 
 	private Operation method;
 	private Signature signature;
@@ -233,22 +235,15 @@ public class GenericMethodProxy extends Method {
 		return method.isFinal();
 	}
 
-	@Override
-	public boolean isInline() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
 
 	@Override
 	public boolean isNative() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+		return method.isNative();
 	}
 
 	@Override
 	public boolean isOverride() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+		return method.isOverride();
 	}
 
 	@Override
@@ -327,6 +322,18 @@ public class GenericMethodProxy extends Method {
 		return method.getElementTypeName();
 	}
 	
+
+	@Override
+	public List<ImplicitParamDecl> getImplicitParams() {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+	
+	@Override
+	public OverrideInformation getOverrideInformation() {
+		return method.getOverrideInformation();
+	}
+
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }

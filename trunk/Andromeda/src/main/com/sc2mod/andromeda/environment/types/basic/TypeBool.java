@@ -7,26 +7,48 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.basic;
 
+import com.sc2mod.andromeda.environment.types.NonReferentialType;
+import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class TypeChar extends NonReferentialType {
+public class TypeBool extends NonReferentialType{
 
-	public TypeChar() {
-		super("char");
+	public TypeBool() {
+		super("bool");
 	}
+	
+	//XPilot: these are necessary if we want bool -> string/text casts...
+	/*
+	@Override
+	public boolean canExplicitCastTo(Type type) {
+		if(super.canExplicitCastTo(type)) return true;
+		return canConcatenateCastTo(type);
+	}
+	 
+	@Override
+	public boolean canConcatenateCastTo(Type toType) {
+		if(toType == STRING || toType == TEXT) return true;
+		return false;
+	}
+	*/
 	
 	@Override
 	public String getDefaultValueStr() {
-		return "''";
+		return "false";
 	}
 	
 	@Override
 	public int getRuntimeType() {
-		return RuntimeType.CHAR;
+		return RuntimeType.BOOL;
+	}
+	
+	@Override
+	public int getByteSize() {
+		return 1;
 	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }

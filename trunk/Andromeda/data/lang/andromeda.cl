@@ -70,6 +70,7 @@ GlobalStructureNode ::= {ClassDeclNode} 	AnnotationListNode: annotations
 											"boolean": key
 											TypeNode: enrichedType
 											"boolean": disjoint
+											MemberDeclListNode : body
 				|	{InstanceLimitSetterNode} TypeNode: enrichedType
 											ExprNode: instanceLimit
 // Literals
@@ -108,7 +109,7 @@ ModifierListNode ::= ModifierSE*
 
 
 
-ModifierSE ::= one of PUBLIC,PROTECTED,PRIVATE,STATIC,ABSTRACT,FINAL,NATIVE,TRANSIENT,CONST,OVERRIDE
+ModifierSE ::= one of PUBLIC,PROTECTED,PRIVATE,INTERNAL,STATIC,ABSTRACT,FINAL,NATIVE,TRANSIENT,CONST,OVERRIDE
 
 // Annotations
 AnnotationNode ::= "String": name
@@ -297,6 +298,7 @@ ExprNode ::= {AssignmentExprNode}
 			| {CastExprNode}
 				TypeNode: type
 				ExprNode: rightExpression
+				"boolean": unchecked
 			| {SuperExprNode}
 				ExprNode: superClassName
 			| {ThisExprNode}

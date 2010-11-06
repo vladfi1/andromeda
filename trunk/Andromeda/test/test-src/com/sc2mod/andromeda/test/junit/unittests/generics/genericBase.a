@@ -1,0 +1,41 @@
+
+
+class X <T,T2> {
+	
+	public X(T t){
+		this.t = t;
+	}
+	T t;
+	T2 t2;
+	
+	public T x(){
+		return t;
+	}
+	
+	public void x(T2 t2){
+		this.t2 = t2;
+	}
+	
+	public static void xyz(){
+	
+	}
+
+}
+
+class Z{
+	int z;
+}
+
+static{
+	X<Z,int> xx = new X<Z,int>(new Z());
+	xx.t = new Z();
+	
+	Z z = xx.x();
+	if(z != xx.t){
+		System.error("!");
+	}
+	
+	xx.x(3);
+	
+	X.xyz();
+}

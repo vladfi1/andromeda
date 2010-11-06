@@ -31,7 +31,7 @@ public class ConstructorInvocation extends Invocation {
 		return classToAlloc==null?(IClass)getWhichFunction().getContainingType():classToAlloc;
 	}
 
-	public ConstructorInvocation(Function whichFunction, boolean implicit, ArrayList<IClass> wrappedFieldInits){
+	public ConstructorInvocation(Operation whichFunction, boolean implicit, ArrayList<IClass> wrappedFieldInits){
 		super(whichFunction,InvocationType.METHOD);
 		this.implicit = implicit;
 		this.wrappedFieldInits = wrappedFieldInits;

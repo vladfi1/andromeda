@@ -25,13 +25,13 @@ import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
@@ -227,6 +227,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 					}
 				}
 			}
+			t.canImplicitCastTo(decl.getType());
 			if(error)
 				throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_ASSIGNMENT).at(variableAssignDecl)
 						.details(t.getFullName(),decl.getType().getFullName())
@@ -259,7 +260,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		
 		if(c.hasConstructors()){
 			//Class has explicit constructors
-			Constructor con = (Constructor) c.getConstructors().get(sig, def, from);
+			Operation con = c.getConstructors().get(sig, def, from);
 			if(con == null)
 				throw Problem.ofType(ProblemId.NO_CONSTRUCTOR_WITH_THIS_SIGNATURE).at(def)
 							.details(c.getFullName(),sig.getFullName())

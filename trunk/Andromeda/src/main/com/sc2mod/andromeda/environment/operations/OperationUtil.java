@@ -38,4 +38,12 @@ public final class OperationUtil {
 			.append(")")
 			.toString();
 	}
+	
+	public static String getTypeAndNameAndSignature(Operation op){
+		return new StringBuilder(64)
+			.append(op.getContainingType().getUid())
+			.append(".")
+			.append(getNameAndSignature(op))
+			.toString();
+	}
 }

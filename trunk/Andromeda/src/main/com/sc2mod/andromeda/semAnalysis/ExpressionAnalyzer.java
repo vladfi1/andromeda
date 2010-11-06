@@ -9,7 +9,6 @@
  */
 package com.sc2mod.andromeda.semAnalysis;
 
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.PointerType;
 import com.sc2mod.andromeda.environment.types.SpecialType;
@@ -17,6 +16,8 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.casting.CastUtil;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -115,13 +116,13 @@ public class ExpressionAnalyzer {
 				if(lBase ==BasicType.TEXT && rBase == BasicType.TEXT){
 					binaryExpression.setInferedType(left.getCommonSupertype(right));
 				} else if(lBase == BasicType.TEXT){
-					if(!right.canConcatenateCastTo(BasicType.TEXT))
+					if(!CastUtil.canConcatenateCast(right,BasicType.TEXT))
 						throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_BINOP_OPERANDS).at(binaryExpression)
 							.details("+",left,right)
 							.raiseUnrecoverable();
 					binaryExpression.setInferedType(left);
 				} else {
-					if(!left.canConcatenateCastTo(BasicType.TEXT)) 
+					if(!CastUtil.canConcatenateCast(left,BasicType.TEXT)) 
 						throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_BINOP_OPERANDS).at(binaryExpression)
 						.details("+",left,right)
 						.raiseUnrecoverable();
@@ -138,13 +139,13 @@ public class ExpressionAnalyzer {
 					//The inferred type is the common super type
 					binaryExpression.setInferedType(left.getCommonSupertype(right));
 				} else if(lBase == BasicType.STRING){
-					if(!right.canConcatenateCastTo(BasicType.STRING)) 
+					if(!CastUtil.canConcatenateCast(right,BasicType.STRING)) 
 						throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_BINOP_OPERANDS).at(binaryExpression)
 						.details("+",left,right)
 						.raiseUnrecoverable();
 					binaryExpression.setInferedType(left); //Inferred type is the left one
 				} else {
-					if(!left.canConcatenateCastTo(BasicType.STRING))
+					if(!CastUtil.canConcatenateCast(left,BasicType.STRING))
 						throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_BINOP_OPERANDS).at(binaryExpression)
 						.details("+",left,right)
 						.raiseUnrecoverable();

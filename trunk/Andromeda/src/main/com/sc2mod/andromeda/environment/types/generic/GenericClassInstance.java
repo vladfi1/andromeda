@@ -20,11 +20,14 @@ import com.sc2mod.andromeda.classes.VirtualCallTable;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.Destructor;
+import com.sc2mod.andromeda.environment.scopes.content.MethodSet;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
+import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -39,235 +42,28 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 	
 	
 	
+	
+	
 	public GenericClassInstance(IClass class1, Signature s) {
 		super(class1, s);
+		this.genericParent = class1;
+		constructors = new MethodSet(this, "<init>");
+		
+	}
+	
+	@Override
+	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
+		if(super.canExplicitCastTo(toType, unchecked))
+			return true;
+		if(unchecked && toType.isTypeOrExtension(BasicType.INT))
+			return true;
+		return false;
 	}
 
-
-//
-//	
-//	/**
-//	 * XPilot: now works for generic types
-//	 */
-//	@Override
-//	public boolean isInstanceof(IClass c) {
-//		if(this == c) return true;
-//		if(c.isGeneric()) {
-//			if(c instanceof GenericClassInstance) {
-//				GenericClassInstance gci = (GenericClassInstance)c;
-//				if(theType == gci.theType) {
-//					return signature.fits(gci.signature);
-//				}
-//			} else {
-//				//XPilot: why check if instanceof a base GenericClass (not an instance)?
-//				//System.out.println(c.getFullName());
-//				//System.out.println(getFullName());
-//				//throw new Error();
-//				return false;
-//			}
-//		}
-//		if(superClass == null) return false;
-//		return superClass.isInstanceof(c);
-//	}
-//	
-//	public void generateGenericMembers() {
-//		if(genericMembersResolved) return;
-//		genericMembersResolved = true;
-//		
-////		System.out.println("RESOLVING " + this.getFullName());
-//		
-//		//XPilot: certain fields
-//		if(theType.superClass == null) {
-//			superClass = null;
-//		} else {
-//			superClass = (IClass) theType.superClass.replaceTypeParameters(paramMap);
-//		}
-//		topClass = theType.topClass;
-//		
-//		//Constructors
-//		constructors = new LinkedHashMap<Signature, Constructor>();		
-//		for(Entry<Signature, Constructor> e: theType.constructors.entrySet()) {
-//			Signature s = alterSignature(e.getKey());
-//			constructors.put(s, e.getValue());
-//		}
-//		
-//		//Fields
-//		fields = theType.fields.getAlteredFieldSet(paramMap);	
-//		
-//		//Methods
-//		methods = theType.methods.getAlteredMethodSet(paramMap);
-//		
-//		//for(AbstractFunction f : methods.getMyMethods()) {
-//		//	System.out.println(f.getSignature());
-//		//}
-//		
-//		//XPilot: Destructor
-//		destructor = theType.destructor;
-//	}
-	
-//	private Signature alterSignature(Signature sig) {
-//		if(sig.isEmpty()) return sig;
-//		if(!sig.containsTypeParams()) return sig;
-//		
-//		IType[] types = sig.getTypeArrayCopy();
-//		//int numTypeParams = theType.typeParams.length;
-//		int sigSize = types.length;
-//		for(int i=0;i<sigSize;i++) {
-//			types[i] = types[i].replaceTypeParameters(paramMap);
-//		}
-//		return new Signature(types);
-//	}
-	
-//	/**
-//	 * A generic class instance contains type params when one of its type arguments
-//	 * contains (or is) any.
-//	 */
-//	@Override
-//	public boolean containsTypeParams() {
-//		return signature.containsTypeParams();		
-//	}
-//	
-//	@Override
-//	public IType replaceTypeParameters(TypeParamMapping paramMap) {
-//		if(!containsTypeParams()) return this;
-//		return theType.getGenericInstance(signature.replaceTypeParameters(paramMap));
-//	}
-//	
-//	/**
-//	 * XPilot: Added so that the hierarchy can be properly traversed.
-//	 */
-//	@Override
-//	public boolean isTopClass() {
-//		return theType.isTopClass();
-//	}
-//	
-//	@Override
-//	public VirtualCallTable getVirtualCallTable() {
-//		return theType.getVirtualCallTable();
-//	}
-//	
-//	@Override
-//	public void registerInstantiation() {
-//		theType.registerInstantiation();
-//	}
-//
-//
-//	@Override
-//	public IType getGeneratedType() {
-//		return theType.getGeneratedType();
-//	}
-//
-//	@Override
-//	public int getMemberByteSize() {
-//		return theType.getMemberByteSize();
-//	}
-//	
-//	@Override
-//	public boolean hasAnnotation(String name) {
-//		return theType.hasAnnotation(name);
-//	}
-//
-//	//***** XPilot: methods that should not be called? *****
-//	
-//	@Override
-//	protected int calcByteSize() {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public boolean canConcatenateCastTo(IType toType) {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public boolean canExplicitCastTo(IType toType) {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public void generateImplementsTransClosure() {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public HashSet<String> getAllowedAnnotations() {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public int getClassIndex() {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public int getInstanceLimit() {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public IClass getTopClass() {
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public TypeParameter[] getTypeParams() {
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public boolean isImplicitReferenceType() {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public boolean isStatic() {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public boolean isUsed() {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public void setGeneratedName(String generatedName) {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public void setInstanceLimit(int instanceLimit) {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public void setMetaClassName(String name) {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public void setStatic() {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//
-//	@Override
-//	public void setVirtualCallTable(VirtualCallTable virtualCallTable) {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
+	@Override
+	public IClass getGenericParent() {
+		return genericParent;
+	}
 	
 	@Override
 	public int calcByteSize() {
@@ -282,11 +78,6 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 	@Override
 	public ClassDeclNode getDefinition() {
 		return genericParent.getDefinition();
-	}
-
-
-	public void setConstructors(OperationSet genericOperationSet) {
-		constructors = genericOperationSet;
 	}
 	
 	@Override

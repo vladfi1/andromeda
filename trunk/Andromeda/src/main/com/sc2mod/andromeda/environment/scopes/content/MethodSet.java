@@ -1,6 +1,7 @@
 package com.sc2mod.andromeda.environment.scopes.content;
 
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -78,6 +79,13 @@ public class MethodSet extends OperationSet {
 		if(subOp.isStatic()){
 			return subOp;
 		}
+		
+		// Bottom method is not declared override?
+		if(!subOp.isOverride())
+			throw Problem.ofType(ProblemId.OVERRIDE_WITHOUT_OVERRIDE_MODIFIER).at(subOp.getDefinition())
+					.details(OperationUtil.getTypeAndNameAndSignature(subOp),
+							 OperationUtil.getTypeAndNameAndSignature(superOp))
+					.raiseUnrecoverable();
 		
 		// Top method final? Fail!
 		if (superOp.isFinal())

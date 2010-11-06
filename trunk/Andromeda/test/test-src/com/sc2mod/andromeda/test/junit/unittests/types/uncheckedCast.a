@@ -1,0 +1,8 @@
+class X{
+
+}
+
+static{
+	int i = (!! int) new X(); 	//works
+	int j = (int) new X();		//error
+}

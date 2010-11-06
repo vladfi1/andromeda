@@ -24,7 +24,6 @@ StaticInit
 
 package com.sc2mod.andromeda.environment.types
 ArrayType
-BasicType
 UnscopedType
 Enrichment
 ClosureType
@@ -32,6 +31,10 @@ NonReferentialType
 PointerType
 SpecialType
 StaticDecl
+TypeUnknown
+
+package com.sc2mod.andromeda.environment.types.basic
+BasicType
 TypeBool
 TypeByte
 TypeChar
@@ -39,7 +42,7 @@ TypeFixed
 TypeInt
 TypeShort
 TypeString
-TypeUnknown
+TypeText
 
 package com.sc2mod.andromeda.environment.types.impl
 ClassImpl

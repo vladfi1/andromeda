@@ -161,8 +161,8 @@ public class TypeUtil {
 	 * @param left a class
 	 * @param right another class
 	 */
-	public static boolean isHierarchyShared(IClass left, IClass right) {
-		return left.isSubtypeOf(right)||right.isSubtypeOf(left);
+	public static boolean isHierarchyShared(IType left, IType right) {
+		return left == right || left.isSubtypeOf(right) || right.isSubtypeOf(left);
 	}
 	
 	

@@ -10,12 +10,13 @@ import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.casting.CastUtil;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
@@ -72,7 +73,6 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	@Override
 	public void visit(AssignmentExprNode assignment, ExpressionContext context) {	
 			
-		
 		//Visit left side as lValue
 		ExprNode lExpr = assignment.getLeftExpression();
 		switch(assignment.getAssignOp()){
@@ -176,9 +176,17 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		IType rightType = castExpression.getRightExpression().getInferedType();
 		
 		//Is cast possible
-		if(rightType.canExplicitCastTo(type)){
+		boolean unchecked = castExpression.isUnchecked();
+		if(CastUtil.canExplicitCast(rightType, type, unchecked)){
 			castExpression.setInferedType(type);
 		} else {
+			//If we do a checked cast but only unchecked is possible, give a more
+			//concise error message
+			if(!unchecked && CastUtil.canExplicitCast(rightType, type, true)){
+				throw Problem.ofType(ProblemId.TYPE_ERROR_NEED_UNCHECKED_CAST).at(castExpression)
+					.details(rightType,type)
+					.raiseUnrecoverable();
+			}
 			throw Problem.ofType(ProblemId.TYPE_ERROR_FORBIDDEN_CAST).at(castExpression)
 						.details(rightType,type)
 						.raiseUnrecoverable();

@@ -41,7 +41,8 @@ public abstract class ScopeImpl implements IScope , SemanticsVisitorNode {
 	public ScopeContentSet getContent(){
 		return content;
 	}
-	private final ScopeContentSet content;
+	
+	private ScopeContentSet content;
 	
 	/**
 	 * Adds content to this scope. Also adds
@@ -56,6 +57,10 @@ public abstract class ScopeImpl implements IScope , SemanticsVisitorNode {
 
 	protected abstract ScopeContentSet createContentSet();
 
-	
+	protected void recreateContentSet(){
+		if(content == null){
+			content = createContentSet();
+		}
+	}
 }
 

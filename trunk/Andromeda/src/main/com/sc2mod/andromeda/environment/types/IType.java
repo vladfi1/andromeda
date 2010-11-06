@@ -19,6 +19,7 @@ import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
@@ -34,16 +35,6 @@ public interface IType extends IScope, IScopedElement{
 	String getDescription();
 	
 	TypeCategory getCategory();
-
-
-	
-	
-	/**
-	 * Returns iff a type can be concatenate cast to another type.
-	 * 
-	 * The basic implementation allows this if the type can be cast implicitly
-	 */
-	public boolean canConcatenateCastTo(IType toType);
 	
 	/**
 	 * Returns iff a type can be cast implicitly to antoher type (i.e. without an explicit type cast).
@@ -54,11 +45,7 @@ public interface IType extends IScope, IScopedElement{
 	 */
 	public boolean canImplicitCastTo(IType toType);
 
-	/**
-	 * Returns true, if this type can be explicitly cast to the given type (with an explicit cast expression)
-	 * The basic implementation allows this if one of the types is a subtype of the other one or the types are the same.
-	 */
-	public boolean canExplicitCastTo(IType toType);
+	
 	
 	boolean canBeNull();
 	
@@ -201,6 +188,7 @@ public interface IType extends IScope, IScopedElement{
 	//*** SCOPING METHODS ***
 	
 	 void addInheritedContent(IScope parentScope);
+
 	
 	
 

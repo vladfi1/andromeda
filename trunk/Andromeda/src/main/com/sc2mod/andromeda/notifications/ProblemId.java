@@ -41,7 +41,6 @@ public enum ProblemId {
 	//**** NAME RESOLVING ****
 	FIELD_NAME_NOT_FOUND ("No visible field or accessor named '%s' exists for type %s."),
 	VAR_NAME_NOT_FOUND ("No variable or visible field or accessor named '%s' exists in this context"),
-	FIELD_NOT_VISIBLE ("The %s field '%s' is not visible."),
 	TYPE_CANNOT_HAVE_FIELDS ("The left side of a field access operation must be a class, struct or an " +
 					"enriched basic type. However, no enrichment for the type '%s' exists.") , 
 
@@ -144,6 +143,8 @@ public enum ProblemId {
 	TYPE_ERROR_NONBOOL_CONDITIONAL("The condition of a conditional expression must be of type bool, but it is of type %s"),
 	TYPE_ERROR_INCOMPATIBLE_CONDITIONAL("The types of the two alternatives in a conditional expression do not match. They must either be the same type or the 'else' type must be implicitly castable to the 'if' one.\n'if' type: %s\n'else' type: %s"),
 	TYPE_ERROR_FORBIDDEN_CAST("Cannot cast from %s to %s"),
+	TYPE_ERROR_NEED_UNCHECKED_CAST("Cannot cast from %s to %s with a checked cast. Use an unchecked cast instead."),
+	
 	
 	TYPE_ERROR_INCOMPATIBLE_RETURN_TYPE("Returned type incompatible with declared return type.\nReturn type: %s\nReturned type: %s"),
 	MISSING_RETURN("Missing return. (the control flow of non-void functions may not reach the end of the function body)"),
@@ -194,6 +195,7 @@ public enum ProblemId {
 	OVERRIDE_STATIC_NON_STATIC("Overwriting a static method with a non-static method or vice versa is not possible."),
 	OVERRIDE_FINAL_METHOD("Cannot override a final method."),
 	OVERRIDE_REDUCED_VISIBILITY("Cannot reduce visibility of overridden method."),
+	OVERRIDE_WITHOUT_OVERRIDE_MODIFIER("The method %s overrides %s but has no 'override' modifier"),
 	AMBIGUOUS_METHOD_ACCESS("Ambiguous access! There is more than one operation named %s:\n%s"),
 	AMBIGUOUS_METHOD_CALL("This method invocation is ambiguous.\nPossible calls:\n%s\n%s"),
 	CONSTRUCTOR_WITH_RETURN_TYPE("Constructors may not specify a return type"),

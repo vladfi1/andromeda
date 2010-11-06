@@ -29,9 +29,11 @@ import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.InstanceLimitSetterNode;
 import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.SimpleTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 import com.sc2mod.andromeda.util.Pair;
@@ -95,8 +97,26 @@ public class StructureRegistryTreeScanner extends
 		// By registering them this late, the type they enrich can be resolved
 		// right away.
 		Enrichment enrichment = new Enrichment(enrichDeclaration, scopes._1);
-		enrichDeclaration.childrenAccept(this, new Pair<IScope, IType>(
+		resolver.checkAndResolve(enrichment);
+		enrichDeclaration.getBody().accept(this, new Pair<IScope, IType>(
 				enrichment, enrichment.getEnrichedType()));
+	}
+	
+	@Override
+	public void visit(TypeExtensionDeclNode typeExtensionDeclNode, Pair<IScope, IType> scopes) {
+		
+		//If the type extension has an attached enrichment, process it
+		if(typeExtensionDeclNode.getBody() != null){
+			EnrichDeclNode enrichDecl = new EnrichDeclNode(typeExtensionDeclNode.getAnnotations(), typeExtensionDeclNode.getModifiers(), new SimpleTypeNode(typeExtensionDeclNode.getName(), null), typeExtensionDeclNode.getBody());
+			enrichDecl.setPos(typeExtensionDeclNode.getLeftPos(),typeExtensionDeclNode.getRightPos());
+			Enrichment enrichment = new Enrichment(enrichDecl, scopes._1);
+			
+			//We can set the enriched type right away
+			enrichment.setResolvedEnrichedType(typeExtensionDeclNode.getSemantics());
+			
+			resolver.checkAndResolve(enrichment);
+			enrichDecl.getBody().accept(this, new Pair<IScope, IType>(enrichment,enrichment.getEnrichedType()));
+		}
 	}
 
 	// ***************************

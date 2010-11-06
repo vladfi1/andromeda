@@ -7,41 +7,44 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.basic;
 
+import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.NonReferentialType;
+import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class TypeShort extends NonReferentialType{
+public class TypeFixed extends NonReferentialType{
 
-	public TypeShort() {
-		super("short");
+	public TypeFixed() {
+		super("fixed");
 	}
 	
 	 @Override
 	public boolean canImplicitCastTo(IType toType) {
-		 if(toType == this|| toType == FLOAT) return true;
-		 return false;
+		 return toType == this;
 	}
-	 
-	 @Override
-	public boolean canExplicitCastTo(IType type) {
-		 return canConcatenateCastTo(type);
-	}
-	 
-	 @Override
+
+	@Override
 	public boolean canConcatenateCastTo(IType toType) {
-		if(toType == this|| toType == FLOAT || toType == STRING || toType == TEXT) return true;
+		if(toType == this || toType == STRING || toType == TEXT) return true;
 		return false;
 	}
 	 
 	 @Override
 	public String getDefaultValueStr() {
-		return "0";
+		return "0.";
 	}
+	 
+	 @Override
+	public int getRuntimeType() {
+		 return RuntimeType.FLOAT;
+	}
+	 
 
-	
+
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }

@@ -107,6 +107,13 @@ public final class Util {
 				else
 					m.setVisibility(Visibility.PROTECTED);
 				break;
+			case INTERNAL:
+				if(m.getVisibility()!=Visibility.PUBLIC)
+					Problem.ofType(ProblemId.DUPLICATE_VISIBILITY_MODIFIER).at(mods)
+							.raise();
+				else
+					m.setVisibility(Visibility.INTERNAL);
+				break;
 			case PUBLIC:
 				if(m.getVisibility()!=Visibility.PUBLIC)
 					Problem.ofType(ProblemId.DUPLICATE_VISIBILITY_MODIFIER).at(mods)

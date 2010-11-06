@@ -20,13 +20,20 @@ public class TypeUnknown extends SpecialType {
 	}
 	
 	@Override
-	public boolean canImplicitCastTo(IType toType) {
-		if(canBeNull()) return true;
-		return false;
+	public boolean isSubtypeOf(IType t) {
+		return t.canBeNull();
 	}
 	
 	@Override
-	public boolean canExplicitCastTo(IType type) {
+	public boolean canImplicitCastTo(IType toType) {
+		if(toType.canBeNull()) return true;
+		return false;
+	}
+	
+	
+	
+	@Override
+	public boolean canExplicitCastTo(IType type, boolean unchecked) {
 		return canImplicitCastTo(type);
 	}
 	

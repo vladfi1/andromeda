@@ -1,5 +1,8 @@
 package com.sc2mod.andromeda.environment.types.generic;
 
+import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
@@ -20,7 +23,11 @@ public class GenericMemberGenerationVisitor extends VoidSemanticsVisitorAdapter 
 	public void visit(GenericClassInstance genericClassInstance) {
 		copyGenericContent(genericClassInstance);
 		
-		genericClassInstance.setConstructors(GenericUtil.getGenericOperationSet(tprov,genericClassInstance.getConstructors(), genericClassInstance.getTypeArguments()));
+		Signature typeArgs = genericClassInstance.getTypeArguments();
+		OperationSet constructors = genericClassInstance.getConstructors();
+		for(Operation op : genericClassInstance.getGenericParent().getConstructors()){
+			constructors.add(GenericUtil.getGenericOperation(tprov, op, typeArgs));
+		}
 	}
 	
 	@Override

@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import com.sc2mod.andromeda.environment.Signature;
 
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;

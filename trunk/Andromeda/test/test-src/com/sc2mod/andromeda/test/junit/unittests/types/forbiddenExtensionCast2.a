@@ -1,0 +1,10 @@
+extension X uses int{
+
+}
+
+
+static{
+	X x = (!! X) 3;
+	int a = (int) x; //works
+	int b = x; //error
+}

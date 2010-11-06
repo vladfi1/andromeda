@@ -9,9 +9,9 @@ import com.sc2mod.andromeda.util.Pair;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 
 public class InstanceLimitChecker {
 

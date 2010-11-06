@@ -21,7 +21,7 @@ terminal DOT; // qualifiedName
 terminal SEMICOLON, MULT, COMMA, LBRACE, RBRACE, EQ, LPAREN, RPAREN, COLON;
 terminal PACKAGE; // packageDeclaration
 terminal IMPORT; // importDeclaration
-terminal PUBLIC, PROTECTED, PRIVATE; // modifier
+terminal PUBLIC, PROTECTED, PRIVATE, INTERNAL; // modifier
 terminal STATIC; // modifier
 terminal ABSTRACT, FINAL, NATIVE, TRANSIENT;
 terminal CLASS; // classDeclaration
@@ -53,7 +53,7 @@ terminal EQEQ, NOTEQ; // equalityExpression
 terminal AND; // andExpression
 terminal XOR; // exclusiveOrExpression
 terminal OR;  // inclusiveOrExpression
-terminal ANDAND; // conditionalAndExpression
+terminal ANDAND, NOTNOT; // conditionalAndExpression
 terminal OROR; // conditionalOrExpression
 terminal QUESTION; // conditionalExpression
 terminal MULTEQ, DIVEQ, MODEQ, PLUSEQ, MINUSEQ; // assignmentOperator
@@ -86,6 +86,7 @@ terminal ISKEY;
 terminal SETINSTANCELIMIT;
 terminal KEYOF;
 terminal DOTINLINE;
+terminal EXTENSION;
 
 //Emitted by scanner
 terminal SourceFileInfo INCLUDE_START, IMPORT_START;
@@ -294,6 +295,7 @@ globalStructure ::= typeDeclaration:f {: RESULT = f; :}
 	|	typeExtension:f {: RESULT = f; :}
 	|	staticInitializer:f {: RESULT = new GlobalStaticInitDeclNode(f); :}
 	|   INCLUDE_START:l sourceFile:a INCLUDE_END:r {: RESULT = new IncludeNode(a); a.setFileInfo(l); RESULT.setPos(lleft,rright); :}
+	|	instanceLimit:f {: RESULT = f; :}
 	;
 
 
@@ -339,7 +341,6 @@ functionDeclaration ::=	methodDeclaration:m {: RESULT = new GlobalFuncDeclNode(m
 						|	DOUBLE:l {: RESULT = new BasicTypeNode("fixed"); RESULT.setPos(lleft,lright);  :} 
 						|	FIXED:l {: RESULT = new BasicTypeNode("fixed"); RESULT.setPos(lleft,lright);  :} 
 						;
-
 					referenceType ::=
 							classOrInterfaceType:t {: RESULT = t; :}
 						|	arrayType:t {: RESULT = t; :}
@@ -424,6 +425,7 @@ modifier ::=
 	PUBLIC {: RESULT = (ModifierSE.PUBLIC); :}
 	| PROTECTED {: RESULT = (ModifierSE.PROTECTED);:}
 	| PRIVATE {: RESULT = (ModifierSE.PRIVATE);:}
+	| INTERNAL {: RESULT = (ModifierSE.INTERNAL);:}
 	| STATIC {: RESULT = (ModifierSE.STATIC);:}
 	| ABSTRACT {: RESULT = (ModifierSE.ABSTRACT);:}
 	| FINAL {: RESULT = (ModifierSE.FINAL);:}
@@ -504,8 +506,10 @@ typeDefinition	::= annotationsOpt:ao modifiersOpt:m TYPEDEF:l type:t IDENTIFIER:
 
 // Type extensions
 
-typeExtension ::= 	annotationsOpt:ao modifiersOpt:m TYPEDEF:l IDENTIFIER:i isKeyOpt:iko USES type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,iko,t,true); RESULT.setPos(lleft,rright); :}
-		|			annotationsOpt:ao modifiersOpt:m TYPEDEF:l IDENTIFIER:i isKeyOpt:iko EXTENDS type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,iko,t,false); RESULT.setPos(lleft,rright); :}
+typeExtension ::= 	annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp USES type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,true,null); RESULT.setPos(lleft,rright); :}
+		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp EXTENDS type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,false,null); RESULT.setPos(lleft,rright); :}
+		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp USES type:t classBody:r {: RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,true,r); RESULT.setPos(lleft,rright); :}
+		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp EXTENDS type:t classBody:r {: RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,false,r); RESULT.setPos(lleft,rright); :}
 		;
 		
 isKeyOpt ::= 
@@ -521,8 +525,8 @@ instanceLimit ::= SETINSTANCELIMIT:l classOrInterfaceType:t LBRACK expression:e 
 
 //structs
 structDeclaration ::=
-	annotationsOpt:ao STRUCT:l IDENTIFIER:i LBRACE structBody:b RBRACE:r {: RESULT = new StructDeclNode(ao,new ModifierListNode(),i,b); RESULT.setPos(lleft,rright); :}
-|	annotationsOpt:ao STRUCT:l IDENTIFIER:i LBRACE structBody:b RBRACE SEMICOLON:r {: RESULT = new StructDeclNode(ao,new ModifierListNode(),i,b); RESULT.setPos(lleft,rright); :}
+	annotationsOpt:ao STRUCT:l IDENTIFIER:i typeParametersOpt:tp LBRACE structBody:b RBRACE:r {: RESULT = new StructDeclNode(ao,new ModifierListNode(),i,tp,b); RESULT.setPos(lleft,rright); :}
+|	annotationsOpt:ao STRUCT:l IDENTIFIER:i typeParametersOpt:tp LBRACE structBody:b RBRACE SEMICOLON:r {: RESULT = new StructDeclNode(ao,new ModifierListNode(),i,tp,b); RESULT.setPos(lleft,rright); :}
 
 	;
 	
@@ -695,8 +699,8 @@ explicitConstructorInvocation ::=
 
 // Interface Declarations
 interfaceDeclaration ::=
-		annotationsOpt:ao modifiersOpt:m INTERFACE IDENTIFIER:n extendsInterfacesOpt:i 
-			interfaceBody:b {: RESULT = new InterfaceDeclNode(ao,m,n,i,b); RESULT.setPos(mleft,bright); :}
+		annotationsOpt:ao modifiersOpt:m INTERFACE IDENTIFIER:n typeParametersOpt:tp extendsInterfacesOpt:i 
+			interfaceBody:b {: RESULT = new InterfaceDeclNode(ao,m,n,i,tp,b); RESULT.setPos(mleft,bright); :}
 	;
 extendsInterfacesOpt ::=  {: RESULT = new TypeListNode(); :}
 	|	extendsInterfaces:t {: RESULT = t; :}
@@ -1048,8 +1052,10 @@ abstractMethodDeclaration ::=
 						|	castExpression:e {: RESULT = e; :}
 						;
 					castExpression ::=
-							LPAREN:l primitiveType:t RPAREN unaryExpression:e {: RESULT = new CastExprNode(t,e); RESULT.setPos(lleft,eright); :}
-						|	LPAREN:l expression:e1 RPAREN unaryExpressionNotPlusMinus:e {: TypeNode t = ParserHelper.getExpressionType(e1,null); RESULT = new CastExprNode(t,e); RESULT.setPos(lleft,eright); :}
+							LPAREN:l primitiveType:t RPAREN unaryExpression:e {: RESULT = new CastExprNode(t,e,false); RESULT.setPos(lleft,eright); :}
+						|	LPAREN:l expression:e1 RPAREN unaryExpressionNotPlusMinus:e {: TypeNode t = ParserHelper.getExpressionType(e1,null); RESULT = new CastExprNode(t,e,false); RESULT.setPos(lleft,eright); :}
+						|	LPAREN:l NOTNOT primitiveType:t RPAREN unaryExpression:e {: RESULT = new CastExprNode(t,e,true); RESULT.setPos(lleft,eright); :}
+						|	LPAREN:l NOTNOT classOrInterfaceType:t RPAREN unaryExpressionNotPlusMinus:e {: RESULT = new CastExprNode(t,e,true); RESULT.setPos(lleft,eright);  :}
 //						|	LPAREN:l name:n dims RPAREN unaryExpressionNotPlusMinus:e {: TypeNode t = ParserHelper.getExpressionType(n,null); RESULT = new CastExprNode(t,e); RESULT.setPos(lleft,eright); :}
 						;
 					multiplicativeExpression ::=

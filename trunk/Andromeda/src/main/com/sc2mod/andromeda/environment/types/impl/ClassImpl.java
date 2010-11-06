@@ -14,12 +14,12 @@ import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.MethodSet;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
@@ -281,10 +281,10 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	 * classes can also be cast to int or its extensions
 	 */
 	@Override
-	public boolean canExplicitCastTo(IType toType) {
-		if(super.canExplicitCastTo(toType))
+	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
+		if(super.canExplicitCastTo(toType, unchecked))
 			return true;
-		if(toType.isTypeOrExtension(BasicType.INT))
+		if(unchecked && toType.isTypeOrExtension(BasicType.INT))
 			return true;
 		return false;
 	}

@@ -10,11 +10,11 @@
 package com.sc2mod.andromeda.environment.types.generic;
 
 import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -71,7 +71,7 @@ public class TypeParameter extends TypeImpl {
 	}
 	
 	@Override
-	public boolean canExplicitCastTo(IType toType) {
+	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
 		if(toType==this) return true;
 		if(toType.isTypeOrExtension(BasicType.INT)) return true; 
 		if(toType.getCategory()==TypeCategory.TYPE_PARAM)return true;

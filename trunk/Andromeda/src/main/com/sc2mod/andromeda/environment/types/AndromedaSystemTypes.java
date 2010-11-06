@@ -2,6 +2,7 @@ package com.sc2mod.andromeda.environment.types;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 
 public class AndromedaSystemTypes extends SystemTypes{
 

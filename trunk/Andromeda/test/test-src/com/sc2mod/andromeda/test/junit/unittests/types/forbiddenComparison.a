@@ -1,0 +1,14 @@
+class X{
+
+}
+
+class Y{
+
+}
+
+static{
+	X x = new X();
+	Y y = new Y();
+	bool b = (x == y); //forbidden
+	
+}

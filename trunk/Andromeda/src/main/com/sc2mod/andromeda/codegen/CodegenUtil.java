@@ -11,8 +11,8 @@ package com.sc2mod.andromeda.codegen;
 
 import java.util.HashMap;
 
-import com.sc2mod.andromeda.environment.types.BasicType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.AssignOpSE;
 import com.sc2mod.andromeda.syntaxNodes.BinOpSE;

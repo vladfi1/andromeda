@@ -161,6 +161,7 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   "else"                         { return symbol(ELSE); }
   "enrich"						 { return symbol(ENRICH); }
   "extends"                      { return symbol(EXTENDS); }
+  "extension"					 { return symbol(EXTENSION); }
   "final"                        { return symbol(FINAL); }
   "finally"                      { return symbol(FINALLY); }
 //  "float"                        { return symbol(FLOAT); }
@@ -179,6 +180,7 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   "if"                           { return symbol(IF); }
   "inline"						 { return symbol(INLINE); }
   ".inline"						 { return symbol(DOTINLINE); }
+  "internal"					 { return symbol(INTERNAL); }
   "public"                       { return symbol(PUBLIC); }
   "short"                        { return symbol(SHORT); }
   "super"                        { return symbol(SUPER); }
@@ -229,6 +231,7 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   ">"                            { return symbol(GT); }
   "<"                            { return symbol(LT); }
   "!"                            { return symbol(NOT); }
+  "!!"                            { return symbol(NOTNOT); }  
   "~"                            { return symbol(COMP); }
   "?"                            { return symbol(QUESTION); }
   ":"                            { return symbol(COLON); }

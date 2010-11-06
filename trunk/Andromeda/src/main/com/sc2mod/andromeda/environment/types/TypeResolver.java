@@ -28,12 +28,10 @@ import com.sc2mod.andromeda.syntaxNodes.util.VisitorAdapter;
 public class TypeResolver extends VisitorAdapter<IScope,IType>{
 
 	private TypeProvider tprov;	
-	private GenericMemberGenerationVisitor genericsResolver;
 
 
 	public TypeResolver(TypeProvider tprov){
 		this.tprov = tprov;
-		this.genericsResolver = new GenericMemberGenerationVisitor(tprov);
 	}
 	
 	public IType raiseUnknownType(SyntaxNode type, String name){
@@ -72,10 +70,7 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 				typeArgs[i]=t;				
 			}
 			INamedType genericInstance = tprov.getGenericInstance(((INamedType)result),new Signature(typeArgs));
-			//If immediate generic resolving is activated, then the generic instance members are copied down
-			if(tprov.doResolveGenerics() && !genericInstance.isGenericDecl()){
-				genericInstance.accept(genericsResolver);
-			}
+			return genericInstance;
 		} else{
 			if(args != null)
 				throw Problem.ofType(ProblemId.NON_GENERIC_TYPE_HAS_TYPE_ARGUMENTS).at(args)
