@@ -1,0 +1,9 @@
+//checks overriding of abstract methods
+
+abstract class A{
+	abstract void x();
+}
+
+class B extends A{
+	void x(){} //error, override needed
+}

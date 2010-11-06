@@ -1,0 +1,14 @@
+//this test uses a class hierarchy with a non-overriding class in the middle
+//to check that x is inherited over this hierarchy
+
+class A{
+	void x(){}
+}
+
+class B extends A{
+
+}
+
+class C extends B{
+	void x(){} //error, override needed
+}

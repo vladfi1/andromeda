@@ -1,0 +1,9 @@
+
+
+class A{
+	void x(){}
+}
+
+class B extends A{
+	override void x(int i){} //error, does not override
+}

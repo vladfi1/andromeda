@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
 import com.sc2mod.andromeda.environment.types.generic.GenericExtensionInstance;
 import com.sc2mod.andromeda.environment.types.generic.GenericInterfaceInstance;
 import com.sc2mod.andromeda.environment.types.generic.GenericStructInstance;
+import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
 import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
@@ -26,6 +27,18 @@ class CastDecisionVisitorExplicit extends ParameterSemanticsVisitorAdapter<IType
 	private final boolean unchecked;
 	public CastDecisionVisitorExplicit(boolean unchecked){
 		this.unchecked = unchecked;
+	}
+	
+	
+	@Override
+	public Boolean visit(BasicType from, IType to) {
+		switch(to.getCategory()){
+		case BASIC: return to == from; 
+		case EXTENSION:
+			IType toBase = to.getBaseType();
+			return unchecked && toBase == from;
+		}
+		return false;
 	}
 	
 	@Override
@@ -96,42 +109,117 @@ class CastDecisionVisitorExplicit extends ParameterSemanticsVisitorAdapter<IType
 	}
 	
 	@Override
-	public Boolean visit(ExtensionImpl extensionImpl, IType state) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+	public Boolean visit(TypeParameter from, IType to) {
+		if(to==from) return true;
+		if(to==BasicType.INT) return true;
+		if(unchecked){
+			return intBasedUncheckedCast(to);
+		}
+		return false;
+	}
+	
+	private boolean intBasedUncheckedCast(IType to){
+		switch(to.getCategory()){
+		case TYPE_PARAM:
+		case CLASS:
+		case INTERFACE:
+		case FUNCTION:
+			return true;
+		case BASIC:
+		case EXTENSION:
+			return to.getBaseType() == BasicType.INT;
+		}
+		return false;
 	}
 	
 	@Override
-	public Boolean visit(ClassImpl classImpl, IType state) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+	public Boolean visit(ExtensionImpl from, IType to) {
+		if(from.isSubtypeOf(to)){
+			return true;
+		}
+		if(unchecked){
+			if(from.getBaseType() == BasicType.INT){
+				return intBasedUncheckedCast(to);
+			} else {
+				return from.getBaseType() == to.getBaseType();
+			}
+		} else {
+			if(from.getBaseType() == to){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@Override
-	public Boolean visit(InterfaceImpl interfaceImpl, IType state) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+	public Boolean visit(GenericExtensionInstance from,	IType to) {
+		if(from.isSubtypeOf(to)){
+			return true;
+		}
+		if(to==BasicType.INT) return true;
+		if(unchecked){
+			if(from.getBaseType() == BasicType.INT){
+				return intBasedUncheckedCast(to);
+			} else {
+				return from.getBaseType() == to.getBaseType();
+			}
+		} else {
+			if(from.getBaseType() == to){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@Override
-	public Boolean visit(GenericClassInstance genericClassInstance, IType state) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+	public Boolean visit(ClassImpl from, IType to) {
+		if(TypeUtil.isHierarchyShared(from, to)){
+			return true;
+		}
+		if(to==BasicType.INT) return true;
+		if(unchecked){
+			return intBasedUncheckedCast(to);
+		}
+		return false;
 	}
 	
 	@Override
-	public Boolean visit(GenericInterfaceInstance genericInterfaceInstance,
-			IType state) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+	public Boolean visit(InterfaceImpl from, IType to) {
+		if(TypeUtil.isHierarchyShared(from, to)){
+			return true;
+		}
+		if(to==BasicType.INT) return true;
+		if(unchecked){
+			return intBasedUncheckedCast(to);
+		}
+		return false;
 	}
 	
 	@Override
-	public Boolean visit(GenericExtensionInstance genericExtensionInstance,
-			IType state) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+	public Boolean visit(GenericClassInstance from, IType to) {
+		if(TypeUtil.isHierarchyShared(from, to)){
+			return true;
+		}
+		if(to==BasicType.INT) return true;
+		if(unchecked){
+			return intBasedUncheckedCast(to);
+		}
+		return false;
 	}
+	
+	@Override
+	public Boolean visit(GenericInterfaceInstance from,	IType to) {
+		if(TypeUtil.isHierarchyShared(from, to)){
+			return true;
+		}
+		if(to==BasicType.INT) return true;
+		if(unchecked){
+			return intBasedUncheckedCast(to);
+		} 
+		return false;
+	}
+	
+
 	
 	
 	

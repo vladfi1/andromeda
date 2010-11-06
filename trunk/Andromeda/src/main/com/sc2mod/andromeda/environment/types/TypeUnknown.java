@@ -31,13 +31,6 @@ public class TypeUnknown extends SpecialType {
 	}
 	
 	
-	
-	@Override
-	public boolean canExplicitCastTo(IType type, boolean unchecked) {
-		return canImplicitCastTo(type);
-	}
-	
-	
 	@Override
 	public String getDescription() {
 		return "unknown (null)";

@@ -1,0 +1,9 @@
+
+
+class A{
+	private void x(){}
+}
+
+class B extends A{
+	override void x(){} //error, A.x is not visible
+}

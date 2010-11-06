@@ -28,13 +28,6 @@ public class TypeInt extends NonReferentialType {
 			|| toType == FLOAT;
 	}
 	
-	 
-	@Override
-	public boolean canConcatenateCastTo(IType toType) {
-		if(toType == this|| toType == FLOAT || toType == STRING || toType == TEXT) return true;
-		return false;
-	}
-	 
 	@Override
 	public String getDefaultValueStr() {
 		return "0";

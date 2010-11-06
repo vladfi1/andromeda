@@ -38,11 +38,6 @@ public class MethodSet extends OperationSet {
 			throw Problem.ofType(ProblemId.DUPLICATE_METHOD).at(newOp.getDefinition(),oldOp.getDefinition())
 						.raiseUnrecoverable();
 
-		// Different return types? Fail!
-		if (oldOp.getReturnType() != newOp.getReturnType())
-			throw Problem.ofType(ProblemId.OVERRIDE_RETURN_TYPE_MISMATCH).at(newOp.getDefinition(),oldOp.getDefinition())
-							.raiseUnrecoverable();
-
 		// Exactly one of them is static? Fail!
 		if (oldOp.isStatic() ^ newOp.isStatic())
 			throw Problem.ofType(ProblemId.OVERRIDE_STATIC_NON_STATIC).at(newOp.getDefinition(),oldOp.getDefinition())
@@ -80,11 +75,19 @@ public class MethodSet extends OperationSet {
 			return subOp;
 		}
 		
+
 		// Bottom method is not declared override?
 		if(!subOp.isOverride())
 			throw Problem.ofType(ProblemId.OVERRIDE_WITHOUT_OVERRIDE_MODIFIER).at(subOp.getDefinition())
 					.details(OperationUtil.getTypeAndNameAndSignature(subOp),
 							 OperationUtil.getTypeAndNameAndSignature(superOp))
+					.raiseUnrecoverable();
+		
+		// Different return types? Fail if not covariant
+		if (!subOp.getReturnType().isSubtypeOf(superOp.getReturnType()))
+			throw Problem.ofType(ProblemId.OVERRIDE_RETURN_TYPE_MISMATCH).at(subOp.getDefinition())
+					.details(subOp.getReturnType().getFullName(), OperationUtil.getTypeAndNameAndSignature(subOp),
+							 superOp.getReturnType().getFullName(), OperationUtil.getTypeAndNameAndSignature(superOp))
 					.raiseUnrecoverable();
 		
 		// Top method final? Fail!
@@ -100,11 +103,6 @@ public class MethodSet extends OperationSet {
 		//Override permitted, add it!
 		superOp.getOverrideInformation().addOverride(subOp);
 		
-		//FIXME check for unimplemented methods in non abstract classes
-//		//Was the old one without body? Reduce abstract count
-//		if(!oldOp.hasBody()){
-//			numUnimplementedMethods--;
-//		}
 		return subOp;
 	}
 

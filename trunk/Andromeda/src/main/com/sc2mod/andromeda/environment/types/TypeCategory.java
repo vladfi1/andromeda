@@ -6,12 +6,11 @@ public enum TypeCategory {
 	 INTERFACE(2),
 	 CLASS(3),
 	 STRUCT(4),
-	 POINTER(5), 
-	 ENRICH(6),
-	 ARRAY(7),
-	 EXTENSION(8),
-	 FUNCTION(9),
-	 TYPE_PARAM(10),
+	 POINTER(5),
+	 ARRAY(6),
+	 EXTENSION(7),
+	 FUNCTION(8),
+	 TYPE_PARAM(9),
 	 OTHER(0);
 	 
 	 TypeCategory (int index){

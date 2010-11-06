@@ -187,9 +187,13 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 		ScopeContentSet content = type.getContent();
 		for(int i = 0;i<size;i++){
 			TypeParamNode paramNode = paramList.elementAt(i);
-			//FIXME: Implement type bounds
-			paramNode.getTypeBound();
-			TypeParameter param = new TypeParameter(type, paramNode, i, null);
+			//FIXME: Fully Implement type bounds
+			TypeNode typeBound = paramNode.getTypeBound();
+			IType resolvedTypeBound = null;
+			if(typeBound != null){
+				resolvedTypeBound = tprov.resolveType(typeBound, type);
+			}
+			TypeParameter param = new TypeParameter(type, paramNode, i, resolvedTypeBound);
 			params[i] = param;
 			
 			//Add to the type as scope content

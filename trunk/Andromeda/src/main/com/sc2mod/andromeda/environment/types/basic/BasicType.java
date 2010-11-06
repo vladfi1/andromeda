@@ -135,14 +135,7 @@ public class BasicType extends NamedTypeImpl {
 		SpecialType.registerSpecialTypes(t);
 	}
 	
-	@Override
-	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
-		if(toType == this) return true;
-		if(unchecked && toType.getCategory()==TypeCategory.EXTENSION){
-			return toType.getBaseType()==this;
-		}
-		return false;
-	}
+
 	
 
 	@Override

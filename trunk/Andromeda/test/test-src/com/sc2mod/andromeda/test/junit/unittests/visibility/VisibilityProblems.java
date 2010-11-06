@@ -1,4 +1,4 @@
-package com.sc2mod.andromeda.test.junit.unittests.problems.visibility;
+package com.sc2mod.andromeda.test.junit.unittests.visibility;
 
 import org.junit.Test;
 

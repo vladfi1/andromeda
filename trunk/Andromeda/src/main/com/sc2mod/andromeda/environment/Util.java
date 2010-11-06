@@ -119,7 +119,7 @@ public final class Util {
 					Problem.ofType(ProblemId.DUPLICATE_VISIBILITY_MODIFIER).at(mods)
 							.raise();
 				else {
-					//FIXME: Public deperecation wanting
+					//FIXME: Public deperecation warning
 					
 				}
 					break;				

@@ -21,6 +21,12 @@ public class GenericTests extends AndromedaSingleRunTest {
 		checkOutput();
 	}
 	
+	@Test
+	public void invalidTypeBound(){
+		callAndromeda("invalidTypeBound.a");
+		assertOnlyProblem(ProblemId.INVALID_TYPE_BOUND);
+	}
+	
 	
 	
 }

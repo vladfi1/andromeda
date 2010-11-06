@@ -3,6 +3,6 @@ class X{
 }
 
 static{
-	int i = (!! int) new X(); 	//works
-	int j = (int) new X();		//error
+	X i = (!! X) 2; 	//works
+	X j = (X) 1;		//error
 }

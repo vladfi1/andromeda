@@ -28,11 +28,6 @@ public class TypeString extends BasicType{
 	}
 	 
 	 @Override
-	public boolean canExplicitCastTo(IType type, boolean unchecked) {
-		 return super.canExplicitCastTo(type, unchecked) || canImplicitCastTo(type);
-	}
-	 
-	 @Override
 	public int getRuntimeType() {
 		 return RuntimeType.STRING;
 	 }

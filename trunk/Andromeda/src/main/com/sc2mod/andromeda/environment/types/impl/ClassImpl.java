@@ -185,13 +185,6 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	public String getDescription() {
 		return "class";
 	}
-	
-	@Override
-	public boolean canConcatenateCastTo(IType toType) {
-		if(super.canConcatenateCastTo(toType)) return true;
-		if(toType==BasicType.STRING || toType==BasicType.TEXT) return true;
-		return false;
-	}
 
 	@Override
 	public TypeCategory getCategory() {
@@ -276,19 +269,6 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 		}
 	}
 	
-	/**
-	 * In addition to the normal explicit casting rules,
-	 * classes can also be cast to int or its extensions
-	 */
-	@Override
-	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
-		if(super.canExplicitCastTo(toType, unchecked))
-			return true;
-		if(unchecked && toType.isTypeOrExtension(BasicType.INT))
-			return true;
-		return false;
-	}
-
 	@Override
 	public void registerInstantiation() {
 		instantiationCount++;

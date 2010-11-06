@@ -1,0 +1,5 @@
+-no dangling forward decls => difficult
+-no missing implementations in non-abstract classes
+-override methods (and functions?) do really override
+-static classes have no non-static members
+-protected not used outside of types

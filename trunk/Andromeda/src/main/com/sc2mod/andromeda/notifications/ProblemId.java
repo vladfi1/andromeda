@@ -88,7 +88,8 @@ public enum ProblemId {
 	STATIC_CLASS_EXTENDED("Cannot extend class %s because it is static"),
 	STATIC_CLASS_HAS_CONSTRUCTOR("Static classes cannot have constructors."),
 	STATIC_CLASS_HAS_NON_STATIC_MEMBER("Static classes cannot have non-static members"),
-	ABSTRACT_CLASS_MISSES_IMPLEMENTATIONS("The non-abstract class %s must implement the following methods:\n%s"),
+	ABSTRACT_METHOD_IN_NON_ABSTRACT_CLASS("Cannot define an abstract method in a non-abstract class"),
+	NON_ABSTRACT_CLASS_MISSES_IMPLEMENTATIONS("The non-abstract class %s must implement the abstract method '%s' defined in type %s"),
 	CONSTRUCTOR_REQUIRED("The super class %s has no parameterless, visible constructor, so the class % must specify a constructor"),
 	DUPLICATE_DESTRUCTOR("Duplicate destructor."),
 	DUPLICATE_CONSTRUCTOR("Duplicate constructor %s"),
@@ -102,6 +103,7 @@ public enum ProblemId {
 	
 	DUPLICATE_TYPE_DEFINITION("Duplicate definition of type %s."),
 	NON_GENERIC_TYPE_HAS_TYPE_ARGUMENTS("The non-generic type %s cannot have type arguments"),
+	INVALID_TYPE_BOUND("This type cannot be used as type bound. Only types based on int (classes, interfaces, int-extensions) are allowed."),
 	
 	INTERFACE_EXTENDING_NON_INTERFACE("Interfaces can only extend other interfaces"),
 	DUPLICATE_EXTENDS("Duplicate interface in extends clause"),
@@ -190,8 +192,8 @@ public enum ProblemId {
 	ACCESSOR_NOT_VISIBLE("The accessor '%s' is not visible for %s access"),
 	
 	//****** METHODS ******
-	OVERRIDE_DECL_DOES_NOT_OVERRIDE("Method was declared 'override' but no overridden method exists in the superclass."),
-	OVERRIDE_RETURN_TYPE_MISMATCH("The overriding method must have the same return type than the overridden one."),
+	OVERRIDE_DECL_DOES_NOT_OVERRIDE("Method was declared 'override' but no visible overridden method exists in the superclass."),
+	OVERRIDE_RETURN_TYPE_MISMATCH("The overriding method's returntype must be the same type or a subtype of the return type of the overridden method.\nConflicting return types (and methods):%s (%s) is no subtype of %s (%s)"),
 	OVERRIDE_STATIC_NON_STATIC("Overwriting a static method with a non-static method or vice versa is not possible."),
 	OVERRIDE_FINAL_METHOD("Cannot override a final method."),
 	OVERRIDE_REDUCED_VISIBILITY("Cannot reduce visibility of overridden method."),

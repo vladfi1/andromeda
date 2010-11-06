@@ -24,3 +24,6 @@
 -You are now forced to use the override keyword for methods that override a method in the superclass
 	I think that this will prevent you from spelling mistakes in subclass methods that produce
 	bugs which are hard to track.
+-Method return types are now covariant. That means that if you override a method in a subclass,
+	you can give the overriding method another return type as the overridden method, if the
+	new return type is a subtype of the overridden return type

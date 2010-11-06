@@ -16,7 +16,6 @@ ConstructorInvocation
 Deallocator
 Destructor
 Function
-GenericFunctionProxy
 GenericMethodProxy
 Invocation
 Method

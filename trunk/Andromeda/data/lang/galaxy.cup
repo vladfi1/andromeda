@@ -245,8 +245,8 @@ non terminal AnnotationListNode annotations, annotationsOpt;
 
 //Generics
 //Gemeric decl
-non terminal Object typeBound;
-non terminal Object typeBoundOpt;
+non terminal TypeNode typeBound;
+non terminal TypeNode typeBoundOpt;
 non terminal TypeParamNode typeParam;
 non terminal TypeParamListNode typeParamList;
 non terminal TypeParamListNode typeParameters, typeParametersOpt;
@@ -450,9 +450,9 @@ annotationsOpt ::= annotations:a {: RESULT = a; :}
 //Generic stuff
 
 //Generic decl
-typeBound ::= EXTENDS classOrInterfaceType {: RESULT = null; :}
+typeBound ::= EXTENDS classOrInterfaceType:t {: RESULT = t; :}
 		;
-typeBoundOpt ::= typeBound {: RESULT = null; :}
+typeBoundOpt ::= typeBound:tb {: RESULT = tb; :}
 		|		{: RESULT = null; :}
 		;
 

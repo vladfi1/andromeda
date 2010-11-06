@@ -19,6 +19,8 @@ import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.notifications.Problem;
+import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.TypeParamNode;
 
 public class TypeParameter extends TypeImpl {
@@ -32,8 +34,11 @@ public class TypeParameter extends TypeImpl {
 	
 	public TypeParameter(INamedType forType, TypeParamNode node, int index, IType typeBound) {
 		super(forType);
-		//FIXME: Check that the type bound is a valid type bound (i.e. something based off int)
-		
+		if(typeBound != null && typeBound.getBaseType() != BasicType.INT){
+			throw Problem.ofType(ProblemId.INVALID_TYPE_BOUND).at(node.getTypeBound())
+				.raiseUnrecoverable();
+		}
+
 		this.index = index;
 		this.typeBound = typeBound;
 		decl = node;
@@ -68,15 +73,6 @@ public class TypeParameter extends TypeImpl {
 	@Override
 	public String getGeneratedName() {
 		return BasicType.INT.getGeneratedName();
-	}
-	
-	@Override
-	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
-		if(toType==this) return true;
-		if(toType.isTypeOrExtension(BasicType.INT)) return true; 
-		if(toType.getCategory()==TypeCategory.TYPE_PARAM)return true;
-		if(toType.getCategory()==TypeCategory.CLASS) return true;
-		return false;
 	}
 
 	

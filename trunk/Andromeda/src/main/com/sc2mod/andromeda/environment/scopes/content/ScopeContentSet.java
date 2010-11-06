@@ -64,6 +64,18 @@ public abstract class ScopeContentSet {
 		return new DeepIterator(includeOperations,includeSubpackaes);
 	}
 	
+	public Iterable<IScopedElement> iterateDeep(final boolean includeOperations, final boolean includeSubpackaes){
+		return new Iterable<IScopedElement>() {
+			@Override
+			public Iterator<IScopedElement> iterator() {
+				return new DeepIterator(includeOperations,includeSubpackaes);
+			}
+		};
+	}
+	
+	
+	
+	
 	
 	IScopedElement resolve(String name, IScope from, AccessType accessType, Signature sig, SyntaxNode where, EnumSet<ScopedElementType> allowedTypes){
 		
@@ -162,19 +174,7 @@ public abstract class ScopeContentSet {
 			}
 			
 		}
-		
-		//FIXME: Add that somewhere, or maybe not?
-//		if(!f.isAccessor()&&addToMyFields){
-//			if(f.isStatic()){
-//				numStaticFields++;
-//				myStaticFields.add((FieldDecl) f);
-//			} else {
-//				if(f.isInitDecl())
-//					numInits++;
-//				numNonStaticFields++;
-//				myNonStaticFields.add((FieldDecl) f);
-//			}
-//		}
+
 	}
 	
 

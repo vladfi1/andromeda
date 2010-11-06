@@ -65,16 +65,7 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	public abstract TypeCategory getCategory();
 
 
-	
-	/**
-	 * Returns iff a type can be concatenate cast to another type.
-	 * 
-	 * The basic implementation allows this if the type can be cast implicitly
-	 */
-	@Override
-	public boolean canConcatenateCastTo(IType toType){
-		return canImplicitCastTo(toType);
-	}
+
 	
 	/**
 	 * Returns iff a type can be cast implicitly to antoher type (i.e. without an explicit type cast).
@@ -88,21 +79,6 @@ public abstract class TypeImpl extends BlockScope implements IType{
 		if(toType==this) 
 			return true;
 		if(isSubtypeOf(toType))
-			return true;
-		return false;
-	}
-
-	/**
-	 * Returns true, if this type can be explicitly cast to the given type (with an explicit cast expression)
-	 * The basic implementation allows this if one of the types is a subtype of the other one or the types are the same.
-	 */
-	@Override
-	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
-		if(toType==this) 
-			return true;
-		if(isSubtypeOf(toType))
-			return true;
-		if(toType.isSubtypeOf(this))
 			return true;
 		return false;
 	}

@@ -150,20 +150,10 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 	}
 	
 	@Override
-	public boolean canConcatenateCastTo(IType toType) {
-		return extendedBaseType.canConcatenateCastTo(toType);
-	}
-	
-	@Override
 	public boolean canImplicitCastTo(IType toType) {
 		if(toType==this) return true;
 		if(isDistinct) return false;
 		return extendedType.canImplicitCastTo(toType);
-	}
-	
-	@Override
-	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
-		return extendedBaseType.canExplicitCastTo(toType, unchecked);
 	}
 	
 	@Override

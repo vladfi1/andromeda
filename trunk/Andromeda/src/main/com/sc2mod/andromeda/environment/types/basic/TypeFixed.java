@@ -26,12 +26,6 @@ public class TypeFixed extends NonReferentialType{
 	public boolean canImplicitCastTo(IType toType) {
 		 return toType == this;
 	}
-
-	@Override
-	public boolean canConcatenateCastTo(IType toType) {
-		if(toType == this || toType == STRING || toType == TEXT) return true;
-		return false;
-	}
 	 
 	 @Override
 	public String getDefaultValueStr() {

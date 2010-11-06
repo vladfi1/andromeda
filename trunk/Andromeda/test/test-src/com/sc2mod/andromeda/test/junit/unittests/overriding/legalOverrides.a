@@ -1,0 +1,24 @@
+//Tests that permitted overrides throw no error
+
+abstract class A{
+	void x(){}				//normal overriding
+	abstract void y();		//overrriding with abstracts
+	A getA(){ return null; }//covanriance test
+	internal void z(){}		//visibility tests
+}
+
+abstract class B extends A{
+	override void x(){}
+	
+	override B getA(){ return null; }//covariant return type!
+}
+
+abstract class B2 extends A{
+	override protected void z(){}
+}
+
+class C extends B2{
+	override void x(){}
+	override void y(){}
+	override public void z(){}
+}

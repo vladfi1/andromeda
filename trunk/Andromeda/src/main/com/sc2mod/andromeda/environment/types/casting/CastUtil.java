@@ -1,12 +1,12 @@
 package com.sc2mod.andromeda.environment.types.casting;
 
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.basic.BasicType;
 
 public final class CastUtil {
 
 	private CastUtil(){}
 	
-	private static CastDecisionVisitorConcatenate concChecker = new CastDecisionVisitorConcatenate();
 	private static CastDecisionVisitorExplicit checkedExplicitChecker = new CastDecisionVisitorExplicit(false);
 	private static CastDecisionVisitorExplicit uncheckedExplicitChecker = new CastDecisionVisitorExplicit(true);
 
@@ -28,7 +28,13 @@ public final class CastUtil {
 	 * The basic implementation allows this if the type can be cast implicitly
 	 */
 	public static boolean canConcatenateCast(IType from, IType to){
-		return from.accept(concChecker,to);
+		if(from.getBaseType() == BasicType.TEXT)
+			return to == BasicType.TEXT;
+		
+		if(to == BasicType.STRING || to == BasicType.TEXT)
+			return true;
+		
+		return CastUtil.canImplicitCast(from, to);
 	}
 	
 	/**

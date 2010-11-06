@@ -1,0 +1,14 @@
+
+class X{
+ 	int j(){
+ 		return 0;
+ 	}
+}
+
+abstract class Y extends X{
+	override abstract int j();
+}
+
+class Z extends Y{
+
+}

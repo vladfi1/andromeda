@@ -119,7 +119,7 @@ AnnotationListNode ::= AnnotationNode*
 // Generics
 TypeParamNode ::= 
 			String: name
-			Object: typeBound
+			TypeNode: typeBound
 			
 TypeParamListNode ::= TypeParamNode*
 

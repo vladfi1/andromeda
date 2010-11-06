@@ -104,10 +104,6 @@ public abstract class OperationSet implements IScopedElement, Iterable<Operation
 				
 			// No duplicate method? Everything fine!
 			if (old == null){
-				//Unless override was specified
-				if(!isOpInherited(m)&&m.isOverride())
-					throw Problem.ofType(ProblemId.OVERRIDE_DECL_DOES_NOT_OVERRIDE).at(m.getDefinition())
-							.raiseUnrecoverable();
 				return;
 			}
 			

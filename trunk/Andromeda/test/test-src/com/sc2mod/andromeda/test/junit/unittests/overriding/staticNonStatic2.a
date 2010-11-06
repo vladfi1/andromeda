@@ -1,0 +1,9 @@
+
+
+class A{
+	static void x(){}
+}
+
+class B extends A{
+	override void x(){} //error, static non-static
+}

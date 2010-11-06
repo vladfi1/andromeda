@@ -7,7 +7,9 @@ import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
+import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.IType;
@@ -128,29 +130,55 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 		if(class1.isStatic())
 			checkStaticClass(class1);
 		
-		if(!class1.isAbstract())
-			checkForUnimplementedMethods(class1);
+		classScopeChecks(class1);
 	}
 	
-	/**
-	 * Checks that non abstract classes contain no unimplemented methods
-	 * @param class1
-	 */
-	private void checkForUnimplementedMethods(IClass class1) {
-		//FIXME: Check for unimplemented methods again
-//		if(methods.containsUnimplementedMethods()&&!this.isAbstract()){
-//			List<Operation> meths = methods.getUnimplementedMethods();
-//			StringBuffer sb = new StringBuffer(256);
-//			for(Operation m : meths){
-//				sb.append("\n").append(m.getContainingType().getUid()).append(".").append(m.getNameAndSignature()).append("\n");
-//			}
-//			sb.setLength(sb.length()-1);
-//			throw Problem.ofType(ProblemId.ABSTRACT_CLASS_MISSES_IMPLEMENTATIONS).at(this.declaration)
-//							.details(this.getUid(),sb.toString())
-//							.raiseUnrecoverable();
-//			
-//		}
+	private void classScopeChecks(ClassImpl clazz){
+		boolean staticClass = clazz.isStatic();
+		boolean nonAbstract = !clazz.isAbstract();
+		ScopeContentSet content = clazz.getContent();
+		for(IScopedElement elem : clazz.getContent().iterateDeep(true, false)){
+			switch(elem.getElementType()){
+			case OPERATION:
+				Operation op = (Operation) elem;
+				
+				//check that override methods do override
+				if(op.isOverride() && op.getOverrideInformation().getOverridenMethod() == null){
+					throw Problem.ofType(ProblemId.OVERRIDE_DECL_DOES_NOT_OVERRIDE).at(op.getDefinition())
+						.raiseUnrecoverable();
+				}
+				
+				//check that a non abstract class has no abstract members
+				if(nonAbstract && op.isAbstract()){
+					if(content.isElementInherited(op)){
+
+						throw Problem.ofType(ProblemId.NON_ABSTRACT_CLASS_MISSES_IMPLEMENTATIONS)
+							.at(clazz.getDefinition())
+							.details(clazz.getName(),op.getReturnType().getFullName() + " " + OperationUtil.getNameAndSignature(op),op.getContainingType().getUid())
+							.raiseUnrecoverable();
+					} else {
+						throw Problem.ofType(ProblemId.ABSTRACT_METHOD_IN_NON_ABSTRACT_CLASS)
+							.at(op.getDefinition())
+							.raiseUnrecoverable();
+					}
+					
+				}
+				
+			case VAR:
+				
+				//check that static classes contain only static members
+				if(staticClass){
+					if(!elem.isStatic()){
+						throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_NON_STATIC_MEMBER)
+							.at(elem.getDefinition())
+							.raiseUnrecoverable();
+					}
+				}
+			}
+		}
+		
 	}
+
 
 	/**
 	 * Checks about static classes
@@ -160,11 +188,6 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 		if(!class1.getConstructors().isEmpty())
 			throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_CONSTRUCTOR).at(class1.getConstructors().getAny().getDefinition())
 						.raiseUnrecoverable();
-		
-		//FIXME: Numstatics count in typeUtil machen und hier usen
-//		if(class1.getNumNonStatics()!=0)
-//			throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_NON_STATIC_MEMBER).at(class1.getDefinition())
-//						.raiseUnrecoverable();
 	}
 	
 

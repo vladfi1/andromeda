@@ -1,0 +1,8 @@
+
+abstract class X{
+ 	abstract int j();
+}
+
+class Y extends X{
+	//error, does not implement j
+}

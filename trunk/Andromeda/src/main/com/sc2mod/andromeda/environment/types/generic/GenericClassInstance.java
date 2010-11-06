@@ -50,15 +50,6 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 		constructors = new MethodSet(this, "<init>");
 		
 	}
-	
-	@Override
-	public boolean canExplicitCastTo(IType toType, boolean unchecked) {
-		if(super.canExplicitCastTo(toType, unchecked))
-			return true;
-		if(unchecked && toType.isTypeOrExtension(BasicType.INT))
-			return true;
-		return false;
-	}
 
 	@Override
 	public IClass getGenericParent() {

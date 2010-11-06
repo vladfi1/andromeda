@@ -1,0 +1,9 @@
+
+
+class A{
+	protected void x(){}
+}
+
+class B extends A{
+	internal override void x(){} //error, visibility reduced
+}
