@@ -825,15 +825,15 @@ abstractMethodDeclaration ::=
 						|	classInstanceCreationExpression:e {: RESULT = e; :}
 						;
 					ifThenStatement ::=
-							IF:l LPAREN expression:e RPAREN statement:s1 {: RESULT = new IfStmtNode(e,s1,null); RESULT.setPos(lleft,s1right); :}
+							IF:l LPAREN expression:e RPAREN statement:s1 {: RESULT = new IfStmtNode(e,ParserHelper.createBlock(s1),null); RESULT.setPos(lleft,s1right); :}
 						;
 					ifThenElseStatement ::=
 							IF:l LPAREN expression:e RPAREN statementNoShortIf:s1 
-								ELSE statement:s2 {: RESULT = new IfStmtNode(e,s1,s2); RESULT.setPos(lleft,s2right); :}
+								ELSE statement:s2 {: RESULT = new IfStmtNode(e,ParserHelper.createBlock(s1),ParserHelper.createBlock(s2)); RESULT.setPos(lleft,s2right); :}
 						;
 					ifThenElseStatementNoShortIf ::=
 							IF:l LPAREN expression:e RPAREN statementNoShortIf:s1 
-								ELSE statementNoShortIf:s2 {: RESULT = new IfStmtNode(e,s1,s2); RESULT.setPos(lleft,s2right); :}
+								ELSE statementNoShortIf:s2 {: RESULT = new IfStmtNode(e,ParserHelper.createBlock(s1),ParserHelper.createBlock(s2)); RESULT.setPos(lleft,s2right); :}
 						;
 						
 					// ====== SWITCH NOT YET SUPPORTED ====== 
@@ -863,25 +863,25 @@ abstractMethodDeclaration ::=
 						;
 
 					whileStatement ::=
-							WHILE:l LPAREN expression:e RPAREN:r statement:s {: RESULT = new WhileStmtNode(e,s); RESULT.setPos(lleft,rright); :}
+							WHILE:l LPAREN expression:e RPAREN:r statement:s {: RESULT = new WhileStmtNode(e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
 						;
 					whileStatementNoShortIf ::=
-							WHILE:l LPAREN expression:e RPAREN:r statementNoShortIf:s {: RESULT = new WhileStmtNode(e,s); RESULT.setPos(lleft,rright); :}
+							WHILE:l LPAREN expression:e RPAREN:r statementNoShortIf:s {: RESULT = new WhileStmtNode(e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
 						;
 					doWhileStatement ::=
-							DO:l statement:s WHILE LPAREN expression:e RPAREN SEMICOLON:r {: RESULT = new DoWhileStmtNode(e,s); RESULT.setPos(lleft,rright); :}
+							DO:l statement:s WHILE LPAREN expression:e RPAREN SEMICOLON:r {: RESULT = new DoWhileStmtNode(e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
 						;
 					forStatement ::=
 							FOR:l LPAREN forInitOpt:i SEMICOLON expressionOpt:e SEMICOLON
-								forUpdateOpt:u RPAREN:r statement:s {: RESULT = new ForStmtNode(i,e,u,s); RESULT.setPos(lleft,rright); :}
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e RPAREN:r statement:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForEachStmtNode(t,vid,e,s); RESULT.setPos(lleft,rright); :} 
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e DOTDOT expression:e2 RPAREN:r statement:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForCountStmtNode(t,vid,e,e2,s); :} 
+								forUpdateOpt:u RPAREN:r statement:s {: RESULT = new ForStmtNode(i,e,u,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
+						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e RPAREN:r statement:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForEachStmtNode(t,vid,e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :} 
+						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e DOTDOT expression:e2 RPAREN:r statement:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForCountStmtNode(t,vid,e,e2,ParserHelper.createBlock(s)); :} 
 						;
 					forStatementNoShortIf ::=
 							FOR:l LPAREN forInitOpt:i SEMICOLON expressionOpt:e SEMICOLON
-								forUpdateOpt:u RPAREN:r statementNoShortIf:s {: RESULT = new ForStmtNode(i,e,u,s); RESULT.setPos(lleft,rright); :}
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e RPAREN:r statementNoShortIf:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForEachStmtNode(t,vid,e,s); RESULT.setPos(lleft,rright); :} 
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e DOTDOT expression:e2 RPAREN:r statementNoShortIf:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForCountStmtNode(t,vid,e,e2,s); :} 
+								forUpdateOpt:u RPAREN:r statementNoShortIf:s {: RESULT = new ForStmtNode(i,e,u,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
+						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e RPAREN:r statementNoShortIf:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForEachStmtNode(t,vid,e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :} 
+						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e DOTDOT expression:e2 RPAREN:r statementNoShortIf:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForCountStmtNode(t,vid,e,e2,ParserHelper.createBlock(s)); :} 
 					
 						;
 					forInitOpt ::= {: RESULT = new BlockStmtNode(new StmtListNode()); :}

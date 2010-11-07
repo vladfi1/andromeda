@@ -1,6 +1,6 @@
 package com.sc2mod.andromeda.parsing.phases;
 
-import com.sc2mod.andromeda.codetransform.SimplificationStmtVisitor;
+import com.sc2mod.andromeda.codetransform.CanonizeStmtVisitor;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Workflow;
@@ -8,10 +8,10 @@ import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
-public class SimplificationPhase extends Phase {
+public class CanonizationPhase extends Phase {
 
-	public SimplificationPhase() {
-		super(PhaseRunPolicy.IF_NO_ERRORS, "Simplifying code", true);
+	public CanonizationPhase() {
+		super(PhaseRunPolicy.IF_NO_ERRORS, "Canonizing code", true);
 	}
 	
 	@Override
@@ -22,7 +22,7 @@ public class SimplificationPhase extends Phase {
 	}
 	
 	private void workflow(Environment env, Configuration options, SyntaxNode code){
-		SimplificationStmtVisitor trans = new SimplificationStmtVisitor(options,env.typeProvider);
+		CanonizeStmtVisitor trans = new CanonizeStmtVisitor(options,env.typeProvider);
 		code.accept(trans);
 	}
 

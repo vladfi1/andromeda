@@ -22,8 +22,18 @@ public class LoopSemantics implements SemanticsElement{
 
 	private List<StmtNode> continues;
 	private List<StmtNode> breaks;
+	private boolean controlFlowReachesEnd = true;
 	private static List<StmtNode> empty = new ArrayList<StmtNode>();
 	
+	public LoopSemantics() {
+	}
+	
+	public LoopSemantics(LoopSemantics semantics) {
+		this.continues = semantics.continues;
+		this.breaks = semantics.breaks;
+		this.controlFlowReachesEnd = semantics.controlFlowReachesEnd;
+	}
+
 	public void addContinue(StmtNode s){
 		if(continues == null){
 			continues = new ArrayList<StmtNode>(2);
@@ -65,7 +75,14 @@ public class LoopSemantics implements SemanticsElement{
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
+
+	public void setControlFlowReachesEnd(boolean b) {
+		controlFlowReachesEnd = b;
+	}
 	
+	public boolean doesControlFlowReachEnd() {
+		return controlFlowReachesEnd;
+	}
 	
 
 

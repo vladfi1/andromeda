@@ -27,13 +27,13 @@ import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
 import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
-public class SimplificationExprVisitor extends TransformationExprVisitor {
+public class CanonizeExprVisitor extends TransformationExprVisitor {
 
 	private UglyExprTransformer exprTransformer;
 	private TypeProvider typeProvider;
 	private boolean resolveConst;
 	
-	public SimplificationExprVisitor(Configuration options, TypeProvider typeProvider) {
+	public CanonizeExprVisitor(Configuration options, TypeProvider typeProvider) {
 		super(options);
 		this.resolveConst = options.getParamBool(Parameter.OPTIMIZE_RESOLVE_CONSTANT_EXPRS);
 		this.typeProvider = typeProvider;

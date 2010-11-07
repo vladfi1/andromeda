@@ -44,15 +44,6 @@ public class ForeachSemantics extends LoopSemantics {
 	private Invocation next;
 	private Invocation getIterator;
 	
-	private StmtNode delStatement;
-	
-	
-	public StmtNode getDelStatement() {
-		return delStatement;
-	}
-	public void setDelStatement(StmtNode delStatemetn) {
-		this.delStatement = delStatemetn;
-	}
 	public IType getIterVarType() {
 		return iterVarType;
 	}

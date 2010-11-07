@@ -36,6 +36,7 @@ import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.impl.RecordTypeImpl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -702,56 +703,57 @@ public class CodeGenVisitor extends CodeGenerator {
 	
 	@Override
 	public void visit(ForEachStmtNode forEachStatement) {
-		SimpleBuffer curBuffer = this.curBuffer;
-
-		ForeachSemantics semantics = (ForeachSemantics) forEachStatement.getSemantics();
-		NameExprNode iter = semantics.getIterator();
-		
-		
-		//Comment
-		if(insertComments){
-			curBuffer.append("//Generated for each loop");
-			curBuffer.newLine(curIndent);
-		}
-		
-		//Init (iterator = leftside.getIterator();)
-		curBuffer.append(((VarDecl)iter.getSemantics()).getGeneratedName()).append("=");		
-		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getGetIterator(), forEachStatement.getExpression(), SyntaxGenerator.EMPTY_EXPRESSIONS);
-		curBuffer.append(";");
-		
-		if(newLines) curBuffer.newLine(curIndent);
-		
-		//Condition: (while(iterator.hasNext()))
-		curBuffer.append("while(");
-		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getHasNext(), iter, SyntaxGenerator.EMPTY_EXPRESSIONS);
-		curBuffer.append("){");
-		
-		if(newLines){
-			if(useIndent)curIndent++;
-			curBuffer.newLine(curIndent);
-		}
-		
-		//Update: itervar = iterator.next();
-		LocalVarDecl iterVarDecl = semantics.getIterVarDecl();
-		curBuffer.append(iterVarDecl.getGeneratedName()).append("=");
-		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getNext(), iter, SyntaxGenerator.EMPTY_EXPRESSIONS);
-		curBuffer.append(";").newLine(curIndent);		
-
-		// loop body
-		BlockStmtNode stmt = (BlockStmtNode) forEachStatement.getThenStatement();
-		visitExt(stmt, null, null,false);
-		
-		// loop end and delete afterwards, if desired
-		if(newLines){
-			if(useIndent)curIndent--;
-			curBuffer.newLine(curIndent);
-		}
-		curBuffer.append("}");
-		
-		if(semantics.doDestroyAfter()){
-			curBuffer.newLine(curIndent);
-			semantics.getDelStatement().accept(this);
-		}
+		throw new InternalProgramError("ForEach loops cannot exist in the code generation phase!");
+//		SimpleBuffer curBuffer = this.curBuffer;
+//
+//		ForeachSemantics semantics = (ForeachSemantics) forEachStatement.getSemantics();
+//		NameExprNode iter = semantics.getIterator();
+//		
+//		
+//		//Comment
+//		if(insertComments){
+//			curBuffer.append("//Generated for each loop");
+//			curBuffer.newLine(curIndent);
+//		}
+//		
+//		//Init (iterator = leftside.getIterator();)
+//		curBuffer.append(((VarDecl)iter.getSemantics()).getGeneratedName()).append("=");		
+//		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getGetIterator(), forEachStatement.getExpression(), SyntaxGenerator.EMPTY_EXPRESSIONS);
+//		curBuffer.append(";");
+//		
+//		if(newLines) curBuffer.newLine(curIndent);
+//		
+//		//Condition: (while(iterator.hasNext()))
+//		curBuffer.append("while(");
+//		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getHasNext(), iter, SyntaxGenerator.EMPTY_EXPRESSIONS);
+//		curBuffer.append("){");
+//		
+//		if(newLines){
+//			if(useIndent)curIndent++;
+//			curBuffer.newLine(curIndent);
+//		}
+//		
+//		//Update: itervar = iterator.next();
+//		LocalVarDecl iterVarDecl = semantics.getIterVarDecl();
+//		curBuffer.append(iterVarDecl.getGeneratedName()).append("=");
+//		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getNext(), iter, SyntaxGenerator.EMPTY_EXPRESSIONS);
+//		curBuffer.append(";").newLine(curIndent);		
+//
+//		// loop body
+//		BlockStmtNode stmt = (BlockStmtNode) forEachStatement.getThenStatement();
+//		visitExt(stmt, null, null,false);
+//		
+//		// loop end and delete afterwards, if desired
+//		if(newLines){
+//			if(useIndent)curIndent--;
+//			curBuffer.newLine(curIndent);
+//		}
+//		curBuffer.append("}");
+//		
+//		if(semantics.doDestroyAfter()){
+//			curBuffer.newLine(curIndent);
+//			semantics.getDelStatement().accept(this);
+//		}
 		
 		
 		
@@ -827,57 +829,58 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	@Override
 	public void visit(ForStmtNode forStatement) {
-		SimpleBuffer curBuffer = this.curBuffer;
-		Configuration options = this.options;
-
-		// comment
-		if (newLines && insertComments) {
-			curBuffer.append("//generated for-loop");
-			curBuffer.newLine(curIndent);
-		}
-
-		// init
-		StmtNode s = forStatement.getForInit();
-		s.accept(this);
-
-		// for
-		if (newLines)
-			curBuffer.newLine(curIndent);
-		curIndent++;
-		invokeRValueVisitor(forStatement.getCondition(), false, false);
-		curIndent--;
-
-		curBuffer.append("while(");
-		expressionVisitor.curExprBuffer.flushTo(curBuffer, false);
-		curBuffer.append(")");
-
-		// loop body
-		StmtNode stmt = forStatement.getThenStatement();
-		if (newLines) {
-			if (ownLineForOpenBraces)
-				curBuffer.newLine(curIndent);
-			curBuffer.append("{");
-			if (useIndent)
-				curIndent++;
-			stmt.childrenAccept(this);
-			curBuffer.newLine(curIndent);
-		} else {
-			curBuffer.append("{");
-			stmt.childrenAccept(this);
-		}
-
-		// for-update
-		forStatement.getForUpdate().getStatements().accept(this);
-		if (useIndent)
-			curIndent--;
-
-		// Block end
-		if (newLines) {
-			curBuffer.newLine(curIndent);
-			curBuffer.append("}");
-		} else {
-			curBuffer.append("}");
-		}
+		throw new InternalProgramError("For loops cannot exist in the code gen phase");
+//		SimpleBuffer curBuffer = this.curBuffer;
+//		Configuration options = this.options;
+//
+//		// comment
+//		if (newLines && insertComments) {
+//			curBuffer.append("//generated for-loop");
+//			curBuffer.newLine(curIndent);
+//		}
+//
+//		// init
+//		StmtNode s = forStatement.getForInit();
+//		s.accept(this);
+//
+//		// for
+//		if (newLines)
+//			curBuffer.newLine(curIndent);
+//		curIndent++;
+//		invokeRValueVisitor(forStatement.getCondition(), false, false);
+//		curIndent--;
+//
+//		curBuffer.append("while(");
+//		expressionVisitor.curExprBuffer.flushTo(curBuffer, false);
+//		curBuffer.append(")");
+//
+//		// loop body
+//		StmtNode stmt = forStatement.getThenStatement();
+//		if (newLines) {
+//			if (ownLineForOpenBraces)
+//				curBuffer.newLine(curIndent);
+//			curBuffer.append("{");
+//			if (useIndent)
+//				curIndent++;
+//			stmt.childrenAccept(this);
+//			curBuffer.newLine(curIndent);
+//		} else {
+//			curBuffer.append("{");
+//			stmt.childrenAccept(this);
+//		}
+//
+//		// for-update
+//		forStatement.getForUpdate().getStatements().accept(this);
+//		if (useIndent)
+//			curIndent--;
+//
+//		// Block end
+//		if (newLines) {
+//			curBuffer.newLine(curIndent);
+//			curBuffer.append("}");
+//		} else {
+//			curBuffer.append("}");
+//		}
 
 
 	}

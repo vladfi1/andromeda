@@ -12,6 +12,7 @@ package com.sc2mod.andromeda.parsing;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
+import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
@@ -20,6 +21,8 @@ import com.sc2mod.andromeda.syntaxNodes.ModifierSE;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.QualifiedTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.SimpleTypeNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeListNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeNode;
 
@@ -95,6 +98,14 @@ public class ParserHelper {
 	public static ExprNode createInlineMethodInvocation(ExprNode p,
 			ExprListNode a) {
 		throw new InternalProgramError("Inline method calls not implemented yet!");
+	}
+	
+	public static BlockStmtNode createBlock(StmtNode stmt){
+		if(stmt instanceof BlockStmtNode){
+			return (BlockStmtNode) stmt;
+		}
+		return (BlockStmtNode) new BlockStmtNode((StmtListNode) new StmtListNode(stmt).setPos(stmt.getLeftPos(),stmt.getRightPos())).setPos(stmt.getLeftPos(), stmt.getRightPos());
+		
 	}
 
 }

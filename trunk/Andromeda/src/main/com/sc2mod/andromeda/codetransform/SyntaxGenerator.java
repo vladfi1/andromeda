@@ -20,6 +20,7 @@ import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.variables.AccessorDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.options.Configuration;
+import com.sc2mod.andromeda.semAnalysis.LoopSemantics;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.AssignOpSE;
 import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
@@ -32,17 +33,24 @@ import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.IfStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
+import com.sc2mod.andromeda.syntaxNodes.LocalVarDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.LocalVarDeclStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeNode;
 import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
 import com.sc2mod.andromeda.syntaxNodes.UnOpSE;
+import com.sc2mod.andromeda.syntaxNodes.VarAssignDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
+import com.sc2mod.andromeda.syntaxNodes.WhileStmtNode;
 import com.sc2mod.andromeda.vm.data.BoolObject;
 import com.sc2mod.andromeda.vm.data.FixedObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
@@ -56,7 +64,13 @@ public class SyntaxGenerator {
 	
 	public static final ExprListNode EMPTY_EXPRESSIONS = new ExprListNode();
 
-
+	ExprNode createMethodInvocation(ExprNode prefix, String funcName, ExprListNode arguments, Invocation semantics){
+		MethodInvocationExprNode expr = new MethodInvocationExprNode(prefix, funcName, arguments, null);
+		expr.setSemantics(semantics);
+		expr.setInferedType(semantics.getReturnType());
+		return expr;
+	}
+	
 	ExprNode createAccessorGet(AccessorDecl ad, ExprNode lValuePrefix, String funcName){
 		InvocationType invType;
 		if(ad.isStatic()){
@@ -214,5 +228,19 @@ public class SyntaxGenerator {
 		Invocation in = ResolveUtil.registerDelete(((IClass)expression.getInferedType()),s);
 		s.setSemantics(in);	
 		return s;
+	}
+
+	public StmtNode genLocalVarAssignDeclStmt(TypeNode type, IdentifierNode identifier, ExprNode initializer ) {
+		VarAssignDeclNode assignDecl = new VarAssignDeclNode(identifier, initializer);
+		VarDeclListNode assignDeclList = new VarDeclListNode(assignDecl);
+		LocalVarDeclNode varDecl = new LocalVarDeclNode(null, type, assignDeclList);
+		return new LocalVarDeclStmtNode(varDecl);
+		
+	}
+
+	public WhileStmtNode createWhileLoop(ExprNode condition, BlockStmtNode body, LoopSemantics loopSemantics) {
+		WhileStmtNode loop = new WhileStmtNode(condition, body);
+		loop.setSemantics(loopSemantics);
+		return loop;
 	}
 }

@@ -13,26 +13,32 @@ import java.util.ArrayList;
 
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.semAnalysis.ForeachSemantics;
+import com.sc2mod.andromeda.semAnalysis.LoopSemantics;
+import com.sc2mod.andromeda.syntaxNodes.AssignOpSE;
+import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.DoWhileStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ForEachStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ForStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.WhileStmtNode;
 
-public class SimplificationStmtVisitor extends TransformationVisitor {
+public class CanonizeStmtVisitor extends TransformationVisitor {
 
 	boolean replaceAssignmentByAccessor;
 	TransformationExprVisitor rValueVisitor;
 	UglyExprTransformer exprTransformer;
 	private ArrayList<ArrayList<StmtNode>> insertBeforeReturn = new ArrayList<ArrayList<StmtNode>>();
 
-	public SimplificationStmtVisitor(Configuration options, TypeProvider typeProvider) {
-		super(new SimplificationExprVisitor(options, typeProvider),
+	public CanonizeStmtVisitor(Configuration options, TypeProvider typeProvider) {
+		super(new CanonizeExprVisitor(options, typeProvider),
 				options, true);
 	}
 
@@ -81,19 +87,51 @@ public class SimplificationStmtVisitor extends TransformationVisitor {
 		popBeforeReturn();
 
 		pushLoopContinue = pushContinueBefore;
+		
+		//Now we transform the loop into a while loop
+		/*
+		 *	for(<init> ; <cond> ; <update>){
+		 *		<body>
+		 *  }
+		 *  
+		 *  =>
+		 *  
+		 *  <init>
+		 *  while(<cond>){
+		 *  	<body>
+		 *  	<update> (if control flow reaches end of loop)
+		 *  }
+		 */
+		
+		//prepend for init
+		StmtNode forInit = forStatement.getForInit();
+		addStatementBefore(forInit);
+		
+		//add update behind body, unwrap if necessary
+		LoopSemantics semantics = forStatement.getSemantics();
+		if(forStatement.getSemantics().doesControlFlowReachEnd()){
+			forStatement.getThenStatement().getStatements().append(forStatement.getForUpdate());
+		}
+		
+		//while loop
+		WhileStmtNode loop = syntaxGenerator.createWhileLoop(forStatement.getCondition(), forStatement.getThenStatement(), new LoopSemantics(semantics));
+		
+		//replace for loop by while loop
+		replaceStatement(loop);
+		
 	}
 
 	@Override
 	public void visit(ForEachStmtNode forEachStatement) {
-		//FIXME: Resolve for each statements to while loops here
 		ForeachSemantics semantics = (ForeachSemantics) forEachStatement.getSemantics();
 		NameExprNode l = varProvider.getImplicitLocalVar(semantics.getIteratorType());
 		semantics.setIterator(l);
+		StmtNode delStatement = null;
 		if(semantics.doDestroyAfter()){
 			//If we want to destroy after the loop, we need to insert it before each return
-			StmtNode delStatement = syntaxGenerator.genDeleteStatement(l);
+			delStatement = syntaxGenerator.genDeleteStatement(l);
 			pushBeforeReturn(delStatement);
-			semantics.setDelStatement(delStatement);
+
 		} else {
 			
 			pushBeforeReturn();
@@ -101,6 +139,55 @@ public class SimplificationStmtVisitor extends TransformationVisitor {
 		}
 		super.visit(forEachStatement);
 		popBeforeReturn();
+		
+		//Replace the loop by a while loop
+		/*
+		 * for(IterType a : b){ <body> }
+		 * 
+		 * =>
+		 * 
+		 * iterator = b.getIterator();
+		 * while(iterator.hasNext()){
+		 * 	IterType a = iterator.next();
+		 *  <body>
+		 * }
+		 * delete iterator; (if want delete)
+		 * 
+		 */
+		//b.getIterator()
+		ExprNode getIterator = syntaxGenerator.createMethodInvocation(forEachStatement.getExpression(), "getIterator", SyntaxGenerator.EMPTY_EXPRESSIONS, semantics.getGetIterator());
+		
+		//iterator = b.getIterator();
+		StmtNode init = syntaxGenerator.genAssignStatement(l, getIterator, AssignOpSE.EQ);
+		
+		//iterator.next()
+		ExprNode next = syntaxGenerator.createMethodInvocation(l, "next", SyntaxGenerator.EMPTY_EXPRESSIONS, semantics.getNext());
+		
+		//IterType a = iterator.getNext();
+		StmtNode nextStmt = syntaxGenerator.genLocalVarAssignDeclStmt(forEachStatement.getIteratorType(), forEachStatement.getIterator(), next);
+		
+		//prepend to body
+		BlockStmtNode body = forEachStatement.getThenStatement();
+		body.getStatements().insertElementAt(nextStmt, 0);
+		
+		//iterator.hasNext()
+		ExprNode condition = syntaxGenerator.createMethodInvocation(l, "getNext", SyntaxGenerator.EMPTY_EXPRESSIONS, semantics.getHasNext());
+		
+		//loop
+		WhileStmtNode n = syntaxGenerator.createWhileLoop(condition, body, new LoopSemantics(semantics));
+
+		
+		//add init before, replace foreach loop by while loop
+		addStatementBefore(init);
+		
+		//if the user wants to delete after the loop, insert the loop and delete, otherwise only the loop
+		if(semantics.doDestroyAfter()){
+			addStatementBefore(n);
+			replaceStatement(delStatement);
+		} else {
+			replaceStatement(n);
+		}
+		
 	}
 	
 	@Override

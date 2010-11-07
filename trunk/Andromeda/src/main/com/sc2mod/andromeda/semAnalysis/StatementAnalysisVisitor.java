@@ -523,10 +523,6 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	@Override
 	public void visit(DoWhileStmtNode doWhileStatement) {
 		StmtNode thenStmt = doWhileStatement.getThenStatement();
-		//Do not allow a non block statement as body
-		if(!(thenStmt instanceof BlockStmtNode)){
-			doWhileStatement.setThenStatement(new BlockStmtNode(new StmtListNode(thenStmt)));
-		}
 		
 		LoopSemantics loopBefore = curLoop;
 		doWhileStatement.setSemantics(curLoop = new LoopSemantics());
@@ -560,10 +556,6 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	@Override
 	public void visit(WhileStmtNode whileStatement) {
 		StmtNode thenStmt = whileStatement.getThenStatement();
-		//Do not allow a non block statment as body
-		if(!(thenStmt instanceof BlockStmtNode)){
-			whileStatement.setThenStatement(new BlockStmtNode(new StmtListNode(thenStmt)));
-		}
 		
 		//Body
 		LoopSemantics loopBefore = curLoop;
@@ -601,10 +593,6 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	@Override
 	public void visit(ForEachStmtNode forEachStmt) {
 		StmtNode thenStmt = forEachStmt.getThenStatement();
-		//Do not allow a non block statement as body
-		if(!(thenStmt instanceof BlockStmtNode)){
-			forEachStmt.setThenStatement(new BlockStmtNode(new StmtListNode(thenStmt)));
-		}
 		
 		//Body
 		LoopSemantics loopBefore = curLoop;
@@ -622,6 +610,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		LocalVarDecl iterVarDecl = new LocalVarDecl(null, iterVarType, forEachStmt.getIterator(), false, curScope, true);
 		nameResolver.registerLocalVar(iterVarDecl);
 		semantics.setIterVarDecl(iterVarDecl);
+		forEachStmt.getIterator().setSemantics(iterVarDecl);
 		
 		//Body
 		thenStmt.accept(this);
@@ -723,10 +712,6 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	@Override
 	public void visit(ForStmtNode forStatement) {
 		StmtNode thenStmt = forStatement.getThenStatement();
-		//Do not allow a non block statement as body
-		if(!(thenStmt instanceof BlockStmtNode)){
-			forStatement.setThenStatement(new BlockStmtNode(new StmtListNode(thenStmt)));
-		}
 		
 		//Body
 		LoopSemantics loopBefore = curLoop;
@@ -743,6 +728,11 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		ExprNode e = forStatement.getCondition();
 		if(e!=null) analyzeExpression(e);
 		thenStmt.accept(this);
+		//does the control flow reach the end of the body?
+		if(execPathStack.isTopFrameEmpty()){
+			curLoop.setControlFlowReachesEnd(false);;
+		}
+		
 		StmtNode el = forStatement.getForUpdate();
 		if(el!=null){ 
 			el.accept(this);
@@ -814,16 +804,8 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	public void visit(IfStmtNode ifThenElseStatement) {
 		//Do not allow a non block statement as body, (in the else case possible if an ifthenelse follows)
 		StmtNode thenStmt = ifThenElseStatement.getThenStatement();
-		if(!(thenStmt instanceof BlockStmtNode)){
-			ifThenElseStatement.setThenStatement(new BlockStmtNode(new StmtListNode(thenStmt)));
-		}
 		StmtNode elseStmt = ifThenElseStatement.getElseStatement();
-		if(elseStmt != null){
-			if(!(elseStmt instanceof BlockStmtNode)&&!(elseStmt instanceof IfStmtNode)){
-				ifThenElseStatement.setElseStatement(new BlockStmtNode(new StmtListNode(elseStmt)));
-			}				
-		}
-		
+	
 		//Infer condition
 		analyzeExpression(ifThenElseStatement.getCondition());
 		

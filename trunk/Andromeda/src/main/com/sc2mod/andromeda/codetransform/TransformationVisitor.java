@@ -59,6 +59,7 @@ public abstract class TransformationVisitor extends VoidVisitorAdapter {
 	protected static ArrayList<StmtNode> EMPTY_LIST = new ArrayList<StmtNode>(0);
 	private ArrayList<StmtNode> insertBeforeStmts = new ArrayList<StmtNode>();
 	private ArrayList<ArrayList<StmtNode>> insertBeforeContinue = new ArrayList<ArrayList<StmtNode>>();
+	private StmtNode replaceStatement;
 
 	protected void pushBeforeContinue(ArrayList<StmtNode> insertBeforeStmts2) {
 		ArrayList<StmtNode> al = new ArrayList<StmtNode>(insertBeforeStmts2.size());
@@ -80,10 +81,21 @@ public abstract class TransformationVisitor extends VoidVisitorAdapter {
 		insertBeforeContinue.remove(insertBeforeContinue.size()-1);
 	}
 	
-
+	protected void replaceStatement(StmtNode statement) {
+		replaceStatement = statement;
+	}
 	
 	public void addStatementBefore(StmtNode statement) {
-		insertBeforeStmts.add(statement);
+		if(statement instanceof BlockStmtNode){
+			//if it is a block statement unwrap it
+			StmtListNode stmts = statement.getStatements();
+			int length = stmts.size();
+			for(int i = 0;i<length;i++){
+				insertBeforeStmts.add(stmts.elementAt(i));
+			}
+		} else {
+			insertBeforeStmts.add(statement);
+		}
 	}
 
 	ExprNode replaceExpression;
@@ -391,6 +403,14 @@ public abstract class TransformationVisitor extends VoidVisitorAdapter {
 		for(int i=0;i<size;i++){
 			StmtNode s = statementList.elementAt(i);
 			s.accept(this);
+			
+			//Do statement replacement if desired
+			if(replaceStatement != null){
+				statementList.setElementAt(replaceStatement, i);
+				replaceStatement = null;
+			}
+			
+			//Do before insertion if desired
 			if(!insertBeforeStmts.isEmpty()){
 				for(StmtNode insert: insertBeforeStmts){
 					statementList.insertElementAt(insert,i++);
@@ -398,6 +418,7 @@ public abstract class TransformationVisitor extends VoidVisitorAdapter {
 				}
 				insertBeforeStmts.clear();
 			}
+			
 		}
 	}
 	

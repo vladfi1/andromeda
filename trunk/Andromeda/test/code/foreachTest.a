@@ -1,0 +1,37 @@
+
+class Iterator{
+
+	bool hasNext(){
+		return false;
+	}
+	
+	int next(){
+		return 0;
+	}
+}
+
+
+class Iterable{
+	
+	public Iterator getIterator(){
+		return new Iterator();
+	}
+
+}
+
+static{
+	Iterable it = new Iterable();
+	
+	
+	for(int i : it){
+		//normal loop
+		int j = i * 2;
+	}
+	
+	
+	for(int i : it){
+		//loop which never reaches the end
+		return;
+	}
+
+}

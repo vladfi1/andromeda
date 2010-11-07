@@ -266,6 +266,16 @@ void forLoopTest(){
 	j = k = 0;
 	for(;j++<k-- + 10;) ;
 	testInt("For loop 7", k, -6);
+	
+	//here we check if no dead code is generated
+	for(int i=0 ; i < 10 ; i++){
+		continue;
+	}
+	
+	//here we check if no dead code is generated
+	for(int i=0 ; i < 10 ; i++){
+		return;
+	}
 
 }
 
@@ -302,7 +312,7 @@ class Medium1 extends Top{
 		c = i;
 	}
 	
-	public int getInt(){
+	public override int getInt(){
 		return 3;
 	}
 
@@ -310,13 +320,13 @@ class Medium1 extends Top{
 
 class Medium2 extends Top{
 
-	public int getInt(){
+	public override int getInt(){
 		return 4;
 	}
 }
 
 class Bottom1 extends Medium1{
-	public int getInt(){
+	public override int getInt(){
 		return 5;
 	}
 	

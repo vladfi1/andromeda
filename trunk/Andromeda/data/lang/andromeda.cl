@@ -224,30 +224,30 @@ StmtNode ::= {BlockStmtNode}
 				LocalVarDeclNode: varDeclaration
 			| {IfStmtNode}
 				ExprNode: condition
-				StmtNode: thenStatement
-				StmtNode: elseStatement
+				BlockStmtNode: thenStatement
+				BlockStmtNode: elseStatement
 			| {WhileStmtNode}
 				ExprNode: condition
-				StmtNode: thenStatement
+				BlockStmtNode: thenStatement
 			| {DoWhileStmtNode}
 				ExprNode: condition
-				StmtNode: thenStatement
+				BlockStmtNode: thenStatement
 			| {ForStmtNode}
 				StmtNode: forInit
 				ExprNode: condition
 				BlockStmtNode: forUpdate
-				StmtNode: thenStatement
+				BlockStmtNode: thenStatement
 			| {ForCountStmtNode}
 				TypeNode: iteratorType
 				IdentifierNode: iterator
 				ExprNode : fromExpr
 				ExprNode : toExpr
-				StmtNode : thenStatement
+				BlockStmtNode : thenStatement
 			| {ForEachStmtNode}
 				TypeNode: iteratorType
 				IdentifierNode: iterator
 				ExprNode: expression
-				StmtNode: thenStatement
+				BlockStmtNode: thenStatement
 			| {BreakStmtNode}
 				string: label
 			| {ContinueStmtNode}

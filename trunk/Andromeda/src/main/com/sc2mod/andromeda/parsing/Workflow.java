@@ -20,7 +20,7 @@ import com.sc2mod.andromeda.classes.indexSys.IndexClassGenerator;
 import com.sc2mod.andromeda.codegen.CodeGenVisitor;
 import com.sc2mod.andromeda.codegen.NameGenerationVisitor;
 import com.sc2mod.andromeda.codetransform.CallHierarchyVisitor;
-import com.sc2mod.andromeda.codetransform.SimplificationStmtVisitor;
+import com.sc2mod.andromeda.codetransform.CanonizeStmtVisitor;
 import com.sc2mod.andromeda.codetransform.SyntaxGenerator;
 import com.sc2mod.andromeda.codetransform.UnusedFinder;
 import com.sc2mod.andromeda.codetransform.VirtualCallResolver;
