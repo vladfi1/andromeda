@@ -12,9 +12,11 @@ package com.sc2mod.andromeda.semAnalysis;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import com.sc2mod.andromeda.environment.access.AccessUtil;
+import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
@@ -167,7 +169,7 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 	}
 	
 	private void resolveName(ExprNode nameExpression) {
-		VarDecl v = (VarDecl) nameExpression.getSemantics();
+		Variable v = AccessUtil.getVarIfVarAccess((NameAccess) nameExpression.getSemantics());
 		if(v == null){
 			return;
 		}
@@ -193,7 +195,7 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 	
 	@Override
 	public void visit(VarAssignDeclNode variableAssignDecl) {
-		VarDecl vd = variableAssignDecl.getName().getSemantics();
+		Variable vd = variableAssignDecl.getName().getSemantics();
 		DataObject d = variableAssignDecl.getInitializer().getValue();
 		if(d == null){
 			addToResolveList(variableAssignDecl);

@@ -1,17 +1,13 @@
 package com.sc2mod.andromeda.environment.types;
 
 import java.util.Iterator;
-import java.util.Map.Entry;
 
-import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.generic.TypeParamIdentificationVisitor;
-import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
-import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitorAdapter;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 
 public class TypeUtil {
@@ -20,8 +16,8 @@ public class TypeUtil {
 	public static boolean hasTypeFieldInits(IType t){
 		for(IScopedElement c : t.getContent().viewValues()){
 			if(c.getElementType() == ScopedElementType.VAR){
-				VarDecl vd = (VarDecl) c;
-				if(vd.isStatic() && !vd.isAccessor())
+				Variable vd = (Variable) c;
+				if(vd.isStatic())
 					return true;
 			}
 		}
@@ -70,7 +66,7 @@ public class TypeUtil {
 	}
 	
 	
-	public static Iterable<VarDecl> getNonStaticTypeFields(IType t, boolean includeInherited){
+	public static Iterable<Variable> getNonStaticTypeFields(IType t, boolean includeInherited){
 		final ScopeContentSet content = t.getContent();
 		
 		//If inheritance is not supported, we auto include inherited fileds (since there are none)
@@ -78,18 +74,18 @@ public class TypeUtil {
 		if(!content.supportsInheritance()) includeInherited = true;
 		final boolean includeInherit = includeInherited;
 		
-		return new Iterable<VarDecl>() {
+		return new Iterable<Variable>() {
 			
 			@Override
-			public Iterator<VarDecl> iterator() {
-				return new FilterIterator<IScopedElement, VarDecl>(content.viewValues().iterator()) {
+			public Iterator<Variable> iterator() {
+				return new FilterIterator<IScopedElement, Variable>(content.viewValues().iterator()) {
 
 					@Override
 					protected boolean filter(IScopedElement it2) {
 						if(it2.getElementType() != ScopedElementType.VAR) return false;
 						
-						VarDecl vd = (VarDecl) it2;
-						if(vd.isStatic() || vd.isAccessor())
+						Variable vd = (Variable) it2;
+						if(vd.isStatic())
 							return false;
 						
 						if(!includeInherit && content.isElementInherited(vd))
@@ -99,8 +95,8 @@ public class TypeUtil {
 					}
 
 					@Override
-					protected VarDecl transform(IScopedElement it2) {
-						return (VarDecl) it2;
+					protected Variable transform(IScopedElement it2) {
+						return (Variable) it2;
 					}
 				};
 			}
@@ -175,4 +171,11 @@ public class TypeUtil {
 		return t.getCategory() == TypeCategory.CLASS;
 	}
 		
+	public static String getTypeCategoryName(TypeCategory cat){
+		switch(cat){
+		case CLASS: return "class";
+		case INTERFACE: return "interface";
+		default: return "type";
+		}
+	}
 }

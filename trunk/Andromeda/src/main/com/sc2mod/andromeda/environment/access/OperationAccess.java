@@ -7,9 +7,11 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.variables;
+package com.sc2mod.andromeda.environment.access;
 
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -19,12 +21,11 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.FunctionObject;
 
-public class FuncPointerDecl extends VarDecl{
+public class OperationAccess extends NameAccess{
 
 	Operation func;
 	int index = -1;
 	
-	@Override
 	public int getIndex() {
 		return index;
 	}
@@ -33,44 +34,39 @@ public class FuncPointerDecl extends VarDecl{
 		this.index = index;
 	}
 
-	public FuncPointerDecl(Operation func, TypeProvider typeProvider){
-		this.func = func;
-		type = typeProvider.registerFunctionPointerUsage(this);
+	public OperationAccess(Operation func, TypeProvider typeProvider){
+//		this.func = func;
+//		type = typeProvider.registerFunctionPointerUsage(this);
 	}
 	
-	@Override
-	public int getDeclType() {
-		return TYPE_FUNCTION_POINTER;
+	public OperationAccess(IScopedElement elem) {
+		// TODO Auto-generated constructor stub
+		throw new Error("IMPLEMENT");
 	}
 
-	@Override
-	public boolean isInitDecl() {
-		return false;
-	}
-
-	@Override
-	public IType getContainingType() {
-		return func.getContainingType();
-	}
+//	@Override
+//	public boolean isInitDecl() {
+//		return false;
+//	}
+//
+//	@Override
+//	public IType getContainingType() {
+//		return func.getContainingType();
+//	}
+//	
+//	@Override
+//	public SyntaxNode getDefinition() {
+//		return func.getDefinition();
+//	}
 	
-	@Override
-	public SyntaxNode getDefinition() {
-		return func.getDefinition();
-	}
-
-	public Operation getFunction() {
-		return func;
-	}
-	
-	@Override
-	public String getGeneratedName() {
-		return String.valueOf(getIndex());
-	}
+//	@Override
+//	public String getGeneratedName() {
+//		return String.valueOf(getIndex());
+//	}
 	
 	/**
 	 * Functions are always constant
 	 */
-	@Override
 	public boolean isConst() {
 		return true;
 	}
@@ -80,12 +76,27 @@ public class FuncPointerDecl extends VarDecl{
 		return func.isStatic();
 	}
 	
-	@Override
-	public DataObject getValue() {
-		return new FunctionObject(this);
-	}
+//	@Override
+//	public DataObject getValue() {
+//		return new FunctionObject(this);
+//	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	@Override
+	public AccessType getAccessType() {
+		return AccessType.OP_POINTER;
+	}
+
+	@Override
+	public Operation getAccessedElement() {
+		return func;
+	}
+
+	@Override
+	public IScope getPrefixScope() {
+		throw new Error("Not implemented!");
+	}
 }

@@ -15,7 +15,7 @@ import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 
@@ -51,7 +51,7 @@ public interface INameProvider {
 	 * @param decl Declaration for which to generate the name.
 	 * @return the generated name.
 	 */
-	public String getGlobalName(VarDecl decl);
+	public String getGlobalName(Variable decl);
 	
 	/**
 	 * Retrieves a function name from a function (also method, constructor, static_init,...)
@@ -97,7 +97,7 @@ public interface INameProvider {
 	 * Generates a global name for a name.
 	 * 
 	 * This method is only used for generated globals for which
-	 * no VarDecl exists!
+	 * no Variable exists!
 	 * 
 	 * May have internal state.
 	 * @param name the name for which to generate a name.
@@ -109,7 +109,7 @@ public interface INameProvider {
 	 * Generates a global name for a name.
 	 * 
 	 * This method is only used for generated globals for which
-	 * no VarDecl exists!
+	 * no Variable exists!
 	 * 
 	 * May have internal state.
 	 * 
@@ -131,7 +131,7 @@ public interface INameProvider {
 	 * and is normally generated before.
 	 * 
 	 * This method is only used for generated parameters for which
-	 * no VarDecl exists!
+	 * no Variable exists!
 	 * 
 	 * May NOT have internal state, must return the same result
 	 * on each invocation with the same parameters.

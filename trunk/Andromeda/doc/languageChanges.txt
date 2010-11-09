@@ -27,3 +27,4 @@
 -Method return types are now covariant. That means that if you override a method in a subclass,
 	you can give the overriding method another return type as the overridden method, if the
 	new return type is a subtype of the overridden return type
+-Removed accessors. They were replaced by the accessor quick notation and the auto method calling.

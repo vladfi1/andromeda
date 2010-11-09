@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import com.sc2mod.andromeda.environment.SemanticsElement;
-import com.sc2mod.andromeda.environment.operations.ConstructorInvocation;
+import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
+import com.sc2mod.andromeda.environment.access.Invocation;
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.operations.Invocation;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.variables.VarDecl;

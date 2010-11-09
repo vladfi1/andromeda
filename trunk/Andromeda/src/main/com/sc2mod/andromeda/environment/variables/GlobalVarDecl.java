@@ -21,37 +21,17 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
-public class GlobalVarDecl extends NonParamDecl implements IGlobal{
+public class GlobalVarDecl extends NonLocalVarDecl implements IGlobal{
 
-	private VarDeclNode declaration;
-	private IScope scope;
 	private int index;
+	
+	//TODO static code smell
 	static int curIndex;
 	
 	public GlobalVarDecl(FieldDeclNode globalVarDeclaration, VarDeclNode declNode, IScope scope) {
-		super(globalVarDeclaration.getFieldModifiers(),globalVarDeclaration.getType(),declNode,scope);
-		this.declaration = declNode;
-		this.scope = scope;
+		super(globalVarDeclaration,declNode,scope);
 	}
 
-	public SyntaxNode getDefinition() {
-		return declaration;
-	}
-
-	@Override
-	public IScope getScope() {
-		return scope;
-	}
-	
-	@Override
-	public void setVisibility(Visibility visibility) {
-		this.visibility = visibility;		
-	}
-
-	@Override
-	public int getDeclType() {
-		return TYPE_GLOBAL;
-	}
 	
 	@Override
 	public int getIndex() {
@@ -75,4 +55,10 @@ public class GlobalVarDecl extends NonParamDecl implements IGlobal{
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+
+	@Override
+	public VarType getVarType() {
+		return VarType.GLOBAL;
+	}
 }

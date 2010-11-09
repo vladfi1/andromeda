@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.environment.operations.InvocationType;
+import com.sc2mod.andromeda.environment.access.Invocation;
+import com.sc2mod.andromeda.environment.access.InvocationType;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.operations.Invocation;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;

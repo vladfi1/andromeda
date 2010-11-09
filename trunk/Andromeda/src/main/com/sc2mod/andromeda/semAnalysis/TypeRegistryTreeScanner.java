@@ -11,33 +11,22 @@ package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.PackageDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.GlobalStructureListNode;
-import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.GlobalStaticInitDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
-import com.sc2mod.andromeda.syntaxNodes.InstanceLimitSetterNode;
-import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeAliasDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.util.Visitor;
 import com.sc2mod.andromeda.util.visitors.NoResultTreeScanVisitor;
-import com.sc2mod.andromeda.util.visitors.VoidTreeScanVisitor;
 
 /**
  * This scanner does the first step of the semantic analysis by registering
@@ -144,7 +133,6 @@ public class TypeRegistryTreeScanner extends NoResultTreeScanVisitor<IScope>{
 	public void visit(MethodDeclNode mdecl, FileScope scope){}
 	public void visit(StaticInitDeclNode sdecl, FileScope scope){}
 	public void visit(FieldDeclNode mdecl, FileScope scope){}
-	public void visit(AccessorDeclNode mdecl, FileScope scope){}
 	
 
 

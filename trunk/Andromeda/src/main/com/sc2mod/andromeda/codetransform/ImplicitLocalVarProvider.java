@@ -11,6 +11,7 @@ package com.sc2mod.andromeda.codetransform;
 
 import java.util.ArrayList;
 
+import com.sc2mod.andromeda.environment.access.VarAccess;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
@@ -56,7 +57,7 @@ public class ImplicitLocalVarProvider {
 
 			//Get the user a name expression to this variable
 			var = new NameExprNode(name);
-			var.setSemantics(v);
+			var.setSemantics(new VarAccess(v));
 			var.setInferedType(t);
 			methodBuffer.add(var);
 			methodDeclBuffer.add(v);

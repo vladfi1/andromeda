@@ -15,7 +15,7 @@ import com.sc2mod.andromeda.parsing.phases.Phase;
 import com.sc2mod.andromeda.parsing.phases.PrintResultsPhase;
 import com.sc2mod.andromeda.parsing.phases.RunMapPhase;
 import com.sc2mod.andromeda.parsing.phases.SemanticAnalysisPhase;
-import com.sc2mod.andromeda.parsing.phases.CanonizationPhase;
+import com.sc2mod.andromeda.parsing.phases.CanonicalizationPhase;
 import com.sc2mod.andromeda.parsing.phases.WriteCodePhase;
 import com.sc2mod.andromeda.parsing.phases.WriteXMLPhase;
 
@@ -40,7 +40,7 @@ public class ParserFactory {
 		phases.add(new ParsePhase(lang));
 		phases.add(new SemanticAnalysisPhase());
 		if(genCode){
-			phases.add(new CanonizationPhase());
+			phases.add(new CanonicalizationPhase());
 			phases.add(new CallHierarchyPhase());
 			phases.add(new CodeGenPreparationPhase());
 			phases.add(new CodeGenPhase());

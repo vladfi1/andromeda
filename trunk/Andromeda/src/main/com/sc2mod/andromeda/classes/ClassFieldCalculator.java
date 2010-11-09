@@ -19,7 +19,7 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.impl.RecordTypeImpl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.UninitedVarDeclNode;
@@ -49,7 +49,7 @@ public abstract class ClassFieldCalculator {
 	 * @param c the class for which to generate the implicit fields
 	 * @return a list of implicit fields
 	 */
-	protected abstract ArrayList<VarDecl> generateImplicitFields(IClass c);
+	protected abstract ArrayList<Variable> generateImplicitFields(IClass c);
 	
 	public ClassFieldCalculator(TypeProvider tp, INameProvider snv) {
 		this.typeProvider = tp;
@@ -66,9 +66,9 @@ public abstract class ClassFieldCalculator {
 	protected FieldDecl createField(IClass c, IType type,String name){
 		VarDeclNode vdn = new UninitedVarDeclNode(new IdentifierNode(name));
 		VarDeclListNode vd = new VarDeclListNode();
-		FieldDeclNode fd = new FieldDeclNode(null, null, null, vd );
+		FieldDeclNode fd = new FieldDeclNode(null, null, null, vd , null);
 		FieldDecl f = new FieldDecl(fd, vdn, c, c);
-		f.setType(type);
+		f.setResolvedType(type);
 		f.setGeneratedName(nameGenerator.getFieldName(f, c));
 		return f;
 	}
@@ -79,7 +79,7 @@ public abstract class ClassFieldCalculator {
 		for(IClass c : typeProvider.getClasses()){
 			if(!c.isTopClass()) continue;
 			
-			ArrayList<VarDecl> fields = calcHierarchyFields(c, generateImplicitFields(c));
+			ArrayList<Variable> fields = calcHierarchyFields(c, generateImplicitFields(c));
 			int size = fields.size();
 			for(int i=0;i<size;i++){
 				//Enumerate fields, giving them their index
@@ -104,16 +104,16 @@ public abstract class ClassFieldCalculator {
 	 * @param c
 	 * @param fields
 	 */
-	private void setFieldsForHierarchy(IClass c, ArrayList<VarDecl> fields){
+	private void setFieldsForHierarchy(IClass c, ArrayList<Variable> fields){
 		c.setHierarchyFields(fields);
 		for(IRecordType c2: c.getDescendants()){
 			setFieldsForHierarchy((IClass) c2, fields);
 		}
 	}
 
-	private ArrayList<VarDecl> calcHierarchyFields(IClass c, ArrayList<VarDecl> fieldList) {
+	private ArrayList<Variable> calcHierarchyFields(IClass c, ArrayList<Variable> fieldList) {
 		//Add all fields from top class without checking (they cannot be reused)
-		for(VarDecl field : TypeUtil.getNonStaticTypeFields(c, false)){
+		for(Variable field : TypeUtil.getNonStaticTypeFields(c, false)){
 			fieldList.add(field);
 		}
 		//Call for children in the hierarchy
@@ -124,8 +124,8 @@ public abstract class ClassFieldCalculator {
 		return fieldList;
 	}
 
-	private ArrayList<VarDecl> calcFields(IClass t, ArrayList<VarDecl> fieldList, int startAtIndex) {
-		outer: for(VarDecl field : TypeUtil.getNonStaticTypeFields(t, false)){
+	private ArrayList<Variable> calcFields(IClass t, ArrayList<Variable> fieldList, int startAtIndex) {
+		outer: for(Variable field : TypeUtil.getNonStaticTypeFields(t, false)){
 			
 			//Check if there is a field that could be used
 			int size = fieldList.size();
@@ -133,7 +133,7 @@ public abstract class ClassFieldCalculator {
 			
 			//We start not at zero but skip all fields of the top class
 			middle: for(int i=startAtIndex;i<size;i++){
-				VarDecl f = fieldList.get(i);
+				Variable f = fieldList.get(i);
 				if(f.getType().getGeneratedType()== field.getType().getGeneratedType()&&!t.isSubtypeOf(f.getContainingType())){
 					//Field can be reused if it is not yet used in this hierarchy
 					//FIXME: Dirty hack, factor usedBy out from field and remove the type casts

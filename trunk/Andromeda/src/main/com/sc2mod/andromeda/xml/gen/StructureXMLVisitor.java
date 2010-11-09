@@ -10,22 +10,26 @@
 package com.sc2mod.andromeda.xml.gen;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
-import com.sc2mod.andromeda.parsing.InclusionType;
-import com.sc2mod.andromeda.parsing.SourceFileInfo;
-import com.sc2mod.andromeda.parsing.Source;
+import com.sc2mod.andromeda.environment.access.AccessorAccess;
+import com.sc2mod.andromeda.environment.operations.Function;
+import com.sc2mod.andromeda.environment.operations.Method;
+import com.sc2mod.andromeda.environment.operations.OperationUtil;
+import com.sc2mod.andromeda.environment.scopes.Visibility;
+import com.sc2mod.andromeda.environment.types.Enrichment;
+import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
+import com.sc2mod.andromeda.environment.variables.NonParamDecl;
+import com.sc2mod.andromeda.environment.variables.ParamDecl;
 import com.sc2mod.andromeda.parsing.CompilationFileManager;
+import com.sc2mod.andromeda.parsing.InclusionType;
+import com.sc2mod.andromeda.parsing.Source;
+import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
@@ -33,21 +37,12 @@ import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.VisitorAdaptor;
-import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.operations.Method;
-import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.Enrichment;
-import com.sc2mod.andromeda.environment.variables.AccessorDecl;
-import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
-import com.sc2mod.andromeda.environment.variables.NonParamDecl;
-import com.sc2mod.andromeda.environment.variables.ParamDecl;
+import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
 
-public class StructureXMLVisitor extends VisitorAdaptor{
+public class StructureXMLVisitor extends VoidVisitorAdapter{
 
 	
 	private XMLWriter writer;
@@ -130,7 +125,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 		IClass c = (IClass)classDeclaration.getSemantics();
 		writer.writeAttribute("name", c.getName());
 		writePosition(classDeclaration);
-		writer.writeAttribute("visibility", Visibility.getName(c.getVisibility()));
+		writer.writeAttribute("visibility", c.getVisibility().getName());
 		if(c.isStatic()){
 			writer.writeAttribute("static", "true");
 		}
@@ -174,7 +169,6 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 		Enrichment c = (Enrichment)enrichDeclaration.getSemantics();
 		writer.writeAttribute("type", c.getEnrichedType().getUid());
 		writePosition(enrichDeclaration);
-		writer.writeAttribute("visibility", Visibility.getName(c.getVisibility()));
 		
 		boolean inRecordBefore = inRecord;
 		inRecord=true;		
@@ -188,7 +182,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 	public void visit(MethodDeclNode methodDeclaration) {
 		XMLWriter writer = this.writer;
 		Function f = (Function) methodDeclaration.getSemantics();
-		if(f.isForwardDeclaration()) return;
+		if(OperationUtil.isForwardDeclaration(f)) return;
 		if(inRecord){
 			writer.writeStartElement("method");
 		} else {
@@ -199,7 +193,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 		
 		writer.writeAttribute("name", f.getName());
 		writePosition(methodDeclaration);
-		writer.writeAttribute("visibility", Visibility.getName(f.getVisibility()));
+		writer.writeAttribute("visibility", f.getVisibility().getName());
 		
 		
 		if(inRecord){
@@ -267,7 +261,7 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 			writer.writeAttribute("name", fd.getUid());
 			writePosition(sn);
 			writer.writeAttribute("type", fd.getType().getUid());
-			writer.writeAttribute("visibility", Visibility.getName(fd.getVisibility()));
+			writer.writeAttribute("visibility", fd.getVisibility().getName());
 			
 			if(fd.isConst()){
 				writer.writeAttribute("const","true");
@@ -278,43 +272,6 @@ public class StructureXMLVisitor extends VisitorAdaptor{
 			}
 		}
 	}
-	
-	@Override
-	public void visit(AccessorDeclNode accessorDeclaration) {
-		XMLWriter writer = this.writer;
-		writer.writeStartElement("accessor");
-		
-		AccessorDecl ad = (AccessorDecl) accessorDeclaration.getSemantics();
-		writer.writeAttribute("name", ad.getUid());
-		writePosition(accessorDeclaration);
-		writer.writeAttribute("type", ad.getType().getUid());
-		writer.writeAttribute("visibility", Visibility.getName(ad.getVisibility()));
-		
-		if(ad.isStatic()){
-			writer.writeAttribute("static", "true");
-		}
-		
-		Method m = ad.getGetter();
-		if(m != null){
-			writeGetSet(m,true);
-		}
-		m = ad.getSetter();
-		if(m != null){
-			writeGetSet(m,false);
-		}
-		
-		writer.writeEndElement();
-	}
 
-	private void writeGetSet(Method m, boolean isGet) {
-		XMLWriter writer = this.writer;
-		if(isGet){
-			writer.writeEmptyElement("get");
-		} else {
-			writer.writeEmptyElement("set");
-		}
-		writePosition(m.getDefinition());
-		writer.writeAttribute("visibility", Visibility.getName(m.getVisibility()));
-	}
 	
 }

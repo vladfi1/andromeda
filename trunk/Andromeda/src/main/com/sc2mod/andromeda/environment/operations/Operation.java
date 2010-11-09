@@ -16,11 +16,11 @@ import com.sc2mod.andromeda.environment.IAnnotatable;
 import com.sc2mod.andromeda.environment.IModifiable;
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
@@ -90,7 +90,7 @@ public abstract class Operation implements SemanticsElement, IScopedElement, IMo
 
 	public abstract OperationType getOperationType();
 	
-	public abstract FuncPointerDecl getPointerDecl(TypeProvider tp);
+	public abstract OperationAccess getPointerDecl(TypeProvider tp);
 	
 	public OverrideInformation getOverrideInformation(){
 		throw new Error("Cannot get override information for a non method operation!");

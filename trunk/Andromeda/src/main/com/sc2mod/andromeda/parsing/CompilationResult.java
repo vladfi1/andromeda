@@ -1,10 +1,7 @@
 package com.sc2mod.andromeda.parsing;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import com.sc2mod.andromeda.notifications.Message;
-import com.sc2mod.andromeda.notifications.MessageSeverity;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.util.Debug;
 import com.sc2mod.andromeda.util.logging.Log;
@@ -28,6 +25,13 @@ public class CompilationResult {
 	public ArrayList<Problem> getErrors() {
 		return errors;
 	}
+	public ArrayList<Problem> getOthers() {
+		return others;
+	}
+	public ArrayList<Problem> getProblems() {
+		return problems;
+	}
+	
 	
 	public boolean isSuccessful(){
 		return errors.isEmpty();
@@ -56,9 +60,6 @@ public class CompilationResult {
 			problem.setStackTrace(Debug.getStackTrace(3, 0));
 		}
 		Log.printProblem(problem,printStackTraces);
-	}
-	public ArrayList<Problem> getProblems() {
-		return problems;
 	}
 	
 }

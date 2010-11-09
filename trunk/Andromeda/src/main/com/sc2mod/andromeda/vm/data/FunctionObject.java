@@ -9,17 +9,18 @@
  */
 package com.sc2mod.andromeda.vm.data;
 
+import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.types.ClosureType;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
+import com.sc2mod.andromeda.notifications.ErrorUtil;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
 
 public class FunctionObject extends DataObject{
 
 
-	private FuncPointerDecl funcDecl;
-	public FunctionObject(FuncPointerDecl func){
+	private OperationAccess funcDecl;
+	public FunctionObject(OperationAccess func){
 		funcDecl = func;
 	}
 	
@@ -30,7 +31,9 @@ public class FunctionObject extends DataObject{
 
 	@Override
 	public IType getType() {
-		return funcDecl.getType();
+		//TODO: What should this return for func objects?
+		throw ErrorUtil.defaultInternalError();
+		//return funcDecl.getType();
 	}
 	
 	@Override

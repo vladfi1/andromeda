@@ -9,9 +9,10 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
+import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.semAnalysis.SimplicityDecisionVisitor;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
@@ -56,11 +57,11 @@ public class ComplexExpressionChopper {
 			
 			//Now the prefix!
 			ExprNode prefix = chop(a.getPrefix(), addStatementsTo);
-			return syntaxGenerator.genArrayAccess(prefix, arrayIndex, toChop.getInferedType(), (VarDecl) a.getSemantics());
+			return syntaxGenerator.genArrayAccess(prefix, arrayIndex, toChop.getInferedType(), (NameAccess) a.getSemantics());
 			
 		} else if(toChop instanceof FieldAccessExprNode){
 			FieldAccessExprNode f = (FieldAccessExprNode) toChop;
-			VarDecl vd = f.getSemantics();
+			NameAccess vd = f.getSemantics();
 			
 			//No need to chop static variables
 			if(vd.isStatic()){
@@ -73,12 +74,12 @@ public class ComplexExpressionChopper {
 			if(t.isValidAsParameter()){
 				NameExprNode z = varProvider.getImplicitLocalVar(t);					
 				addStatementsTo.addStatementBefore(syntaxGenerator.genAssignStatement(z, e, AssignOpSE.EQ));
-				return syntaxGenerator.genFieldAccess(z, f.getName(), f.getInferedType(), (VarDecl) f.getSemantics());
+				return syntaxGenerator.genFieldAccess(z, f.getName(), f.getInferedType(), vd);
 				
 			} else {
 				//No valid parameter, we have to chop further :(
 				ExprNode chopped = chop(e,addStatementsTo);
-				return syntaxGenerator.genFieldAccess(chopped, f.getName(), f.getInferedType(), (VarDecl) e.getSemantics());
+				return syntaxGenerator.genFieldAccess(chopped, f.getName(), f.getInferedType(), vd);
 				
 			}
 		

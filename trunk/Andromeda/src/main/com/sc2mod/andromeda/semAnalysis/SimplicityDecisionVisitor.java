@@ -10,6 +10,8 @@
 package com.sc2mod.andromeda.semAnalysis;
 
 
+import com.sc2mod.andromeda.environment.access.AccessType;
+import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
@@ -59,9 +61,9 @@ public class SimplicityDecisionVisitor extends VisitorAdapter<Void, Boolean> {
 	
 	@Override
 	public Boolean visit(NameExprNode nameExprNode, Void state) {
-		VarDecl vd = nameExprNode.getSemantics();
+		NameAccess vd = nameExprNode.getSemantics();
 		//Accessors are not simple!
-		if(vd.isAccessor()){
+		if(vd.getAccessType() == AccessType.ACCESSOR){
 			return false;
 		}
 		
@@ -72,9 +74,9 @@ public class SimplicityDecisionVisitor extends VisitorAdapter<Void, Boolean> {
 	
 	@Override
 	public Boolean visit(FieldAccessExprNode fieldAccessExprNode, Void state) {
-		VarDecl vd = fieldAccessExprNode.getSemantics();
+		NameAccess vd = fieldAccessExprNode.getSemantics();
 		//Accessors are not simple!
-		if(vd.isAccessor()){
+		if(vd.getAccessType() == AccessType.ACCESSOR){
 			return false;
 		}
 		

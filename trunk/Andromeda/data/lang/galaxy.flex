@@ -196,8 +196,6 @@ IncludeFile = [ \t\f]*\"[a-zA-Z0-9_\.\/-]+\"
 //  "strictfp"                     { return symbol(STRICTFP); }
   "override"					 { return symbol(OVERRIDE); }
   "typedef"						 { return symbol(TYPEDEF); }
-  "get"							 { return symbol(GET); }
-  "set"							 { return symbol(SET); }
   "function"					 { return symbol(FUNCTION); }
   
   /* boolean literals */

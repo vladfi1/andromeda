@@ -16,7 +16,7 @@ import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 /**
  * Implementation of the NameProvider interface which tries
  * to create Names which are as short as possible.
@@ -148,7 +148,7 @@ public class ShortNameProvider implements INameProvider{
 	
 	public void assignLocalNamesForMethod(Function function){
 		int index = 0;
-		VarDecl[] vars = function.getParams();
+		Variable[] vars = function.getParams();
 		for(int i=0;i<vars.length;i++){
 			vars[i].setGeneratedName(getLocalName(index++));
 		}
@@ -170,7 +170,7 @@ public class ShortNameProvider implements INameProvider{
 	}
 
 	@Override
-	public String getGlobalName(VarDecl decl) {
+	public String getGlobalName(Variable decl) {
 		return generateCheckDisallowed();
 	}
 
@@ -183,8 +183,8 @@ public class ShortNameProvider implements INameProvider{
 	@Override
 	public void assignFieldNames(IStruct struct) {
 		int index=0;
-		Iterable<VarDecl> fields = TypeUtil.getNonStaticTypeFields(struct, false);
-		for (VarDecl field : fields) {
+		Iterable<Variable> fields = TypeUtil.getNonStaticTypeFields(struct, false);
+		for (Variable field : fields) {
 			field.setGeneratedName(getLocalName(index++));
 		}
 	}

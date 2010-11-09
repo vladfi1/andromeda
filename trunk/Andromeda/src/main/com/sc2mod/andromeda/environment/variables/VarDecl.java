@@ -39,18 +39,18 @@ import com.sc2mod.andromeda.vm.data.DataObject;
  * @author J. 'gex' Finis
  *
  */
-public abstract class VarDecl implements SemanticsElement, IScopedElement, IIdentifiable, IDefined, IModifiable{
+public abstract class VarDecl extends Variable{
 
-	public static final int TYPE_LOCAL = 1;
-	public static final int TYPE_FIELD = 2;
-	public static final int TYPE_GLOBAL = 3;
-	public static final int TYPE_STATIC_FIELD = 4;
-	public static final int TYPE_PARAMETER = 5;
-	public static final int TYPE_ACCESSOR = 6;
-	public static final int TYPE_STATIC_ACCESSOR = 7;
-	public static final int TYPE_STATIC = 8;
-	public static final int TYPE_FUNCTION_POINTER = 9;
-	public static final int TYPE_IMPLICIT = 10;
+//	public static final int TYPE_LOCAL = 1;
+//	public static final int TYPE_FIELD = 2;
+//	public static final int TYPE_GLOBAL = 3;
+//	public static final int TYPE_STATIC_FIELD = 4;
+//	public static final int TYPE_PARAMETER = 5;
+//	public static final int TYPE_ACCESSOR = 6;
+//	public static final int TYPE_STATIC_ACCESSOR = 7;
+//	public static final int TYPE_STATIC = 8;
+//	public static final int TYPE_FUNCTION_POINTER = 9;
+//	public static final int TYPE_IMPLICIT = 10;
 	
 	protected Visibility visibility = Visibility.DEFAULT;	
 	private IdentifierNode declaration;
@@ -68,34 +68,28 @@ public abstract class VarDecl implements SemanticsElement, IScopedElement, IIden
 	private boolean createCode = true;
 	private List<StmtNode> initCode;
 	
-	public VarDecl(ModifierListNode mods,IType type,IdentifierNode def, IScope scope) {
+	private VarDecl(ModifierListNode mods, IdentifierNode def, IScope scope){
 		this.declaration = def;
 		this.name = def.getId();
 		this.mods = mods;
 		this.scope = scope;
 		def.setSemantics(this);
 		Util.processModifiers(this, mods);
+	}
+	
+	public VarDecl(ModifierListNode mods,IType type,IdentifierNode def, IScope scope) {
+		this(mods,def,scope);
 		setResolvedType(type);
 	}
 	
-	public VarDecl(ModifierListNode mods,com.sc2mod.andromeda.syntaxNodes.TypeNode type,IdentifierNode def, IScope scope) {
-		this.declaration = def;
-		this.scope = scope;
-		this.name = def.getId();
-		this.mods = mods;
+	public VarDecl(ModifierListNode mods,TypeNode type,IdentifierNode def, IScope scope) {
+		this(mods,def,scope);
 		this.typeNode = type;
-		def.setSemantics(this);
-		Util.processModifiers(this, mods);
 	}
-	
-	protected VarDecl() {
-		//Constructor only for special var decls used by the name resolver
-	}
-
 	
 	@Override
-	public ScopedElementType getElementType(){
-		return ScopedElementType.VAR;
+	public IdentifierNode getDefinition() {
+		return declaration;
 	}
 	
 	public TypeNode getTypeNode() {
@@ -126,9 +120,8 @@ public abstract class VarDecl implements SemanticsElement, IScopedElement, IIden
 		this.createCode = createCode;
 	}
 
-	public abstract int getDeclType();
+	//public abstract int getDeclType();
 	
-
 	/**
 	 * Called by the resolve and check visitor when
 	 * the type is resolved to entry it.
@@ -139,10 +132,6 @@ public abstract class VarDecl implements SemanticsElement, IScopedElement, IIden
 		if(declaration != null)
 			declaration.setInferedType(t);
 	}
-	
-	public ModifierListNode getModifiers(){
-		return mods;
-	}
 
 	public String getGeneratedName() {
 		return generatedName==null?getUid():generatedName;
@@ -152,23 +141,14 @@ public abstract class VarDecl implements SemanticsElement, IScopedElement, IIden
 		this.generatedName = generatedName;
 	}
 	
-
 	@Override
 	public String getUid() {
 		return name;
 	}
 
 	@Override
-	public SyntaxNode getDefinition() {
-		return declaration;
-	}
-	
 	public IType getType(){
 		return type;
-	}
-	
-	public void setType(IType type) {
-		this.type = type;
 	}
 	
 	public void override(LocalVarDecl overridden){
@@ -184,10 +164,6 @@ public abstract class VarDecl implements SemanticsElement, IScopedElement, IIden
 		return overrides!=null;
 	}
 	
-
-	public boolean isAccessor(){
-		return false;
-	}
 
 	@Override
 	public Visibility getVisibility() {return visibility; }
@@ -299,7 +275,7 @@ public abstract class VarDecl implements SemanticsElement, IScopedElement, IIden
 		return null;
 	}
 	
-	public abstract boolean isInitDecl();
+	public abstract boolean isInitedInDecl();
 
 	public VarDeclNode getDeclarator() {
 		return null;

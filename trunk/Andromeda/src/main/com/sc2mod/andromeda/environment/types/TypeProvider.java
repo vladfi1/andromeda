@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
@@ -34,7 +35,6 @@ import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
 import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
-import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -200,8 +200,8 @@ public class TypeProvider {
 	 * @param funcPointerDecl
 	 * @return
 	 */
-	public ClosureType registerFunctionPointerUsage(FuncPointerDecl funcPointerDecl) {
-		Operation af = funcPointerDecl.getFunction();
+	public ClosureType registerFunctionPointerUsage(OperationAccess funcPointerDecl) {
+		Operation af = funcPointerDecl.getAccessedElement();
 		ClosureType fpt = getFunctionPointerType(af.getSignature(),af.getReturnType());
 		fpt.registerUsage(funcPointerDecl);
 		return fpt;

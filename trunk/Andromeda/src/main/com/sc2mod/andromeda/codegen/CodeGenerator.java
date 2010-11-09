@@ -26,7 +26,7 @@ import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
 import com.sc2mod.andromeda.environment.scopes.ScopeUtil;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.OutputMemoryStats;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
@@ -126,7 +126,7 @@ public abstract class CodeGenerator extends VoidVisitorAdapter {
 		//Parameters
 		functionBuffer.append("(");
 		int numParams = m.getSignature().size();
-		VarDecl[] params = m.getParams();
+		Variable[] params = m.getParams();
 		
 		//Decider name?
 		if(deciderName!=null){
@@ -160,7 +160,7 @@ public abstract class CodeGenerator extends VoidVisitorAdapter {
 			
 		
 		for(int i=0;i<numParams;){
-			VarDecl param = params[i];
+			Variable param = params[i];
 			functionBuffer.append(param.getType().getGeneratedName());
 			functionBuffer.append(" ");
 			functionBuffer.append(param.getGeneratedName());

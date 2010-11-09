@@ -10,7 +10,7 @@ public class VisibilityProblems extends AndromedaSingleRunTest {
 	@Test
 	public void visibility1(){
 		callAndromeda("PrivateVisibility.a");
-		assertOnlyProblem(ProblemId.NOT_VISIBLE);
+		assertOnlyProblem(ProblemId.FIELD_NAME_NOT_FOUND);
 	}
 	
 }

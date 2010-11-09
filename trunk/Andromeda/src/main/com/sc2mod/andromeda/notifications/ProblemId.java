@@ -39,7 +39,7 @@ public enum ProblemId {
 	MISSING_NATIVE_LIB ("Missing native library file '%s'"),
 
 	//**** NAME RESOLVING ****
-	FIELD_NAME_NOT_FOUND ("No visible field or accessor named '%s' exists for type %s."),
+	FIELD_NAME_NOT_FOUND ("No visible field or accessor method named '%s' found for %s."),
 	VAR_NAME_NOT_FOUND ("No variable or visible field or accessor named '%s' exists in this context"),
 	TYPE_CANNOT_HAVE_FIELDS ("The left side of a field access operation must be a class, struct or an " +
 					"enriched basic type. However, no enrichment for the type '%s' exists.") , 
@@ -49,7 +49,6 @@ public enum ProblemId {
 	NO_SUCH_METHOD("No visible method %s(%s) exists for type %s"),	//CHECK> DIFFERENT ERROR FOR NO METHOD AND WRONG SIG
 	TYPE_CANNOT_HAVE_METHODS ("The left side of a method call must be a class, struct or an " +
 					"enriched basic type. However, no enrichment for the type '%s' exists.") , 
-	NOT_VISIBLE ("The %s '%s' is not visible from here."),
 	NO_SUCH_FUNCTION("No visible function or method %s(%s) found. Misspelled? Wrong types?"),
 
 	SUPER_OUTSIDE_OF_CLASS("The 'super' expression can only be used in classes."),
@@ -185,11 +184,9 @@ public enum ProblemId {
 	
 	//****** FIELDS ******
 	DUPLICATE_NAME("Duplicate name '%s'"),
-	ACCESSOR_FIELD_OVERRIDE("Accessors cannot override fields and vice versa."),
 	DUPLICAT_GLOBAL_VARIABLE("Duplicate global variable '%s'"),
-	ACCESSOR_READ_ONLY("The accessor '%s' is read-only"),
-	ACCESSOR_WRITE_ONLY("The accessor '%s' is write-only"),
-	ACCESSOR_NOT_VISIBLE("The accessor '%s' is not visible for %s access"),
+	ACCESSOR_ON_MULTIPLE_FIELDS("Cannot define accessors for declarations with multiple fields"),
+	ACCESSOR_DECLARED_STATIC("Accessors may not be declared static. They are implicitly static if their corresponding field is static"),
 	
 	//****** METHODS ******
 	OVERRIDE_DECL_DOES_NOT_OVERRIDE("Method was declared 'override' but no visible overridden method exists in the superclass."),

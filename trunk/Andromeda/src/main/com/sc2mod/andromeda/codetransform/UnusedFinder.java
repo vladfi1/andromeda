@@ -81,26 +81,26 @@ public class UnusedFinder {
 	}
 	private static int handleUnusedFunctions;
 	private static void checkUncalledFunctions(Configuration options, Environment env) {
-		//Functions
-		for(Entry<String, LinkedHashMap<Signature, LinkedList<Function>>> e : env.getFunctions().getFunctionTable().entrySet()){
-			for(Entry<Signature, LinkedList<Function>> e2: e.getValue().entrySet()){
-				for(Function f: e2.getValue()){
-					checkFunction(f,f.getScope().getInclusionType());
-				}
-			}
-		}
-		
-		//Methods
-		for(RecordTypeImpl r: env.typeProvider.getRecordTypes()){
-			InclusionType inclusionType = r.getScope().getInclusionType();
-			if(inclusionType==InclusionType.NATIVE) continue;
-			LinkedHashMap<String, LinkedHashMap<Signature, Operation>> methods = r.getMethods().getMethodTable();
-			for(Entry<String, LinkedHashMap<Signature, Operation>> meths: methods.entrySet()){
-				for(Entry<Signature, Operation> keyvalue: meths.getValue().entrySet()){
-					checkFunction(keyvalue.getValue(),inclusionType);
-				}
-			}
-		}
+//		//Functions
+//		for(Entry<String, LinkedHashMap<Signature, LinkedList<Function>>> e : env.getFunctions().getFunctionTable().entrySet()){
+//			for(Entry<Signature, LinkedList<Function>> e2: e.getValue().entrySet()){
+//				for(Function f: e2.getValue()){
+//					checkFunction(f,f.getScope().getInclusionType());
+//				}
+//			}
+//		}
+//		
+//		//Methods
+//		for(RecordTypeImpl r: env.typeProvider.getRecordTypes()){
+//			InclusionType inclusionType = r.getScope().getInclusionType();
+//			if(inclusionType==InclusionType.NATIVE) continue;
+//			LinkedHashMap<String, LinkedHashMap<Signature, Operation>> methods = r.getMethods().getMethodTable();
+//			for(Entry<String, LinkedHashMap<Signature, Operation>> meths: methods.entrySet()){
+//				for(Entry<Signature, Operation> keyvalue: meths.getValue().entrySet()){
+//					checkFunction(keyvalue.getValue(),inclusionType);
+//				}
+//			}
+//		}
 	}
 
 
@@ -124,104 +124,104 @@ public class UnusedFinder {
 	}
 	
 	private static void checkUnusedGlobals(Configuration options, Environment env){
-		LinkedHashMap<String, ArrayList<GlobalVarDecl>> variables = env.getGlobalVariables().getVarSet();
-		 
-		for(Entry<String, ArrayList<GlobalVarDecl>> e: variables.entrySet()){
-			for(GlobalVarDecl decl: e.getValue()){
-				
-				InclusionType inclusionType = decl.getScope().getInclusionType();
-				boolean isLib;
-				switch(inclusionType){
-				case LANGUAGE:
-				case NATIVE:
-					continue;
-				case LIBRARY:
-					isLib = true;
-					break;
-				default:
-					isLib = false;
-				}
-
-				//System.out.println(decl.getGeneratedName());
-				
-				//XPilot: don't remove a variable if it is written to
-				if(decl.getNumReadAccesses()==0 && decl.getNumReadAccesses() == 0){
-					if(isLib||decl.getNumInlines()>0){
-						decl.setCreateCode(false);
-					} else {
-						Problem p = Problem.ofType(ProblemId.UNREAD_VARIABLE).at(decl.getDefinition())
-										.details("global variable", decl.getUid())
-										.raise();
-						if(p.wantRemove())decl.setCreateCode(false);
-					}
-				} else if(decl.getNumWriteAccesses()==0&&decl.getType().getCategory()!=com.sc2mod.andromeda.environment.types.Type.TypeImpl){
-					Problem.ofType(ProblemId.UNINITIALIZED_VARIABLE).at(decl.getDefinition())
-							.details("global variable", decl.getUid())
-							.raise();
-				}
-				
-			}
-		}
+//		LinkedHashMap<String, ArrayList<GlobalVarDecl>> variables = env.getGlobalVariables().getVarSet();
+//		 
+//		for(Entry<String, ArrayList<GlobalVarDecl>> e: variables.entrySet()){
+//			for(GlobalVarDecl decl: e.getValue()){
+//				
+//				InclusionType inclusionType = decl.getScope().getInclusionType();
+//				boolean isLib;
+//				switch(inclusionType){
+//				case LANGUAGE:
+//				case NATIVE:
+//					continue;
+//				case LIBRARY:
+//					isLib = true;
+//					break;
+//				default:
+//					isLib = false;
+//				}
+//
+//				//System.out.println(decl.getGeneratedName());
+//				
+//				//XPilot: don't remove a variable if it is written to
+//				if(decl.getNumReadAccesses()==0 && decl.getNumReadAccesses() == 0){
+//					if(isLib||decl.getNumInlines()>0){
+//						decl.setCreateCode(false);
+//					} else {
+//						Problem p = Problem.ofType(ProblemId.UNREAD_VARIABLE).at(decl.getDefinition())
+//										.details("global variable", decl.getUid())
+//										.raise();
+//						if(p.wantRemove())decl.setCreateCode(false);
+//					}
+//				} else if(decl.getNumWriteAccesses()==0&&decl.getType().getCategory()!=com.sc2mod.andromeda.environment.types.Type.TypeImpl){
+//					Problem.ofType(ProblemId.UNINITIALIZED_VARIABLE).at(decl.getDefinition())
+//							.details("global variable", decl.getUid())
+//							.raise();
+//				}
+//				
+//			}
+//		}
 	}
 	
 	private static void checkUnusedFields(Configuration options, Environment env) {
 
-		//Fields
-		for(RecordTypeImpl r: env.typeProvider.getRecordTypes()){
-			InclusionType inclusionType = r.getScope().getInclusionType();
-			boolean isLib;
-			switch(inclusionType){
-			case LANGUAGE:
-			case NATIVE:
-				continue;
-			case LIBRARY:
-				isLib = true;
-				break;
-			default:
-				isLib = false;
-			}
-			
-			FieldSet fi = r.getFields();
-			ArrayList<FieldDecl> fields = fi.getStaticClassFields();
-			for(FieldDecl decl: fields){
-				//XPilot: don't remove a variable if it is written to
-				if(decl.getNumReadAccesses()==0 && decl.getNumWriteAccesses() == 0){
-					if(isLib|| decl.getNumInlines()>0){
-						decl.setCreateCode(false);
-					} else {
-						Problem p = Problem.ofType(ProblemId.UNREAD_VARIABLE).at(decl.getDefinition())
-							.details("static field", decl.getUid())
-							.raise();
-						if(p.wantRemove())decl.setCreateCode(false);
-					}
-				} else if(decl.getNumWriteAccesses()==0){
-					Problem.ofType(ProblemId.UNINITIALIZED_VARIABLE).at(decl.getDefinition())
-						.details("static field", decl.getUid())
-						.raise();
-				}
-			}
-			
-
-			fields = fi.getNonStaticClassFields();
-			for(FieldDecl decl: fields){
-				//XPilot: don't remove a variable if it is written to
-				if(decl.getNumReadAccesses()==0 && decl.getNumWriteAccesses() == 0){
-					if(isLib){
-						//Fields cannot be removed, so do nothing in a lib
-					} else {
-						Problem.ofType(ProblemId.UNREAD_VARIABLE).at(decl.getDefinition())
-							.details("field", decl.getUid())
-							.raise();
-					}
-				} else if(decl.getNumWriteAccesses()==0){
-					//XPilot: containing class may not be used
-					if(decl.getContainingType().getCategory() == TypeCategory.CLASS && ((IClass)decl.getContainingType()).isUsed())
-						
-						Problem.ofType(ProblemId.UNINITIALIZED_VARIABLE).at(decl.getDefinition())
-							.details("field", decl.getUid())
-							.raise();
-				}
-			}
-		}
+//		//Fields
+//		for(RecordTypeImpl r: env.typeProvider.getRecordTypes()){
+//			InclusionType inclusionType = r.getScope().getInclusionType();
+//			boolean isLib;
+//			switch(inclusionType){
+//			case LANGUAGE:
+//			case NATIVE:
+//				continue;
+//			case LIBRARY:
+//				isLib = true;
+//				break;
+//			default:
+//				isLib = false;
+//			}
+//			
+//			FieldSet fi = r.getFields();
+//			ArrayList<FieldDecl> fields = fi.getStaticClassFields();
+//			for(FieldDecl decl: fields){
+//				//XPilot: don't remove a variable if it is written to
+//				if(decl.getNumReadAccesses()==0 && decl.getNumWriteAccesses() == 0){
+//					if(isLib|| decl.getNumInlines()>0){
+//						decl.setCreateCode(false);
+//					} else {
+//						Problem p = Problem.ofType(ProblemId.UNREAD_VARIABLE).at(decl.getDefinition())
+//							.details("static field", decl.getUid())
+//							.raise();
+//						if(p.wantRemove())decl.setCreateCode(false);
+//					}
+//				} else if(decl.getNumWriteAccesses()==0){
+//					Problem.ofType(ProblemId.UNINITIALIZED_VARIABLE).at(decl.getDefinition())
+//						.details("static field", decl.getUid())
+//						.raise();
+//				}
+//			}
+//			
+//
+//			fields = fi.getNonStaticClassFields();
+//			for(FieldDecl decl: fields){
+//				//XPilot: don't remove a variable if it is written to
+//				if(decl.getNumReadAccesses()==0 && decl.getNumWriteAccesses() == 0){
+//					if(isLib){
+//						//Fields cannot be removed, so do nothing in a lib
+//					} else {
+//						Problem.ofType(ProblemId.UNREAD_VARIABLE).at(decl.getDefinition())
+//							.details("field", decl.getUid())
+//							.raise();
+//					}
+//				} else if(decl.getNumWriteAccesses()==0){
+//					//XPilot: containing class may not be used
+//					if(decl.getContainingType().getCategory() == TypeCategory.CLASS && ((IClass)decl.getContainingType()).isUsed())
+//						
+//						Problem.ofType(ProblemId.UNINITIALIZED_VARIABLE).at(decl.getDefinition())
+//							.details("field", decl.getUid())
+//							.raise();
+//				}
+//			}
+//		}
 	}
 }

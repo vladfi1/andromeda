@@ -7,7 +7,7 @@ import mopaqlib.MoPaQ;
 import com.sc2mod.andromeda.codegen.CodeGenVisitor;
 import com.sc2mod.andromeda.codegen.INameProvider;
 import com.sc2mod.andromeda.codegen.NameGenerationVisitor;
-import com.sc2mod.andromeda.environment.operations.Invocation;
+import com.sc2mod.andromeda.environment.access.Invocation;
 
 public class TransientCompilationData {
 

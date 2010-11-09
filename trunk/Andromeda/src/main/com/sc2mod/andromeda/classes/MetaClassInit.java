@@ -47,7 +47,7 @@ public class MetaClassInit {
 			ArrayTypeNode at = new ArrayTypeNode(new BasicTypeNode("int"), new ExprListNode(sg.genIntLiteralExpr(compilationData.getMaxVCTSize())));
 			VarDeclNode vdn;
 			VarDeclListNode vd = new VarDeclListNode(vdn = new UninitedVarDeclNode(new IdentifierNode("vct")));
-			FieldDeclNode fd = new FieldDeclNode(null, null, at, vd);
+			FieldDeclNode fd = new FieldDeclNode(null, null, at, vd, null);
 			FieldDecl fdecl = new FieldDecl(fd,vdn,metaClass, metaClass);
 			metaClass.addContent("vct", fdecl);
 			fdecl.accept(new ResolveAndCheckTypesVisitor(env));

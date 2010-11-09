@@ -27,18 +27,10 @@ class AccessorTest{
 	
 	public AccessorTest[5] xs;
 	private int a;
+	 => get;
+	 => set;
 	
-	int A{
-	
-		get{
-			return a;
-		}
-		
-		set{
-			a = value;		
-		}
-	
-	}
+
 	
 	public AccessorTest(){
 		x = this;
@@ -119,6 +111,13 @@ void sideEffectTest(){
 	testInt("side effects 17", st.b, 49);
 	
 	testInt("side effects eval count 2", AccessorTest.evalCount, 4);
+}
+
+void accessorTest(){
+	st.a = 3;
+	int i = st.a;
+	st.a += 2;
+
 }
 
 /*************** CLASS FIELDS ***************/

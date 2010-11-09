@@ -7,10 +7,11 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.operations;
+package com.sc2mod.andromeda.environment.access;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.SemanticsElement;
+import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;

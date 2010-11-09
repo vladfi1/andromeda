@@ -30,15 +30,15 @@ import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.WhileStmtNode;
 
-public class CanonizeStmtVisitor extends TransformationVisitor {
+public class CanonicalizeStmtVisitor extends TransformationVisitor {
 
 	boolean replaceAssignmentByAccessor;
 	TransformationExprVisitor rValueVisitor;
 	UglyExprTransformer exprTransformer;
 	private ArrayList<ArrayList<StmtNode>> insertBeforeReturn = new ArrayList<ArrayList<StmtNode>>();
 
-	public CanonizeStmtVisitor(Configuration options, TypeProvider typeProvider) {
-		super(new CanonizeExprVisitor(options, typeProvider),
+	public CanonicalizeStmtVisitor(Configuration options, TypeProvider typeProvider) {
+		super(new CanonicalizeExprVisitor(options, typeProvider),
 				options, true);
 	}
 

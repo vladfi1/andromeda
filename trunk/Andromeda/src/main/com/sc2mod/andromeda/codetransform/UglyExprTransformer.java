@@ -9,11 +9,13 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
+import com.sc2mod.andromeda.environment.access.AccessorAccess;
+import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.variables.AccessorDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.semAnalysis.SimplicityDecisionVisitor;
 import com.sc2mod.andromeda.syntaxNodes.AssignOpSE;
 import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
@@ -122,55 +124,62 @@ public class UglyExprTransformer {
 		ExprNode rightSide = a.getRightExpression();
 		
 		ExprNode replace = null;
-		VarDecl vd = null;
+		//Variable vd = null;
 		ExprNode prefix = null;
 		String accessorName = null;
 		boolean isPrefixSimple = false;
-		
+		boolean isAccessor = false;
+		NameAccess acc = (NameAccess)leftSide.getSemantics();
 		if(TransformUtil.isFieldAccess(leftSide)){
-			vd = (VarDecl) leftSide.getSemantics();
-			if(vd.isAccessor()){
-				if(!vd.isStatic() && leftSide instanceof FieldAccessExprNode){
+			
+			switch(acc.getAccessType()){
+			case ACCESSOR:
+				isAccessor = true;
+				if(!acc.isStatic() && leftSide instanceof FieldAccessExprNode){
 					prefix = leftSide.getLeftExpression();
-					isPrefixSimple = simpleDecider.isSimple(leftSide);
+					isPrefixSimple = simpleDecider.isSimple(prefix);
+					
 				}
 				accessorName = leftSide.getName();
 			}
 		}
 	
 		AssignOpSE operator = a.getAssignOp();
-		boolean isAccessor = vd==null?false:vd.isAccessor();
 		boolean isLeftSimple = simpleDecider.isSimple(leftSide);
 		boolean isRightSimple = simpleDecider.isSimple(rightSide);
 		boolean isCalc = operator!=AssignOpSE.EQ;
 		NameExprNode z;
 		
+		String debugCase;
+		
 		if(inExpr){
 			if(isAccessor){
 				if(isPrefixSimple){
 					if(isCalc){
+						debugCase = "6b";
 						//System.out.println("CASE 6b");
 						//(6b)
 						//z = geta(this)+c
 						//seta(this, z)		
 						//R: z
 						z = varProvider.getImplicitLocalVar(leftSide.getInferedType());
-						ExprNode get = syntaxGenerator.createAccessorGet((AccessorDecl) vd, prefix, accessorName);
+						ExprNode get = syntaxGenerator.createAccessorGet((AccessorAccess) acc, prefix, accessorName);
 						BinOpSE op = TransformUtil.getOpFromAssignOp(operator);
 						ExprNode binary = syntaxGenerator.genBinaryExpression(get,rightSide,op,get.getInferedType(),get.getInferedType(),get.getInferedType());
 						parent.addStatementBefore(syntaxGenerator.genAssignStatement(z, binary, AssignOpSE.EQ));						
-						parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorDecl) vd, prefix, accessorName,z));
+						parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorAccess) acc, prefix, accessorName,z));
 						replace = surroundWithBinaryIncDecReplacement(z,binOp,incDecExpr);
 					} else {
 						if(isRightSimple){
-
+							debugCase = "5";
 							//System.out.println("CASE 5");
 							//(5)
 							//seta(this, c )
 							//R: c
-							parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorDecl) vd, prefix, accessorName,rightSide));
+							parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorAccess) acc, prefix, accessorName,rightSide));
 							replace = rightSide;
 						} else {
+							debugCase = "6";
 							//System.out.println("CASE 6");
 							//(6)
 							//z = Y
@@ -178,12 +187,13 @@ public class UglyExprTransformer {
 							//R: z
 							z = varProvider.getImplicitLocalVar(leftSide.getInferedType());
 							parent.addStatementBefore(syntaxGenerator.genAssignStatement(z, rightSide, AssignOpSE.EQ));
-							parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorDecl) vd, prefix, accessorName,z));
+							parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorAccess) acc, prefix, accessorName,z));
 							replace = z;
 						}
 					}
 				} else {
 					if(isCalc){
+						debugCase = "9";
 						//System.out.println("CASE 9");
 						//(9)
 						//z = X
@@ -192,22 +202,24 @@ public class UglyExprTransformer {
 						//R: z2
 						z = varProvider.getImplicitLocalVar(typeProvider.getPointerType(prefix.getInferedType()));
 						parent.addStatementBefore(syntaxGenerator.genAssignStatement(z, prefix, AssignOpSE.EQ));
-						ExprNode get = syntaxGenerator.createAccessorGet((AccessorDecl) vd, z, accessorName);
+						ExprNode get = syntaxGenerator.createAccessorGet((AccessorAccess) acc, z, accessorName);
 						BinOpSE op = TransformUtil.getOpFromAssignOp(operator);
 						ExprNode binary = syntaxGenerator.genBinaryExpression(get,rightSide,op,get.getInferedType(),get.getInferedType(),get.getInferedType());
 						ExprNode z2 = varProvider.getImplicitLocalVar(leftSide.getInferedType());
 						parent.addStatementBefore(syntaxGenerator.genAssignStatement(z2, binary, AssignOpSE.EQ));
-						parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorDecl) vd, z, accessorName,z2));
+						parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorAccess) acc, z, accessorName,z2));
 						replace = surroundWithBinaryIncDecReplacement(z2,binOp,incDecExpr);
 					} else {
 						if(isRightSimple){
+							debugCase = "7";
 							//System.out.println("CASE 7");
 							//(7)
 							//seta(X, c)
 							//R: c
-							parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorDecl) vd, prefix, accessorName,rightSide));
+							parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorAccess) acc, prefix, accessorName,rightSide));
 							replace = rightSide;
 						} else {
+							debugCase = "8";
 							//System.out.println("CASE 8");
 							//(8)
 							//z = Y
@@ -215,19 +227,21 @@ public class UglyExprTransformer {
 							//R: z
 							z = varProvider.getImplicitLocalVar(leftSide.getInferedType());
 							parent.addStatementBefore(syntaxGenerator.genAssignStatement(z, rightSide, AssignOpSE.EQ));
-							parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorDecl) vd, prefix, accessorName,z));
+							parent.addStatementBefore(syntaxGenerator.createAccessorSetStmt((AccessorAccess) acc, prefix, accessorName,z));
 							replace = z;
 						}
 					}
 				}
 			} else {				
 				if(isLeftSimple){
+					debugCase = "1";
 					//System.out.println("CASE 1");
 					//(1)
 					parent.addStatementBefore(syntaxGenerator.genExpressionStatement(a));
 					replace = surroundWithBinaryIncDecReplacement(leftSide,binOp,incDecExpr);
 				} else {
 					if(isCalc){
+						debugCase = "4";
 						//System.out.println("CASE 4");
 						//(4)
 						//P = chop(X)
@@ -251,11 +265,13 @@ public class UglyExprTransformer {
 						replace = surroundWithBinaryIncDecReplacement(left,binOp,incDecExpr);						
 					} else {
 						if(isRightSimple){
+							debugCase = "2";
 							//System.out.println("CASE 2");
 							//(2)
 							parent.addStatementBefore(syntaxGenerator.genExpressionStatement(a));
 							replace = rightSide;
 						} else {
+							debugCase = "3";
 							//System.out.println("CASE 3");
 							//(3)
 							z = varProvider.getImplicitLocalVar(leftSide.getInferedType());
@@ -269,26 +285,38 @@ public class UglyExprTransformer {
 		} else {
 			if(isAccessor){
 				if(isCalc){
-					//(9) simple
-					//z = X
-					//R: seta(z,geta(z)+Y)
-					z = varProvider.getImplicitLocalVar(leftSide.getInferedType());
-					parent.addStatementBefore(syntaxGenerator.genAssignStatement(z, prefix, AssignOpSE.EQ));
-					ExprNode get = syntaxGenerator.createAccessorGet((AccessorDecl) vd, z, accessorName);
-					BinOpSE op = TransformUtil.getOpFromAssignOp(operator);
-					ExprNode binary = syntaxGenerator.genBinaryExpression(get,rightSide,op,get.getInferedType(),get.getInferedType(),get.getInferedType());
-					replace = syntaxGenerator.createAccessorSetExpr((AccessorDecl) vd, z, accessorName,binary);
+					if(isPrefixSimple){
+						debugCase = "a9s";
+						//(9) prefix simple
+						//R: seta(X,geta(X)+Y)
+						ExprNode get = syntaxGenerator.createAccessorGet((AccessorAccess) acc, prefix, accessorName);
+						BinOpSE op = TransformUtil.getOpFromAssignOp(operator);
+						ExprNode binary = syntaxGenerator.genBinaryExpression(get,rightSide,op,get.getInferedType(),get.getInferedType(),get.getInferedType());
+						replace = syntaxGenerator.createAccessorSetExpr((AccessorAccess) acc, prefix, accessorName,binary);
+
+					} else {
+						debugCase = "a9";
+						//(9) simple
+						//z = X
+						//R: seta(z,geta(z)+Y)
+						z = varProvider.getImplicitLocalVar(leftSide.getInferedType());
+						parent.addStatementBefore(syntaxGenerator.genAssignStatement(z, prefix, AssignOpSE.EQ));
+						ExprNode get = syntaxGenerator.createAccessorGet((AccessorAccess) acc, z, accessorName);
+						BinOpSE op = TransformUtil.getOpFromAssignOp(operator);
+						ExprNode binary = syntaxGenerator.genBinaryExpression(get,rightSide,op,get.getInferedType(),get.getInferedType(),get.getInferedType());
+						replace = syntaxGenerator.createAccessorSetExpr((AccessorAccess) acc, z, accessorName,binary);	
+					}
 				} else {
+					debugCase = "a5678";
 					//(5+6+7+8) simple
 					//R: seta(X, Y)	
-					replace = syntaxGenerator.createAccessorSetExpr((AccessorDecl) vd, prefix, accessorName,rightSide);
+					replace = syntaxGenerator.createAccessorSetExpr((AccessorAccess) acc, prefix, accessorName,rightSide);
 				}
 				
 			} else {
 				return a;
 			}
-		}
-				
+		}		
 		return replace;
 	}
 }

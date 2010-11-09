@@ -35,19 +35,12 @@ public class LocalVarDecl extends NonParamDecl {
 		this.isOnTop = isOnTop;
 	}
 	
-	
-	
 	public boolean isOnTop() {
 		return isOnTop;
 	}
 
 	public void setOnTop(boolean isOnTop) {
 		this.isOnTop = isOnTop;
-	}
-
-	@Override
-	public int getDeclType() {
-		return TYPE_LOCAL;
 	}
 	
 	@Override
@@ -60,4 +53,9 @@ public class LocalVarDecl extends NonParamDecl {
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	@Override
+	public VarType getVarType() {
+		return VarType.LOCAL;
+	}
 }

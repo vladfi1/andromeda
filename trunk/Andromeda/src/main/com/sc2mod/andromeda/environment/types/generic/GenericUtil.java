@@ -14,6 +14,7 @@ import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.GenericVarProxy;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 
 
 public final class GenericUtil {
@@ -36,7 +37,7 @@ public final class GenericUtil {
 				}
 				break;
 			case VAR:
-				copyTo.add(key,getGenericVarDecl(tprov,(VarDecl)elem, typeArguments));
+				copyTo.add(key,getGenericVarDecl(tprov,(Variable)elem, typeArguments));
 				break;
 			case TYPE:
 				//type parameters are not copied down
@@ -59,7 +60,7 @@ public final class GenericUtil {
 		return new GenericMethodProxy(op,newSignature,t2);
 	}
 
-	private static VarDecl getGenericVarDecl(TypeProvider tprov, VarDecl elem, Signature typeArguments) {
+	private static Variable getGenericVarDecl(TypeProvider tprov, Variable elem, Signature typeArguments) {
 		IType t = elem.getType();
 		IType t2 = tprov.insertTypeArgs(t, typeArguments);
 		return new GenericVarProxy(elem,t2);

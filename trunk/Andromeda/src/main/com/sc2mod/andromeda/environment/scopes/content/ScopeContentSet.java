@@ -14,14 +14,14 @@ import javax.lang.model.element.ElementKind;
 
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.access.AccessorAccess;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
-import com.sc2mod.andromeda.environment.scopes.AccessType;
+import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Package;
-import com.sc2mod.andromeda.environment.variables.AccessorDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitorAdapter;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
@@ -77,11 +77,12 @@ public abstract class ScopeContentSet {
 	
 	
 	
-	IScopedElement resolve(String name, IScope from, AccessType accessType, Signature sig, SyntaxNode where, EnumSet<ScopedElementType> allowedTypes){
+	IScopedElement resolve(String name, IScope from, UsageType accessType, Signature sig, SyntaxNode where, EnumSet<ScopedElementType> allowedTypes){
 		
 		//Get the entry
 		IScopedElement result = contentSet.get(name);
-		if(result == null) return null;
+		if(result == null)
+			return null;
 		
 		//Disallowed type found? Return null
 		if(!allowedTypes.contains(result.getElementType())){
@@ -97,18 +98,10 @@ public abstract class ScopeContentSet {
 		
 		//Check if it is accessible
 		if(!result.getVisibility().checkAccessible(from,result.getScope())){
-			throw Problem.ofType(ProblemId.NOT_VISIBLE).at(where)
-					.details(result.getElementTypeName(),name)
-					.raiseUnrecoverable();
-		}
-
-		//Do readonly checks for accessors
-		if(type == ScopedElementType.VAR){
-			//If this is an accessor, do read write checks
-			if(((VarDecl)result).isAccessor()){
-				AccessorDecl ad = (AccessorDecl) result;
-				ad.doAccessChecks(from,accessType,where);
-			}			
+			return null;
+//			throw Problem.ofType(ProblemId.NOT_VISIBLE).at(where)
+//					.details(result.getElementTypeName(),name)
+//					.raiseUnrecoverable();
 		}
 		
 		return result;

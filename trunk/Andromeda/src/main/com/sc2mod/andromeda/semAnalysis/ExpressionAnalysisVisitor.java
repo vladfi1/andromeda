@@ -1,11 +1,14 @@
 package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.operations.ConstructorInvocation;
-import com.sc2mod.andromeda.environment.operations.Invocation;
-import com.sc2mod.andromeda.environment.operations.InvocationType;
+import com.sc2mod.andromeda.environment.access.AccessorAccess;
+import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
+import com.sc2mod.andromeda.environment.access.Invocation;
+import com.sc2mod.andromeda.environment.access.InvocationType;
+import com.sc2mod.andromeda.environment.access.NameAccess;
+import com.sc2mod.andromeda.environment.access.VarAccess;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.scopes.AccessType;
+import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
@@ -18,6 +21,7 @@ import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.casting.CastUtil;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -54,8 +58,9 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	private final StatementAnalysisVisitor parent;
 	private final NameResolver nameResolver;
 	private final ExpressionAnalyzer exprResolver;
+	private IType rightSideType;
 	
-	private IScope staticPrefixScope;
+	//private IScope staticPrefixScope;
 	
 	public ExpressionAnalysisVisitor(StatementAnalysisVisitor parent){
 		this.parent = parent;
@@ -73,6 +78,15 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	@Override
 	public void visit(AssignmentExprNode assignment, ExpressionContext context) {	
 			
+		
+		
+		//check right side
+		ExprNode rExpr = assignment.getRightExpression();
+		rExpr.accept(this,ExpressionContext.DEFAULT);
+		
+		IType rightSideTypeBefore = rightSideType;
+		rightSideType = rExpr.getInferedType();
+		
 		//Visit left side as lValue
 		ExprNode lExpr = assignment.getLeftExpression();
 		switch(assignment.getAssignOp()){
@@ -83,9 +97,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 			lExpr.accept(this,ExpressionContext.LRVALUE);
 			break;
 		}
-		
-		ExprNode rExpr = assignment.getRightExpression();
-		rExpr.accept(this,ExpressionContext.DEFAULT);
+		rightSideType = rightSideTypeBefore;
 		
 		//Is the assignment type valid?
 		if(!rExpr.getInferedType().canImplicitCastTo(lExpr.getInferedType()))
@@ -291,66 +303,59 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 			 * The scope for the prefix can be set to the staticPrefixScope variable,
 			 * since the prefix sets this variable for packages and types.
 			 */
-			prefixScope = staticPrefixScope;
+			prefixScope = ((NameAccess)prefix.getSemantics()).getPrefixScope();
 		}
 		
 		return prefixScope;
 	}
 	
-	private VarDecl checkResolvedVar(IScopedElement elem, ExprNode where, ExpressionContext context){
-		VarDecl vd = null;
-		IType t = null;
-		switch(elem.getElementType()){
-		case ERROR: //FIXME: Error handling
-			throw new Error("!");
-		case VAR:
-			vd = (VarDecl) elem;
-			t = vd.getType();
-			break;
-		case OPERATION:
-			vd = ((Operation)elem).getPointerDecl(parent.typeProvider);
-			t = vd.getType();
-			break;
-		case TYPE:
+	private void checkResolvedVar(NameAccess elem, ExprNode where, ExpressionContext context){
+		where.setSemantics(elem);
+		switch(elem.getAccessType()){
 		case PACKAGE:
-			//If this is a type or package prefix, we set it as static
-			//field scope so it can be used to look up its content in a field access
-			//or method invocation expression.
-			staticPrefixScope = (IScope) elem;
-		}
-		
-		//Set semantics
-		if(vd == null){
+		case TYPE:
 			//If we have found a package or type, we must be in a prefix. Otherwise, these make no sense
 			if(context != ExpressionContext.SCOPE_PREFIX){
 				throw Problem.ofType(ProblemId.NAME_EXPR_IS_NOT_A_VAR_OR_OP).at(where)
-					.details(elem.getElementType().name().toLowerCase())
+					.details(elem.getAccessedElement().getElementType().name().toLowerCase())
 					.raiseUnrecoverable();
 			}
-		} else {
-			where.setSemantics(vd);
+			break;
+		case OP_POINTER:
+			//TODO: Op pointer const handling
+		case VAR:
+		
 			
 			//Is it const?
+			Variable vd = ((VarAccess)elem).getAccessedElement();
 			if(vd.isConst()){
 				where.setConstant(true);
 				where.accept(parent.constResolve);
 			}
+
+			where.setInferedType(vd.getType());
+			break;
+		case ACCESSOR:
+			AccessorAccess ac = (AccessorAccess) elem;
+			where.setInferedType(ac.getType());
 		}
 		
-		//Set infered type
-		if(t != null){
-			where.setInferedType(t);
-		}
-		return vd;
+
 	}
 	
 	@Override
 	public void visit(NameExprNode nameExprNode, ExpressionContext context) {
 
-		//FIXME: Use correct access type
+		UsageType accessType;
+		IType rightSideType;
+		switch(context){
+		case LRVALUE:	accessType = UsageType.LRVALUE; rightSideType = null; break;
+		case LVALUE:	accessType = UsageType.LVALUE; rightSideType = this.rightSideType; break;
+		default: 		accessType = UsageType.RVALUE; rightSideType = this.rightSideType; break;
+		}
 		
 		//Resolve the name
-		IScopedElement elem = nameResolver.resolveName(nameExprNode.getName(), parent.curScope, AccessType.RVALUE, nameExprNode);
+		NameAccess elem = nameResolver.resolveName(nameExprNode.getName(), parent.curScope, accessType, nameExprNode, rightSideType);
 
 		if(elem == null) 
 			throw Problem.ofType(ProblemId.VAR_NAME_NOT_FOUND).at(nameExprNode).details(nameExprNode.getName())
@@ -372,16 +377,26 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		boolean staticAccess = isPrefixStatic(prefix);
 		IScope prefixScope = getPrefixScope(prefix);
 		
-		//FIXME: Use correct access type
+		UsageType accessType;
+		IType rightSideType;
+		switch(context){
+		case LRVALUE:	accessType = UsageType.LRVALUE; rightSideType = null; break;
+		case LVALUE:	accessType = UsageType.LVALUE; rightSideType = this.rightSideType; break;
+		default: 		accessType = UsageType.RVALUE; rightSideType = this.rightSideType; break;
+		}
 		
 		//Resolve the name
-		IScopedElement elem = ResolveUtil.resolvePrefixedName(prefixScope, fieldAccess.getName(), parent.curScope, AccessType.RVALUE, fieldAccess,staticAccess);
+		NameAccess elem = ResolveUtil.resolvePrefixedName(prefixScope, fieldAccess.getName(), parent.curScope, accessType, fieldAccess,staticAccess, rightSideType);
 		
 		//FIXME correct error response
-		if(elem == null) throw new Error("Could not resolve (see copyOfNameResolver)");
-		
+		if(elem == null){
+			throw Problem.ofType(ProblemId.FIELD_NAME_NOT_FOUND).at(fieldAccess)
+				.details(fieldAccess.getName(),prefixScope.toString())
+				.raiseUnrecoverable();
+		}
+
 		//Do checks, set semantics and infered type
-		VarDecl va = checkResolvedVar(elem, fieldAccess,context);
+		checkResolvedVar(elem, fieldAccess,context);
 	
 	
 		
@@ -447,7 +462,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 				throw Problem.ofType(ProblemId.NO_SUCH_FUNCTION).at(methodInvocation)
 					.details(methodInvocation.getFuncName(),sig.getFullName())
 					.raiseUnrecoverable();
-				
+			
 		}
 		
 		//Set semantics and type

@@ -1,6 +1,7 @@
 package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.Environment;
+import com.sc2mod.andromeda.environment.access.AccessorAccess;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
@@ -24,7 +25,6 @@ import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
 import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
-import com.sc2mod.andromeda.environment.variables.AccessorDecl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
@@ -89,18 +89,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	public void visit(FieldDecl fieldDecl) {
 		resolveVarType(fieldDecl);
 	}
-	
-	@Override
-	public void visit(AccessorDecl accessorDecl) {
-		resolveVarType(accessorDecl);
-		Method getter = accessorDecl.getGetter();
-		Method setter = accessorDecl.getSetter();
-		if(getter!=null) getter.accept(this);
-		if(setter!=null){
-			setter.accept(this);
-			setter.addImplicitParam(accessorDecl.getType(), "value");
-		}
-	}
+
 	
 	@Override
 	public void visit(GlobalVarDecl globalVarDecl) {

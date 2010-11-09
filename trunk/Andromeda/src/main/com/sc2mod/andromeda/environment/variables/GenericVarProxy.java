@@ -12,6 +12,8 @@ package com.sc2mod.andromeda.environment.variables;
 import java.util.Collection;
 import java.util.List;
 
+import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -23,12 +25,13 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
-public class GenericVarProxy extends VarDecl {
+public class GenericVarProxy extends Variable {
 
-	private VarDecl wrappedDecl;
+	private Variable wrappedDecl;
+	
 	private IType type;
 
-	public GenericVarProxy(VarDecl vd, IType type) {
+	public GenericVarProxy(Variable vd, IType type) {
 		this.wrappedDecl = vd;
 		this.type = type;
 	}
@@ -37,170 +40,154 @@ public class GenericVarProxy extends VarDecl {
 	public IType getType() {
 		return type;
 	}
-
-	@Override
-	public int getDeclType() {
-		return wrappedDecl.getDeclType();
-	}
-
-	@Override
-	public boolean isInitDecl() {
-		return wrappedDecl.isInitDecl();
-	}
-
-	@Override
+	
 	public void addInitCode(Collection<StmtNode> initCode) {
 		wrappedDecl.addInitCode(initCode);
 	}
 
-	@Override
 	public boolean doesOverride() {
 		return wrappedDecl.doesOverride();
 	}
 
-	@Override
+	public boolean equals(Object obj) {
+		return wrappedDecl.equals(obj);
+	}
+
 	public IType getContainingType() {
 		return wrappedDecl.getContainingType();
 	}
 
-	@Override
 	public VarDeclNode getDeclarator() {
 		return wrappedDecl.getDeclarator();
 	}
 
-	@Override
 	public SyntaxNode getDefinition() {
 		return wrappedDecl.getDefinition();
 	}
 
-	@Override
+	public ScopedElementType getElementType() {
+		return wrappedDecl.getElementType();
+	}
+
+	public String getElementTypeName() {
+		return wrappedDecl.getElementTypeName();
+	}
+
 	public String getGeneratedName() {
 		return wrappedDecl.getGeneratedName();
 	}
 
-	@Override
-	public int getIndex() {
-		return wrappedDecl.getIndex();
-	}
-
-	@Override
 	public List<StmtNode> getInitCode() {
 		return wrappedDecl.getInitCode();
 	}
 
-	@Override
-	public ModifierListNode getModifiers() {
-		return wrappedDecl.getModifiers();
-	}
-
-	@Override
 	public int getNumInlines() {
 		return wrappedDecl.getNumInlines();
 	}
 
-	@Override
 	public int getNumReadAccesses() {
 		return wrappedDecl.getNumReadAccesses();
 	}
 
-	@Override
 	public int getNumWriteAccesses() {
 		return wrappedDecl.getNumWriteAccesses();
 	}
 
-	@Override
-	public LocalVarDecl getOverride() {
-		return wrappedDecl.getOverride();
+	public IScope getScope() {
+		return wrappedDecl.getScope();
 	}
 
-	@Override
 	public String getUid() {
 		return wrappedDecl.getUid();
 	}
 
-	@Override
-	public DataObject getValue() {
-		return wrappedDecl.getValue();
+	public VarType getVarType() {
+		return wrappedDecl.getVarType();
 	}
 
-	@Override
 	public Visibility getVisibility() {
 		return wrappedDecl.getVisibility();
 	}
 
-	@Override
+	public int hashCode() {
+		return wrappedDecl.hashCode();
+	}
+
 	public boolean isAbstract() {
 		return wrappedDecl.isAbstract();
 	}
 
-	@Override
-	public boolean isAccessor() {
-		return wrappedDecl.isAccessor();
-	}
-
-	@Override
 	public boolean isConst() {
 		return wrappedDecl.isConst();
 	}
 
-	@Override
-	public boolean isCreateCode() {
-		return wrappedDecl.isCreateCode();
-	}
-
-	@Override
 	public boolean isFinal() {
 		return wrappedDecl.isFinal();
 	}
 
-	@Override
-	public boolean isGlobalField() {
-		return wrappedDecl.isGlobalField();
+	public boolean isInitedInDecl() {
+		return wrappedDecl.isInitedInDecl();
 	}
 
-	@Override
-	public boolean isMember() {
-		return wrappedDecl.isMember();
-	}
-
-	@Override
 	public boolean isNative() {
 		return wrappedDecl.isNative();
 	}
 
-	@Override
 	public boolean isOverride() {
 		return wrappedDecl.isOverride();
 	}
 
-	@Override
 	public boolean isStatic() {
 		return wrappedDecl.isStatic();
 	}
 
-	@Override
-	public void override(LocalVarDecl overridden) {
-		wrappedDecl.override(overridden);
-	}
-
-	@Override
 	public void registerAccess(boolean write) {
 		wrappedDecl.registerAccess(write);
 	}
 
-	@Override
 	public void registerInline() {
 		wrappedDecl.registerInline();
 	}
 
-	@Override
-	public void setCreateCode(boolean createCode) {
-		wrappedDecl.setCreateCode(createCode);
+	public void setAbstract() {
+		wrappedDecl.setAbstract();
 	}
 
-	@Override
+	public void setConst() {
+		wrappedDecl.setConst();
+	}
+
+	public void setFinal() {
+		wrappedDecl.setFinal();
+	}
+
 	public void setGeneratedName(String generatedName) {
 		wrappedDecl.setGeneratedName(generatedName);
+	}
+
+	public void setNative() {
+		wrappedDecl.setNative();
+	}
+
+	public void setOverride() {
+		wrappedDecl.setOverride();
+	}
+
+	public void setStatic() {
+		wrappedDecl.setStatic();
+	}
+
+	public void setVisibility(Visibility visibility) {
+		wrappedDecl.setVisibility(visibility);
+	}
+
+	public String toString() {
+		return wrappedDecl.toString();
+	}
+	
+	@Override
+	public DataObject getValue() {
+		return wrappedDecl.getValue();
 	}
 
 	@Override
@@ -211,4 +198,6 @@ public class GenericVarProxy extends VarDecl {
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+
 }

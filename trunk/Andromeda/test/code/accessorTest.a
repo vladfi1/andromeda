@@ -1,0 +1,15 @@
+
+class X{
+	
+	private int x;
+	 => public get;
+	 => public set { x = value; }
+
+}
+
+static{
+	X y = new X();
+	y.x = 2;
+	y.x += 2;
+	int j = y.x;
+}

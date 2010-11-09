@@ -19,11 +19,11 @@ import com.sc2mod.andromeda.codegen.buffers.GlobalVarBuffer;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Constructor;
-import com.sc2mod.andromeda.environment.operations.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.scopes.AccessType;
+import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
@@ -33,7 +33,7 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
@@ -191,7 +191,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	 * @param c
 	 */
 	private void generateClassStruct(IClass c){
-		ArrayList<VarDecl> fields = c.getHierarchyFields();
+		ArrayList<Variable> fields = c.getHierarchyFields();
 		SimpleBuffer buffer = codeGenVisitor.structBuffer;
 		int indent = codeGenVisitor.curIndent;
 		
@@ -199,7 +199,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		buffer.append(c.getNameProvider().getStructName());
 		buffer.append("{");
 		if(useIndent) indent++;		
-		for(VarDecl f: fields){
+		for(Variable f: fields){
 			if(newLines)buffer.newLine(indent);	
 			buffer.append(f.getType().getGeneratedName());
 			buffer.append(" ");
@@ -238,7 +238,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	}
 	
 	private void generateAllocator(IClass c){
-		ArrayList<VarDecl> fields = c.getHierarchyFields();
+		ArrayList<Variable> fields = c.getHierarchyFields();
 		SimpleBuffer buffer = codeGenVisitor.functionBuffer;
 		Configuration options = this.options;
 		String className = c.getGeneratedName();
@@ -276,8 +276,8 @@ public class IndexClassGenerator extends ClassGenerator {
 		if(newLines) buffer.newLine(codeGenVisitor.curIndent);
 		generateFieldAccess(buffer,nameMemory,curThisName).append(idFieldName).append("=(").append(curClassIdName).append("<<").append(TYPE_BIT_OFFSET).append(")|this;");
 		
-		for(VarDecl f: TypeUtil.getNonStaticTypeFields(c, false)){
-			if(f.isInitDecl()){
+		for(Variable f: TypeUtil.getNonStaticTypeFields(c, false)){
+			if(f.isInitedInDecl()){
 				if(newLines) buffer.newLine(codeGenVisitor.curIndent);
 				codeGenVisitor.generateFieldInit(buffer,c,f);
 			}
@@ -367,7 +367,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	}
 	
 	private void generateDeallocator(IClass c){
-		ArrayList<VarDecl> fields = c.getHierarchyFields();
+		ArrayList<Variable> fields = c.getHierarchyFields();
 		SimpleBuffer buffer = codeGenVisitor.functionBuffer;
 		curThisName = nameProvider.getLocalNameRaw("this", 1);
 		boolean newLines = this.newLines;
@@ -437,7 +437,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	
 
 	private void generateFieldInit(IClass c){
-		Iterable<VarDecl> fields = TypeUtil.getNonStaticTypeFields(c, false);
+		Iterable<Variable> fields = TypeUtil.getNonStaticTypeFields(c, false);
 		SimpleBuffer buffer = codeGenVisitor.functionBuffer;
 		curThisName = nameProvider.getLocalNameRaw("this", 1);
 		boolean newLines = this.newLines;
@@ -462,8 +462,8 @@ public class IndexClassGenerator extends ClassGenerator {
 		if(newLines){
 			if(useIndent)indent++;
 		}
-		for(VarDecl f: fields){
-			if(f.isInitDecl()){
+		for(Variable f: fields){
+			if(f.isInitedInDecl()){
 				if(newLines) buffer.newLine(indent);
 				codeGenVisitor.generateFieldInit(buffer,c,f);
 			}

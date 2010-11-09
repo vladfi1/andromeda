@@ -11,14 +11,18 @@ package com.sc2mod.andromeda.codetransform;
 
 import java.util.ArrayList;
 
+import com.sc2mod.andromeda.environment.access.AccessType;
+import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
+import com.sc2mod.andromeda.environment.access.Invocation;
+import com.sc2mod.andromeda.environment.access.NameAccess;
+import com.sc2mod.andromeda.environment.access.VarAccess;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.operations.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.operations.Invocation;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.scopes.ScopeUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.VarUtil;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -95,8 +99,10 @@ public class CallHierarchyExpressionVisitor extends TransformationExprVisitor {
 	}
 		
 	private void checkAccessNode(ExprNode name){
-		VarDecl vd = (VarDecl) name.getSemantics();
-		if(vd == null) return;
+		NameAccess acc = (NameAccess) name.getSemantics();
+		if(acc.getAccessType() != AccessType.VAR) return;
+		
+		Variable vd = ((VarAccess)acc).getAccessedElement();
 		
 		//System.out.println(fieldAccess.getName());
 		
@@ -104,7 +110,7 @@ public class CallHierarchyExpressionVisitor extends TransformationExprVisitor {
 		if(isWrite) vd.registerAccess(true);
 		
 		//If this is a global decl and it has an init, parse this
-		if(vd.isGlobalField()&&vd.isInitDecl()) {
+		if(VarUtil.isGlobalField(vd)&&vd.isInitedInDecl()) {
 			vd.getDeclarator().accept(parent);
 		}
 	}

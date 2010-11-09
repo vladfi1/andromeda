@@ -22,7 +22,7 @@ import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
@@ -71,7 +71,7 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	protected int minInstanceofIndex;
 	
 	//TODO: Factor out, this is heavily related with code generation.
-	private ArrayList<VarDecl> hierarchyFields;
+	private ArrayList<Variable> hierarchyFields;
 	
 	/**
 	 * The classes instance limit
@@ -172,12 +172,12 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	}
 	
 	@Override
-	public ArrayList<VarDecl> getHierarchyFields() {
+	public ArrayList<Variable> getHierarchyFields() {
 		return hierarchyFields;
 	}
 
 	@Override
-	public void setHierarchyFields(ArrayList<VarDecl> hierarchyFields) {
+	public void setHierarchyFields(ArrayList<Variable> hierarchyFields) {
 		this.hierarchyFields = hierarchyFields;
 	}
 
@@ -323,7 +323,7 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	public int calcByteSize() {
 		//FIXME: Class field byte size calculation
 		int result = 0;
-//		for(VarDecl f: getTopClass().hierarchyFields){
+//		for(Variable f: getTopClass().hierarchyFields){
 //			result += f.getType().getMemberByteSize();
 //		}
 		return result;

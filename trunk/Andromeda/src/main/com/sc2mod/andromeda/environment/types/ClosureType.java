@@ -15,9 +15,10 @@ import java.util.LinkedHashSet;
 
 import com.sc2mod.andromeda.environment.Signature;
 
+import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -27,7 +28,7 @@ public class ClosureType extends UnscopedType{
 	private Signature sig;
 	private IType returnType;
 	private String uid;
-	private LinkedHashSet<FuncPointerDecl> usages;
+	private LinkedHashSet<OperationAccess> usages;
 	
 	public ClosureType(Signature sig2, IType returnType) {
 		this.sig = sig2;
@@ -74,8 +75,8 @@ public class ClosureType extends UnscopedType{
 		uid = sb.toString();
 	}
 
-	public void registerUsage(FuncPointerDecl funcPointerDecl) {
-		if(usages == null) usages = new LinkedHashSet<FuncPointerDecl>(8);
+	public void registerUsage(OperationAccess funcPointerDecl) {
+		if(usages == null) usages = new LinkedHashSet<OperationAccess>(8);
 		usages.add(funcPointerDecl);
 	}
 	
@@ -91,8 +92,9 @@ public class ClosureType extends UnscopedType{
 
 	public void calcIndices() {
 		int index = 0;
-		for(FuncPointerDecl fpd : usages){
-			if(fpd.getNumReadAccesses() > 0)
+		for(OperationAccess fpd : usages){
+			//TODO Function pointer usage
+			//if(((Variable) fpd.getAccessedElement()).getNumReadAccesses() > 0)
 				fpd.setIndex(index++);
 		}
 	}

@@ -23,12 +23,11 @@ import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.impl.RecordTypeImpl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
@@ -192,11 +191,6 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 	}
 	
 	@Override
-	public void visit(AccessorDeclNode accessorDeclaration) {
-		accessorDeclaration.childrenAccept(this);
-	}
-	
-	@Override
 	public void visit(FieldDeclNode fieldDeclaration) {
 		VarDeclListNode v = fieldDeclaration.getDeclaredVariables();
 		int size = v.size();
@@ -215,7 +209,7 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 		VarDeclListNode v = globalVarDeclaration.getFieldDecl().getDeclaredVariables();
 		int size = v.size();
 		for(int i=0;i<size;i++){
-			VarDecl decl = (VarDecl) v.elementAt(i).getName().getSemantics();
+			Variable decl = (Variable) v.elementAt(i).getName().getSemantics();
 			if(inLib&&decl.getNumReadAccesses()==0) continue;
 			decl.setGeneratedName(nameProvider.getGlobalName(decl));
 		}

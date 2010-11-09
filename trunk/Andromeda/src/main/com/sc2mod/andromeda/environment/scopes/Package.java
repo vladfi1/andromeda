@@ -65,6 +65,11 @@ public class Package extends ScopeImpl implements IScopedElement {
 	public Package getPackage() {
 		return this;
 	}
+	
+	@Override
+	public String toString() {
+		return "package " + name;
+	}
 
 	/**
 	 * The parent scope of a package is always the global one,

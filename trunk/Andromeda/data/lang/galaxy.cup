@@ -73,7 +73,6 @@ terminal ARROW;
 terminal TYPEDEF;
 terminal CONST;
 terminal ENRICH;
-terminal GET,SET;
 terminal DELETE;
 terminal STRUCT;
 terminal INLINE;
@@ -231,9 +230,9 @@ non terminal GlobalStructureNode structDeclaration;
 non terminal MemberDeclListNode structBody;
 non terminal EnrichDeclNode enrichDeclaration;
 
-non terminal MethodDeclNode accessorSet,accessorGet;
-non terminal AccessorBodyTransNode accessorBody;
-non terminal AccessorDeclNode accessorDeclaration;
+//non terminal MethodDeclNode accessorSet,accessorGet;
+non terminal AccessorList accessorBody;
+non terminal MethodDeclNode accessorDeclaration;
 non terminal ExprNode dereferenceExpression;
 
 non terminal GlobalStructureListNode fileContent;
@@ -575,7 +574,7 @@ classBodyDeclaration ::=
 classMemberDeclaration ::=
 		fieldDeclaration:d {: RESULT = d; :}
 	|	methodDeclaration:d {: RESULT = d; :}
-	|	accessorDeclaration:d {: RESULT = d; :}
+//	|	accessorDeclaration:d {: RESULT = d; :}
 	/* repeat the prod for 'classDeclaration' here: */
 	|	annotationsOpt:ao modifiersOpt CLASS IDENTIFIER superOpt interfacesOpt classBody  {: RESULT = null; System.err.println("Inner classes not yet supported!"); :}
 	|	interfaceDeclaration {: RESULT = null; System.err.println("Inner interfaces not supported!"); :}
@@ -584,7 +583,9 @@ classMemberDeclaration ::=
 
 //Field Declarations
 				fieldDeclaration ::= 
-						annotationsOpt:ao modifiersOpt:l type:t variableDeclarators:d SEMICOLON:r {: RESULT = new FieldDeclNode(ao,l,t,d); RESULT.setPos(l,tleft,rright); :}
+						annotationsOpt:ao modifiersOpt:l type:t variableDeclarators:d SEMICOLON:r {: RESULT = new FieldDeclNode(ao,l,t,d,null); RESULT.setPos(l,tleft,rright); :}
+					|	annotationsOpt:ao modifiersOpt:l type:t variableDeclarators:d SEMICOLON:r accessorBody:b {: RESULT = new FieldDeclNode(ao,l,t,d,b); RESULT.setPos(l,tleft,rright); :}
+					
 					;
 				variableDeclarators ::=
 						variableDeclarator:i {: RESULT = new VarDeclListNode(i); RESULT.setPos(ileft,iright);:}
@@ -602,27 +603,34 @@ classMemberDeclaration ::=
 
 		
 // Accessor method declarations
-accessorDeclaration ::=
-		annotationsOpt:ao modifiersOpt:m type:t variableDeclaratorId:d accessorBody:a {: RESULT = new AccessorDeclNode(ao,m,t,d,null,a.getGetMethod(),a.getSetMethod(),false); RESULT.setPos(tleft,aright); :}
-	|	annotationsOpt:ao modifiersOpt:m type:t variableDeclaratorId:d LBRACK formalParameterList:p RBRACK accessorBody:a {: RESULT = new AccessorDeclNode(ao,m,t,d,p,a.getGetMethod(),a.getSetMethod(),false); RESULT.setPos(tleft,aright); :}
-	|	annotationsOpt:ao modifiersOpt:m type:t THIS LBRACK formalParameterList:p RBRACK accessorBody:a {: RESULT = new AccessorDeclNode(ao,m,t,null,p,a.getGetMethod(),a.getSetMethod(),true); RESULT.setPos(tleft,aright); :}
-	;
+//accessorDeclaration ::=
+//		annotationsOpt:ao modifiersOpt:m type:t variableDeclaratorId:d accessorBody:a {: RESULT = new AccessorDeclNode(ao,m,t,d,null,a.getGetMethod(),a.getSetMethod(),false); RESULT.setPos(tleft,aright); :}
+//	|	annotationsOpt:ao modifiersOpt:m type:t variableDeclaratorId:d LBRACK formalParameterList:p RBRACK accessorBody:a {: RESULT = new AccessorDeclNode(ao,m,t,d,p,a.getGetMethod(),a.getSetMethod(),false); RESULT.setPos(tleft,aright); :}
+//	|	annotationsOpt:ao modifiersOpt:m type:t THIS LBRACK formalParameterList:p RBRACK accessorBody:a {: RESULT = new AccessorDeclNode(ao,m,t,null,p,a.getGetMethod(),a.getSetMethod(),true); RESULT.setPos(tleft,aright); :}
+//	;
 accessorBody ::=	
-		LBRACE:l accessorGet:g accessorSet:s RBRACE:r {: RESULT = new AccessorBodyTransNode(g,s); RESULT.setPos(lleft,rright); :}
-	|	LBRACE:l accessorSet:s accessorGet:g RBRACE:r {: RESULT = new AccessorBodyTransNode(g,s); RESULT.setPos(lleft,rright); :}
-	|	LBRACE:l accessorGet:g RBRACE:r {: RESULT = new AccessorBodyTransNode(g,null); RESULT.setPos(lleft,rright); :}
-	|	LBRACE:l accessorSet:s RBRACE:r {: RESULT = new AccessorBodyTransNode(null,s); RESULT.setPos(lleft,rright); :}
+	
+		accessorBody:b accessorDeclaration:s {: RESULT = b; b.append(s); RESULT.setPos(bleft,sright); :}
+//	|	accessorBody:b accessorGet:g {: RESULT = b; b.append(g); RESULT.setPos(bleft,gright); :}
+//	|	accessorGet:g {: RESULT = new AccessorList(g); RESULT.setPos(gleft,gright); :}
+	|	accessorDeclaration:s {: RESULT = new AccessorList(s); RESULT.setPos(sleft,sright); :}
 	;
 	
-accessorGet ::=
-	annotationsOpt:ao modifiersOpt:m GET:l methodBody:b  {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,null,null,new ParameterListNode(),null); mh.setPos(lleft,lright); 
-											RESULT = new MethodDeclNode(MethodTypeSE.ACC_GET,mh,b); RESULT.setPos(lleft,bright); :}
+accessorDeclaration ::=
+	ARROW:l annotationsOpt:ao modifiersOpt:m IDENTIFIER:i methodBody:b  {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,null,i,null,null); mh.setPos(lleft,lright); 
+											RESULT = new MethodDeclNode(MethodTypeSE.ACCESSOR,mh,b); RESULT.setPos(lleft,bright); :}
+	| ARROW:l annotationsOpt:ao modifiersOpt:m IDENTIFIER:i LPAREN formalParameterListOpt:p RPAREN:r methodBody:b  {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,null,i,p,null); mh.setPos(lleft,lright); 
+											RESULT = new MethodDeclNode(MethodTypeSE.ACCESSOR,mh,b); RESULT.setPos(lleft,bright); :}
+	| ARROW:l annotationsOpt:ao modifiersOpt:m type:t IDENTIFIER:i methodBody:b  {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,t,i,null,null); mh.setPos(lleft,lright); 
+											RESULT = new MethodDeclNode(MethodTypeSE.ACCESSOR,mh,b); RESULT.setPos(lleft,bright); :}
+	| ARROW:l annotationsOpt:ao modifiersOpt:m type:t IDENTIFIER:i LPAREN formalParameterListOpt:p RPAREN:r methodBody:b  {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,t,i,p,null); mh.setPos(lleft,lright); 
+											RESULT = new MethodDeclNode(MethodTypeSE.ACCESSOR,mh,b); RESULT.setPos(lleft,bright); :}
 	;
 	
-accessorSet ::=
-	annotationsOpt:ao modifiersOpt:m SET:l methodBody:b {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,new BasicTypeNode("void"),null,new ParameterListNode(),null); mh.setPos(lleft,lright); 
-											RESULT = new MethodDeclNode(MethodTypeSE.ACC_SET,mh,b); RESULT.setPos(lleft,bright); :}
-	;
+//accessorSet ::=
+//	ARROW:l annotationsOpt:ao modifiersOpt:m SET:g methodBody:b {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,new BasicTypeNode("void"),null,new ParameterListNode(),null); mh.setPos(lleft,lright); 
+//											RESULT = new MethodDeclNode(MethodTypeSE.ACC_SET,mh,b); RESULT.setPos(lleft,bright); :}
+//	;
 	
 // Method Declarations
 				methodDeclaration ::=
@@ -825,15 +833,15 @@ abstractMethodDeclaration ::=
 						|	classInstanceCreationExpression:e {: RESULT = e; :}
 						;
 					ifThenStatement ::=
-							IF:l LPAREN expression:e RPAREN statement:s1 {: RESULT = new IfStmtNode(e,s1,null); RESULT.setPos(lleft,s1right); :}
+							IF:l LPAREN expression:e RPAREN statement:s1 {: RESULT = new IfStmtNode(e,ParserHelper.createBlock(s1),null); RESULT.setPos(lleft,s1right); :}
 						;
 					ifThenElseStatement ::=
 							IF:l LPAREN expression:e RPAREN statementNoShortIf:s1 
-								ELSE statement:s2 {: RESULT = new IfStmtNode(e,s1,s2); RESULT.setPos(lleft,s2right); :}
+								ELSE statement:s2 {: RESULT = new IfStmtNode(e,ParserHelper.createBlock(s1),ParserHelper.createBlock(s2)); RESULT.setPos(lleft,s2right); :}
 						;
 					ifThenElseStatementNoShortIf ::=
 							IF:l LPAREN expression:e RPAREN statementNoShortIf:s1 
-								ELSE statementNoShortIf:s2 {: RESULT = new IfStmtNode(e,s1,s2); RESULT.setPos(lleft,s2right); :}
+								ELSE statementNoShortIf:s2 {: RESULT = new IfStmtNode(e,ParserHelper.createBlock(s1),ParserHelper.createBlock(s2)); RESULT.setPos(lleft,s2right); :}
 						;
 						
 					// ====== SWITCH NOT YET SUPPORTED ====== 
@@ -863,25 +871,25 @@ abstractMethodDeclaration ::=
 						;
 
 					whileStatement ::=
-							WHILE:l LPAREN expression:e RPAREN:r statement:s {: RESULT = new WhileStmtNode(e,s); RESULT.setPos(lleft,rright); :}
+							WHILE:l LPAREN expression:e RPAREN:r statement:s {: RESULT = new WhileStmtNode(e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
 						;
 					whileStatementNoShortIf ::=
-							WHILE:l LPAREN expression:e RPAREN:r statementNoShortIf:s {: RESULT = new WhileStmtNode(e,s); RESULT.setPos(lleft,rright); :}
+							WHILE:l LPAREN expression:e RPAREN:r statementNoShortIf:s {: RESULT = new WhileStmtNode(e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
 						;
 					doWhileStatement ::=
-							DO:l statement:s WHILE LPAREN expression:e RPAREN SEMICOLON:r {: RESULT = new DoWhileStmtNode(e,s); RESULT.setPos(lleft,rright); :}
+							DO:l statement:s WHILE LPAREN expression:e RPAREN SEMICOLON:r {: RESULT = new DoWhileStmtNode(e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
 						;
 					forStatement ::=
 							FOR:l LPAREN forInitOpt:i SEMICOLON expressionOpt:e SEMICOLON
-								forUpdateOpt:u RPAREN:r statement:s {: RESULT = new ForStmtNode(i,e,u,s); RESULT.setPos(lleft,rright); :}
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e RPAREN:r statement:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForEachStmtNode(t,vid,e,s); RESULT.setPos(lleft,rright); :} 
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e DOTDOT expression:e2 RPAREN:r statement:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForCountStmtNode(t,vid,e,e2,s); :} 
+								forUpdateOpt:u RPAREN:r statement:s {: RESULT = new ForStmtNode(i,e,u,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
+						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e RPAREN:r statement:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForEachStmtNode(t,vid,e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :} 
+						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e DOTDOT expression:e2 RPAREN:r statement:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForCountStmtNode(t,vid,e,e2,ParserHelper.createBlock(s)); :} 
 						;
 					forStatementNoShortIf ::=
 							FOR:l LPAREN forInitOpt:i SEMICOLON expressionOpt:e SEMICOLON
-								forUpdateOpt:u RPAREN:r statementNoShortIf:s {: RESULT = new ForStmtNode(i,e,u,s); RESULT.setPos(lleft,rright); :}
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e RPAREN:r statementNoShortIf:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForEachStmtNode(t,vid,e,s); RESULT.setPos(lleft,rright); :} 
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e DOTDOT expression:e2 RPAREN:r statementNoShortIf:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForCountStmtNode(t,vid,e,e2,s); :} 
+								forUpdateOpt:u RPAREN:r statementNoShortIf:s {: RESULT = new ForStmtNode(i,e,u,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
+						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e RPAREN:r statementNoShortIf:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForEachStmtNode(t,vid,e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :} 
+						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e DOTDOT expression:e2 RPAREN:r statementNoShortIf:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForCountStmtNode(t,vid,e,e2,ParserHelper.createBlock(s)); :} 
 					
 						;
 					forInitOpt ::= {: RESULT = new BlockStmtNode(new StmtListNode()); :}

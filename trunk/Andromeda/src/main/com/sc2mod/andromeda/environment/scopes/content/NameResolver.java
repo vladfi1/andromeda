@@ -12,10 +12,12 @@ package com.sc2mod.andromeda.environment.scopes.content;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.operations.Invocation;
-import com.sc2mod.andromeda.environment.scopes.AccessType;
+import com.sc2mod.andromeda.environment.access.Invocation;
+import com.sc2mod.andromeda.environment.access.NameAccess;
+import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.semAnalysis.LocalVarStack;
@@ -50,8 +52,8 @@ public class NameResolver {
 	 * @param where a syntax node to be mentioned in problems raised by this method
 	 * @return the resolved ScopedElement or null
 	 */
-	public IScopedElement resolveName(String name, IScope from, AccessType accessType, SyntaxNode where){
-		return ResolveUtil.resolveUnprefixedName(localVars, name, from, accessType, where);
+	public NameAccess resolveName(String name, IScope from, UsageType accessType, SyntaxNode where, IType rightSideType){
+		return ResolveUtil.resolveUnprefixedName(localVars, name, from, accessType, where, rightSideType);
 	}
 	
 	/**

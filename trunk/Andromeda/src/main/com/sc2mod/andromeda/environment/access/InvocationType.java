@@ -1,4 +1,4 @@
-package com.sc2mod.andromeda.environment.operations;
+package com.sc2mod.andromeda.environment.access;
 
 public enum InvocationType {
 

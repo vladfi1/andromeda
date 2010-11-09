@@ -14,11 +14,11 @@ import java.util.List;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
+import com.sc2mod.andromeda.environment.access.Invocation;
 import com.sc2mod.andromeda.environment.operations.Constructor;
-import com.sc2mod.andromeda.environment.operations.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.operations.Invocation;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;

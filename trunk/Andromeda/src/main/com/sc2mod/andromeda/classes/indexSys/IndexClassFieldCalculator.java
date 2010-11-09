@@ -17,7 +17,7 @@ import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 
 /**
  * Calculates which field a class hierarchy needs.
@@ -38,8 +38,8 @@ public class IndexClassFieldCalculator extends ClassFieldCalculator {
 	}
 
 	@Override
-	protected ArrayList<VarDecl> generateImplicitFields(IClass c) {
-		ArrayList<VarDecl> result = new ArrayList<VarDecl>();
+	protected ArrayList<Variable> generateImplicitFields(IClass c) {
+		ArrayList<Variable> result = new ArrayList<Variable>();
 		if(c.isTopClass()){
 			result.add(createField(c,BasicType.INT,"__id"));
 			result.add(createField(c,BasicType.INT,"__type"));

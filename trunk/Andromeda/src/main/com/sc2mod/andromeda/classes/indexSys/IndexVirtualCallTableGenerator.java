@@ -23,7 +23,7 @@ import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 
@@ -162,9 +162,9 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 			paramBuffer.append(",");	
 
 		
-		VarDecl[] params = m.getParams();
+		Variable[] params = m.getParams();
 		for(int i=0;i<numParams;){
-			VarDecl param = params[i];
+			Variable param = params[i];
 			paramBuffer.append(param.getGeneratedName());
 			i++;
 			if(i<numParams){

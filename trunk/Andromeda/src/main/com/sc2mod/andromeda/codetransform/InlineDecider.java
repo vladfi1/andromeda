@@ -9,7 +9,7 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
-import com.sc2mod.andromeda.environment.operations.Invocation;
+import com.sc2mod.andromeda.environment.access.Invocation;
 
 public class InlineDecider {
 	public static final int INLINE_NO = 1;

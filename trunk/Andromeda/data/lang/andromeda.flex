@@ -201,8 +201,6 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
 //  "strictfp"                     { return symbol(STRICTFP); }
   "override"					 { return symbol(OVERRIDE); }
   "typedef"						 { return symbol(TYPEDEF); }
-  "get"							 { return symbol(GET); }
-  "set"							 { return symbol(SET); }
   "function"					 { return symbol(FUNCTION); }
   
   /* boolean literals */
@@ -236,6 +234,7 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   "?"                            { return symbol(QUESTION); }
   ":"                            { return symbol(COLON); }
   ".."							 { return symbol(DOTDOT); }
+  "=>"							 { return symbol(ARROW); }
   "=="                           { return symbol(EQEQ); }
   "<="                           { return symbol(LTEQ); }
   ">="                           { return symbol(GTEQ); }

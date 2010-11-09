@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
@@ -187,7 +188,7 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	
 	@Override
 	public String toString() {
-		return getFullName();
+		return TypeUtil.getTypeCategoryName(getCategory()) + " " + getFullName();
 	}
 
 	

@@ -1,54 +1,17 @@
 package com.sc2mod.andromeda.parsing;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.List;
 
-import mopaqlib.MoPaQ;
-import mopaqlib.MoPaQException;
-
-import com.sc2mod.andromeda.classes.ClassFieldCalculator;
-import com.sc2mod.andromeda.classes.ClassGenerator;
-import com.sc2mod.andromeda.classes.MetaClassInit;
-import com.sc2mod.andromeda.classes.VirtualCallTable;
-import com.sc2mod.andromeda.classes.indexSys.IndexClassFieldCalculator;
-import com.sc2mod.andromeda.classes.indexSys.IndexClassGenerator;
-import com.sc2mod.andromeda.codegen.CodeGenVisitor;
-import com.sc2mod.andromeda.codegen.NameGenerationVisitor;
-import com.sc2mod.andromeda.codetransform.CallHierarchyVisitor;
-import com.sc2mod.andromeda.codetransform.CanonizeStmtVisitor;
-import com.sc2mod.andromeda.codetransform.SyntaxGenerator;
-import com.sc2mod.andromeda.codetransform.UnusedFinder;
-import com.sc2mod.andromeda.codetransform.VirtualCallResolver;
-import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.notifications.ErrorUtil;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.Message;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.notifications.UnlocatedErrorMessage;
 import com.sc2mod.andromeda.notifications.UnrecoverableProblem;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.parsing.phases.Phase;
-import com.sc2mod.andromeda.program.FileCollector;
-import com.sc2mod.andromeda.program.MapFormatException;
-import com.sc2mod.andromeda.program.MapRunner;
-import com.sc2mod.andromeda.program.Program;
-import com.sc2mod.andromeda.program.ScriptInjector;
-import com.sc2mod.andromeda.semAnalysis.SemanticAnalysisWorkflow;
-import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
-import com.sc2mod.andromeda.util.Debug;
 import com.sc2mod.andromeda.util.StopWatch;
 import com.sc2mod.andromeda.util.logging.Log;
 import com.sc2mod.andromeda.util.logging.LogFormat;
 import com.sc2mod.andromeda.util.logging.LogLevel;
-import com.sc2mod.andromeda.xml.gen.ResultXMLWriter;
-import com.sc2mod.andromeda.xml.gen.StructureXMLVisitor;
 
 public class Workflow {
 	

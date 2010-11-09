@@ -14,6 +14,7 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
+import com.sc2mod.andromeda.syntaxNodes.TypeNode;
 import com.sc2mod.andromeda.syntaxNodes.UninitedVarDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 
@@ -23,16 +24,6 @@ public abstract class NonParamDecl extends VarDecl {
 	protected VarDeclNode declarator;
 	private boolean constant;
 	private boolean isInitedField;
-	
-	@Override
-	public void setConst() {
-		constant = true;
-	}
-	
-	@Override
-	public boolean isConst() {
-		return constant;
-	}
 	
 	public NonParamDecl(ModifierListNode mods,IType type, VarDeclNode decl, IScope scope){
 		super(mods,type,decl.getName(), scope);
@@ -44,12 +35,12 @@ public abstract class NonParamDecl extends VarDecl {
 		}
 	}
 	
-	public NonParamDecl(ModifierListNode mods,IType type, IdentifierNode decl, IScope scope, boolean isInited){
+	protected NonParamDecl(ModifierListNode mods,IType type, IdentifierNode decl, IScope scope, boolean isInited){
 		super(mods,type,decl, scope);
 		isInitedField = isInited;
 	}
 	
-	public NonParamDecl(ModifierListNode mods,com.sc2mod.andromeda.syntaxNodes.TypeNode type,VarDeclNode decl, IScope scope){
+	public NonParamDecl(ModifierListNode mods,TypeNode type,VarDeclNode decl, IScope scope){
 		super(mods,type,decl.getName(), scope);
 		this.declarator = decl;
 		
@@ -65,10 +56,15 @@ public abstract class NonParamDecl extends VarDecl {
 		super(fieldModifiers,type,varDeclId, scope);
 		this.declarator = null;
 	}
-
+	
 	@Override
-	public SyntaxNode getDefinition() {
-		return declarator;
+	public void setConst() {
+		constant = true;
+	}
+	
+	@Override
+	public boolean isConst() {
+		return constant;
 	}
 	
 	@Override
@@ -77,7 +73,7 @@ public abstract class NonParamDecl extends VarDecl {
 	}
 	
 	@Override
-	public boolean isInitDecl() {
+	public boolean isInitedInDecl() {
 		return isInitedField;
 	}
 	

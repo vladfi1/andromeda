@@ -43,7 +43,7 @@ public class WriteXMLPhase extends Phase{
 		//Output result to xml
 		if(xmlResult != null) {
 			try {
-				new ResultXMLWriter().genXML(env.getResult().getProblems(), xmlResult);
+				new ResultXMLWriter().genXML(env.getResult(), xmlResult);
 			} catch (XMLStreamException e) {
 				ErrorUtil.raiseExternalProblem(e, false);
 			} catch (IOException e) {

@@ -18,7 +18,7 @@ import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 
 /**
  * Implementation of the NameProvider interface which
@@ -40,9 +40,9 @@ public class LongNameProvider implements INameProvider {
 	@Override
 	public void assignLocalNamesForMethod(Function function) {
 		
-		VarDecl[] vars = function.getParams();
+		Variable[] vars = function.getParams();
 		for(int i=0;i<vars.length;i++){
-			VarDecl v = vars[i];
+			Variable v = vars[i];
 			v.setGeneratedName(v.getUid());
 		}
 		vars = function.getLocals();
@@ -52,7 +52,7 @@ public class LongNameProvider implements INameProvider {
 		
 		if(vars!=null){
 			for(int i=0;i<vars.length;i++){
-				VarDecl v = vars[i];
+				Variable v = vars[i];
 				if(v.doesOverride()) continue;
 				
 				//We need to check local vars for duplicate names because the override mechanisms can
@@ -127,7 +127,7 @@ public class LongNameProvider implements INameProvider {
 	}
 
 	@Override
-	public String getGlobalName(VarDecl decl) {
+	public String getGlobalName(Variable decl) {
 		return decl.getUid();
 	}
 
@@ -139,8 +139,8 @@ public class LongNameProvider implements INameProvider {
 
 	@Override
 	public void assignFieldNames(IStruct struct) {
-		Iterable<VarDecl> fields = TypeUtil.getNonStaticTypeFields(struct, false);
-		for (VarDecl field : fields) {
+		Iterable<Variable> fields = TypeUtil.getNonStaticTypeFields(struct, false);
+		for (Variable field : fields) {
 			field.setGeneratedName(field.getUid());
 		}
 	}

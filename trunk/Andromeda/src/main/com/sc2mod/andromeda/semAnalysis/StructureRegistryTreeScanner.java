@@ -14,12 +14,10 @@ import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
-import com.sc2mod.andromeda.environment.variables.AccessorDecl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
@@ -55,6 +53,7 @@ public class StructureRegistryTreeScanner extends
 	private Environment env;
 	private SemanticsCheckerAndResolver resolver;
 	private TransientAnalysisData analysisData;
+	private AccessorTransformer accessorTransformer = new AccessorTransformer();
 
 	public StructureRegistryTreeScanner(Environment env, TransientAnalysisData analysisData) {
 		this.env = env;
@@ -170,6 +169,13 @@ public class StructureRegistryTreeScanner extends
 			resolver.checkAndResolve(decl);
 			scopes._1.addContent(decl.getUid(), decl);
 		}
+		
+		//transform accessor methods
+		if(field.getAccessors() != null){
+			for(GlobalFuncDeclNode md : accessorTransformer.transformGlobalField(g)){
+				md.accept(this,scopes);
+			}
+		}
 	}
 
 	// *** Elements in blocks (members) ***
@@ -200,13 +206,13 @@ public class StructureRegistryTreeScanner extends
 			// Add field into scope (and type if we are in an enrichment)
 			entry(scopes, decl);
 		}
-	}
-
-	@Override
-	public void visit(AccessorDeclNode accessorDeclNode, Pair<IScope, IType> state) {
-		AccessorDecl ad = new AccessorDecl(accessorDeclNode, state._2, state._1);
-		resolver.checkAndResolve(ad);
-		entry(state, ad);
+		
+		//transform accessor methods
+		if(field.getAccessors() != null){
+			for(MethodDeclNode md : accessorTransformer.transformClassField(field)){
+				md.accept(this,scopes);
+			}
+		}
 	}
 
 	@Override

@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.environment.operations;
 
+import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;

@@ -2,11 +2,7 @@
 package com.sc2mod.andromeda.environment.operations
 MethodDeclNode : Function
 StaticInitDeclNode : StaticInit
-MethodInvocationExprNode : Invocation
 ReturnStmtNode : Operation
-NewExprNode : ConstructorInvocation
-ExplicitConsCallStmtNode : ConstructorInvocation
-DeleteStmtNode : Invocation
 
 package com.sc2mod.andromeda.environment.scopes
 SourceFileNode : FileScope 
@@ -20,10 +16,15 @@ TypeExtensionDeclNode : IExtension
 
 package com.sc2mod.andromeda.environment.variables
 IdentifierNode : VarDecl
-AccessorDeclNode : AccessorDecl
-FieldAccessExprNode : VarDecl
-NameExprNode : VarDecl
-ArrayAccessExprNode : VarDecl
+
+package com.sc2mod.andromeda.environment.access
+FieldAccessExprNode : NameAccess
+NameExprNode : NameAccess
+ArrayAccessExprNode : NameAccess
+NewExprNode : ConstructorInvocation
+ExplicitConsCallStmtNode : ConstructorInvocation
+DeleteStmtNode : Invocation
+MethodInvocationExprNode : Invocation
 
 package com.sc2mod.andromeda.semAnalysis
 ForStmtNode : LoopSemantics

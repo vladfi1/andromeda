@@ -12,6 +12,7 @@ package com.sc2mod.andromeda.environment.variables;
 import java.util.ArrayList;
 
 import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -20,18 +21,21 @@ import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 
-public class FieldDecl extends FieldOrAccessorDecl {
+public class FieldDecl extends NonLocalVarDecl {
 
 	private FieldDeclNode fieldDeclaration;
 	private final int index;
 	private int fieldIndex;
 	private FieldDecl usesField;
 	private ArrayList<FieldDecl> usedByFields;
+	private boolean isStatic;
+	private IType containingType;
 	
 	public FieldDecl(FieldDeclNode f, VarDeclNode declNode, IType containingType, IScope scope) {
-		super(f,containingType,declNode,scope);
+		super(f,declNode,scope);
 		this.fieldDeclaration = f;
-		this.index = GlobalVarDecl.curIndex++;		
+		this.index = GlobalVarDecl.curIndex++;	
+		this.containingType = containingType;
 
 	}	
 	
@@ -58,29 +62,13 @@ public class FieldDecl extends FieldOrAccessorDecl {
 		return super.getGeneratedName();
 	}
 
-
-
-	@Override
-	public SyntaxNode getDefinition() {
-		return fieldDeclaration;
-	}
 	public FieldDeclNode getFieldDeclaration(){
 		return fieldDeclaration;
 	}
 	
-
-	@Override
-	public int getDeclType() {
-		return isStatic()?TYPE_STATIC_FIELD:TYPE_FIELD;
-	}
 	
 	public boolean isGlobalField(){
 		return isStatic();
-	}
-
-	@Override
-	public boolean isAccessor() {
-		return false;
 	}
 	
 	@Override
@@ -95,8 +83,35 @@ public class FieldDecl extends FieldOrAccessorDecl {
 	public int getFieldIndex() {
 		return fieldIndex;
 	}
+	
+	public IType getContainingType(){
+		return containingType;
+	}
+	
+	@Override
+	public boolean isMember() {
+		return !isStatic;
+	}
+	
+	@Override
+	public boolean isStatic() {
+		return isStatic;
+	}
+	
+	@Override
+	public void setStatic() {
+		isStatic = true;
+	}
+	
+
+
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	@Override
+	public VarType getVarType() {
+		return isStatic ? VarType.STATIC : VarType.FIELD ;
+	}
 }

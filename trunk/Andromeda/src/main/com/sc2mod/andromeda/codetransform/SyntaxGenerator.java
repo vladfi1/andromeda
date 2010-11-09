@@ -9,16 +9,17 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
-import com.sc2mod.andromeda.environment.operations.Invocation;
-import com.sc2mod.andromeda.environment.operations.InvocationType;
+import com.sc2mod.andromeda.environment.access.AccessorAccess;
+import com.sc2mod.andromeda.environment.access.Invocation;
+import com.sc2mod.andromeda.environment.access.InvocationType;
+import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.variables.AccessorDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.semAnalysis.LoopSemantics;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
@@ -71,7 +72,7 @@ public class SyntaxGenerator {
 		return expr;
 	}
 	
-	ExprNode createAccessorGet(AccessorDecl ad, ExprNode lValuePrefix, String funcName){
+	ExprNode createAccessorGet(AccessorAccess ad, ExprNode lValuePrefix, String funcName){
 		InvocationType invType;
 		if(ad.isStatic()){
 			invType = InvocationType.STATIC;
@@ -79,16 +80,16 @@ public class SyntaxGenerator {
 			//TODO: Virtual calls for accessors
 			invType = InvocationType.METHOD;
 		}
-		Invocation i = new Invocation(ad.getGetter(), invType);		
+		Invocation i = new Invocation(ad.getGetMethod(), invType);		
 		ExprListNode arguments = EMPTY_EXPRESSIONS;
 		MethodInvocationExprNode m = new MethodInvocationExprNode(lValuePrefix,funcName,arguments,null);
 		m.setSemantics(i);	
-		m.setInferedType(ad.getType());
+		m.setInferedType(ad.getAccessedElement().getReturnType());
 		return m;
 		
 	}
 	
-	ExprNode createAccessorSetExpr(AccessorDecl ad, ExprNode lValuePrefix, String funcName, ExprNode setTo){
+	ExprNode createAccessorSetExpr(AccessorAccess ad, ExprNode lValuePrefix, String funcName, ExprNode setTo){
 		InvocationType invType;
 		if(ad.isStatic()){
 			invType = InvocationType.STATIC;
@@ -96,7 +97,7 @@ public class SyntaxGenerator {
 			//TODO: Virtual calls for accessors
 			invType = InvocationType.METHOD;
 		}
-		Invocation i = new Invocation(ad.getSetter(), invType);		
+		Invocation i = new Invocation(ad.getSetMethod(), invType);		
 		ExprListNode arguments = new ExprListNode(setTo);
 		MethodInvocationExprNode m = new MethodInvocationExprNode(lValuePrefix,funcName,arguments,null);
 		m.setSemantics(i);	
@@ -104,14 +105,14 @@ public class SyntaxGenerator {
 		return m;
 	}
 	
-	StmtNode createAccessorSetStmt(AccessorDecl ad, ExprNode lValuePrefix, String funcName, ExprNode setTo){
+	StmtNode createAccessorSetStmt(AccessorAccess ad, ExprNode lValuePrefix, String funcName, ExprNode setTo){
 		return genExpressionStatement(createAccessorSetExpr(ad,lValuePrefix,funcName,setTo));
 	}
 	
-	ExprNode genFieldAccess(ExprNode prefix, String name, IType inferedType, VarDecl semantics){
+	ExprNode genFieldAccess(ExprNode prefix, String name, IType inferedType, NameAccess vd){
 		FieldAccessExprNode f = new FieldAccessExprNode(prefix, name);
 		f.setInferedType(inferedType);
-		f.setSemantics(semantics);
+		f.setSemantics(vd);
 		return f;
 	}
 	
@@ -155,7 +156,7 @@ public class SyntaxGenerator {
 		return derefer;
 	}
 
-	public NameExprNode genSimpleName(String string, VarDecl semantics) {
+	public NameExprNode genSimpleName(String string, Variable semantics) {
 		NameExprNode sn = new NameExprNode(string);
 		sn.setSemantics(semantics);
 		return sn;
@@ -215,7 +216,7 @@ public class SyntaxGenerator {
 
 
 	public ExprNode genArrayAccess(ExprNode prefix, ExprNode arrayIndex,
-			IType inferedType, VarDecl semantics) {
+			IType inferedType, NameAccess semantics) {
 		ArrayAccessExprNode sn = new ArrayAccessExprNode(prefix,arrayIndex);
 		sn.setSemantics(semantics);
 		sn.setInferedType(inferedType);
@@ -233,8 +234,8 @@ public class SyntaxGenerator {
 	public StmtNode genLocalVarAssignDeclStmt(TypeNode type, IdentifierNode identifier, ExprNode initializer ) {
 		VarAssignDeclNode assignDecl = new VarAssignDeclNode(identifier, initializer);
 		VarDeclListNode assignDeclList = new VarDeclListNode(assignDecl);
-		LocalVarDeclNode varDecl = new LocalVarDeclNode(null, type, assignDeclList);
-		return new LocalVarDeclStmtNode(varDecl);
+		LocalVarDeclNode Variable = new LocalVarDeclNode(null, type, assignDeclList);
+		return new LocalVarDeclStmtNode(Variable);
 		
 	}
 

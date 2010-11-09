@@ -9,31 +9,43 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
+import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.access.AccessType;
+import com.sc2mod.andromeda.environment.access.AccessorAccess;
+import com.sc2mod.andromeda.environment.access.Invocation;
+import com.sc2mod.andromeda.environment.access.NameAccess;
+import com.sc2mod.andromeda.environment.access.VarAccess;
+import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.scopes.UsageType;
+import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.variables.AccessorDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
+import com.sc2mod.andromeda.notifications.ErrorUtil;
+import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.CompilerThread;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
 import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
 import com.sc2mod.andromeda.syntaxNodes.CastExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.KeyOfExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
+import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
 import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
-public class CanonizeExprVisitor extends TransformationExprVisitor {
+public class CanonicalizeExprVisitor extends TransformationExprVisitor {
 
 	private UglyExprTransformer exprTransformer;
 	private TypeProvider typeProvider;
 	private boolean resolveConst;
 	
-	public CanonizeExprVisitor(Configuration options, TypeProvider typeProvider) {
+	public CanonicalizeExprVisitor(Configuration options, TypeProvider typeProvider) {
 		super(options);
 		this.resolveConst = options.getParamBool(Parameter.OPTIMIZE_RESOLVE_CONSTANT_EXPRS);
 		this.typeProvider = typeProvider;
@@ -51,14 +63,17 @@ public class CanonizeExprVisitor extends TransformationExprVisitor {
 		if(!e.isConstant()) return false;
 		if(!resolveConst) return false;
 		DataObject val = e.getValue();
-		if(val.doNotInline()) return false;
+		if(val == null){
+			throw new InternalProgramError(e, "Constant but no value?");
+		}
 		if(val==null)
 			throw new Error(e.toString());
+		if(val.doNotInline()) return false;
 		
 		parent.replaceExpression = val.getExpression();
 		if(isFieldAccess){
-			VarDecl vd = (VarDecl) e.getSemantics();
-			vd.registerInline();
+			VarAccess vd = (VarAccess) e.getSemantics();
+			vd.getAccessedElement().registerInline();
 		}
 		return true;
 	}
@@ -67,28 +82,33 @@ public class CanonizeExprVisitor extends TransformationExprVisitor {
 	protected boolean replaceByConst(ExprNode e) {
 		return replaceByConst(e, false);
 	}
-
-	private void checkName(ExprNode nameExpr){
-		//If this is an lvalue, do nothing
-		if(isWrite){
-			return;
-		}
-		VarDecl v = (VarDecl) nameExpr.getSemantics();
-		
-		//No semantics? Then this is a static prefix or package name. Ignore!
-		if(v == null) return;
-		
-		if(v.isAccessor()){
-			//FIXME: Accessor simplification handling
-			//parent.replaceExpression = parent.syntaxGenerator.createAccessorGet((AccessorDecl) v, fieldAccess.getInvocationType(), fieldAccess.getLeftExpression(), fieldAccess.getName());
-		}
-	}
 	
+	private void replaceAccessor(ExprNode nameExpr, ExprNode prefix) {
+		NameAccess na = (NameAccess) nameExpr.getSemantics();
+		if(na.getAccessType() != AccessType.ACCESSOR)
+			return;
+		
+		AccessorAccess v = (AccessorAccess) na;
+		//only getters (rValues) are replaced, rest is replaced by the UglyTransformer
+		if(v.getUsageType() != UsageType.RVALUE)
+			return;
+		Operation getMethod = v.getGetMethod();
+		
+		MethodInvocationExprNode invocationNode = new MethodInvocationExprNode(prefix, getMethod.getUid(), new ExprListNode(), null);
+		Invocation inv = ResolveUtil.createInvocation(getMethod, false);
+		invocationNode.setSemantics(inv);
+		invocationNode.setInferedType(v.getType());
+		
+		//replace the access by the method
+		parent.replaceExpression = invocationNode;
+		
+	}
+
 	@Override
 	public void visit(NameExprNode nameExprNode) {
 		if(replaceByConst(nameExprNode,true)) return;	
 		
-		checkName(nameExprNode);
+		replaceAccessor(nameExprNode,null);
 	}
 
 	@Override
@@ -101,7 +121,7 @@ public class CanonizeExprVisitor extends TransformationExprVisitor {
 		super.visit(fieldAccess);
 		
 		//Check name
-		checkName(fieldAccess);
+		replaceAccessor(fieldAccess,fieldAccess.getLeftExpression());
 		
 		
 	}
@@ -146,7 +166,7 @@ public class CanonizeExprVisitor extends TransformationExprVisitor {
 	@Override
 	public void visit(AssignmentExprNode a) {
 		super.visit(a);
-		parent.replaceExpression = exprTransformer.transform(a, isInsideExpression);		
+		parent.replaceExpression = exprTransformer.transform(a, isInsideExpression);	
 	}
 
 }

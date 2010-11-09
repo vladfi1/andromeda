@@ -24,16 +24,16 @@ public class ParamDecl extends VarDecl{
 	}
 
 	@Override
-	public int getDeclType() {
-		return TYPE_PARAMETER;
-	}
-
-	@Override
-	public boolean isInitDecl() {
+	public boolean isInitedInDecl() {
 		return false;
 	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	@Override
+	public VarType getVarType() {
+		return VarType.PARAMETER;
+	}
 }

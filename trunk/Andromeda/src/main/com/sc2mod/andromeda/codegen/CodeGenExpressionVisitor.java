@@ -12,9 +12,13 @@ package com.sc2mod.andromeda.codegen;
 import com.sc2mod.andromeda.classes.ClassGenerator;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.operations.ConstructorInvocation;
-import com.sc2mod.andromeda.environment.operations.Invocation;
-import com.sc2mod.andromeda.environment.operations.InvocationType;
+import com.sc2mod.andromeda.environment.access.AccessType;
+import com.sc2mod.andromeda.environment.access.AccessUtil;
+import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
+import com.sc2mod.andromeda.environment.access.Invocation;
+import com.sc2mod.andromeda.environment.access.InvocationType;
+import com.sc2mod.andromeda.environment.access.NameAccess;
+import com.sc2mod.andromeda.environment.access.VarAccess;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.types.IClass;
@@ -22,7 +26,7 @@ import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
@@ -208,17 +212,20 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	@Override
 	public void visit(NameExprNode nameExprNode) {
 
-		VarDecl decl = nameExprNode.getSemantics();
+		NameAccess access = nameExprNode.getSemantics();
+		if(access.getAccessType() != AccessType.VAR)
+			return;
+		VarAccess vAccess = (VarAccess) access;
 		
-		boolean notStatic = !decl.isStatic();
-			if(decl.getDeclType()==VarDecl.TYPE_FIELD){
-			IClass c = (IClass) decl.getContainingType();
+		boolean notStatic = !access.isStatic();
+		if(AccessUtil.isClassFieldAccess(access)){
+			IClass c = (IClass) access.getAccessedElement().getContainingType();
 			classGen.generateFieldAccessPrefix(curExprBuffer,c);
 			curExprBuffer.append(classGen.getThisName());
 			classGen.generateFieldAccessSuffix(curExprBuffer,c);
 		}
 		try {
-			curExprBuffer.append(decl.getGeneratedName());
+			curExprBuffer.append(vAccess.getAccessedElement().getGeneratedName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -227,9 +234,12 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	@Override
 	public void visit(FieldAccessExprNode fieldAccess) {
 
-		VarDecl decl = (VarDecl)fieldAccess.getSemantics();
+		NameAccess access = fieldAccess.getSemantics();
+		if(access.getAccessType() != AccessType.VAR)
+			return;
+		VarAccess vAccess = (VarAccess) access;
 		
-		boolean notStatic = !decl.isStatic();
+		boolean notStatic = !access.isStatic();
 		
 		//Infer left child expression (unless this is static)
 		//if(notStatic)
@@ -247,7 +257,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 				curExprBuffer.append(".");
 			}
 		}
-		curExprBuffer.append(decl.getGeneratedName());
+		curExprBuffer.append(vAccess.getAccessedElement().getGeneratedName());
 	}
 	
 	

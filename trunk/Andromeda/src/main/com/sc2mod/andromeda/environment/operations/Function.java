@@ -17,11 +17,11 @@ import java.util.List;
 import com.sc2mod.andromeda.environment.Annotations;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.Util;
+import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
@@ -80,7 +80,7 @@ public class Function extends Operation {
 	private List<ReturnStmtNode> returnStmts = new ArrayList<ReturnStmtNode>(4);
 	private IType returnType;
 	
-	private FuncPointerDecl pointerDecl;
+	private OperationAccess pointerDecl;
 	
 	private IScope scope;
 
@@ -377,9 +377,9 @@ public class Function extends Operation {
 		isInline = annotationTable.containsKey(Annotations.INLINE);
 	}
 	@Override
-	public FuncPointerDecl getPointerDecl(TypeProvider typeProvider) {
+	public OperationAccess getPointerDecl(TypeProvider typeProvider) {
 		if(pointerDecl!=null) return pointerDecl;
-		pointerDecl = new FuncPointerDecl(this,typeProvider);
+		pointerDecl = new OperationAccess(this,typeProvider);
 		return pointerDecl;
 	}
 	

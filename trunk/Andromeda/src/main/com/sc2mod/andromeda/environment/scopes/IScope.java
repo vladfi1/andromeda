@@ -2,6 +2,7 @@ package com.sc2mod.andromeda.environment.scopes;
 
 import java.util.EnumSet;
 
+import com.sc2mod.andromeda.environment.IIdentifiable;
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IClass;

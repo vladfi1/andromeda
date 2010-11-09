@@ -65,11 +65,6 @@ public abstract class NamedTypeImpl extends TypeImpl implements INamedType{
 	}
 	
 	@Override
-	public String toString() {
-		return getFullName();
-	}
-	
-	@Override
 	public String getGeneratedName() {
 		return generatedName==null?getName():generatedName;
 	}

@@ -12,12 +12,10 @@ package com.sc2mod.andromeda.codetransform;
 import java.util.ArrayList;
 
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ContinueStmtNode;
@@ -209,16 +207,11 @@ public abstract class TransformationVisitor extends VoidVisitorAdapter {
 		}
 		//If statements were generated, we need to add those to the init code of the variable decl
 		if(!insertBeforeStmts.isEmpty()){
-			VarDecl decl = variableAssignDecl.getName().getSemantics();
+			Variable decl = variableAssignDecl.getName().getSemantics();
 			decl.addInitCode(insertBeforeStmts);
 			insertBeforeStmts.clear();
 		}
 
-	}
-	
-	@Override
-	public void visit(AccessorDeclNode accessorDeclaration) {
-		accessorDeclaration.childrenAccept(this);
 	}
 	
 	@Override

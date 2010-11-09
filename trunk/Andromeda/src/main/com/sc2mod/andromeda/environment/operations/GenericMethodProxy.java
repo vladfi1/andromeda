@@ -6,11 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.variables.FuncPointerDecl;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
@@ -187,7 +187,7 @@ public class GenericMethodProxy extends Operation {
 	}
 
 	@Override
-	public FuncPointerDecl getPointerDecl(TypeProvider typeProvider) {
+	public OperationAccess getPointerDecl(TypeProvider typeProvider) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}

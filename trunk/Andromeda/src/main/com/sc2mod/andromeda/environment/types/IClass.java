@@ -43,6 +43,7 @@ import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -73,9 +74,9 @@ public interface IClass extends IReferentialType {
 
 	public int getClassIndex();
 	
-	public ArrayList<VarDecl> getHierarchyFields();
+	public ArrayList<Variable> getHierarchyFields();
 
-	public void setHierarchyFields(ArrayList<VarDecl> hierarchyFields);
+	public void setHierarchyFields(ArrayList<Variable> hierarchyFields);
 
 	public boolean isTopClass();
 

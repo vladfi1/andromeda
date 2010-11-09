@@ -15,14 +15,13 @@ import java.util.List;
 import com.sc2mod.andromeda.classes.ClassGenerator;
 import com.sc2mod.andromeda.codegen.buffers.GlobalVarBuffer;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
-import com.sc2mod.andromeda.codetransform.SyntaxGenerator;
 import com.sc2mod.andromeda.environment.Environment;
+import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
+import com.sc2mod.andromeda.environment.access.Invocation;
+import com.sc2mod.andromeda.environment.access.InvocationType;
 import com.sc2mod.andromeda.environment.operations.Constructor;
-import com.sc2mod.andromeda.environment.operations.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.operations.Invocation;
-import com.sc2mod.andromeda.environment.operations.InvocationType;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
@@ -33,15 +32,12 @@ import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.types.impl.RecordTypeImpl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.semAnalysis.ForeachSemantics;
-import com.sc2mod.andromeda.syntaxNodes.AccessorDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.BreakStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
@@ -65,7 +61,6 @@ import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
 import com.sc2mod.andromeda.syntaxNodes.LocalVarDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.LocalVarDeclStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
@@ -188,16 +183,6 @@ public class CodeGenVisitor extends CodeGenerator {
 	}
 
 	@Override
-	public void visit(AccessorDeclNode a) {
-		MethodDeclNode m = a.getGetMethod();
-		if (m != null)
-			m.accept(this);
-		m = a.getSetMethod();
-		if (m != null)
-			m.accept(this);
-	}
-
-	@Override
 	public void visit(ExplicitConsCallStmtNode e) {
 		ExprListNode arguments = e.getArguments();
 		ConstructorInvocation c = (ConstructorInvocation) e.getSemantics();
@@ -231,8 +216,8 @@ public class CodeGenVisitor extends CodeGenerator {
 
 		if (useIndent)
 			curIndent++;
-		Iterable<VarDecl> fields = TypeUtil.getNonStaticTypeFields(struct, false);
-		for (VarDecl field : fields) {
+		Iterable<Variable> fields = TypeUtil.getNonStaticTypeFields(struct, false);
+		for (Variable field : fields) {
 			if (newLines)
 				structBuffer.newLine(curIndent);
 			structBuffer.append(field.getType().getGeneratedName());
@@ -446,7 +431,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		curFunction = null;
 	}
 	
-	private String generateGlobalInitFunction(VarDecl g) {
+	private String generateGlobalInitFunction(Variable g) {
 		List<StmtNode> initCode = g.getInitCode();
 		boolean newLines = this.newLines;
 		curBuffer = functionBuffer;
@@ -493,7 +478,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		return funcName;		
 	}
 
-	private void generateGlobalDecl(VarDecl g, boolean isPrivate) {
+	private void generateGlobalDecl(Variable g, boolean isPrivate) {
 		GlobalVarBuffer globalVarBuffer = this.globalVarBuffer;
 		if (newLines)
 			globalVarBuffer.newLine();
@@ -526,7 +511,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		globalVarBuffer.flushTo(fileBuffer.variables, true);
 	}
 
-	public void generateFieldInit(SimpleBuffer buffer,IClass c,VarDecl f) {
+	public void generateFieldInit(SimpleBuffer buffer,IClass c,Variable f) {
 		
 		SimpleBuffer curBufferBefore = curBuffer;
 		curBuffer = buffer;
@@ -557,7 +542,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		VarDeclListNode f = gvd.getFieldDecl().getDeclaredVariables();
 		int size = f.size();
 		for (int i = 0; i < size; i++) {
-			VarDecl field = f.elementAt(i).getName().getSemantics();
+			Variable field = f.elementAt(i).getName().getSemantics();
 			if (inLib && field.getNumReadAccesses() == 0)
 				continue;
 			generateGlobalDecl(field,
@@ -570,7 +555,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		VarDeclListNode f = fieldDeclaration.getDeclaredVariables();
 		int size = f.size();
 		for (int i = 0; i < size; i++) {
-			VarDecl field = f.elementAt(i).getName().getSemantics();
+			Variable field = f.elementAt(i).getName().getSemantics();
 			//XPilot: don't remove a variable if it is written to
 			if (inLib && field.getNumReadAccesses() == 0 && field.getNumWriteAccesses() == 0)
 				continue;
@@ -717,7 +702,7 @@ public class CodeGenVisitor extends CodeGenerator {
 //		}
 //		
 //		//Init (iterator = leftside.getIterator();)
-//		curBuffer.append(((VarDecl)iter.getSemantics()).getGeneratedName()).append("=");		
+//		curBuffer.append(((Variable)iter.getSemantics()).getGeneratedName()).append("=");		
 //		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getGetIterator(), forEachStatement.getExpression(), SyntaxGenerator.EMPTY_EXPRESSIONS);
 //		curBuffer.append(";");
 //		

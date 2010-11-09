@@ -9,7 +9,7 @@
  */
 package com.sc2mod.andromeda.semAnalysis;
 
-import com.sc2mod.andromeda.environment.operations.Invocation;
+import com.sc2mod.andromeda.environment.access.Invocation;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;

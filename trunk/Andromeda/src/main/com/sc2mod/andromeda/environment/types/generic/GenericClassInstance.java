@@ -28,7 +28,7 @@ import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
@@ -107,7 +107,7 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 
 
 	@Override
-	public ArrayList<VarDecl> getHierarchyFields() {
+	public ArrayList<Variable> getHierarchyFields() {
 		return genericParent.getHierarchyFields();
 	}
 
@@ -185,7 +185,7 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 
 
 	@Override
-	public void setHierarchyFields(ArrayList<VarDecl> hierarchyFields) {
+	public void setHierarchyFields(ArrayList<Variable> hierarchyFields) {
 		throw new Error("Not allowed!");
 	}
 

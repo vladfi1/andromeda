@@ -12,12 +12,10 @@ Package
 package com.sc2mod.andromeda.environment.operations
 Operation
 Constructor
-ConstructorInvocation
 Deallocator
 Destructor
 Function
 GenericMethodProxy
-Invocation
 Method
 StaticInit
 
@@ -62,15 +60,26 @@ GenericTypeInstance
 TypeParameter
 
 package com.sc2mod.andromeda.environment.variables
-AccessorDecl
 FieldDecl
-FieldOrAccessorDecl
-FuncPointerDecl
-FuncPointerNameDecl
 GenericVarProxy
 GlobalVarDecl
 ImplicitFieldDecl
+ImplicitParamDecl
 LocalVarDecl
+NonLocalVarDecl
 NonParamDecl
 ParamDecl
 VarDecl
+Variable
+
+package com.sc2mod.andromeda.environment.access
+VarAccess
+NameAccess
+AccessorAccess
+OperationAccess
+OpPointerNameAccess
+Invocation
+ConstructorInvocation
+OpPointerInvocation
+PackageAccess
+TypeAccess

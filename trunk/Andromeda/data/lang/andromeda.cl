@@ -139,22 +139,14 @@ MemberDeclNode 			::= {MethodDeclNode}
 								ModifierListNode: fieldModifiers
 								TypeNode: type
 								VarDeclListNode: declaredVariables
+								AccessorList : accessors
 						| {StaticInitDeclNode}
 								AnnotationListNode: annotations
 								StmtNode: body
-						| {AccessorDeclNode}
-								AnnotationListNode: annotations
-								ModifierListNode: fieldModifiers
-								TypeNode: type
-								IdentifierNode: accessorName
-								ParameterListNode: accessorParameters
-								MethodDeclNode: getMethod
-								MethodDeclNode: setMethod
-								"boolean": accessorUseThis
 
 MemberDeclListNode ::= MemberDeclNode*
 
-MethodTypeSE ::= one of METHOD, CONSTRUCTOR, DESTRUCTOR, ACC_GET, ACC_SET
+MethodTypeSE ::= one of METHOD, CONSTRUCTOR, DESTRUCTOR, ACCESSOR
 
 // Field Declarations
 
@@ -172,9 +164,7 @@ VarDeclNode ::= {UninitedVarDeclNode}
 
 //Accessor declarations
 
-AccessorBodyTransNode ::= 
-			MethodDeclNode: getMethod
-			MethodDeclNode: setMethod
+AccessorList ::= MethodDeclNode*
 
 //Method declarations
 
