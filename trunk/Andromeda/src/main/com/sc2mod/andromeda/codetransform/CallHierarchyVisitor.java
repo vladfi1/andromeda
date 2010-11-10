@@ -36,7 +36,7 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	//XPilot: these are not used...
 	//boolean readAccess = true;
 	//boolean writeAccess;
-	//FIXME: Assign a good starting size to this and other hash maps. This can be done by counting the elements in the environment.
+	//TODO: Assign a good starting size to this and other hash maps. This can be done by counting the elements in the environment.
 	private HashSet<SemanticsElement> marked = new HashSet<SemanticsElement>();
 	
 	private void mark(SemanticsElement elem){

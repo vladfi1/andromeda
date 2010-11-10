@@ -10,24 +10,15 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import javax.lang.model.element.ElementKind;
-
-import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.access.AccessorAccess;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
-import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
-import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Package;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
-import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitorAdapter;
+import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
+import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.program.ToDo;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public abstract class ScopeContentSet {
@@ -36,7 +27,7 @@ public abstract class ScopeContentSet {
 	
 	
 	
-	
+	private ResolveResult lastResolveResult;
 	protected HashMap<String, IScopedElement> contentSet = new LinkedHashMap<String, IScopedElement>();
 	private ArrayList<StaticInit> staticInits = null;
 	
@@ -75,17 +66,23 @@ public abstract class ScopeContentSet {
 	
 	
 	
+	public ResolveResult getLastResolveResult(){
+		return lastResolveResult;
+	}
 	
 	
 	IScopedElement resolve(String name, IScope from, UsageType accessType, Signature sig, SyntaxNode where, EnumSet<ScopedElementType> allowedTypes){
-		
+
 		//Get the entry
 		IScopedElement result = contentSet.get(name);
-		if(result == null)
+		if(result == null){
+			lastResolveResult = ResolveResult.NOT_FOUND;
 			return null;
+		}
 		
 		//Disallowed type found? Return null
 		if(!allowedTypes.contains(result.getElementType())){
+			lastResolveResult = ResolveResult.DISALLOWED_TYPE;
 			return null;
 		}
 		
@@ -94,16 +91,20 @@ public abstract class ScopeContentSet {
 			//Op set? Do operation resolving stuff
 			OperationSet oset = (OperationSet) result;
 			result = oset.get(sig, where);
+			
+			if(result == null){
+				lastResolveResult = ResolveResult.WRONG_SIGNATURE;
+				return null;
+			}
 		}
 		
 		//Check if it is accessible
 		if(!result.getVisibility().checkAccessible(from,result.getScope())){
+			lastResolveResult = ResolveResult.NOT_VISIBLE;
 			return null;
-//			throw Problem.ofType(ProblemId.NOT_VISIBLE).at(where)
-//					.details(result.getElementTypeName(),name)
-//					.raiseUnrecoverable();
 		}
-		
+
+		lastResolveResult = ResolveResult.SUCCESSFUL;
 		return result;
 	}
 	
@@ -158,12 +159,12 @@ public abstract class ScopeContentSet {
 	
 	
 		IScopedElement old = contentSet.put(uid, elem);
-	
 		if(old != null){
 			//Handle duplicate elements
 			if(doHandleDuplicate(old, elem)!=elem){
 				//If we want the old one instead of the new one, put it in.
-				contentSet.put(uid, old);
+				
+				contentSet.put(uid, old); 
 			}
 			
 		}

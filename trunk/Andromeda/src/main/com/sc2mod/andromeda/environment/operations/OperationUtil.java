@@ -40,10 +40,14 @@ public final class OperationUtil {
 	}
 	
 	public static String getTypeAndNameAndSignature(Operation op){
-		return new StringBuilder(64)
+		if(op.getContainingType() != null){
+			return new StringBuilder(64)
 			.append(op.getContainingType().getUid())
 			.append(".")
 			.append(getNameAndSignature(op))
 			.toString();
+		} else {
+			return getNameAndSignature(op);
+		}
 	}
 }

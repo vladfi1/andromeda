@@ -62,8 +62,7 @@ public class GlobalScope extends ScopeImpl {
 	
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+		return "<global>";
 	}
 	
 	@Override

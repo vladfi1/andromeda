@@ -27,7 +27,6 @@ public class FunctionSet extends OperationSet {
 			return oldOp;
 		}
 		//FIXME: Check that no forward declaration is undefined in the end.
-		//FIXME: Check that a override declared function does really override a method
 		
 		//Is one of them overrider?
 		if(oldOp.isOverride()&&newOp.isOverride()){

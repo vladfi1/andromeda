@@ -4,9 +4,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import com.sc2mod.andromeda.test.junit.unittests.ExampleTest;
+import com.sc2mod.andromeda.test.junit.unittests.accessors.AccessorProblems;
 import com.sc2mod.andromeda.test.junit.unittests.classes.ClassProblems;
 import com.sc2mod.andromeda.test.junit.unittests.generics.GenericTests;
 import com.sc2mod.andromeda.test.junit.unittests.misc.MiscProblems;
+import com.sc2mod.andromeda.test.junit.unittests.names.NameProblems;
 import com.sc2mod.andromeda.test.junit.unittests.overriding.OverrideProblems;
 import com.sc2mod.andromeda.test.junit.unittests.syntax.SyntaxProblems;
 import com.sc2mod.andromeda.test.junit.unittests.types.TypeErrors;
@@ -24,7 +26,9 @@ import junit.framework.TestSuite;
         TypeErrors.class,
         OverrideProblems.class,
         MiscProblems.class,
-        ClassProblems.class
+        ClassProblems.class,
+        AccessorProblems.class,
+        NameProblems.class
 })
 
 public class AllTests {

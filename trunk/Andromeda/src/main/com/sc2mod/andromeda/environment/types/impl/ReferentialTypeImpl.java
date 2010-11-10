@@ -11,7 +11,8 @@ import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 public abstract class ReferentialTypeImpl extends RecordTypeImpl implements IReferentialType {
 	
 	protected HashSet<IInterface> interfaces = new HashSet<IInterface>(6);
-	
+	private int typeIndex;
+
 	public HashSet<IInterface> getInterfaces() {
 		return interfaces;
 	}
@@ -24,6 +25,14 @@ public abstract class ReferentialTypeImpl extends RecordTypeImpl implements IRef
 	public int getRuntimeType() {
 		return RuntimeType.INT;
 	}
+	
+	public int getTypeIndex() {
+		return typeIndex;
+	}
+
+	public void setTypeIndex(int typeIndex) {
+		this.typeIndex = typeIndex;
+	}	
 	
 	
 	

@@ -9,25 +9,17 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.operations.Constructor;
-import com.sc2mod.andromeda.environment.operations.StaticInit;
-import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.GlobalScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.generic.GenericMemberGenerationVisitor;
 import com.sc2mod.andromeda.environment.types.generic.TypeParamInstanciationVisitor;
@@ -36,20 +28,15 @@ import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
 import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.program.ToDo;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeAliasDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeListNode;
 import com.sc2mod.andromeda.util.Pair;
-import com.sc2mod.andromeda.vm.data.DataObject;
 
 public class TypeProvider {
 
@@ -111,6 +98,7 @@ public class TypeProvider {
 	public ArrayList<IRecordType> getRecordTypes() {
 		return recordTypes;
 	}
+
 	
 	public ArrayList<IClass> getClasses() {
 		return classes;
@@ -260,7 +248,7 @@ public class TypeProvider {
 	}
 
 	private IType getSingleArrayType(IType wrappedType,ExprNode dimension){
-		ToDo.println("Array dims check");
+		//TODO: Check array dimensions, once they are resolved
 //		Type ty = dimension.getInferedType();
 //		if(ty == null)
 //			throw Problem.ofType(ProblemId.UNKNOWN_ARRAY_DIMENSION_TYPE).at(dimension)
@@ -367,24 +355,7 @@ public class TypeProvider {
 	//==========================================
 	//			GARBAGE: DOES NOT BELONG HERE, MOVE OR DELETE			
 	//==========================================
-	private int curClassIndex = 1;
-	private int curInterfaceIndex = 0;
-	
-	public int getNextClassIndex(){
-		return curClassIndex++;
-	}
-	
-	public int getCurInstanceofIndex(){
-		return curClassIndex;
-	}
-	
-	public int getNextInterfaceIndex(){
-		return curInterfaceIndex++;
-	}
-	
-	public int getCurInterfaceIndex(){
-		return curInterfaceIndex;
-	}
+
 
 
 

@@ -357,10 +357,6 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		//Resolve the name
 		NameAccess elem = nameResolver.resolveName(nameExprNode.getName(), parent.curScope, accessType, nameExprNode, rightSideType);
 
-		if(elem == null) 
-			throw Problem.ofType(ProblemId.VAR_NAME_NOT_FOUND).at(nameExprNode).details(nameExprNode.getName())
-				.raiseUnrecoverable();
-		
 		//Do checks, set semantics and infered type
 		checkResolvedVar(elem, nameExprNode,context);
 		
@@ -388,13 +384,6 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		//Resolve the name
 		NameAccess elem = ResolveUtil.resolvePrefixedName(prefixScope, fieldAccess.getName(), parent.curScope, accessType, fieldAccess,staticAccess, rightSideType);
 		
-		//FIXME correct error response
-		if(elem == null){
-			throw Problem.ofType(ProblemId.FIELD_NAME_NOT_FOUND).at(fieldAccess)
-				.details(fieldAccess.getName(),prefixScope.toString())
-				.raiseUnrecoverable();
-		}
-
 		//Do checks, set semantics and infered type
 		checkResolvedVar(elem, fieldAccess,context);
 	

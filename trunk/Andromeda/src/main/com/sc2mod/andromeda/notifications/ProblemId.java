@@ -39,8 +39,12 @@ public enum ProblemId {
 	MISSING_NATIVE_LIB ("Missing native library file '%s'"),
 
 	//**** NAME RESOLVING ****
-	FIELD_NAME_NOT_FOUND ("No visible field or accessor method named '%s' found for %s."),
-	VAR_NAME_NOT_FOUND ("No variable or visible field or accessor named '%s' exists in this context"),
+	FIELD_NAME_NOT_FOUND ("Neither a field named '%s' nor a corresponding accessor method was found."),
+	ACCESSOR_NOT_VISIBLE ("The accessor method for field '%s' is not visible"),
+	FIELD_NOT_VISIBLE("The field '%s' is not visible"),
+	ACCESSOR_WRONG_SIGNATURE ("The field '%s' cannot be found. A corresponding accessor method exists but has the wrong signature."),
+	
+	
 	TYPE_CANNOT_HAVE_FIELDS ("The left side of a field access operation must be a class, struct or an " +
 					"enriched basic type. However, no enrichment for the type '%s' exists.") , 
 
@@ -186,7 +190,12 @@ public enum ProblemId {
 	DUPLICATE_NAME("Duplicate name '%s'"),
 	DUPLICAT_GLOBAL_VARIABLE("Duplicate global variable '%s'"),
 	ACCESSOR_ON_MULTIPLE_FIELDS("Cannot define accessors for declarations with multiple fields"),
-	ACCESSOR_DECLARED_STATIC("Accessors may not be declared static. They are implicitly static if their corresponding field is static"),
+	ACCESSOR_DECLARED_STATIC("Accessor methods may not be declared static. They are implicitly static if their corresponding field is static"),
+	ACCESSOR_GET_OR_SET_MISSING("This accessor value cannot be used on the left side of a get/set assignment.\nThere is a %s method '%s' but no %s method in the same scope."),
+	ACCESSOR_GET_OR_SET_NOT_VISIBLE("This accessor value cannot be used on the left side of a get/set assignment.\nThere is a visible %s method '%s' but the corresponding %s method is not visible."),
+	ACCESSOR_GET_OR_SET_WRONG_SIGNATURE("This accessor value cannot be used on the left side of a get/set assignment.\nThere is a valid %s method '%s' but the corresponding %s method has the wrong signature."),
+	ACCESSOR_STATIC_NON_STATIC_GET_SET("This accessor value cannot be used on the left side of a get/set assignment.\nThe get and set method must both be static or not static, but one is static and the other one is not"),
+	
 	
 	//****** METHODS ******
 	OVERRIDE_DECL_DOES_NOT_OVERRIDE("Method was declared 'override' but no visible overridden method exists in the superclass."),

@@ -13,3 +13,20 @@ static{
 	y.x += 2;
 	int j = y.x;
 }
+
+enrich int{
+
+	int getI(){
+		return this;
+	}
+	
+	void setI(int i){}
+	
+}
+
+static{
+	int a = 3;
+	
+	a.i.i.i = a.i.i;
+
+}

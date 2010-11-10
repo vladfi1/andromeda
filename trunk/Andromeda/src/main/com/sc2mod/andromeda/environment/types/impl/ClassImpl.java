@@ -19,6 +19,7 @@ import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
@@ -200,18 +201,6 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	public boolean canHaveMethods() {
 		return true;
 	}
-
-	//TODO: Check if this is used somewhere
-//	void generateClassIndex(TypeProvider tp){
-//		minInstanceofIndex = tp.getCurInstanceofIndex();
-//		
-//		for(IRecordType r: descendants){
-//			((IClass)r).generateClassIndex(tp);
-//		}
-//		
-//		classIndex = tp.getNextClassIndex();
-//		
-//	}
 	
 	@Override
 	public boolean isTopClass(){

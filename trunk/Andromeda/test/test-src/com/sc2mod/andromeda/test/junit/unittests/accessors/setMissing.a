@@ -1,0 +1,9 @@
+
+int getX(){
+	return 3;
+}
+
+static{
+	x += 2;
+
+}

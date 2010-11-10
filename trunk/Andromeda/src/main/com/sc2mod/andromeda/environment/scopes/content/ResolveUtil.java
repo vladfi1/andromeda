@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.environment.access.TypeAccess;
 import com.sc2mod.andromeda.environment.access.VarAccess;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.scopes.IScope;
@@ -29,6 +30,7 @@ import com.sc2mod.andromeda.notifications.ErrorUtil;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.notifications.UnrecoverableProblem;
 import com.sc2mod.andromeda.semAnalysis.AccessorTransformer;
 import com.sc2mod.andromeda.semAnalysis.LocalVarStack;
 import com.sc2mod.andromeda.syntaxNodes.DeleteStmtNode;
@@ -45,7 +47,7 @@ public final class ResolveUtil {
 	private static final EnumSet<ScopedElementType> RESOLVE_ONLY_TYPES = EnumSet.of(ScopedElementType.TYPE,ScopedElementType.ERROR);
 	private static final EnumSet<ScopedElementType> RESOLVE_NAMES = EnumSet.allOf(ScopedElementType.class);
 	private static final EnumSet<ScopedElementType> RESOLVE_OPS_AND_VARS = EnumSet.of(ScopedElementType.ERROR,ScopedElementType.OP_SET,ScopedElementType.VAR);
-	private static final EnumSet<ScopedElementType> RESOLVE_OPS = EnumSet.of(ScopedElementType.ERROR,ScopedElementType.OP_SET);
+	static final EnumSet<ScopedElementType> RESOLVE_OPS = EnumSet.of(ScopedElementType.ERROR,ScopedElementType.OP_SET);
 	private static final EnumSet<ScopedElementType> RESOLVE_ONLY_PACKAGES = EnumSet.of(ScopedElementType.PACKAGE,ScopedElementType.ERROR);
 	private static final EnumSet<ScopedElementType> RESOLVE_ONLY_VARS = EnumSet.of(ScopedElementType.VAR, ScopedElementType.ERROR);
 	
@@ -65,13 +67,17 @@ public final class ResolveUtil {
 	
 	public static NameAccess resolvePrefixedName(IScope prefix, String name, IScope from, UsageType accessType, SyntaxNode where, boolean staticAccess, IType setType){
 		IScopedElement elem = prefix.getContent().resolve(name,from,accessType,null,where,RESOLVE_NAMES);
+		ResolveResult error = ResolveResult.NOT_FOUND; 
 		
 		//Not found? Try get and set methods, respectively
 		NameAccess ac;
 		if(elem == null){
-			ac = resolveGetSet(prefix,name,from,accessType,where, setType);
-			if(ac == null)
-				return null;
+			error = rememberError(error, prefix.getContent().getLastResolveResult());
+			ac = ResolveGetSetUtil.resolveGetSet(prefix,name,from,accessType,where, setType);
+			if(ac == null){
+				error = rememberError(error, prefix.getContent().getLastResolveResult().toAccessorResult());
+				throw emitNameError(name,error,where);
+			}
 			elem = ac.getAccessedElement();
 		} else {
 			ac = createAccess(elem);
@@ -84,6 +90,26 @@ public final class ResolveUtil {
 	}
 	
 
+
+	private static UnrecoverableProblem emitNameError(String name, ResolveResult error, SyntaxNode where) {
+		switch(error){
+		case ACCESSOR_NOT_VISIBLE:
+			throw Problem.ofType(ProblemId.ACCESSOR_NOT_VISIBLE).at(where)
+				.details(name)
+				.raiseUnrecoverable();
+		case ACCESSOR_WRONG_SIGNATURE:
+			throw Problem.ofType(ProblemId.ACCESSOR_WRONG_SIGNATURE).at(where)
+				.details(name)
+				.raiseUnrecoverable();
+		case NOT_VISIBLE:
+			throw Problem.ofType(ProblemId.FIELD_NOT_VISIBLE).at(where)
+				.details(name)
+				.raiseUnrecoverable();
+		}
+		throw Problem.ofType(ProblemId.FIELD_NAME_NOT_FOUND).at(where)
+			.details(name)
+			.raiseUnrecoverable();
+	}
 
 	/**
 	 * Does not resolve function pointers! The operation must be a real function or method.
@@ -142,6 +168,7 @@ public final class ResolveUtil {
 	
 	static Invocation resolveUnprefixedInvocation(LocalVarStack localContext, String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer){
 		IScopedElement elem = null;
+		//TODO: Nice error messages for invocations, just like for names
 		
 		//First check locals, if func pointers are allowed (since these could be a local variable)
 		if(allowFuncPointer){
@@ -215,22 +242,27 @@ public final class ResolveUtil {
 	
 	private static NameAccess recursiveNameResolve(String name, IScope from, UsageType accessType, IType setType, SyntaxNode where, EnumSet<ScopedElementType> allowedTypes){
 		IScope lookup = from;
+		ResolveResult error = ResolveResult.NOT_FOUND;
 		while(lookup != null){
-			IScopedElement result = lookup.getContent().resolve(name, from, accessType, null, where, allowedTypes);
+			ScopeContentSet content = lookup.getContent();
+			IScopedElement result = content.resolve(name, from, accessType, null, where, allowedTypes);
 			if(result != null) 
 				return createAccess(result);
+			error = rememberError(error, content.getLastResolveResult());
 			
 			//try get and set methods
-				AccessorAccess op = resolveGetSet(lookup,name,from,accessType,where,setType);
-				if(op != null)
-					return op;
+			AccessorAccess op = ResolveGetSetUtil.resolveGetSet(lookup,name,from,accessType,where,setType);
+			if(op != null)
+				return op;
+			error = rememberError(error, content.getLastResolveResult());
+				
 			
 			//try parent
 			lookup = lookup.getParentScope();
 		}
 		
 		//Not found in any scope :(
-		return null;
+		throw emitNameError(name, error, where);
 	}
 	
 	public static Invocation createInvocation(IScopedElement elem, boolean disallowVirtual) {
@@ -282,48 +314,13 @@ public final class ResolveUtil {
 		}
 		throw ErrorUtil.defaultInternalError();
 	}
-
-	static AccessorAccess resolveGetSet(IScope prefix, String name, IScope from, UsageType usageType, SyntaxNode where, IType setType) {
-		switch(usageType){
-		case LRVALUE:
-			Operation get = resolveGet(prefix,name,from,where);
-			
-			//we use the type of the getter as signature type for the setter
-			if(get != null){
-				setType = get.getReturnType();
-			}
-			Operation set = resolveSet(prefix,name,from,where,setType);
-			
-			if(get == null && set == null){
-				return null;
-			}
-			
-			//FIXME Checks if get and set present
-			return new AccessorAccess(usageType, where, get, set, setType);
-		case RVALUE:
-			get = resolveGet(prefix,name,from,where);
-			if(get == null)
-				return null;
-			return new AccessorAccess(usageType, where, get, null, get.getReturnType());
-			
-		case LVALUE:
-			set = resolveSet(prefix,name,from,where,setType);
-			if(set == null)
-				return null;
-			return new AccessorAccess(usageType, where, null, set,setType);
-		}
-		return null;
+	
+	private static ResolveResult rememberError(ResolveResult result, ResolveResult newResult){
+		if(result == ResolveResult.NOT_FOUND || result == ResolveResult.DISALLOWED_TYPE)
+			return newResult;
+		
+		return result;
 	}
 
-	private static Operation resolveSet(IScope prefix, String name, IScope from, SyntaxNode where, IType setType) {
-		Signature sig = null;
-		if(setType != null){
-			sig = new Signature(setType);
-		}
-		return (Operation) prefix.getContent().resolve(AccessorTransformer.createAccessMethodName("set",name), from, UsageType.OTHER, sig, where, RESOLVE_OPS);
-	}
 
-	private static Operation resolveGet(IScope prefix, String name, IScope from, SyntaxNode where) {
-		return (Operation) prefix.getContent().resolve(AccessorTransformer.createAccessMethodName("get",name), from, UsageType.OTHER, Signature.EMPTY_SIGNATURE, where, RESOLVE_OPS);
-	}
 }

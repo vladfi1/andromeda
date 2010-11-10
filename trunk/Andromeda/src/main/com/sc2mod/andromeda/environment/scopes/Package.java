@@ -122,6 +122,7 @@ public class Package extends ScopeImpl implements IScopedElement {
 	@Override
 	public void addContent(String name, IScopedElement elem) {
 		getContent().add(name, elem);
+
 		IScope parentScope = getParentScope();
 		if(parentScope != null && elem.getVisibility()==Visibility.PUBLIC) parentScope.addContent(name, elem);
 		

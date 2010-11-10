@@ -40,6 +40,7 @@ public class Enrichment extends BlockScope implements IDefined {
 	public Enrichment(EnrichDeclNode decl, IScope scope) {
 		super(scope);
 		this.decl = decl;
+		decl.setSemantics(this);
 	}
 	
 	@Override
