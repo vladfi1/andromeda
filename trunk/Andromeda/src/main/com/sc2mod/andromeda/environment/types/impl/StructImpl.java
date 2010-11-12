@@ -15,6 +15,7 @@ import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.generic.GenericStructInstance;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -26,8 +27,8 @@ public class StructImpl extends RecordTypeImpl implements IStruct{
 
 	private StructDeclNode declaration;
 
-	public StructImpl(StructDeclNode declaration, IScope scope) {
-		super(declaration, scope);
+	public StructImpl(StructDeclNode declaration, IScope scope, TypeProvider t) {
+		super(declaration, scope,t);
 		this.declaration = declaration;
 	}
 	
@@ -69,7 +70,7 @@ public class StructImpl extends RecordTypeImpl implements IStruct{
 
 	@Override
 	public INamedType createGenericInstance(Signature s) {
-		return new GenericStructInstance(this,s);
+		return new GenericStructInstance(this,s,tprov);
 	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }

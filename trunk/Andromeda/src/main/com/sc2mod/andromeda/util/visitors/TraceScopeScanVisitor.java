@@ -3,7 +3,7 @@ package com.sc2mod.andromeda.util.visitors;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.parsing.SourceFileInfo;
+import com.sc2mod.andromeda.parsing.SourceInfo;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
@@ -12,7 +12,7 @@ public class TraceScopeScanVisitor extends VoidTreeScanVisitor{
 
 	
 	public IScope curScope;
-	public SourceFileInfo curFileInfo;
+	public SourceInfo curSourceInfo;
 	public IType curType;
 
 	@Override
@@ -21,12 +21,12 @@ public class TraceScopeScanVisitor extends VoidTreeScanVisitor{
 		IScope scopeBefore = curScope;
 		curScope = andromedaFile.getSemantics();
 		
-		SourceFileInfo infoBefore = curFileInfo;
-		curFileInfo = andromedaFile.getFileInfo();
+		SourceInfo infoBefore = curSourceInfo;
+		curSourceInfo = andromedaFile.getSourceInfo();
 		
 		andromedaFile.childrenAccept(this);
 		
-		curFileInfo = infoBefore;
+		curSourceInfo = infoBefore;
 		curScope = scopeBefore;
 	}
 	

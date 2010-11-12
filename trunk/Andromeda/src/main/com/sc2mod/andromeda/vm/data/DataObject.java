@@ -10,6 +10,7 @@
 package com.sc2mod.andromeda.vm.data;
 
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
@@ -17,7 +18,7 @@ import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
 
 public abstract class DataObject {
 	
-	public abstract IType getType();
+	public abstract IType getType(TypeProvider tp);
 
 	public void setBoolValue(boolean b){
 		throw new ExecutionError("Cannot set to this type!");
@@ -63,17 +64,17 @@ public abstract class DataObject {
 		throw new ExecutionError("Cannot get this type!");
 	}
 	
-	public abstract ExprNode getExpression();
+	public abstract ExprNode getExpression(TypeProvider tp);
 	
-	protected LiteralExprNode getLiteralExpr(LiteralTypeSE lt){
+	protected LiteralExprNode getLiteralExpr(TypeProvider tp, LiteralTypeSE lt){
 		LiteralExprNode le = new LiteralExprNode(new LiteralNode(this, lt));
-		le.setInferedType(getType());
+		le.setInferedType(getType(tp));
 		return le;
 	}
 
 	public DataObject castTo(IType type) {
-		if(type == getType()) return this;
-		throw new ExecutionError("Cannot cast from " + getType().getFullName() + " to " + type.getFullName());
+		if(type == getType(type.getTypeProvider())) return this;
+		throw new ExecutionError("Cannot cast from " + getType(type.getTypeProvider()).getFullName() + " to " + type.getFullName());
 	}
 
 	public boolean doNotInline() {

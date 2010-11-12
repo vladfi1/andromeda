@@ -46,7 +46,7 @@ public class MethodSet extends OperationSet {
 		
 		if (oldInherited && newInherited){
 			//Both are inherited.
-			//FIXME: Handling if both methods are inherited (from interfaces or traits for example)
+			//TODO: Handling if both methods are inherited (from interfaces or traits for example)
 			return oldOp;
 		} else {
 			//One of them is inherited.

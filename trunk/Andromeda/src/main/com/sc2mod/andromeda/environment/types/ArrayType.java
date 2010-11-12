@@ -24,7 +24,8 @@ public class ArrayType extends UnscopedType {
 	private int dimension;
 	private String uid;
 
-	public ArrayType(IType wrappedType, int dimension){
+	public ArrayType(IType wrappedType, int dimension, TypeProvider t){
+		super(t);
 		this.wrappedType = wrappedType;
 		this.dimension = dimension;
 		this.uid = new StringBuffer().append(wrappedType.getUid()).append("[").append(dimension).append("]").toString();

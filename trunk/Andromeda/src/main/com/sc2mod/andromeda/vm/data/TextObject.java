@@ -11,6 +11,7 @@ package com.sc2mod.andromeda.vm.data;
 
 import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
@@ -31,8 +32,8 @@ public class TextObject extends DataObject{
 	}
 
 	@Override
-	public ExprNode getExpression() {
-		return getLiteralExpr(LiteralTypeSE.TEXT);
+	public ExprNode getExpression(TypeProvider tp) {
+		return getLiteralExpr(tp, LiteralTypeSE.TEXT);
 	}
 	
 
@@ -45,7 +46,7 @@ public class TextObject extends DataObject{
 	
 	
 	@Override
-	public IType getType() {
-		return BasicType.TEXT;
+	public IType getType(TypeProvider tp) {
+		return tp.BASIC.TEXT;
 	}
 }

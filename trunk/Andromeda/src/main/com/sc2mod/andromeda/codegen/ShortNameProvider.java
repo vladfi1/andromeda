@@ -89,22 +89,26 @@ public class ShortNameProvider implements INameProvider{
 	private int strNum = 0;
 
 	private char[] result = new char[5];
+
+
+	private IndexInformation indexInfo;
 	
 	/**
 	 * Generates a short name provider with an individual number of reserved local names.
 	 * @param numNamesReservedForLocals number of (extra short) names reserved for locals
 	 */
-	public ShortNameProvider(int numNamesReservedForLocals){
+	public ShortNameProvider(int numNamesReservedForLocals, IndexInformation indexInfo){
 		for(;numLocals<numNamesReservedForLocals;numLocals++){
 			localNames[numLocals] = generate();
 		}	
+		this.indexInfo = indexInfo;
 	}
 	
 	/**
 	 * Standard constructor with default number of reserved names for locals.
 	 */
-	public ShortNameProvider() {
-		this(DEFAULT_NUM_NAMES_RESERVED_FOR_LOCALS);
+	public ShortNameProvider(IndexInformation indexInfo) {
+		this(DEFAULT_NUM_NAMES_RESERVED_FOR_LOCALS, indexInfo);
 	}
 	
 	private String generate(){
@@ -195,7 +199,7 @@ public class ShortNameProvider implements INameProvider{
 		if(decl.isStatic()){
 			return generateCheckDisallowed();
 		} else {
-			return getLocalName(decl.getFieldIndex());
+			return getLocalName(indexInfo.getFieldIndex(decl));
 		}
 	}
 
@@ -213,14 +217,6 @@ public class ShortNameProvider implements INameProvider{
 	public String getLocalNameRaw(String name, int index) {
 		return getLocalName(index);
 	}
-	
-	public static void main(String[] args){
-		ShortNameProvider s = new ShortNameProvider(0);
-		long time = System.currentTimeMillis();
-		for(int i=DEFAULT_NUM_NAMES_RESERVED_FOR_LOCALS;i<20000;i++){
-			s.generate();
-		}
-		System.out.println((System.currentTimeMillis()-time) + " ms");
-	}
+
 
 }

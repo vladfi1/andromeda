@@ -47,7 +47,7 @@ public class InstanceLimitChecker {
 		if(c.isStatic())
 			throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_INSTANCELIMIT).at(instanceLimit)
 				.raiseUnrecoverable();
-		if(instanceLimit.getInferedType()!=BasicType.INT)
+		if(instanceLimit.getInferedType()!=env.typeProvider.BASIC.INT)
 			throw Problem.ofType(ProblemId.WRONGLY_TYPED_INSTANCELIMIT).at(instanceLimit).details(instanceLimit.getInferedType().getUid())
 				.raiseUnrecoverable();
 		DataObject val = instanceLimit.getValue();

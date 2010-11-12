@@ -13,12 +13,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import com.sc2mod.andromeda.environment.Util;
+import com.sc2mod.andromeda.environment.StructureUtil;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -39,8 +40,8 @@ public abstract class RecordTypeImpl extends DeclaredTypeImpl implements IRecord
 
 	private int byteSize = -1;
 	
-	public RecordTypeImpl(GlobalStructureNode g, IScope s) {
-		super(g,s);
+	public RecordTypeImpl(GlobalStructureNode g, IScope s, TypeProvider t) {
+		super(g,s,t);
 	}
 	
 	@Override

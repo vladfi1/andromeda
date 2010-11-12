@@ -12,12 +12,12 @@ package com.sc2mod.andromeda.notifications;
 import java.io.IOException;
 
 import com.sc2mod.andromeda.parsing.Source;
-import com.sc2mod.andromeda.parsing.CompilationFileManager;
+import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class LazySourceLocation implements SourceLocation {
 
-	private CompilationFileManager env;
+	private SourceManager env;
 	private int column = -1;
 	private int line = -1;
 	private int offset;
@@ -27,11 +27,11 @@ public class LazySourceLocation implements SourceLocation {
 	private SourceLocationContent loadedLocation;
 	private String description;
 	
-	public LazySourceLocation(SyntaxNode sn, CompilationFileManager env){
+	public LazySourceLocation(SyntaxNode sn, SourceManager env){
 		this(sn.getLeftPos(),sn.getRightPos(),env);
 	}
 	
-	public LazySourceLocation(int left, int right, CompilationFileManager env){
+	public LazySourceLocation(int left, int right, SourceManager env){
 		this.env = env;
 		offset = (left&0x00FFFFFF);
 		length = (right&0x00FFFFFF)-offset;

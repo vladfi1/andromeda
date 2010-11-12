@@ -10,8 +10,8 @@ public abstract class UnscopedType extends TypeImpl {
 	/**
 	 * Unscoped types have no scope...
 	 */
-	protected UnscopedType() {
-		super(null);
+	protected UnscopedType(TypeProvider t) {
+		super(null,t);
 	}
 	
 	/**

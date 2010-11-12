@@ -43,7 +43,7 @@ public class CompilationResult {
 	 * Not to be called from anywhere else!
 	 * @param problem the problem that occurred
 	 */
-	public void registerProblem(Problem problem) {
+	public synchronized void registerProblem(Problem problem) {
 		problems.add(problem);
 		switch(problem.getSeverity()){
 		case ERROR:

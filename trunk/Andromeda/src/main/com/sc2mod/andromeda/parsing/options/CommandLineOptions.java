@@ -105,7 +105,7 @@ public class CommandLineOptions {
 			} else {
 				File f = new File(s);
 				Files.checkForFile(f);
-				files.add(new FileSource(f));
+				files.add(new FileSource(f,null));
 			}
 		}
 	}

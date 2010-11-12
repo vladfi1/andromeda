@@ -36,6 +36,8 @@ public interface IType extends IScope, IScopedElement{
 	
 	TypeCategory getCategory();
 	
+	TypeProvider getTypeProvider();
+	
 	/**
 	 * Returns iff a type can be cast implicitly to antoher type (i.e. without an explicit type cast).
 	 * 

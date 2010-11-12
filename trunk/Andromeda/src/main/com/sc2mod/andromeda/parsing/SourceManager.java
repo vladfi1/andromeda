@@ -26,6 +26,7 @@ import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.notifications.SourceLocationContent;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
+import com.sc2mod.andromeda.util.Pair;
 
 /**
  * The Compilation Environment stores all data that arises during a compilation run
@@ -33,10 +34,10 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
  * @author gex
  *
  */
-public class CompilationFileManager {
+public class SourceManager {
 
-	private HashMap<Integer,Source> sources = new HashMap<Integer,Source>();
-	private HashMap<String,Source> sourcesByPath = new HashMap<String,Source>();
+	private HashMap<Integer,SourceInfo> sources = new HashMap<Integer,SourceInfo>();
+	private HashMap<String,SourceInfo> sourcesByPath = new HashMap<String,SourceInfo>();
 	private List<String> lookupDirs = new ArrayList<String>();
 	private List<String> libDirs = new ArrayList<String>();
 	private File nativeDir;
@@ -49,7 +50,7 @@ public class CompilationFileManager {
 	
 	
 
-	public CompilationFileManager(Configuration options){
+	public SourceManager(Configuration options){
 		this.options = options;
 	}
 
@@ -83,34 +84,57 @@ public class CompilationFileManager {
 	}
 	
 	public Source getSourceById(int id){
+		return sources.get(id).getSource();
+	}
+	
+	public synchronized SourceInfo getSourceInfoById(int id){
 		return sources.get(id);
 	}
 	
-	public SourceReader getReader(Source f, InclusionType inclusionType){
+	/**
+	 * Gets a reader onto a specific source under a specific inclusion type
+	 * or null if the resource has already been read. 
+	 * The source is also added to the "known and read" sources.
+	 * 
+	 * Only one reader can be gotten for one source (to prevent double includes).
+	 * Every subsequent call to the same source will return null.
+	 * 
+	 * If the source is null or does not exist, a FileNotFound exception is thrown.
+	 * 
+	 * @param f the source to be read.
+	 * @param inclusionType the inclusion type.
+	 * @return
+	 */
+	public synchronized SourceReader getReader(Source f, InclusionType inclusionType) throws FileNotFoundException{
+		if(f == null || !f.exists()){
+			throw new FileNotFoundException("The source " + f.getFullPath() + " does not exist");
+		}
 		if(sourcesByPath.containsKey(f.getFullPath())){
 			//This resource was already included! Do not get a reader on it.
 			return null;
 		}
+		int id = count++;
+		SourceInfo info = new SourceInfo(f,id,inclusionType);
 		SourceReader r;
 		try {
-			r = new SourceReader(this,f, inclusionType, count++);
+			r = new SourceReader(this,f, inclusionType, id);
 		} catch (IOException e) {
 			throw ErrorUtil.raiseInternalProblem(e);
 		}
 		bytesRead += f.length();
-		sources.put(r.getFileId(), f);
-		sourcesByPath.put(f.getFullPath(), f);
+		sources.put(r.getFileId(), info);
+		sourcesByPath.put(f.getFullPath(), info);
 		return r;
 	}
 	
-	private Source checkPathsForFile(String filePath, List<String> lookupDirs){
+	private Source checkPathsForFile(String filePath, String pkgName, List<String> lookupDirs){
 		Source toRead = null;
 		for(String base: lookupDirs){
-			toRead = new FileSource(base + "/" + filePath);
+			toRead = new FileSource(base + "/" + filePath, pkgName);
 			if(!(filePath.endsWith(".galaxy")||filePath.endsWith(".a"))){
-				toRead = new FileSource(base + "/" + filePath + ".a");
+				toRead = new FileSource(base + "/" + filePath + ".a", pkgName);
 				if(!toRead.exists()){
-					toRead = new FileSource(base + "/" + filePath + ".galaxy");
+					toRead = new FileSource(base + "/" + filePath + ".galaxy", pkgName);
 				}
 			}
 			if(toRead.exists()){
@@ -120,15 +144,21 @@ public class CompilationFileManager {
 		return toRead;
 	}
 	
-	public Source resolveFile(String filePath, InclusionType includeType){
+//	public synchronized boolean hasReadSource(Source s){
+//		return sourcesByPath.containsKey(s.getFullPath());
+//	}
+	
+	private Pair<Source,InclusionType> resolveFile(String filePath, InclusionType includeType){
 		Source toRead = null;
+		String pkgName = filePathToPkgName(filePath);
 		
 		//If this is a library include we only check the lib folders...
 		if(includeType == InclusionType.NATIVE){		
 			if(!filePath.endsWith(".galaxy")) filePath = filePath.concat(".galaxy");
-			toRead = new FileSource(nativeDir.getAbsolutePath() + "/" + filePath);
-					
-			return toRead;
+			toRead = new FileSource(nativeDir.getAbsolutePath() + "/" + filePath, pkgName);
+			if(toRead == null)
+				return null;
+			return new Pair<Source, InclusionType>(toRead, InclusionType.NATIVE);
 		} else if(includeType != InclusionType.LIBRARY){
 			
 			//First we look in the map file (if one is specified)
@@ -137,50 +167,40 @@ public class CompilationFileManager {
 			}
 			
 			//Next we look in the lookup paths
-			toRead = checkPathsForFile(filePath,this.lookupDirs);
-			if(toRead != null) return toRead;
+			toRead = checkPathsForFile(filePath, pkgName, this.lookupDirs);
+			if(toRead != null) return new Pair<Source, InclusionType>(toRead, InclusionType.INCLUDE);
 		} 
 		
 		//Finally the lib paths
-		toRead = checkPathsForFile(filePath, libDirs);
+		toRead = checkPathsForFile(filePath, pkgName, libDirs);
+		
+		//Not found :(
+		if(toRead == null)
+			return null;
+		
+		return new Pair<Source, InclusionType>(toRead, InclusionType.LIBRARY);
+	}
+	
+	private String filePathToPkgName(String filePath) {
+		// FIXME Implement correctly
+		return filePath;
+	}
+
+	public synchronized Pair<Source, InclusionType> resolveInclude(String fileName, SyntaxNode where){
+		int fileId = (where.getLeftPos()&0xFF000000);
+		if(!sources.containsKey(fileId)) throw new InternalError("Unknown file id!");
+		SourceInfo f = sources.get(fileId);
+		Pair<Source, InclusionType> toRead = resolveFile(fileName, f.getType());
+		if(toRead==null||!toRead._1.exists())
+			return null;
 		
 		return toRead;
 	}
-
-	private static Pattern includePattern = Pattern.compile("include\\s*\\\"(.*)\\\"");
-	private static Pattern importPattern = Pattern.compile("import\\s*(.*)\\;");
-	public SourceReader getReaderFromInclude(String s,int left, int right, InclusionType includeType, boolean importSyntax) {
-		/*
-		 * Note: Every error here is unrecoverable, because missing an included file
-		 * normally generates many following mistakes (cause all content in it is not found)
-		 */
-		int fileId = (left&0xFF000000);
-		if(!sources.containsKey(fileId)) throw new InternalError("Unknown file id!");
-		Source f = sources.get(fileId);
-		Matcher m;
-		if(importSyntax){
-			s = s.replace('.', '/');
-			m = importPattern.matcher(s);
-			if(!m.matches())
-				throw Problem.ofType(ProblemId.MALFORMED_IMPORT).at(left,right).details(s)
-					.raiseUnrecoverable();	
-		} else {
-			m = includePattern.matcher(s);
-			if(!m.matches())
-				throw Problem.ofType(ProblemId.MALFORMED_INCLUDE).at(left,right).details(s)
-					.raiseUnrecoverable();		
-		}
-				
-		Source toRead = resolveFile(m.group(1), includeType);
-		
-		try{
-			if(toRead==null||!toRead.exists()) throw new FileNotFoundException();
-			return getReader(toRead,includeType);
-		}catch(FileNotFoundException e){
-			throw Problem.ofType(ProblemId.INCLUDED_FILE_NOT_FOUND).at(left,right).details(m.group(1))
-				.raiseUnrecoverable();
-		}
-	}
+	
+//	public SourceReader getReaderFromInclude(String fileName,SyntaxNode where) throws FileNotFoundException {
+//		Pair<Source, InclusionType> toRead = resolveInclude(fileName, where);
+//		return getReader(toRead._1,toRead._2);
+//	}
 
 
 	public String getSourceInformation(SyntaxNode node){
@@ -195,7 +215,7 @@ public class CompilationFileManager {
 		String result = "";
 		if(!sources.containsKey(fileId)) return "Unknown file id!";
 		try {
-			result = new SourceLocationContent(sources.get(fileId), pos, length).toString();
+			result = new SourceLocationContent(sources.get(fileId).getSource(), pos, length).toString();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "-- SOURCE INFORMATION COULDN'T BE READ --";

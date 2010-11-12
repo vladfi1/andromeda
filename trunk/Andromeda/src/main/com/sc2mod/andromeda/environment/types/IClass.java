@@ -23,7 +23,7 @@ import com.sc2mod.andromeda.environment.IIdentifiable;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.parsing.CompilationFileManager;
+import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
@@ -71,8 +71,6 @@ public interface IClass extends IReferentialType {
 	public void setInstanceLimit(int instanceLimit);
 	
 	public int getInstanceLimit();
-
-	public int getClassIndex();
 	
 	public ArrayList<Variable> getHierarchyFields();
 

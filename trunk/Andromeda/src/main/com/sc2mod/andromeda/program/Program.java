@@ -134,6 +134,7 @@ public class Program {
 
 	public static void main(String[] args) throws URISyntaxException {
 				
+
 		//Get application directory
 		if(appDirectory==null){
 			appDirectory = new File(ClassLoader.getSystemResource(".").toURI());
@@ -173,28 +174,14 @@ public class Program {
 		
 		
 		if(invokeWorkflow(files, o, Language.ANDROMEDA).getResult().isSuccessful()){
-			System.out.println("");
+
+			//again
 			CompilationEnvironment cr = invokeWorkflow(files, o, Language.ANDROMEDA);
-			SourceFileNode st = cr.getSyntaxTree();
-			VoidVisitorAdapter va = new VoidVisitorAdapter() {
-			int x;
-				@Override
-	
-			public void visitDefault(SyntaxNode sn) {
-					sn.childrenAccept(this);
-					x++;
-			}
-				@Override
-					public String toString() {
-					return x + "";
-				}
-			};
-			StopWatch sw = new StopWatch();
-			for(int i = 0;i < 1000;i++){
-				st.accept(va);
-			}
-			System.out.println(va.toString());
-			sw.printTime("TIME: ");
+			//again
+			 cr = invokeWorkflow(files, o, Language.ANDROMEDA);
+			//again
+			 cr = invokeWorkflow(files, o, Language.ANDROMEDA);
+			
 			System.exit(0);
 		} else {
 			System.exit(-1);

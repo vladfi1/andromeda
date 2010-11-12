@@ -20,6 +20,7 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeAliasDeclNode;
 import com.sc2mod.andromeda.util.Pair;
 
@@ -84,7 +85,7 @@ public class SemanticAnalysisWorkflow {
 		//Create the semantics environment
 		Environment env = new Environment();
 		compEnv.setSemanticEnvironment(env);
-		SourceFileNode syntax = compEnv.getSyntaxTree();
+		SourceListNode syntax = compEnv.getSyntaxTree();
 		TransientAnalysisData analysisData = new TransientAnalysisData();
 		
 		//Cannot resolve generics until members have copied down
@@ -126,8 +127,8 @@ public class SemanticAnalysisWorkflow {
 		env.typeProvider.resolveSystemTypes();
 		
 		
-//		// 4.) Analyze statements and expressions
-//		//Infer expression types, resolve function calls and field accesses
+		// 4.) Analyze statements and expressions
+		//Infer expression types, resolve function calls and field accesses
 		StatementAnalysisVisitor codeAnalysis = new StatementAnalysisVisitor(env,compEnv.getConfig());
 		syntax.accept(codeAnalysis);	
 		
@@ -136,10 +137,6 @@ public class SemanticAnalysisWorkflow {
 		
 		//Check class instance limits
 		new InstanceLimitChecker(analysisData, env).doChecks();
-
-//		//FIXME: Do this somewhere else 
-		// Generate function indices
-//		env.generateFunctionIndex();
 		
 		return env;
 		

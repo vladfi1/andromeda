@@ -13,7 +13,7 @@ import java.io.PrintStream;
 
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.SourceLocation;
-import com.sc2mod.andromeda.parsing.CompilationFileManager;
+import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.util.Debug;
 

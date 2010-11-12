@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
+import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -20,10 +21,10 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
  */
 @Deprecated
 public class StaticDecl extends SpecialType {
-
+	//FIXME Remove this calss
 	private IType wrappedType;
 	public StaticDecl(IType wrappedType) {
-		super("type");
+		super("type", null);
 		this.wrappedType = wrappedType;
 		
 	}

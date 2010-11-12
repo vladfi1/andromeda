@@ -32,7 +32,7 @@ public class WriteXMLPhase extends Phase{
 		//Output structure to xml if desired to
 		if(xmlStructure != null) {
 			try {
-				new StructureXMLVisitor(options).genXml(env.getFileManager(), xmlStructure, env.getSyntaxTree());
+				new StructureXMLVisitor(options).genXml(env.getSourceManager(), xmlStructure, env.getSyntaxTree());
 			} catch (XMLStreamException e) {
 				ErrorUtil.raiseExternalProblem(e, false);
 			} catch (IOException e) {

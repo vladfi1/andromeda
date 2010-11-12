@@ -12,6 +12,7 @@ package com.sc2mod.andromeda.vm.data;
 import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.types.ClosureType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.notifications.ErrorUtil;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
@@ -25,12 +26,12 @@ public class FunctionObject extends DataObject{
 	}
 	
 	@Override
-	public ExprNode getExpression() {
-		return getLiteralExpr(LiteralTypeSE.INT);
+	public ExprNode getExpression(TypeProvider tp) {
+		return getLiteralExpr(tp, LiteralTypeSE.INT);
 	}
 
 	@Override
-	public IType getType() {
+	public IType getType(TypeProvider tp) {
 		//TODO: What should this return for func objects?
 		throw ErrorUtil.defaultInternalError();
 		//return funcDecl.getType();

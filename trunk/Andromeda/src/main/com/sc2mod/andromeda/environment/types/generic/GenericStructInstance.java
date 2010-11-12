@@ -6,6 +6,7 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IStruct;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
@@ -15,8 +16,8 @@ public class GenericStructInstance extends GenericTypeInstance implements IStruc
 
 	private IStruct genericParent;
 
-	public GenericStructInstance(IStruct struct, Signature s) {
-		super(struct,s);
+	public GenericStructInstance(IStruct struct, Signature s, TypeProvider t) {
+		super(struct,s, t);
 		this.genericParent = struct;
 	}
 

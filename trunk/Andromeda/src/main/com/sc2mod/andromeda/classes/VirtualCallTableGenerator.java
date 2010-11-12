@@ -18,8 +18,10 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.SpecialType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
+import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
@@ -44,9 +46,9 @@ public abstract class VirtualCallTableGenerator {
 	private INameProvider nameProvider;
 	private IClass metaClass;
 	private String virtualCallerName;
-
+	protected final BasicTypeSet BASIC;
 	
-	public VirtualCallTableGenerator(IClass metaClass,INameProvider nameProvider, CodeGenerator generator, SimpleBuffer flushTo, Configuration options) {
+	public VirtualCallTableGenerator(BasicTypeSet basic, IClass metaClass,INameProvider nameProvider, CodeGenerator generator, SimpleBuffer flushTo, Configuration options) {
 		super();
 		this.flushTo = flushTo;
 		this.newLine = options.getParamBool(Parameter.CODEGEN_NEW_LINES);
@@ -54,6 +56,7 @@ public abstract class VirtualCallTableGenerator {
 		this.generator = generator;
 		this.nameProvider = nameProvider;
 		this.metaClass = metaClass;
+		this.BASIC = basic;
 		this.insertDescriptionComments = options.getParamBool(Parameter.CODEGEN_DESCRIPTION_COMMENTS);
 	}
 	
@@ -101,7 +104,7 @@ public abstract class VirtualCallTableGenerator {
 		
 		if(methodLine.isEmpty()) return;
 		Operation m = methodLine.get(0);
-		returnsVoid = m.getReturnType()==SpecialType.VOID;
+		returnsVoid = m.getReturnType()== BASIC.VOID;
 		
 		//Assemble params
 		String comment = null;
@@ -119,7 +122,7 @@ public abstract class VirtualCallTableGenerator {
 		
 		buffer.append("{");
 		if(newLine)buffer.newLine(useIndent?1:0);
-		buffer.append(BasicType.INT.getGeneratedName()).append(" ").append(deciderName).append("=");
+		buffer.append(BASIC.INT.getGeneratedName()).append(" ").append(deciderName).append("=");
 		buffer.append(nameProvider.getLocalNameRaw("this", m.getParams().length)).append("->");
 		buffer.append(((IClass)m.getContainingType()).getHierarchyFields().get(1).getGeneratedName()).append("->");
 		buffer.append(ResolveUtil.rawResolveField(metaClass, "vct", metaClass.getDefinition(), false).getGeneratedName());

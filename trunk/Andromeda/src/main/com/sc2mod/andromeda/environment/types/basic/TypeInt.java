@@ -12,20 +12,21 @@ package com.sc2mod.andromeda.environment.types.basic;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.NonReferentialType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class TypeInt extends NonReferentialType {
 
-	public TypeInt() {
-		super("int");
+	public TypeInt(TypeProvider t) {
+		super("int",t);
 	}
 	
 	@Override
 	public boolean canImplicitCastTo(IType toType) {
 		return toType == this
-			|| toType == FLOAT;
+			|| toType == tprov.BASIC.FLOAT;
 	}
 	
 	@Override
@@ -46,7 +47,7 @@ public class TypeInt extends NonReferentialType {
 	@Override
 	public IType getCommonSupertype(IType t) {
 		IType base = t.getBaseType();
-		if(base==BasicType.FLOAT) return t;
+		if(base==tprov.BASIC.FLOAT) return t;
 		return super.getCommonSupertype(t);
 	}
 

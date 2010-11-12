@@ -3,6 +3,8 @@ package com.sc2mod.andromeda.parser;
 
 import java.util.Stack;
 
+import com.sc2mod.andromeda.util.StopWatch;
+
 /** This class implements a skeleton table driven LR parser.  In general,
  *  LR parsers are a form of bottom up shift-reduce parsers.  Shift-reduce
  *  parsers act by shifting input onto a parse stack until the Symbols 
@@ -540,12 +542,12 @@ public abstract class LRParser {
       production_tab = production_table();
       action_tab     = action_table();
       reduce_tab     = reduce_table();
-
       /* initialize the action encapsulation object */
       init_actions();
 
       /* do user initialization */
       user_init();
+      
 
       /* get the first token */
       cur_token = scan(); 

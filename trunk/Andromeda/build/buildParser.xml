@@ -63,13 +63,13 @@
  	 <cup srcfile="${langPath}/galaxy.cup" destdir="${srcOut}" interface="true" parser="GalaxyGenParser"/>
   </target>
 
-  <target name="jflex" depends="cup">
+  <target name="jflex" depends="init">
   	<jflex file="${langPath}/unicode.flex" destdir="${srcOut}"/>
-    <jflex file="${langPath}/andromeda.flex" destdir="${srcOut}" skeleton="${langPath}/skeleton/flex/skeleton.nested"/>
     <jflex file="${langPath}/galaxy.flex" destdir="${srcOut}" skeleton="${langPath}/skeleton/flex/skeleton.nested"/>
+    <jflex file="${langPath}/andromeda.flex" destdir="${srcOut}" skeleton="${langPath}/skeleton/flex/skeleton.nested"/>
   </target>
 
-  <target name="build parser" depends="jflex">
+  <target name="build parser" depends="jflex, cup">
   </target>
 	
   <target name="build syntax nodes" depends="enrich">

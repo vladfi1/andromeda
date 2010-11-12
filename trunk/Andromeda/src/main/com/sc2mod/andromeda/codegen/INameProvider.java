@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.Variable;
+import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 
@@ -35,12 +36,13 @@ import com.sc2mod.andromeda.parsing.options.Parameter;
 public interface INameProvider {
 	
 	public static class Factory{
-		public static INameProvider createProvider(Environment semEnv, Configuration o){
+		public static INameProvider createProvider(CompilationEnvironment env, Configuration o){
 			boolean shortenVarNames = o.getParamBool(Parameter.CODEGEN_SHORTEN_VAR_NAMES);
+			IndexInformation indexInfo = env.getTransientData().getIndexInformation();
 			if(shortenVarNames){
-				return new ShortNameProvider();
+				return new ShortNameProvider(indexInfo);
 			} else {
-				return new LongNameProvider(semEnv);
+				return new LongNameProvider(indexInfo,env.getSemanticEnvironment());
 			}
 		}
 	}

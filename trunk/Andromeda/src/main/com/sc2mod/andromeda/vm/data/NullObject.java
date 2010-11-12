@@ -9,8 +9,9 @@
  */
 package com.sc2mod.andromeda.vm.data;
 
-import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
@@ -19,7 +20,6 @@ import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
 public class NullObject extends DataObject{
 	
 	public static final NullObject INSTANCE = new NullObject();
-	private static final LiteralExprNode NULL_LITERAL = INSTANCE.getLiteralExpr(LiteralTypeSE.NULL);
 	private NullObject(){}
 	
 	@Override
@@ -29,13 +29,13 @@ public class NullObject extends DataObject{
 
 	
 	@Override
-	public ExprNode getExpression() {
-		return NULL_LITERAL;
+	public ExprNode getExpression(TypeProvider tp) {
+		return INSTANCE.getLiteralExpr(tp,LiteralTypeSE.NULL);
 	}
 	
 	@Override
-	public IType getType() {
-		return SpecialType.NULL;
+	public IType getType(TypeProvider tp) {
+		return tp.BASIC.NULL;
 	}
 
 	

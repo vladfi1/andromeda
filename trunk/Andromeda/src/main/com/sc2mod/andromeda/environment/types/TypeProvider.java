@@ -21,6 +21,7 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.GlobalScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
 import com.sc2mod.andromeda.environment.types.generic.GenericMemberGenerationVisitor;
 import com.sc2mod.andromeda.environment.types.generic.TypeParamInstanciationVisitor;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
@@ -65,10 +66,17 @@ public class TypeProvider {
 	private TypeResolver resolver = new TypeResolver(this);
 	private TypeParamInstanciationVisitor paramInstanciator = new TypeParamInstanciationVisitor(this);
 	
+	public final BasicTypeSet BASIC;
+	
+	private int nextTypeIndex = 1;
+	public int getNextTypeIndex(){
+		return nextTypeIndex++;
+	}
+	
 	public TypeProvider(Environment env){
 		globalScope = env.getTheGlobalScope();
-		BasicType.registerBasicTypes(this);
-		systemTypes = new AndromedaSystemTypes(env);
+		BASIC = new BasicTypeSet(this);
+		systemTypes = new AndromedaSystemTypes(env,this);
 	}
 	
 	/*
@@ -147,18 +155,18 @@ public class TypeProvider {
 	}
 	
 	public void registerStruct(StructDeclNode d, IScope scope) {
-		registerRecordType(new StructImpl(d,scope));
+		registerRecordType(new StructImpl(d,scope,this));
 	}
 
 	public void registerClass(ClassDeclNode d, IScope scope) {
 		IClass c;		
-		c = new ClassImpl(d,scope);
+		c = new ClassImpl(d,scope,this);
 		registerRecordType(c);
 		classes.add(c);
 	}
 
 	public void registerInterface(InterfaceDeclNode d, IScope scope) {
-		registerRecordType(new InterfaceImpl(d,scope));
+		registerRecordType(new InterfaceImpl(d,scope,this));
 	}
 	
 	public void registerRootRecord(IRecordType class1) {
@@ -174,7 +182,7 @@ public class TypeProvider {
 	public void registerTypeExtension(TypeExtensionDeclNode typeExtension, IScope scope) {
 		
 		//Create it
-		IExtension e = new ExtensionImpl(typeExtension,scope);
+		IExtension e = new ExtensionImpl(typeExtension,scope,this);
 		
 		//Entry into scope
 		registerSimpleType(e);
@@ -213,7 +221,7 @@ public class TypeProvider {
 		
 		ClosureType fp = funcs.get(returnType);
 		if(fp == null){
-			fp = new ClosureType(params,returnType);
+			fp = new ClosureType(params,returnType,this);
 			funcs.put(returnType, fp);
 		}
 		return fp;
@@ -242,7 +250,7 @@ public class TypeProvider {
 		
 		IType type = t.get(dim);
 		if(type == null){
-			t.put(dim,type = new ArrayType(wrappedType, dim));
+			t.put(dim,type = new ArrayType(wrappedType, dim,this));
 		}
 		return type;
 	}
@@ -285,7 +293,7 @@ public class TypeProvider {
 		IType result = pointerTypes.get(pointsTo);
 		//Type does not exist yet? Create and register
 		if(result == null){
-			pointerTypes.put(pointsTo, result = new PointerType(pointsTo));
+			pointerTypes.put(pointsTo, result = new PointerType(pointsTo,this));
 		}
 		return result;
 	}
@@ -354,31 +362,7 @@ public class TypeProvider {
 	
 	//==========================================
 	//			GARBAGE: DOES NOT BELONG HERE, MOVE OR DELETE			
-	//==========================================
-
-
-
-
-	//TODO: Do this somewhere else
-//	public void generateClassAndInterfaceIndex() {
-//		for(IRecordType r: rootRecordTypes){
-//			TypeCategory category = r.getCategory();
-//			switch(category){
-//			case CLASS:
-//				IClass c = (IClass)r;
-//				c.generateClassIndex(this);
-//				c.generateImplementsTransClosure();
-//				break;
-//			case INTERFACE:
-//				((IInterface)r).generateInterfaceIndex(this);
-//				break;
-//			}
-//		}
-//		
-//	
-//	}
-
-
+	//=========================================
 
 
 	public void calcFuncPointerIndices() {
@@ -390,14 +374,7 @@ public class TypeProvider {
 	}
 
 
-	
-	
-	//now done by the name resolver
-//	public Type resolveTypeName(String name){
-//		return types.get(name);
-//		
-//	}
-	
+
 
 
 }

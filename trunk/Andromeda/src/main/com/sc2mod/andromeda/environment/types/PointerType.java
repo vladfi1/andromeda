@@ -17,7 +17,8 @@ public class PointerType extends UnscopedType {
 
 	private IType pointsTo;
 	private String uid;
-	public PointerType(IType child) {
+	public PointerType(IType child, TypeProvider t) {
+		super(t);
 		pointsTo = child;
 		uid = child.getUid() + "*";
 	}

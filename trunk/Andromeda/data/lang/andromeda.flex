@@ -6,7 +6,6 @@
 package com.sc2mod.andromeda.parser;
 
 import com.sc2mod.andromeda.parsing.SourceReader;
-import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
@@ -38,6 +37,7 @@ curInclusionType = ((SourceReader)in).getInclusionType();
   protected int curFile;
   protected InclusionType curInclusionType;
   
+  /*
   private Symbol processInclude(InclusionType inclusionType, boolean isImport){
   	if(curInclusionType == InclusionType.NATIVE){
   		inclusionType = InclusionType.NATIVE;
@@ -55,7 +55,8 @@ curInclusionType = ((SourceReader)in).getInclusionType();
   	if(ar == null) return null;
   	yypushStream(ar);
   	return symbol(includeToken,new SourceFileInfo(curFile,inclusionType,s));
-  }
+  } 
+  */
 
   
   private Symbol symbol(int type) {
@@ -127,9 +128,11 @@ Exponent = [eE] [+-]? [0-9]+
 StringCharacter = [^\r\n\"\\]
 SingleCharacter = [^\r\n\'\\]
 
+/*
 IncludeFile = [ \t\f]*\"[a-zA-Z0-9_\.\/-]+\"
 LibIncludeFile = [ \t\f]*\<[a-zA-Z0-9_\.\/-]+\>
 LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
+*/
 
 %state STRING, CHARLITERAL
 
@@ -169,6 +172,7 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   "default"                      { return symbol(DEFAULT); }
   "implements"                   { return symbol(IMPLEMENTS); }
   "import"                       { return symbol(IMPORT); }
+  "include"						 { return symbol(INCLUDE); }
   "instanceof"                   { return symbol(INSTANCEOF); }
   "int"                          { return symbol(INT); }
   "fixed"                        { return symbol(FIXED); }
@@ -301,14 +305,17 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   {Identifier}                   { return symbol(IDENTIFIER, yytext()); }  
   
   /* include */
+  /*
   "include"{IncludeFile}   { Symbol s = processInclude(InclusionType.INCLUDE,false);
   							 if(s != null) return s; }
   "include"{LibIncludeFile} { Symbol s = processInclude(InclusionType.LIBRARY,false);
   							 if(s != null) return s; }
   "import"{LibImportFile} { Symbol s = processInclude(InclusionType.LIBRARY,true);
   							 if(s != null) return s; }
+  							 
+   */
 
-	<<EOF>>        { if (yymoreStreams()){ yypopStream(); return symbol(INCLUDE_END);}else return symbol(EOF); }
+	<<EOF>>        { if (yymoreStreams()){ yypopStream(); throw new Error("Stacked readers?"); }else return symbol(EOF); }
   
  
 }

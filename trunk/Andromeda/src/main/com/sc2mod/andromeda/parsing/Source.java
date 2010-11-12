@@ -52,4 +52,22 @@ public abstract class Source {
 	 */
 	public abstract String getTypeName();
 	
+	/**
+	 * The anticipated language of this source.
+	 * For files for example, this is determined by the file extension.
+	 * @return
+	 */
+	public abstract Language getAnticipatedLanguage();
+	
+	/**
+	 * Returns the path of this file in the source folder, converted to dot
+	 * notation or null if this is no file source.
+	 * 
+	 * If the source folder is /a/b/c and the file's name is /a/b/c/d/e/F.a
+	 * then this method would return d.e.F
+	 * 
+	 * 
+	 */
+	public abstract String getPathInSourceFolder();
+	
 }

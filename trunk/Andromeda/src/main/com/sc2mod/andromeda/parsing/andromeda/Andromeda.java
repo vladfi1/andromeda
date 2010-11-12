@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
-import com.sc2mod.andromeda.parsing.CompilationFileManager;
+import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.parsing.FileSource;
 import com.sc2mod.andromeda.parsing.IParser;
 import com.sc2mod.andromeda.parsing.InclusionType;
@@ -32,7 +32,7 @@ public class Andromeda extends LanguageImpl{
 	@Override
 	public IParser createParser(CompilationEnvironment env) {
 		Configuration cfg = env.getConfig();
-		CompilationFileManager fileManager = env.getFileManager();
+		SourceManager fileManager = env.getSourceManager();
 		File mapIn = cfg.getParamFile(Parameter.FILES_MAP_IN);
 		List<Source> filesIn = env.getParserInput().get(InclusionType.MAIN);
 		

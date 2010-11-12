@@ -4,10 +4,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
-import com.sc2mod.andromeda.parsing.CompilationFileManager;
+import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 
 public enum ProblemId {
+	
+	
 	
 	//**** MISC ****
 	INTERNAL_PROBLEM("An unexpected internal problem has occurred which indicates a bug. Please file a bug report!\n"+
@@ -35,6 +37,7 @@ public enum ProblemId {
 	//**** INCLUSION ERRORS ****
 	MALFORMED_INCLUDE ("Malformed include directive: %s"),
 	MALFORMED_IMPORT ("Malformed import directive: %s"),
+	INPUT_FILE_NOT_FOUND ("The input file '%s' was not found"),
 	INCLUDED_FILE_NOT_FOUND ("The included file '%s' was not found"),
 	MISSING_NATIVE_LIB ("Missing native library file '%s'"),
 
@@ -204,6 +207,8 @@ public enum ProblemId {
 	OVERRIDE_FINAL_METHOD("Cannot override a final method."),
 	OVERRIDE_REDUCED_VISIBILITY("Cannot reduce visibility of overridden method."),
 	OVERRIDE_WITHOUT_OVERRIDE_MODIFIER("The method %s overrides %s but has no 'override' modifier"),
+	OVERRIDE_FORBIDDEN_ELEMENT("Cannot override the %s %s with a %s."),
+	
 	AMBIGUOUS_METHOD_ACCESS("Ambiguous access! There is more than one operation named %s:\n%s"),
 	AMBIGUOUS_METHOD_CALL("This method invocation is ambiguous.\nPossible calls:\n%s\n%s"),
 	CONSTRUCTOR_WITH_RETURN_TYPE("Constructors may not specify a return type"),
@@ -231,11 +236,27 @@ public enum ProblemId {
 	UNCALLED_FUNCTION("The %s is never called."),
 	UNREAD_VARIABLE("The %s %s is never read"),
 	UNWRITTEN_VARIABLE("The %s %s is never written"),
-	UNINITIALIZED_VARIABLE("The %s %s is read but never initialized");
+	UNINITIALIZED_VARIABLE("The %s %s is read but never initialized"), 
+	
+	DEPRECATION(ProblemSeverity.WARNING,"The usage of %s is deprecated."),
+	UNIT_NAME_MISSING(ProblemSeverity.WARNING,"A package declaration should contain a compilation unit name. Otherwise, you cannot reference this compilation unit with imports."), 
+	
+	//TODO: sort these:
+	DUPLICATE_COMPILATION_UNIT("Two compilation units with the same qualified name found.");
 	
 	String message;
+	private ProblemSeverity severity;
 	ProblemId(String message){
+		this(ProblemSeverity.ERROR, message);
+	}
+	
+	ProblemId(ProblemSeverity defaultSeverity, String message){
 		this.message = message;
+		this.severity = defaultSeverity;
+	}
+	
+	public void setSeverity(ProblemSeverity severity){
+		this.severity = severity;
 	}
 	
 	/**
@@ -250,10 +271,8 @@ public enum ProblemId {
 	 */
 	Problem createProblem(CompilationEnvironment srcEnv){
 		
-		//TODO: SET WARNINGS IN Problems
-				
-		//Here, the severity should be looked up and the correct class should be returned.
-		return new Problem(this, srcEnv, ProblemSeverity.ERROR);
+		//TODO: Make options contribute to problem severity again
+		return new Problem(this, srcEnv, severity);
 	}
 	
 	private static final Pattern TOKEN_PATTERN = Pattern.compile("\\%\\w");

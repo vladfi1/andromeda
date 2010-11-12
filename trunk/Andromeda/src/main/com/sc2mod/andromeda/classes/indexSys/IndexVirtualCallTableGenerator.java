@@ -21,8 +21,10 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.SpecialType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
+import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
@@ -50,8 +52,8 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 	private ClassGenerator classGen;
 
 	
-	public IndexVirtualCallTableGenerator(ClassGenerator classGen,IClass metaClass,INameProvider nameProvider, CodeGenerator generator, SimpleBuffer flushTo, Configuration options) {
-		super(metaClass,nameProvider,generator,flushTo,options);
+	public IndexVirtualCallTableGenerator(BasicTypeSet basic, ClassGenerator classGen,IClass metaClass,INameProvider nameProvider, CodeGenerator generator, SimpleBuffer flushTo, Configuration options) {
+		super(basic, metaClass,nameProvider,generator,flushTo,options);
 		this.flushTo = flushTo;
 		this.newLine = options.getParamBool(Parameter.CODEGEN_NEW_LINES);
 		this.useIndent = options.getParamBool(Parameter.CODEGEN_USE_INDENT);
@@ -109,7 +111,7 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 		
 		if(methodLine.isEmpty()) return;
 		Operation m = methodLine.get(0);
-		returnsVoid = m.getReturnType()==SpecialType.VOID;
+		returnsVoid = m.getReturnType()==BASIC.VOID;
 		
 		//Assemble params
 		String comment = null;
@@ -134,8 +136,11 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 		
 		
 		if(newLine)buffer.newLine(useIndent?1:0);
-		buffer.append(BasicType.INT.getGeneratedName()).append(" ").append(deciderName).append("=");
-		buffer.append(metaClass.getNameProvider().getMemoryName()).append("[");
+		buffer.append(BASIC.INT.getGeneratedName()).append(" ").append(deciderName).append("=");
+		buffer.append(metaClass
+				.getNameProvider()
+				.getMemoryName()
+				).append("[");
 		buffer.append(((IClass)m.getContainingType()).getTopClass().getNameProvider().getMemoryName()).append("[");
 		buffer.append(nameProvider.getLocalNameRaw("this", numParams)).append("].");
 		buffer.append(((IClass)m.getContainingType()).getHierarchyFields().get(1).getGeneratedName()).append("].");

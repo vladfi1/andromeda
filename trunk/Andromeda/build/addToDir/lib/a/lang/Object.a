@@ -1,6 +1,6 @@
-package a.lang;
+package a.lang => Object;
 
 /**
 *	The (implicit) top class of all classes.
 */
-public class Object [1] {}
+class Object [1] {}

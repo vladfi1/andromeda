@@ -89,7 +89,7 @@ public class TriggerExtractor
 							} else {
 								name = l.item(0).getTextContent();
 							}
-							out.add(new TriggerSource(source,name,innerNodes.item(j).getTextContent()));
+							out.add(new TriggerSource(source,Language.ANDROMEDA, name,innerNodes.item(j).getTextContent()));
 //							System.out.println("----------");
 //							System.out.println(innerNodes.item(j).getTextContent());
 //							System.out.println("----------");

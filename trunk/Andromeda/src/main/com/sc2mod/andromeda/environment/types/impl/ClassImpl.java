@@ -68,9 +68,6 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	//TODO: Factor out? After all it isn't even used. maybe delete.
 	private HashMap<String,IInterface> interfacesTransClosure;
 	
-	protected int classIndex;
-	protected int minInstanceofIndex;
-	
 	//TODO: Factor out, this is heavily related with code generation.
 	private ArrayList<Variable> hierarchyFields;
 	
@@ -98,8 +95,8 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	private String metaClassName;
 
 	
-	public ClassImpl(ClassDeclNode declaration, IScope scope) {
-		super(declaration, scope);
+	public ClassImpl(ClassDeclNode declaration, IScope scope, TypeProvider t) {
+		super(declaration, scope, t);
 		this.nameProvider = new IndexClassNameProvider(this);
 		interfacesTransClosure = new HashMap<String,IInterface>();
 		this.declaration = declaration;
@@ -168,11 +165,6 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	}
 	
 	@Override
-	public int getClassIndex() {
-		return classIndex;
-	}
-	
-	@Override
 	public ArrayList<Variable> getHierarchyFields() {
 		return hierarchyFields;
 	}
@@ -215,7 +207,7 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	
 	@Override
 	public IType getGeneratedType() {
-		return BasicType.INT;
+		return tprov.BASIC.INT;
 	}
 	
 	@Override
@@ -356,7 +348,7 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 
 	@Override
 	public INamedType createGenericInstance(Signature s) {
-		return new GenericClassInstance(this, s);
+		return new GenericClassInstance(this, s, tprov);
 	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }

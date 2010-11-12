@@ -36,7 +36,7 @@ import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.InclusionType;
-import com.sc2mod.andromeda.parsing.SourceFileInfo;
+import com.sc2mod.andromeda.parsing.SourceInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.BreakStmtNode;
@@ -63,6 +63,7 @@ import com.sc2mod.andromeda.syntaxNodes.LocalVarDeclStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
@@ -123,7 +124,7 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	public CodeGenVisitor(Environment env, Configuration options, INameProvider nameProvider) {
 		super(env, options, nameProvider);
-		this.expressionVisitor = new CodeGenExpressionVisitor(this);
+		this.expressionVisitor = new CodeGenExpressionVisitor(this, env.typeProvider);
 	}
 
 	
@@ -134,7 +135,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		
 	}
 
-	public void generateCode(NameGenerationVisitor ngv, SourceFileNode af) {
+	public void generateCode(NameGenerationVisitor ngv, SourceListNode af) {
 
 		ngv.writeTypedefs(typedefBuffer);
 		typedefBuffer.flushTo(fileBuffer.typedefs, true);
@@ -145,9 +146,9 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	@Override
 	public void visit(SourceFileNode andromedaFile) {
-		SourceFileInfo afi = andromedaFile.getFileInfo();
+		SourceInfo afi = andromedaFile.getSourceInfo();
 		// No names are generated for native libs
-		InclusionType inclType = afi.getInclusionType();
+		InclusionType inclType = afi.getType();
 		if (inclType == InclusionType.NATIVE)
 			return;
 
@@ -164,7 +165,7 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	@Override
 	public void visit(IncludeNode includedFile) {
-		includedFile.getIncludedContent().accept(this);
+		includedFile.getIncludeContent().accept(this);
 	}
 
 	@Override
@@ -355,7 +356,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		}
 
 		// Init header
-		String boolName = BasicType.BOOL.getGeneratedName();
+		String boolName = env.typeProvider.BASIC.BOOL.getGeneratedName();
 		String param1 = nameProvider.getLocalNameRaw("A__1", init.getLocals().length);
 		String param2 = nameProvider.getLocalNameRaw("A__2", init.getLocals().length+1);
 		functionBuffer.append(boolName + " ").append(init.getGeneratedName())

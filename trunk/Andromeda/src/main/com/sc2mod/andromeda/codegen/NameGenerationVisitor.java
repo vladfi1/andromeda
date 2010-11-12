@@ -19,13 +19,14 @@ import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.impl.RecordTypeImpl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.InclusionType;
-import com.sc2mod.andromeda.parsing.SourceFileInfo;
+import com.sc2mod.andromeda.parsing.SourceInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
@@ -41,6 +42,7 @@ import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.MemberDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
@@ -55,25 +57,27 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 	private boolean inLib;
 	
 	private boolean shortenVarNames;
+	private TypeProvider tprov;
 	
 	public INameProvider getNameProvider() {
 		return nameProvider;
 	}
 	
-	public NameGenerationVisitor(INameProvider nameProvider) {
+	public NameGenerationVisitor(TypeProvider tp, INameProvider nameProvider) {
 		this.nameProvider = nameProvider;
+		this.tprov = tp;
 	}
 
-	public NameGenerationVisitor(INameProvider nameProvider, Configuration o) {
+	public NameGenerationVisitor(TypeProvider tp, INameProvider nameProvider, Configuration o) {
 		this.shortenVarNames = o.getParamBool(Parameter.CODEGEN_SHORTEN_VAR_NAMES);
 		this.nameProvider = nameProvider;
+		this.tprov = tp;
 		options = o;
 	}
 	
 	public void prepareNameGeneration() {		
 		if(shortenVarNames){
-			ArrayList<BasicType> bt = BasicType.getBasicTypeList();
-			for(BasicType b: bt){
+			for(BasicType b: tprov.BASIC){
 				b.setGeneratedName(nameProvider.getTypeName(b));
 			}
 		}
@@ -81,21 +85,24 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 	
 	public void writeTypedefs(SimpleBuffer buffer) {
 		if(shortenVarNames){
-			ArrayList<BasicType> bt = BasicType.getBasicTypeList();
 			boolean newLines = options.getParamBool(Parameter.CODEGEN_NEW_LINES);
-			for(BasicType b: bt){
+			for(BasicType b: tprov.BASIC){
 				buffer.append("typedef ").append(b.getName()).append(" ").append(b.getGeneratedName()).append(";");
 				if(newLines) buffer.newLine();
 			}
 		}
 	}
 	
+	@Override
+	public void visit(SourceListNode sourceListNode) {
+		sourceListNode.childrenAccept(this);
+	}
 	
 	@Override
 	public void visit(SourceFileNode andromedaFile) {
-		SourceFileInfo afi = andromedaFile.getFileInfo();
+		SourceInfo afi = andromedaFile.getSourceInfo();
 		//No names are generated for native libs
-		InclusionType inclType = afi.getInclusionType();
+		InclusionType inclType = afi.getType();
 		if(inclType==InclusionType.NATIVE) return;
 		
 		boolean inLibBefore = inLib;

@@ -52,7 +52,7 @@ public class AndromedaTestRun {
 		if(true)return;
 		reset();
 		ArrayList<Source> input = new ArrayList<Source>();
-		input.add(new FileSource(new File("out/test/Andromeda.galaxy").getAbsolutePath()));
+		input.add(new FileSource(new File("out/test/Andromeda.galaxy").getAbsolutePath(),null));
 		CompilationEnvironment result = null;
 		try {
 			result  = Program.invokeWorkflow(input,getDefaultOptions(), Language.GALAXY);

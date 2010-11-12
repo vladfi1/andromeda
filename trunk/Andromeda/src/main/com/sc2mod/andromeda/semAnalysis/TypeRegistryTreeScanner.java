@@ -15,6 +15,7 @@ import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.CompilationUnitIdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
@@ -49,24 +50,25 @@ public class TypeRegistryTreeScanner extends NoResultTreeScanVisitor<IScope>{
 	/**
 	 * Creates a package and registers it in its parent package, or gets
 	 * the package if it already exists.
-	 * @param packageName
+	 * @param id
 	 * @return
 	 */
-	private Package buildPackageFromName(ExprNode packageName) {
-		if(packageName == null) return env.getDefaultPackage();
-		String name = packageName.getName();
+	private Package buildPackageFromName(CompilationUnitIdentifierNode id) {
+		if(id == null) return env.getDefaultPackage();
+		String name = id.getName().getId();
 		
 		//Recursively build or fetch parent package
 		//We can cast to field access here safely since a package decl only consists of field accesses
 		Package parent;
-		if(packageName instanceof NameExprNode){
+		CompilationUnitIdentifierNode prefix = id.getPrefix();
+		if(prefix == null){
 			parent = env.getDefaultPackage();
 		} else {
-			parent = buildPackageFromName(packageName.getLeftExpression());
+			parent = buildPackageFromName(prefix);
 		}
 		
 		//Get or create the package in its parent
-		return parent.addOrGetSubpackage(name,packageName);
+		return parent.addOrGetSubpackage(name,id);
 	}
 		
 	/**
@@ -79,7 +81,7 @@ public class TypeRegistryTreeScanner extends NoResultTreeScanVisitor<IScope>{
 			return env.getDefaultPackage();
 		}
 		
-		ExprNode packageName = packageDecl.getPackageName();
+		CompilationUnitIdentifierNode packageName = packageDecl.getPackageName();
 		return buildPackageFromName(packageName);
 	}
 
@@ -88,12 +90,9 @@ public class TypeRegistryTreeScanner extends NoResultTreeScanVisitor<IScope>{
 	public void visit(SourceFileNode andromedaFile, IScope s) {
 		PackageDeclNode packageDecl = andromedaFile.getPackageDecl();
 		Package p;
-		if(packageDecl == null){
-			p = env.getDefaultPackage();
-		} else {
-			p = buildPackageFromName(andromedaFile.getPackageDecl().getPackageName());
-		}
-		s = new FileScope(andromedaFile.getFileInfo().getFileId()+"",andromedaFile.getFileInfo().getInclusionType(),p);
+		p = buildPackageFromDecl(andromedaFile.getPackageDecl());
+		
+		s = new FileScope(andromedaFile.getSourceInfo().getFileId()+"",andromedaFile.getSourceInfo().getType(),p);
 		andromedaFile.setSemantics(s);
 		andromedaFile.childrenAccept(this,s);
 	}

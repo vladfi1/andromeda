@@ -17,6 +17,7 @@ import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
@@ -34,8 +35,8 @@ public class InterfaceImpl extends ReferentialTypeImpl implements IInterface {
 	private int tableIndex;
 	private ArrayList<IClass> implementingClasses = new ArrayList<IClass>();
 	
-	public InterfaceImpl(InterfaceDeclNode declaration, IScope scope) {
-		super(declaration,scope);
+	public InterfaceImpl(InterfaceDeclNode declaration, IScope scope, TypeProvider t) {
+		super(declaration,scope,t);
 		super.setAbstract();
 		this.declaration = declaration;
 	}

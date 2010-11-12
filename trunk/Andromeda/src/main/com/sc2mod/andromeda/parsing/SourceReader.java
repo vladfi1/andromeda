@@ -16,12 +16,12 @@ public class SourceReader extends FilterReader{
 
 	private int index;
 	private InclusionType inclusionType;
-	private CompilationFileManager environment;
+	private SourceManager environment;
 	public InclusionType getInclusionType() {
 		return inclusionType;
 	}	
 		
-	SourceReader(CompilationFileManager s, Source f, InclusionType inclusionType, int count) throws IOException{
+	SourceReader(SourceManager s, Source f, InclusionType inclusionType, int count) throws IOException{
 		super(f.createReader());
 		this.inclusionType = inclusionType;
 		this.index = count;
@@ -32,7 +32,7 @@ public class SourceReader extends FilterReader{
 		return index<<24;		
 	}
 
-	public CompilationFileManager getSourceEnvironment() {
+	public SourceManager getSourceEnvironment() {
 		return environment;
 	}
 	

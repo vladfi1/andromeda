@@ -3,7 +3,7 @@ package com.sc2mod.andromeda.parser;
 import com.sc2mod.andromeda.syntaxNodes.*;
 import com.sc2mod.andromeda.vm.data.*;
 import com.sc2mod.andromeda.parsing.ParserHelper;
-import com.sc2mod.andromeda.parsing.SourceFileInfo;
+import com.sc2mod.andromeda.parsing.ParserThread;
 
 /**
  * Andromeda language grammar
@@ -86,10 +86,11 @@ terminal SETINSTANCELIMIT;
 terminal KEYOF;
 terminal DOTINLINE;
 terminal EXTENSION;
+terminal INCLUDE;
 
 //Emitted by scanner
-terminal SourceFileInfo INCLUDE_START, IMPORT_START;
-terminal java.lang.Integer INCLUDE_END;
+//terminal SourceFileInfo INCLUDE_START, IMPORT_START;
+//terminal java.lang.Integer INCLUDE_END;
 
 
 non terminal goal;
@@ -97,6 +98,7 @@ non terminal SourceFileNode sourceFile;
 non terminal GlobalStructureNode globalStructure;
 non terminal GlobalVarDeclNode globalVarDeclaration;
 non terminal GlobalFuncDeclNode functionDeclaration;
+non terminal CompilationUnitIdentifierNode compilationUnitIdentifier;
 
 non terminal LiteralNode literal;
 
@@ -115,9 +117,10 @@ non terminal FieldAccessExprNode qualifiedName;
 
 non terminal compilationUnit;
 non terminal PackageDeclNode packageDeclarationOpt, packageDeclaration;
-non terminal GlobalStructureListNode importDeclarationsOpt, importDeclarations;
+non terminal ImportListNode importDeclarationsOpt, importDeclarations;
 non terminal typeDeclarationsOpt, typeDeclarations;
-non terminal IncludeNode importDeclaration;
+non terminal ImportNode importDeclaration;
+non terminal IncludeNode includeDeclaration;
 non terminal singleTypeImportDeclaration;
 non terminal typeImportOnDemandDeclaration;
 non terminal GlobalStructureNode typeDeclaration;
@@ -293,7 +296,8 @@ globalStructure ::= typeDeclaration:f {: RESULT = f; :}
 	|	typeDefinition:f {: RESULT = f; :}
 	|	typeExtension:f {: RESULT = f; :}
 	|	staticInitializer:f {: RESULT = new GlobalStaticInitDeclNode(f); :}
-	|   INCLUDE_START:l sourceFile:a INCLUDE_END:r {: RESULT = new IncludeNode(a); a.setFileInfo(l); RESULT.setPos(lleft,rright); :}
+	|   includeDeclaration:f {: RESULT = f; :}
+//	|   INCLUDE_START:l sourceFile:a INCLUDE_END:r {: RESULT = new IncludeNode(a); a.setFileInfo(l); RESULT.setPos(lleft,rright); :}
 	|	instanceLimit:f {: RESULT = f; :}
 	;
 
@@ -380,12 +384,15 @@ functionDeclaration ::=	methodDeclaration:m {: RESULT = new GlobalFuncDeclNode(m
 
 //Packages
 
-importDeclarationsOpt ::= importDeclarations:i {: RESULT = i; :} | {: RESULT = null; :};
+importDeclarationsOpt ::= 
+		importDeclarations:i {: RESULT = i; :} 
+	|	{: RESULT = null; :}
+	;
 typeDeclarationsOpt   ::= typeDeclarations   | ;
 packageDeclarationOpt ::= packageDeclaration:i {: RESULT = i; :} | {: RESULT = null; :};
 
 importDeclarations ::= 
-		importDeclaration:i {: RESULT = new GlobalStructureListNode(i); RESULT.setPos(ileft,iright); :}
+		importDeclaration:i {: RESULT = new ImportListNode(i); RESULT.setPos(ileft,iright); :}
 	|	importDeclarations:a importDeclaration:g {: a.append(g); RESULT = a;  RESULT.setPos(aleft,gright); :}
 	;
 typeDeclarations ::= 
@@ -393,10 +400,23 @@ typeDeclarations ::=
 	|	typeDeclarations typeDeclaration
 	;
 packageDeclaration ::= 
-		PACKAGE:l name:n SEMICOLON:r {: RESULT = new PackageDeclNode(n); RESULT.setPos(lleft,rright); :}
+		PACKAGE:l compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new PackageDeclNode(c, null); RESULT.setPos(lleft,rright); ParserThread.packageRead(RESULT); :}
+	|	PACKAGE:l compilationUnitIdentifier:c ARROW IDENTIFIER:i  SEMICOLON:r {: IdentifierNode ident = new IdentifierNode(i); ident.setPos(ileft,iright); RESULT = new PackageDeclNode(c,ident); RESULT.setPos(lleft,rright); ParserThread.packageRead(RESULT); :}
+	|	PACKAGE:l ARROW IDENTIFIER:i SEMICOLON:r {: IdentifierNode ident = new IdentifierNode(i); ident.setPos(ileft,iright); RESULT = new PackageDeclNode(null,ident); RESULT.setPos(lleft,rright); ParserThread.packageRead(RESULT); :}
 	;
-importDeclaration ::=  IMPORT_START:l sourceFile:a INCLUDE_END:r {: RESULT = new IncludeNode(a); a.setFileInfo(l); RESULT.setPos(lleft,rright); :}
+importDeclaration ::=  
+		IMPORT:l compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new ImportNode(c); RESULT.setPos(lleft,rright); ParserThread.importRead(RESULT); :}
 	;
+	
+includeDeclaration ::=
+		INCLUDE:l STRING_LITERAL:s {: RESULT = new IncludeNode(s,null); RESULT.setPos(lleft,sright); ParserThread.includeRead(RESULT); :}
+	;
+	
+compilationUnitIdentifier ::=
+		IDENTIFIER:i {: IdentifierNode id = new IdentifierNode(i); id.setPos(ileft,iright); RESULT = new CompilationUnitIdentifierNode(null,id); :}
+	|  compilationUnitIdentifier:c DOT IDENTIFIER:i {: IdentifierNode id = new IdentifierNode(i); id.setPos(ileft,iright);  RESULT = new CompilationUnitIdentifierNode(c,id); RESULT.setPos(cleft,iright); :}
+	;
+	
 //		singleTypeImportDeclaration
 //	|	typeImportOnDemandDeclaration
 //	;

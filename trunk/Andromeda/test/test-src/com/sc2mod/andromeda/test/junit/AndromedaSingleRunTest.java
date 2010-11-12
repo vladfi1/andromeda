@@ -55,7 +55,7 @@ public abstract class AndromedaSingleRunTest extends AndromedaTestRun {
 	protected void callAndromeda(String sourceFile){
 
 		ArrayList<Source> input = new ArrayList<Source>();
-		input.add(new FileSource(new File(packageToString(this.getClass().getPackage()),sourceFile).getAbsolutePath()));
+		input.add(new FileSource(new File(packageToString(this.getClass().getPackage()),sourceFile).getAbsolutePath(),null));
 		Configuration o = getDefaultOptions();
 		try {
 			o.setParam(Parameter.FILES_OUT_DIR, new File("out/test"));

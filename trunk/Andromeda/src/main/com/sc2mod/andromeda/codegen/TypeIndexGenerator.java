@@ -1,12 +1,10 @@
-package com.sc2mod.andromeda.semAnalysis;
+package com.sc2mod.andromeda.codegen;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IRecordType;
-import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
-import com.sc2mod.andromeda.parsing.phases.IndexGenerationPhase;
 
 /**
  * Generates indices which are necessary for the generated code:
@@ -15,11 +13,11 @@ import com.sc2mod.andromeda.parsing.phases.IndexGenerationPhase;
  * @author gex
  *
  */
-public class IndexGenerator extends VoidSemanticsVisitorAdapter{
+public class TypeIndexGenerator extends VoidSemanticsVisitorAdapter{
 
 	
 	private IndexGenerationVisitor visitor = new IndexGenerationVisitor();
-	private IndexInformation createIndexInformation(Environment env){
+	public IndexInformation createIndexInformation(Environment env){
 		visitor.info = new IndexInformation();
 		for(IRecordType t : env.typeProvider.getRecordTypes()){
 			switch(t.getCategory()){

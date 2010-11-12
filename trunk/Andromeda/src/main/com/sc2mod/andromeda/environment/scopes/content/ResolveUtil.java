@@ -131,13 +131,13 @@ public final class ResolveUtil {
 		return op;
 	}
 	
-	public static Invocation resolvePrefixedInvocation(IScope prefix, String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer, boolean staticAccess){
+	public static Invocation resolvePrefixedInvocation(IScope prefix, String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer, boolean staticAccess, boolean disallowVirtualInvocation){
 		IScopedElement elem = prefix.getContent().resolve(name,from,UsageType.OTHER,sig,where,allowFuncPointer?RESOLVE_OPS_AND_VARS:RESOLVE_OPS);
 	
 		//Check for static/non-static misuse
 		checkStaticAccess(staticAccess, elem, where);
 	
-		return createInvocation(elem, false);
+		return createInvocation(elem, disallowVirtualInvocation);
 	}
 	
 	public static IType resolvePrefixedType(IScope prefix, String name, IScope from, SyntaxNode where){
@@ -166,7 +166,7 @@ public final class ResolveUtil {
 		return recursiveNameResolve(name,from,accessType,setType,where,RESOLVE_NAMES);
 	}
 	
-	static Invocation resolveUnprefixedInvocation(LocalVarStack localContext, String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer){
+	static Invocation resolveUnprefixedInvocation(LocalVarStack localContext, String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer, boolean disallowVirtualInvocation){
 		IScopedElement elem = null;
 		//TODO: Nice error messages for invocations, just like for names
 		
@@ -178,7 +178,7 @@ public final class ResolveUtil {
 		if(elem == null)
 			elem = recursiveResolve(name,from,UsageType.OTHER,sig,where,allowFuncPointer?RESOLVE_OPS_AND_VARS:RESOLVE_OPS);
 		
-		return createInvocation(elem, false);
+		return createInvocation(elem, disallowVirtualInvocation);
 	}
 	
 	public static IType resolveUnprefixedType(String name, IScope from, SyntaxNode where){

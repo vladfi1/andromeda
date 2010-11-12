@@ -6,7 +6,7 @@ package com.sc2mod.andromeda.syntaxNodes;
 //Attributes
 attr "com.sc2mod.andromeda.environment.types.IType" inferedType with ExprNode;
 attr "com.sc2mod.andromeda.environment.types.IType" inferedType with IdentifierNode;
-attr "com.sc2mod.andromeda.parsing.SourceFileInfo" fileInfo with SourceFileNode;
+attr "com.sc2mod.andromeda.parsing.SourceInfo" sourceInfo with SourceFileNode;
 attr "boolean" constant with ExprNode;
 attr StmtNode successor with StmtNode;
 attr "com.sc2mod.andromeda.semAnalysis.SuccessorList" successors with StmtNode;
@@ -18,16 +18,30 @@ attr "com.sc2mod.andromeda.vm.data.DataObject" value with ExprNode;
 //Identifiers are pure strings but with location information
 IdentifierNode ::= string : id
 
+CompilationUnitIdentifierNode ::= 
+					CompilationUnitIdentifierNode: prefix
+					IdentifierNode: name
+					
+ImportNode ::=
+		CompilationUnitIdentifierNode: importName
+		
+ImportListNode ::=	ImportNode*
+				 
+
 //Global file structure
+
+//Not emitted by the parser only built by the program
+SourceListNode ::= SourceFileNode*
 
 SourceFileNode ::= 
 			PackageDeclNode: packageDecl
-			GlobalStructureListNode: imports
+			ImportListNode: imports
 			GlobalStructureListNode: content
 			
 
 PackageDeclNode ::=
-			ExprNode: packageName
+			CompilationUnitIdentifierNode: packageName
+			IdentifierNode: unitName
 			
 
 GlobalStructureListNode ::= GlobalStructureNode*
@@ -58,7 +72,8 @@ GlobalStructureNode ::= {ClassDeclNode} 	AnnotationListNode: annotations
 											string: name
 											TypeParamListNode: typeParams
 											MemberDeclListNode: body
-				|	{IncludeNode}			SourceFileNode: includedContent
+				|	{IncludeNode}			string: name
+											SourceFileNode: includeContent
 				|	{TypeAliasDeclNode}		AnnotationListNode: annotations
 											ModifierListNode: modifiers
 											string: name

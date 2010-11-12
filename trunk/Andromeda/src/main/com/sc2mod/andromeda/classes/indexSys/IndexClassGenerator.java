@@ -15,6 +15,7 @@ import com.sc2mod.andromeda.classes.ClassGenerator;
 import com.sc2mod.andromeda.classes.VirtualCallTableGenerator;
 import com.sc2mod.andromeda.codegen.CodeGenVisitor;
 import com.sc2mod.andromeda.codegen.INameProvider;
+import com.sc2mod.andromeda.codegen.IndexInformation;
 import com.sc2mod.andromeda.codegen.buffers.GlobalVarBuffer;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.Environment;
@@ -28,10 +29,11 @@ import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.SpecialType;
+import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -52,10 +54,12 @@ public class IndexClassGenerator extends ClassGenerator {
 	private boolean newLines;
 	private boolean useIndent;
 	private boolean insertDescriptionComments;
+	private IndexInformation indexInformation;
 	
 
-	public IndexClassGenerator(Environment env, CodeGenVisitor c,INameProvider nameProvider,Configuration options) {
+	public IndexClassGenerator(IndexInformation indexInformation, Environment env, CodeGenVisitor c,INameProvider nameProvider,Configuration options) {
 		super(env,c,nameProvider,options);
+		this.indexInformation = indexInformation;
 		newLines = options.getParamBool(Parameter.CODEGEN_NEW_LINES);
 		useIndent = options.getParamBool(Parameter.CODEGEN_USE_INDENT);
 		insertDescriptionComments = options.getParamBool(Parameter.CODEGEN_DESCRIPTION_COMMENTS);
@@ -69,7 +73,10 @@ public class IndexClassGenerator extends ClassGenerator {
 		generateClassInitHeader(arrayList);
 		
 		for(IClass r: arrayList){
-			generateClass(r);
+			// non top classes are left out because they re visited recursively
+			if(r.isTopClass()){
+				generateClass(r);
+			}
 		}
 		
 		codeGenVisitor.generateMethodFooter(codeGenVisitor.classInitBuffer);
@@ -92,7 +99,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		classInitLocal = nameProvider.getLocalNameRaw("A__class", 0);
 		SimpleBuffer buffer = codeGenVisitor.classInitBuffer;
 		classInitFunctionName = nameProvider.getGlobalNameRaw("classInit");
-		buffer.append(SpecialType.VOID.getGeneratedName()).append(" ").append(classInitFunctionName).append("(){");
+		buffer.append(BASIC.VOID.getGeneratedName()).append(" ").append(classInitFunctionName).append("(){");
 		if(newLines)
 			buffer.newLine(1);
 		buffer.append(metaClass.getGeneratedName()).append(" ").append(classInitLocal).append(";");
@@ -101,8 +108,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	}
 
 	private void generateClass(IClass c){
-		VirtualCallTableGenerator vctg = new IndexVirtualCallTableGenerator(this,metaClass,nameProvider,codeGenVisitor,codeGenVisitor.fileBuffer.functions, options);
-
+		
 		
 		if(!c.isStatic()){
 			if(c.isTopClass()){
@@ -115,9 +121,14 @@ public class IndexClassGenerator extends ClassGenerator {
 				generateAllocation(c);
 				
 				//Generate vct
+				VirtualCallTableGenerator vctg = new IndexVirtualCallTableGenerator(BASIC,this,metaClass,nameProvider,codeGenVisitor,codeGenVisitor.fileBuffer.functions, options);
 				vctg.generateTable(c);
-				
 				generationCount++;
+				
+				//generate child classes
+				for(IRecordType c2 : c.getDescendants()){
+					generateClass((IClass) c2);
+				}
 			} else {
 				c.getNameProvider().setMemoryName(c.getTopClass().getNameProvider().getMemoryName());
 				
@@ -148,7 +159,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		//Create class: A__class = new metaclass(id, name);
 		if(newLines)buffer.newLine(indent);
 		buffer.append(classLocal).append("=").append(metaClassConstructor.getGeneratedName());
-		buffer.append("(").append(c.getClassIndex()).append(",").append(c.getClassIndex()).append(",").appendStringLiteral(c.getUid(), codeGenVisitor).append(");");
+		buffer.append("(").append(indexInformation.getClassIndex(c)).append(",").append(indexInformation.getClassIndex(c)).append(",").appendStringLiteral(c.getUid(), codeGenVisitor).append(");");
 		
 		String name = nameProvider.getGlobalNameRawNoPrefix("MC___" + c.getNameProvider().getStructName());
 		c.setMetaClassName(name);
@@ -301,7 +312,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		int maxAlloc = (c.getInstanceLimit()+1);
 		int indent = codeGenVisitor.curIndent;
 		String className = c.getGeneratedDefinitionName();
-		IType typeInt = BasicType.INT;
+		IType typeInt = BASIC.INT;
 		
 
 		

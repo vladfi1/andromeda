@@ -1,6 +1,6 @@
-package a.lang;
+package a.lang => Class;
 
-public final class Class{
+final class Class{
 	private int id;
 	private string name;
 	
@@ -12,11 +12,11 @@ public final class Class{
 		this.name = name;
 	}
 	
-	public string getName(){
+	string getName(){
 		return name;
 	}	
 
-	public int getId(){
+	int getId(){
 		return id;
 	}		
 }

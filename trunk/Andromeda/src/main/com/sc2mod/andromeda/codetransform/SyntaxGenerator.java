@@ -16,9 +16,11 @@ import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
+import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.semAnalysis.LoopSemantics;
@@ -63,6 +65,12 @@ import com.sc2mod.andromeda.vm.data.IntObject;
  */
 public class SyntaxGenerator {
 	
+	private BasicTypeSet BASIC;
+
+	public SyntaxGenerator(TypeProvider tp){
+		this.BASIC = tp.BASIC;
+	}
+	
 	public static final ExprListNode EMPTY_EXPRESSIONS = new ExprListNode();
 
 	ExprNode createMethodInvocation(ExprNode prefix, String funcName, ExprListNode arguments, Invocation semantics){
@@ -101,7 +109,7 @@ public class SyntaxGenerator {
 		ExprListNode arguments = new ExprListNode(setTo);
 		MethodInvocationExprNode m = new MethodInvocationExprNode(lValuePrefix,funcName,arguments,null);
 		m.setSemantics(i);	
-		m.setInferedType(SpecialType.VOID);
+		m.setInferedType(BASIC.VOID);
 		return m;
 	}
 	
@@ -167,7 +175,7 @@ public class SyntaxGenerator {
 		LiteralExprNode le = new LiteralExprNode(l);
 		le.setConstant(true);
 		le.setValue(l.getValue());
-		le.setInferedType(BasicType.INT);
+		le.setInferedType(BASIC.INT);
 		return le;
 	}
 	
@@ -176,7 +184,7 @@ public class SyntaxGenerator {
 		LiteralExprNode le = new LiteralExprNode(l);
 		le.setConstant(true);
 		le.setValue(l.getValue());
-		le.setInferedType(BasicType.FLOAT);
+		le.setInferedType(BASIC.FLOAT);
 		return le;
 	}
 
@@ -210,7 +218,7 @@ public class SyntaxGenerator {
 		LiteralExprNode le = new LiteralExprNode(l);
 		le.setConstant(true);
 		le.setValue(l.getValue());
-		le.setInferedType(BasicType.BOOL);
+		le.setInferedType(BASIC.BOOL);
 		return le;
 	}
 

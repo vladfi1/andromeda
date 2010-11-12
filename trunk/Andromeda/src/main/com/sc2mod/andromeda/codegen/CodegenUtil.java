@@ -25,48 +25,7 @@ public final class CodegenUtil {
 	 */
 	private CodegenUtil(){}
 
-	private static HashMap<IType,HashMap<IType,StringPair>> typeCasts = new HashMap<IType,HashMap<IType,StringPair>>();
-	static{
-		HashMap<IType,StringPair> cur;
-		//Casts from fixed
-		typeCasts.put(BasicType.FLOAT, cur = new HashMap<IType, StringPair>());
-		cur.put(BasicType.INT, new StringPair("FixedToInt(",")"));
-		cur.put(BasicType.BYTE, new StringPair("(FixedToInt(",")&0xff)"));
-		cur.put(BasicType.STRING, new StringPair("FixedToString(",",3)"));
-		cur.put(BasicType.TEXT, new StringPair("FixedToText(",",3)"));
-		cur.put(BasicType.BOOL, new StringPair("(","!=0.0)"));
-		
-		//Casts from int
-		typeCasts.put(BasicType.INT, cur = new HashMap<IType, StringPair>());
-		cur.put(BasicType.BYTE, new StringPair("((",")&0xff)"));
-		cur.put(BasicType.FLOAT, new StringPair("IntToFixed(",")"));
-		cur.put(BasicType.STRING, new StringPair("IntToString(",")"));
-		cur.put(BasicType.TEXT, new StringPair("IntToText(",")"));
-		cur.put(BasicType.BOOL, new StringPair("(","!=0)"));
-		
-		//Casts from string
-		typeCasts.put(BasicType.STRING, cur = new HashMap<IType, StringPair>());
-		cur.put(BasicType.FLOAT, new StringPair("StringToFixed(",")"));
-		cur.put(BasicType.INT, new StringPair("StringToInt(",")"));
-		cur.put(BasicType.BYTE, new StringPair("(StringToInt(",")&0xff)"));
-		cur.put(BasicType.TEXT, new StringPair("StringToText(",")"));
-		cur.put(BasicType.BOOL, new StringPair("(","!=null)"));
-		
-		//Casts from text
-		typeCasts.put(BasicType.TEXT, cur = new HashMap<IType, StringPair>());
-		cur.put(BasicType.FLOAT, new StringPair("StringToFixed(TextToString(","))"));
-		cur.put(BasicType.INT, new StringPair("StringToInt(TextToString(","))"));
-		cur.put(BasicType.STRING, new StringPair("TextToString(",")"));
-		cur.put(BasicType.BOOL, new StringPair("(","!=null)"));
-		
-		//XPilot: Casts from bool?
-	}
-	
-	public static StringPair getCastOp(IType fromType, IType toType){
-		HashMap<IType, StringPair> tcs = typeCasts.get(fromType);
-		if(tcs==null) return null;
-		return tcs.get(toType);
-	}
+
 	
 	
 	

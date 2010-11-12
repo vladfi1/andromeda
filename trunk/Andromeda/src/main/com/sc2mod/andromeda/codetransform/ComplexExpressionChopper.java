@@ -11,7 +11,9 @@ package com.sc2mod.andromeda.codetransform;
 
 import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.semAnalysis.SimplicityDecisionVisitor;
@@ -26,12 +28,14 @@ public class ComplexExpressionChopper {
 	private SyntaxGenerator syntaxGenerator;
 	private ImplicitLocalVarProvider varProvider;
 	private SimplicityDecisionVisitor simpleDecider = new SimplicityDecisionVisitor();
+	private BasicTypeSet BASIC;
 	
 	
 	public ComplexExpressionChopper(SyntaxGenerator syntaxGenerator2,
-			ImplicitLocalVarProvider varProvider2) {
+			ImplicitLocalVarProvider varProvider2, TypeProvider tp) {
 		this.syntaxGenerator = syntaxGenerator2;
 		this.varProvider = varProvider2;
+		this.BASIC = tp.BASIC;
 	}
 
 	/**
@@ -50,7 +54,7 @@ public class ComplexExpressionChopper {
 			ExprNode arrayIndex = a.getRightExpression();
 			if(!simpleDecider.isSimple(arrayIndex)){
 				//The index is not simple we need a local variable for it
-				NameExprNode z = varProvider.getImplicitLocalVar(BasicType.INT);					
+				NameExprNode z = varProvider.getImplicitLocalVar(BASIC.INT);					
 				addStatementsTo.addStatementBefore(syntaxGenerator.genAssignStatement(z, arrayIndex, AssignOpSE.EQ));
 				arrayIndex = z;				
 			}

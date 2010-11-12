@@ -1,16 +1,18 @@
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.basic;
 
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
+import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class TypeError extends TypeImpl {
 	
-	public static final TypeError INSTANCE = new TypeError();
+	//public static final TypeError INSTANCE = new TypeError();
 
-	private TypeError() {
-		super(null);
+	private TypeError(TypeProvider t) {
+		super(null,t);
 	}
 
 	@Override

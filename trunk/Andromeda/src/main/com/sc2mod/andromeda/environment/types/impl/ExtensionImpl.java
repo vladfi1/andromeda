@@ -15,6 +15,7 @@ import com.sc2mod.andromeda.environment.types.IExtension;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.generic.GenericExtensionInstance;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -49,8 +50,8 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 	 * via the setResolvedExtendedType method.
 	 * @param def the definition
 	 */
-	public ExtensionImpl(TypeExtensionDeclNode def, IScope scope) {
-		super(def,scope);
+	public ExtensionImpl(TypeExtensionDeclNode def, IScope scope, TypeProvider t) {
+		super(def,scope,t);
 		isDistinct = def.isDisjoint();
 		this.definition = def;
 		this.isKey = def.isKey();
@@ -98,9 +99,9 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 	
 	@Override
 	public DataObject getNextKey() {
-		if(extendedBaseType==BasicType.INT){
+		if(extendedBaseType==tprov.BASIC.INT){
 			return new IntObject(curKey++);
-		} else if(extendedBaseType==BasicType.STRING) {
+		} else if(extendedBaseType==tprov.BASIC.STRING) {
 			return new StringObject(curKey++);
 		} else {
 			//This should not happen because getNextKey can only be called on keys, and these can only
@@ -202,7 +203,7 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 
 	@Override
 	public INamedType createGenericInstance(Signature s) {
-		return new GenericExtensionInstance(this, s);
+		return new GenericExtensionInstance(this, s, tprov);
 	}
 	
 	

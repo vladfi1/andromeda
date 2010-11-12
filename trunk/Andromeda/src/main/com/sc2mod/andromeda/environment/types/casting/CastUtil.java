@@ -1,7 +1,9 @@
 package com.sc2mod.andromeda.environment.types.casting;
 
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
 
 public final class CastUtil {
 
@@ -28,10 +30,11 @@ public final class CastUtil {
 	 * The basic implementation allows this if the type can be cast implicitly
 	 */
 	public static boolean canConcatenateCast(IType from, IType to){
-		if(from.getBaseType() == BasicType.TEXT)
-			return to == BasicType.TEXT;
+		BasicTypeSet bt = from.getTypeProvider().BASIC;
+		if(from.getBaseType() == bt.TEXT)
+			return to == bt.TEXT;
 		
-		if(to == BasicType.STRING || to == BasicType.TEXT)
+		if(to == bt.STRING || to == bt.TEXT)
 			return true;
 		
 		return CastUtil.canImplicitCast(from, to);

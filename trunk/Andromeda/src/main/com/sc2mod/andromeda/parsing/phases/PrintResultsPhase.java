@@ -31,8 +31,8 @@ public class PrintResultsPhase extends Phase {
 
 	private void writeSuccessful(CompilationEnvironment env, Workflow workflow) {
 		LogLevel ll = LogLevel.PHASE;
-		long bytesIn = env.getFileManager().getBytesRead();
-		int fileCount = env.getFileManager().getFileCount();
+		long bytesIn = env.getSourceManager().getBytesRead();
+		int fileCount = env.getSourceManager().getFileCount();
 		boolean codeGenerated = !env.getConfig().getParamBool(Parameter.MISC_NO_CODE_GEN);
 		OutputMemoryStats outputStats = env.getTransientData().getOutputStats();
 		long time = workflow.getOverallTime();

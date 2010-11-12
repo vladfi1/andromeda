@@ -22,6 +22,7 @@ import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
 import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 
@@ -38,6 +39,7 @@ public abstract class ClassGenerator {
 	protected String curClassIdName;
 	protected String curThisName;
 	protected IClass metaClass;
+	protected BasicTypeSet BASIC;
 
 	
 	/**
@@ -66,6 +68,7 @@ public abstract class ClassGenerator {
 		this.options = options;
 		this.nameProvider = nameProvider;
 		this.codeGenVisitor = c;
+		this.BASIC = env.typeProvider.BASIC;
 		c.setClassGenerator(this);
 		
 		metaClass = env.typeProvider.getSystemClass(AndromedaSystemTypes.T_CLASS);

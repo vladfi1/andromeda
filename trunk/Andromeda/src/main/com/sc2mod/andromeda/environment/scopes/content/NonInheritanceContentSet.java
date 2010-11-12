@@ -3,6 +3,8 @@ package com.sc2mod.andromeda.environment.scopes.content;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
+import com.sc2mod.andromeda.notifications.Problem;
+import com.sc2mod.andromeda.notifications.ProblemId;
 
 public class NonInheritanceContentSet extends ScopeContentSet {
 
@@ -25,8 +27,9 @@ public class NonInheritanceContentSet extends ScopeContentSet {
 			IScopedElement newElem) {
 		
 		//No duplicate elements permitted
-		//FIXME: Proper problem handling
-		throw new Error("Duplicate element "+ oldElem.getUid());
+		throw Problem.ofType(ProblemId.DUPLICATE_NAME).at(newElem.getDefinition(),oldElem.getDefinition())
+		.details(newElem.getUid())
+		.raiseUnrecoverable();
 	}
 
 }

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.INamedType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 
@@ -36,8 +37,8 @@ public abstract class NamedTypeImpl extends TypeImpl implements INamedType{
 	private TypeParameter[] typeParams;
 	private final String name;
 	
-	protected NamedTypeImpl(IScope parentScope, String name){
-		super(parentScope);
+	protected NamedTypeImpl(IScope parentScope, String name, TypeProvider t){
+		super(parentScope, t);
 		this.name = name;
 	}
 	
@@ -46,8 +47,8 @@ public abstract class NamedTypeImpl extends TypeImpl implements INamedType{
 	 * @param gen use always the constant GENERIC.
 	 * @param genericParent the type for which to create a generic instance.
 	 */
-	protected NamedTypeImpl(INamedType genericParent, Signature s){
-		this(genericParent.getScope(), genericParent.getName());
+	protected NamedTypeImpl(INamedType genericParent, Signature s, TypeProvider t){
+		this(genericParent.getScope(), genericParent.getName(),t);
 	}
 	
 	public String getName(){

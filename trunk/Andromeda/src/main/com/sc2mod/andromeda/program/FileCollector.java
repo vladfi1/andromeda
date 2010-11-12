@@ -36,7 +36,7 @@ public class FileCollector {
 			return;
 		}
 		String name = file.getName();
-		if(name.endsWith(".galaxy")||name.endsWith(".a")) result.add(new FileSource(file));
+		if(name.endsWith(".galaxy")||name.endsWith(".a")) result.add(new FileSource(file,null));
 		
 	}
 
@@ -46,7 +46,7 @@ public class FileCollector {
 			File f = new File(rootPath.getAbsolutePath() + "/" + s);
 			if(!f.exists()) throw Problem.ofType(ProblemId.MISSING_NATIVE_LIB).details(f.getAbsolutePath())
 									.raiseUnrecoverable();
-			result.add(new FileSource(f));
+			result.add(new FileSource(f,null));
 		}
 		return result;
 	}

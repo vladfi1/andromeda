@@ -7,6 +7,7 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.IRecordType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
@@ -16,8 +17,8 @@ public class GenericInterfaceInstance extends GenericTypeInstance implements IIn
 
 	private IInterface genericParent;
 
-	public GenericInterfaceInstance(IInterface i, Signature scope) {
-		super(i, scope);
+	public GenericInterfaceInstance(IInterface i, Signature scope, TypeProvider t) {
+		super(i, scope, t);
 		this.genericParent = i;
 	}
 

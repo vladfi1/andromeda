@@ -14,11 +14,12 @@ import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
+import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.types.casting.CastUtil;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.variables.Variable;
@@ -144,31 +145,32 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	public void visit(LiteralExprNode le, ExpressionContext context){
 		LiteralNode l = le.getLiteral();
 		LiteralTypeSE type = l.getType();
+		BasicTypeSet BASIC = parent.typeProvider.BASIC;
 		
 		//Literals are constant
 		le.setConstant(true);
 		
 		switch(type){
 		case BOOL:
-			le.setInferedType(BasicType.BOOL);
+			le.setInferedType(BASIC.BOOL);
 			break;
 		case STRING:
-			le.setInferedType(BasicType.STRING);
+			le.setInferedType(BASIC.STRING);
 			break;
 		case INT:
-			le.setInferedType(BasicType.INT);
+			le.setInferedType(BASIC.INT);
 			break;
 		case CHAR:
-			le.setInferedType(BasicType.CHAR);
+			le.setInferedType(BASIC.CHAR);
 			break;
 		case FLOAT:
-			le.setInferedType(BasicType.FLOAT);
+			le.setInferedType(BASIC.FLOAT);
 			break;
 		case NULL:
-			le.setInferedType(SpecialType.NULL);
+			le.setInferedType(BASIC.NULL);
 			break;
 		case TEXT:
-			le.setInferedType(BasicType.TEXT);
+			le.setInferedType(BASIC.TEXT);
 			break;
 		default:
 			throw new InternalProgramError(l,"Literal of unknown literal type!");
@@ -261,7 +263,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		conditionalExpression.childrenAccept(this,ExpressionContext.DEFAULT);
 		
 		//Check type validity
-		if (conditionalExpression.getLeftExpression().getInferedType() != BasicType.BOOL) {
+		if (conditionalExpression.getLeftExpression().getInferedType() != parent.typeProvider.BASIC.BOOL) {
 			throw Problem.ofType(ProblemId.TYPE_ERROR_NONBOOL_CONDITIONAL).at(conditionalExpression.getLeftExpression())
 							.details(conditionalExpression.getLeftExpression().getInferedType())
 							.raiseUnrecoverable();
@@ -405,7 +407,6 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	
 	@Override
 	public void visit(MethodInvocationExprNode methodInvocation, ExpressionContext context) {
-		//FIXME: Hier check dass alle Besonderheiten aus dem CopyOfNameResolver beruecksichtigt wurden
 		if(methodInvocation.getSpecial() == SpecialInvocationSE.NATIVE){
 			//FIXME handle native prefix function calls
 			throw new InternalProgramError(methodInvocation,"Native prefix not yet supported");
@@ -432,7 +433,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 			disallowVirtualInvocation = prefix instanceof SuperExprNode;
 			
 			//Resolve the prefixed operation
-			inv = ResolveUtil.resolvePrefixedInvocation(prefixScope, methodInvocation.getFuncName(), sig, parent.curScope, methodInvocation, true, staticAccess);
+			inv = ResolveUtil.resolvePrefixedInvocation(prefixScope, methodInvocation.getFuncName(), sig, parent.curScope, methodInvocation, true, staticAccess, disallowVirtualInvocation);
 			
 			//Nothing found?
 			if(inv == null)
@@ -444,7 +445,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		} else {
 			
 			//Resolve the non-prefixed operation
-			inv = nameResolver.resolveInvocation(methodInvocation.getFuncName(), sig, parent.curScope, methodInvocation, true);
+			inv = nameResolver.resolveInvocation(methodInvocation.getFuncName(), sig, parent.curScope, methodInvocation, true, disallowVirtualInvocation);
 			
 			//Nothing found?
 			if(inv == null)

@@ -74,8 +74,8 @@ public class NameResolver {
 	 * @param where a syntax node to be mentioned in problems raised by this method
 	 * @return the resolved ScopedElement or null
 	 */
-	public Invocation resolveInvocation(String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer){
-		return ResolveUtil.resolveUnprefixedInvocation(localVars, name, sig, from, where, allowFuncPointer);
+	public Invocation resolveInvocation(String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer, boolean disallowVirtualInvocation){
+		return ResolveUtil.resolveUnprefixedInvocation(localVars, name, sig, from, where, allowFuncPointer, disallowVirtualInvocation);
 	}
 	
 

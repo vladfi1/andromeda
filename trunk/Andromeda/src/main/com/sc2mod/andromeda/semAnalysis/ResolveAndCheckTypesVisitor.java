@@ -15,11 +15,12 @@ import com.sc2mod.andromeda.environment.types.IExtension;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
+import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
@@ -54,10 +55,12 @@ import com.sc2mod.andromeda.syntaxNodes.TypeParamNode;
 public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 
 	private TypeProvider tprov;
+	private BasicTypeSet BASIC;
 	private static ParamDecl[] NO_PARAMS = new ParamDecl[0];
 	
 	public ResolveAndCheckTypesVisitor(Environment env) {
 		this.tprov = env.typeProvider;
+		this.BASIC = tprov.BASIC;
 	}
 	
 	
@@ -148,18 +151,18 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 	@Override
 	public void visit(Constructor constructor) {
 		resolveFuncParams(constructor);
-		constructor.setReturnType(SpecialType.VOID);
+		constructor.setReturnType(BASIC.VOID);
 	}
 	
 	@Override
 	public void visit(Destructor destructor) {
 		destructor.setResolvedParameters(NO_PARAMS);
-		destructor.setReturnType(SpecialType.VOID);
+		destructor.setReturnType(BASIC.VOID);
 	}
 	
 	@Override
 	public void visit(StaticInit staticInit) {
-		staticInit.setReturnType(SpecialType.VOID);
+		staticInit.setReturnType(BASIC.VOID);
 		staticInit.setResolvedParameters(NO_PARAMS);
 	}
 
@@ -176,13 +179,13 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 		ScopeContentSet content = type.getContent();
 		for(int i = 0;i<size;i++){
 			TypeParamNode paramNode = paramList.elementAt(i);
-			//FIXME: Fully Implement type bounds
+			//TODO: Fully Implement type bounds
 			TypeNode typeBound = paramNode.getTypeBound();
 			IType resolvedTypeBound = null;
 			if(typeBound != null){
 				resolvedTypeBound = tprov.resolveType(typeBound, type);
 			}
-			TypeParameter param = new TypeParameter(type, paramNode, i, resolvedTypeBound);
+			TypeParameter param = new TypeParameter(type, paramNode, i, resolvedTypeBound, tprov);
 			params[i] = param;
 			
 			//Add to the type as scope content
@@ -313,7 +316,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 					.raiseUnrecoverable();
 		}
 		if(extension.isKey()){
-			if(extendedBaseType != BasicType.INT && extendedBaseType != BasicType.STRING){
+			if(extendedBaseType != BASIC.INT && extendedBaseType != BASIC.STRING){
 				throw Problem.ofType(ProblemId.INVALID_BASE_TYPE_FOR_KEY_TYPE).at(extension.getDefinition())
 						.raiseUnrecoverable();
 			}

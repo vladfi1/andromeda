@@ -19,11 +19,12 @@ import com.sc2mod.andromeda.notifications.InternalProgramError;
 public class FileSource extends Source{
 
 	private File file;
-	public FileSource(String path){
-		this.file = new File(path);
+	private String pkgName;
+	public FileSource(String path, String pkgName){
+		this(new File(path), pkgName);
 	}
 
-	public FileSource(File file) {
+	public FileSource(File file, String pkgName) {
 		try {
 			this.file = file.getCanonicalFile();
 		} catch (IOException e) {
@@ -64,4 +65,20 @@ public class FileSource extends Source{
 	public String getFullPath() {
 		return "file://" + file.getAbsolutePath();
 	}
+
+	@Override
+	public Language getAnticipatedLanguage() {
+		if(file.getName().endsWith(".galaxy")){
+			return Language.GALAXY;
+		} else {
+			return Language.ANDROMEDA;
+		}
+	}
+
+	@Override
+	public String getPathInSourceFolder() {
+		return pkgName;
+	}
+	
+	
 }

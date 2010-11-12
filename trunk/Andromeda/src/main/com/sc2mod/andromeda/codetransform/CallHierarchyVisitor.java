@@ -18,6 +18,7 @@ import com.sc2mod.andromeda.environment.access.Invocation;
 import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -51,8 +52,8 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	private CallHierarchyExpressionVisitor exprVisitor;
 	private StaticInitVisitor staticInitVisitor;
 	
-	public CallHierarchyVisitor(Configuration options) {
-		super(new CallHierarchyExpressionVisitor(options), options,false);
+	public CallHierarchyVisitor(Configuration options, TypeProvider tprov) {
+		super(new CallHierarchyExpressionVisitor(options), tprov, options,false);
 		exprVisitor = (CallHierarchyExpressionVisitor) super.exprVisitor;
 		staticInitVisitor = new StaticInitVisitor(this);
 	}
@@ -66,7 +67,7 @@ public class CallHierarchyVisitor extends TransformationVisitor {
 	//*********** GLOBAL CONSTRUCTS (just loop through) **********
 	@Override
 	public void visit(SourceFileNode andromedaFile) {
-		InclusionType inclType = andromedaFile.getFileInfo().getInclusionType();
+		InclusionType inclType = andromedaFile.getSourceInfo().getType();
 		if(inclType == InclusionType.NATIVE || inclType == InclusionType.LANGUAGE) {
 			//Natives and libraries do not get parsed (only if they are called)
 			return;

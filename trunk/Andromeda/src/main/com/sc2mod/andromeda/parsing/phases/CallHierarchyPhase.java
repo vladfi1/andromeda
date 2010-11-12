@@ -20,7 +20,7 @@ public class CallHierarchyPhase extends Phase{
 		//Call hierarchy check
 		System.out.print("Checking call hierarchy...");
 		
-		CallHierarchyVisitor chv = new CallHierarchyVisitor(env.getConfig());
+		CallHierarchyVisitor chv = new CallHierarchyVisitor(env.getConfig(), env.getSemanticEnvironment().typeProvider);
 		env.getSyntaxTree().accept(chv);
 		
 		VirtualCallResolver vcr = new VirtualCallResolver(env.getTransientData().getVirtualInvocations(),semEnv, chv);

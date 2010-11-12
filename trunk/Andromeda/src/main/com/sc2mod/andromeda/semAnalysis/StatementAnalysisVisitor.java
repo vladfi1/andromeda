@@ -27,11 +27,12 @@ import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
+import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
@@ -96,6 +97,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	ExecutionPathStack execPathStack = new ExecutionPathStack();
 	private Configuration options;
 	protected Environment env;
+	private BasicTypeSet BASIC;
 	private ExpressionAnalysisVisitor exprAnalyzer;
 
 	
@@ -106,7 +108,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		this.constResolve = new ConstantResolveVisitor();
 		this.options = options;
 		this.exprAnalyzer = new ExpressionAnalysisVisitor(this);
-		
+		this.BASIC = typeProvider.BASIC;
 		
 	}
 	
@@ -218,7 +220,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		if(!t.canImplicitCastTo(decl.getType())){
 			//For bytes, we might be able to cast if the value is a constant
 			boolean error = true;
-			if(decl.getType().getBaseType()==BasicType.BYTE){				
+			if(decl.getType().getBaseType()==BASIC.BYTE){				
 				DataObject obj = init.getValue();
 				if(obj != null && obj instanceof IntObject){
 					int i = obj.getIntValue();
@@ -354,7 +356,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		
 		//Get function body, if this function has none (abstract/inteface) we don't have to do anything
 		StmtNode body = functionDeclaration.getBody();
-		if(body == null||(!options.getParamBool(Parameter.TEST_CHECK_NATIVE_FUNCTION_BODIES)&&curFileInfo.getInclusionType()==InclusionType.NATIVE)) return;
+		if(body == null||(!options.getParamBool(Parameter.TEST_CHECK_NATIVE_FUNCTION_BODIES)&&curSourceInfo.getType()==InclusionType.NATIVE)) return;
 		
 		//Remember old function (in case we have nested functions or local classes inside a function)
 		Operation functionBefore = curOperation;
@@ -402,7 +404,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		curOperation.setLocals(nameResolver.methodFinished(OperationUtil.countParams(curOperation)));
 
 		//If this is a non void function, check if the exec path does not end without a return
-		if(curOperation.getReturnType()!=SpecialType.VOID&&functionType!=OperationType.CONSTRUCTOR){
+		if(curOperation.getReturnType()!=BASIC.VOID&&functionType!=OperationType.CONSTRUCTOR){
 			if(!execPathStack.isTopFrameEmpty())
 				throw Problem.ofType(ProblemId.MISSING_RETURN).at(functionDeclaration)
 						.raiseUnrecoverable();
@@ -545,7 +547,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		for(StmtNode s: curLoop.getBreaks()) execPathStack.pushStatement(s);
 		
 		
-		if(!doWhileStatement.getCondition().getInferedType().canImplicitCastTo(BasicType.BOOL))
+		if(!doWhileStatement.getCondition().getInferedType().canImplicitCastTo(BASIC.BOOL))
 			throw Problem.ofType(ProblemId.TYPE_ERROR_NONBOOL_LOOP_CONDITION).at(doWhileStatement.getCondition())
 				.details(doWhileStatement.getCondition().getInferedType().getUid())
 				.raiseUnrecoverable();
@@ -576,7 +578,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		for(StmtNode s: curLoop.getBreaks()) execPathStack.pushStatement(s);
 
 		//Check condition type
-		if(!whileStatement.getCondition().getInferedType().canImplicitCastTo(BasicType.BOOL))
+		if(!whileStatement.getCondition().getInferedType().canImplicitCastTo(BASIC.BOOL))
 			throw Problem.ofType(ProblemId.TYPE_ERROR_NONBOOL_LOOP_CONDITION).at(whileStatement.getCondition())
 					.details(whileStatement.getCondition().getInferedType().getUid())
 					.raiseUnrecoverable();
@@ -645,7 +647,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		case CLASS:
 		case INTERFACE:
 			//Get iterator method
-			Invocation iv = ResolveUtil.resolvePrefixedInvocation(itereeType, "getIterator", Signature.EMPTY_SIGNATURE, curScope, iteree, false, false);
+			Invocation iv = ResolveUtil.resolvePrefixedInvocation(itereeType, "getIterator", Signature.EMPTY_SIGNATURE, curScope, iteree, false, false, false);
 			
 			if(iv == null){
 				Problem.ofType(ProblemId.FOREACH_NO_GET_ITERATOR_METHOD).at(forEachStmt)
@@ -658,14 +660,14 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 			IType iteratorType = iv.getReturnType();
 			
 			// hasNext()
-			iv = ResolveUtil.resolvePrefixedInvocation(iteratorType, "hasNext", Signature.EMPTY_SIGNATURE, curScope, iteree, false, false);
+			iv = ResolveUtil.resolvePrefixedInvocation(iteratorType, "hasNext", Signature.EMPTY_SIGNATURE, curScope, iteree, false, false, false);
 			
 			if(iv == null){
 				Problem.ofType(ProblemId.FOREACH_NO_HAS_NEXT_METHOD).at(forEachStmt)
 					.details(iteratorType)
 					.raiseUnrecoverable();
 			}
-			if(iv.getWhichFunction().getReturnType()!=BasicType.BOOL){
+			if(iv.getWhichFunction().getReturnType()!=BASIC.BOOL){
 				Problem.ofType(ProblemId.FOREACH_HAS_NEXT_DOES_NOT_RETURN_BOOL).at(forEachStmt)
 					.details(iv.getWhichFunction().getReturnType().getUid())
 					.raiseUnrecoverable();
@@ -673,7 +675,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 			semantics.setHasNext(iv);
 			
 			//next()
-			iv = ResolveUtil.resolvePrefixedInvocation(iteratorType, "next", Signature.EMPTY_SIGNATURE, curScope, iteree, false, false);
+			iv = ResolveUtil.resolvePrefixedInvocation(iteratorType, "next", Signature.EMPTY_SIGNATURE, curScope, iteree, false, false, false);
 			if(iv == null) {
 				Problem.ofType(ProblemId.FOREACH_NO_NEXT_METHOD).at(forEachStmt)
 					.details(iteratorType.getUid())
@@ -758,9 +760,9 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		ExprNode cond = forStatement.getCondition();
 		if(cond == null){
 			forStatement.setCondition(cond = new LiteralExprNode(new LiteralNode(BoolObject.getBool(true), LiteralTypeSE.BOOL)));
-			cond.setInferedType(BasicType.BOOL);
+			cond.setInferedType(BASIC.BOOL);
 		}
-		if(!cond.getInferedType().canImplicitCastTo(BasicType.BOOL))
+		if(!cond.getInferedType().canImplicitCastTo(BASIC.BOOL))
 			Problem.ofType(ProblemId.TYPE_ERROR_NONBOOL_LOOP_CONDITION).at(forStatement.getCondition())
 				.details(forStatement.getCondition().getInferedType().getUid())
 				.raiseUnrecoverable();
@@ -827,7 +829,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		
 		//Check condition type
 		IType t = ifThenElseStatement.getCondition().getInferedType();
-		if(!t.canImplicitCastTo(BasicType.BOOL)&&!t.canBeNull())
+		if(!t.canImplicitCastTo(BASIC.BOOL)&&!t.canBeNull())
 			Problem.ofType(ProblemId.TYPE_ERROR_NONBOOL_IF_CONDITION).at(ifThenElseStatement.getCondition())
 					.details(ifThenElseStatement.getCondition().getInferedType().getUid())
 					.raiseUnrecoverable();
@@ -885,7 +887,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 			analyzeExpression(result);
 			
 			//Void function? No return expression allowed!
-			if(curOperation.getReturnType()==SpecialType.VOID)
+			if(curOperation.getReturnType()==BASIC.VOID)
 				throw Problem.ofType(ProblemId.RETURNING_VALUE_IN_VOID_METHOD).at(returnStatement)
 							.raiseUnrecoverable();
 				
@@ -899,7 +901,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		
 		} else {
 			//Void return
-			if(curOperation.getReturnType()!=SpecialType.VOID)
+			if(curOperation.getReturnType()!=BASIC.VOID)
 				throw Problem.ofType(ProblemId.RETURN_WITHOUT_VALUE).at(returnStatement)
 							.raiseUnrecoverable();
 		}

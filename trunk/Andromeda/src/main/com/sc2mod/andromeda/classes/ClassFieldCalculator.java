@@ -12,6 +12,7 @@ package com.sc2mod.andromeda.classes;
 import java.util.ArrayList;
 
 import com.sc2mod.andromeda.codegen.INameProvider;
+import com.sc2mod.andromeda.codegen.IndexInformation;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
@@ -42,6 +43,7 @@ public abstract class ClassFieldCalculator {
 
 	protected TypeProvider typeProvider;
 	protected INameProvider nameGenerator;
+	private IndexInformation indexInfo;
 
 
 	/**
@@ -51,9 +53,10 @@ public abstract class ClassFieldCalculator {
 	 */
 	protected abstract ArrayList<Variable> generateImplicitFields(IClass c);
 	
-	public ClassFieldCalculator(TypeProvider tp, INameProvider snv) {
+	public ClassFieldCalculator(TypeProvider tp, INameProvider snv, IndexInformation indexInfo) {
 		this.typeProvider = tp;
 		this.nameGenerator = snv;
+		this.indexInfo = indexInfo;
 	}
 	
 	/**
@@ -83,12 +86,11 @@ public abstract class ClassFieldCalculator {
 			int size = fields.size();
 			for(int i=0;i<size;i++){
 				//Enumerate fields, giving them their index
-				//FIXME: Dirty hack! Pull field index away from field. (Use hashmap)
-				//Then we do not need a cast to fielddecl
-				FieldDecl fd = (FieldDecl) fields.get(i);
-				fd.setFieldIndex(i);
+				Variable fd = fields.get(i);
+				indexInfo.setFieldIndex(fd, i);
+				
 				//And generate their name
-				fd.setGeneratedName(nameGenerator.getFieldName(fd, fd.getContainingType()));
+				fd.setGeneratedName(nameGenerator.getFieldName((FieldDecl) fd, fd.getContainingType()));
 			}
 			setFieldsForHierarchy(c,fields);
 			//c.setHierarchyFields(fields);
@@ -136,17 +138,16 @@ public abstract class ClassFieldCalculator {
 				Variable f = fieldList.get(i);
 				if(f.getType().getGeneratedType()== field.getType().getGeneratedType()&&!t.isSubtypeOf(f.getContainingType())){
 					//Field can be reused if it is not yet used in this hierarchy
-					//FIXME: Dirty hack, factor usedBy out from field and remove the type casts
-					ArrayList<FieldDecl> usedBy = ((FieldDecl) f).getUsedByFields();
+					ArrayList<Variable> usedBy = indexInfo.getFieldAliases(f);
 					if(usedBy != null){
-						for(FieldDecl f2: usedBy){
+						for(Variable f2: usedBy){
 							//Field is already used in this hierarchy, skip!
 							if(t.isSubtypeOf(f2.getContainingType())) continue middle;
 						}
 					}
 					
 					//Field can be reused
-					((FieldDecl)field).setUsesField((FieldDecl) f);
+					indexInfo.setFieldAliasing(field, f);
 					continue outer;
 				}
 			}

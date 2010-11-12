@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.CompilerThread;
-import com.sc2mod.andromeda.parsing.CompilationFileManager;
+import com.sc2mod.andromeda.parsing.SourceManager;
+import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.util.Pair;
 
@@ -72,7 +73,7 @@ public class Problem{
 	 */
 	public Problem at(SyntaxNode node){
 		if (node==null) return this;
-		at(new LazySourceLocation(node, environment.getFileManager()));
+		at(new LazySourceLocation(node, environment.getSourceManager()));
 		return this;
 	}
 	
@@ -95,7 +96,7 @@ public class Problem{
 	 * @return this
 	 */
 	public Problem at(int left, int right){
-		at(new LazySourceLocation(left,right, environment.getFileManager()));
+		at(new LazySourceLocation(left,right, environment.getSourceManager()));
 		return this;
 	}
 	
@@ -131,6 +132,10 @@ public class Problem{
 		throw new UnrecoverableProblem(this);
 	}
 
+	public void raiseOnce(int raiseNumber){
+		if(CompilerThread.registerUniqueEvent(raiseNumber))
+			raise();
+	}
 	
 	/**
 	 * Returns a defensive copy of the source locations of this problem
@@ -174,6 +179,14 @@ public class Problem{
 	@Override
 	public String toString() {
 		return problemId.name() + ": " + getMessage(); 
+	}
+
+	public static void raiseSingleTimeDeprecation(ModifierListNode mods, int uniqueId, String string) {
+		if(!CompilerThread.registerUniqueEvent(uniqueId))
+			return;
+		Problem.ofType(ProblemId.DEPRECATION).at(mods)
+			.details(string)
+			.raise();
 	}
 	
 }

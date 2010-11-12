@@ -12,14 +12,15 @@ package com.sc2mod.andromeda.environment.types.basic;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.NonReferentialType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class TypeFixed extends NonReferentialType{
 
-	public TypeFixed() {
-		super("fixed");
+	public TypeFixed(TypeProvider t) {
+		super("fixed",t);
 	}
 	
 	 @Override

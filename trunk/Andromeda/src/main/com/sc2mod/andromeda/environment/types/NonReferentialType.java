@@ -16,8 +16,8 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class NonReferentialType extends BasicType{
 
-	public NonReferentialType(String name) {
-		super(name);
+	public NonReferentialType(String name, TypeProvider t) {
+		super(name,t);
 		// TODO Auto-generated constructor stub
 	}
 	

@@ -9,31 +9,26 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
-import java.util.ArrayList;
-
 import com.sc2mod.andromeda.environment.access.AccessType;
 import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.access.Invocation;
 import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.access.VarAccess;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.scopes.ScopeUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.variables.VarUtil;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.InclusionType;
-import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
-import com.sc2mod.andromeda.syntaxNodes.ExprNode;
-import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
-import com.sc2mod.andromeda.syntaxNodes.NewExprNode;
 import com.sc2mod.andromeda.syntaxNodes.DeleteStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
+import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
+import com.sc2mod.andromeda.syntaxNodes.NewExprNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.FuncNameObject;
 

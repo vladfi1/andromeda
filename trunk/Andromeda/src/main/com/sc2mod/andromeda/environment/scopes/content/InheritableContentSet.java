@@ -102,8 +102,10 @@ public class InheritableContentSet extends ScopeContentSet {
 	private IScopedElement handleInheritance(IScopedElement superElem, IScopedElement subElem) {
 		//Different types? Fail
 		if(superElem.getElementType() != subElem.getElementType()){
-			//FIXME Proper problem handling
-			throw new Error("Incompatible override");
+			//FIXME Test cases for this error
+			throw Problem.ofType(ProblemId.OVERRIDE_FORBIDDEN_ELEMENT).at(subElem.getDefinition())
+				.details(superElem.getElementTypeName(),superElem.toString(),subElem.getElementTypeName())
+				.raiseUnrecoverable();
 		}
 		
 		//Shadowing permitted

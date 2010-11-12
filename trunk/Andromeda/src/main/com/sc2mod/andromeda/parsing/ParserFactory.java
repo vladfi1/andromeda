@@ -7,6 +7,7 @@ import java.util.List;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.parsing.phases.CallHierarchyPhase;
+import com.sc2mod.andromeda.parsing.phases.CanonicalizationPhase;
 import com.sc2mod.andromeda.parsing.phases.CodeGenPhase;
 import com.sc2mod.andromeda.parsing.phases.CodeGenPreparationPhase;
 import com.sc2mod.andromeda.parsing.phases.InputCollectionPhase;
@@ -15,7 +16,6 @@ import com.sc2mod.andromeda.parsing.phases.Phase;
 import com.sc2mod.andromeda.parsing.phases.PrintResultsPhase;
 import com.sc2mod.andromeda.parsing.phases.RunMapPhase;
 import com.sc2mod.andromeda.parsing.phases.SemanticAnalysisPhase;
-import com.sc2mod.andromeda.parsing.phases.CanonicalizationPhase;
 import com.sc2mod.andromeda.parsing.phases.WriteCodePhase;
 import com.sc2mod.andromeda.parsing.phases.WriteXMLPhase;
 

@@ -8,14 +8,15 @@ import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 
 public class CompilationEnvironment {
 
 	private final Configuration config;
-	private final CompilationFileManager fileManager;
+	private final SourceManager fileManager;
 	private final CompilationResult result;
 	private Environment semanticEnvironment;
-	private SourceFileNode syntaxTree;
+	private SourceListNode syntaxTree;
 	private TransientCompilationData transientData = new TransientCompilationData();
 	private final EnumMap<InclusionType,List<Source>> parserInput = new EnumMap<InclusionType, List<Source>>(InclusionType.class);
 	
@@ -25,11 +26,11 @@ public class CompilationEnvironment {
 		return transientData;
 	}
 
-	public SourceFileNode getSyntaxTree() {
+	public SourceListNode getSyntaxTree() {
 		return syntaxTree;
 	}
 
-	public void setSyntaxTree(SourceFileNode syntaxTree) {
+	public void setSyntaxTree(SourceListNode syntaxTree) {
 		this.syntaxTree = syntaxTree;
 	}
 	
@@ -64,7 +65,7 @@ public class CompilationEnvironment {
 		return config;
 	}
 
-	public CompilationFileManager getFileManager() {
+	public SourceManager getSourceManager() {
 		return fileManager;
 	}
 
@@ -74,7 +75,7 @@ public class CompilationEnvironment {
 	
 	public CompilationEnvironment(Configuration config){
 		this.config = config;
-		fileManager = new CompilationFileManager(config);
+		fileManager = new SourceManager(config);
 		result = new CompilationResult(config.getParamBool(Parameter.DEBUG_PRINT_ERROR_STACK_TRACE));
 	}
 

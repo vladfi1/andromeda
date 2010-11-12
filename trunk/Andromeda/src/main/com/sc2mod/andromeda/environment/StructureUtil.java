@@ -20,9 +20,9 @@ import com.sc2mod.andromeda.syntaxNodes.AnnotationListNode;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 
-public final class Util {
+public final class StructureUtil {
 
-	private Util(){}
+	private StructureUtil(){}
 	
 	public static void processAnnotations(IAnnotatable annotatable, AnnotationListNode al){
 		if(al==null) return;
@@ -51,6 +51,7 @@ public final class Util {
 	public static void processModifiers(IModifiable m, ModifierListNode mods){
 		if(mods==null) return;
 		int size = mods.size();
+		boolean visibilityWasThere = false;
 		for(int i=0;i<size;i++){
 			switch(mods.elementAt(i)){
 			case ABSTRACT:
@@ -94,35 +95,39 @@ public final class Util {
 					m.setOverride();
 				break;
 			case PRIVATE:
-				if(m.getVisibility()!=Visibility.PUBLIC)
+				if(visibilityWasThere)
 					Problem.ofType(ProblemId.DUPLICATE_VISIBILITY_MODIFIER).at(mods)
 							.raise();
 				else
 					m.setVisibility(Visibility.PRIVATE);
+				visibilityWasThere = true;
 				break;
 			case PROTECTED:
-				if(m.getVisibility()!=Visibility.PUBLIC)
+				if(visibilityWasThere)
 					Problem.ofType(ProblemId.DUPLICATE_VISIBILITY_MODIFIER).at(mods)
 							.raise();
 				else
 					m.setVisibility(Visibility.PROTECTED);
+				visibilityWasThere = true;
 				break;
 			case INTERNAL:
-				if(m.getVisibility()!=Visibility.PUBLIC)
+				if(visibilityWasThere)
 					Problem.ofType(ProblemId.DUPLICATE_VISIBILITY_MODIFIER).at(mods)
 							.raise();
 				else
 					m.setVisibility(Visibility.INTERNAL);
+				visibilityWasThere = true;
 				break;
 			case PUBLIC:
-				if(m.getVisibility()!=Visibility.PUBLIC)
+				if(visibilityWasThere)
 					Problem.ofType(ProblemId.DUPLICATE_VISIBILITY_MODIFIER).at(mods)
 							.raise();
-				else {
-					//FIXME: Public deperecation warning
-					
+				else{
+					Problem.raiseSingleTimeDeprecation(mods, 1337, "the 'public' modifier");
+					m.setVisibility(Visibility.PUBLIC);
 				}
-					break;				
+				visibilityWasThere = true;
+				break;				
 			case NATIVE:
 				if(m.isNative()) 
 					Problem.ofType(ProblemId.DUPLICATE_MODIFIER).at(mods)

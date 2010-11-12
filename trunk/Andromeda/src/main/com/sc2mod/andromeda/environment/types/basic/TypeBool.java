@@ -11,14 +11,15 @@ package com.sc2mod.andromeda.environment.types.basic;
 
 import com.sc2mod.andromeda.environment.types.NonReferentialType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class TypeBool extends NonReferentialType{
 
-	public TypeBool() {
-		super("bool");
+	public TypeBool(TypeProvider t) {
+		super("bool",t);
 	}
 	
 	@Override

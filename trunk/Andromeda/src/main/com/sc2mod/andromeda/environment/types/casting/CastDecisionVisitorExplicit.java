@@ -5,6 +5,7 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
 import com.sc2mod.andromeda.environment.types.basic.TypeBool;
 import com.sc2mod.andromeda.environment.types.basic.TypeByte;
 import com.sc2mod.andromeda.environment.types.basic.TypeChar;
@@ -94,13 +95,14 @@ class CastDecisionVisitorExplicit extends ParameterSemanticsVisitorAdapter<IType
 	}
 	
 	private boolean isNumeric(IType t){
-		return t == BasicType.INT || t == BasicType.BYTE || t == BasicType.FLOAT; 
+		BasicTypeSet bt = t.getTypeProvider().BASIC;
+		return t == bt.INT || t == bt.BYTE || t == bt.FLOAT; 
 	}
 	
 	@Override
 	public Boolean visit(TypeString from, IType to) {
 		switch(to.getCategory()){
-		case BASIC: return to == this || to == BasicType.TEXT;
+		case BASIC: return to == this || to == from.getTypeProvider().BASIC.TEXT;
 		case EXTENSION:
 			IType toBase = to.getBaseType();
 			return unchecked && toBase == this;
@@ -111,7 +113,7 @@ class CastDecisionVisitorExplicit extends ParameterSemanticsVisitorAdapter<IType
 	@Override
 	public Boolean visit(TypeParameter from, IType to) {
 		if(to==from) return true;
-		if(to==BasicType.INT) return true;
+		if(to==from.getTypeProvider().BASIC.INT) return true;
 		if(unchecked){
 			return intBasedUncheckedCast(to);
 		}
@@ -127,7 +129,7 @@ class CastDecisionVisitorExplicit extends ParameterSemanticsVisitorAdapter<IType
 			return true;
 		case BASIC:
 		case EXTENSION:
-			return to.getBaseType() == BasicType.INT;
+			return to.getBaseType() == to.getTypeProvider().BASIC.INT;
 		}
 		return false;
 	}
@@ -138,7 +140,7 @@ class CastDecisionVisitorExplicit extends ParameterSemanticsVisitorAdapter<IType
 			return true;
 		}
 		if(unchecked){
-			if(from.getBaseType() == BasicType.INT){
+			if(from.getBaseType() == from.getTypeProvider().BASIC.INT){
 				return intBasedUncheckedCast(to);
 			} else {
 				return from.getBaseType() == to.getBaseType();
@@ -156,9 +158,10 @@ class CastDecisionVisitorExplicit extends ParameterSemanticsVisitorAdapter<IType
 		if(from.isSubtypeOf(to)){
 			return true;
 		}
-		if(to==BasicType.INT) return true;
+		BasicType INT = from.getTypeProvider().BASIC.INT;
+		if(to==INT) return true;
 		if(unchecked){
-			if(from.getBaseType() == BasicType.INT){
+			if(from.getBaseType() == INT){
 				return intBasedUncheckedCast(to);
 			} else {
 				return from.getBaseType() == to.getBaseType();
@@ -176,7 +179,7 @@ class CastDecisionVisitorExplicit extends ParameterSemanticsVisitorAdapter<IType
 		if(TypeUtil.isHierarchyShared(from, to)){
 			return true;
 		}
-		if(to==BasicType.INT) return true;
+		if(to==from.getTypeProvider().BASIC.INT) return true;
 		if(unchecked){
 			return intBasedUncheckedCast(to);
 		}
@@ -188,7 +191,7 @@ class CastDecisionVisitorExplicit extends ParameterSemanticsVisitorAdapter<IType
 		if(TypeUtil.isHierarchyShared(from, to)){
 			return true;
 		}
-		if(to==BasicType.INT) return true;
+		if(to==from.getTypeProvider().BASIC.INT) return true;
 		if(unchecked){
 			return intBasedUncheckedCast(to);
 		}
@@ -200,7 +203,7 @@ class CastDecisionVisitorExplicit extends ParameterSemanticsVisitorAdapter<IType
 		if(TypeUtil.isHierarchyShared(from, to)){
 			return true;
 		}
-		if(to==BasicType.INT) return true;
+		if(to==from.getTypeProvider().BASIC.INT) return true;
 		if(unchecked){
 			return intBasedUncheckedCast(to);
 		}
@@ -212,7 +215,7 @@ class CastDecisionVisitorExplicit extends ParameterSemanticsVisitorAdapter<IType
 		if(TypeUtil.isHierarchyShared(from, to)){
 			return true;
 		}
-		if(to==BasicType.INT) return true;
+		if(to==from.getTypeProvider().BASIC.INT) return true;
 		if(unchecked){
 			return intBasedUncheckedCast(to);
 		} 

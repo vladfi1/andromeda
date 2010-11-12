@@ -57,7 +57,7 @@ public class UglyExprTransformer {
 		this.syntaxGenerator = syntaxGenerator;
 		this.intOneExpr = syntaxGenerator.genIntLiteralExpr(1);
 		this.fixedOneExpr = syntaxGenerator.genFixedLiteralExpr(1.f);
-		this.complexChopper = new ComplexExpressionChopper(syntaxGenerator, varProvider);
+		this.complexChopper = new ComplexExpressionChopper(syntaxGenerator, varProvider,typeProvider);
 	}
 
 	
@@ -90,7 +90,7 @@ public class UglyExprTransformer {
 					
 		//Choose literal
 		ExprNode literal;
-		if(expr.getInferedType()==BasicType.FLOAT){
+		if(expr.getInferedType()==typeProvider.BASIC.FLOAT){
 			literal = fixedOneExpr;
 		} else {
 			literal = intOneExpr;

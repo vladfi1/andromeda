@@ -17,8 +17,8 @@ public class AndromedaSystemTypes extends SystemTypes{
 	public static final String M_ERROR = "error";
 	public static final String CONS_CLASS = "cons_class";
 	
-	public AndromedaSystemTypes(Environment env) {
-		super(env);
+	public AndromedaSystemTypes(Environment env, TypeProvider tp) {
+		super(env,tp);
 	}
 
 	@Override
@@ -27,8 +27,8 @@ public class AndromedaSystemTypes extends SystemTypes{
 		resolveSystemClass(T_OBJECT, buildLangName(T_OBJECT));
 		IClass system = resolveSystemClass(T_SYSTEM, buildLangName(T_SYSTEM));
 		resolveSystemType(T_FUNC_NAME,buildLangName(T_FUNC_NAME));
-		resolveSystemMethod(M_ERROR, system, "error", new Signature(BasicType.STRING),true);
-		resolveSystemConstructor(CONS_CLASS, clazz, new Signature(BasicType.INT,BasicType.STRING));
+		resolveSystemMethod(M_ERROR, system, "error", new Signature(typeProvider.BASIC.STRING),true);
+		resolveSystemConstructor(CONS_CLASS, clazz, new Signature(typeProvider.BASIC.INT,typeProvider.BASIC.STRING));
 	}
 
 }

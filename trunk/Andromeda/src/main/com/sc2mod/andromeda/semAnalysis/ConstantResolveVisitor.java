@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.environment.access.AccessUtil;
 import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -124,6 +125,9 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 			return;
 		}
 		resolveCount++;
+		
+		BasicTypeSet BASIC = type.getTypeProvider().BASIC;
+		
 				
 		switch (op) {
 		case POSTMINUSMINUS:
@@ -132,12 +136,12 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 		case PREPLUSPLUS:
 			break;
 		case MINUS:
-			if(type == BasicType.INT){
+			if(type == BASIC.INT){
 				int i = val.getIntValue();
 				unaryExpression.setValue(new IntObject(-i));
 				break;
 			} 
-			if(type == BasicType.FLOAT){
+			if(type == BASIC.FLOAT){
 				Fixed f = val.getFixedValue();
 				unaryExpression.setValue(new FixedObject(f.negate()));
 				break;
@@ -151,7 +155,7 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 		}	
 		case NOT:
 			//Not can be a boolean not or a test for "not null"
-			if(type == BasicType.BOOL){
+			if(type == BASIC.BOOL){
 				boolean i = val.getBoolValue();
 				unaryExpression.setValue(BoolObject.getBool(!i));
 				break;	
@@ -231,7 +235,8 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 		IType right = rExpr.getInferedType().getBaseType();
 		DataObject lVal = lExpr.getValue();
 		DataObject rVal = rExpr.getValue();
-		
+
+		BasicTypeSet BASIC = left.getTypeProvider().BASIC;
 
 		if(lVal == null || rVal == null){
 			addToResolveList(binaryExpression);
@@ -256,7 +261,7 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 		}
 		case XOR: 
 		{
-			if(left == BasicType.BOOL){
+			if(left == BASIC.BOOL){
 				boolean b1 = lVal.getBoolValue();
 				boolean b2 = rVal.getBoolValue();
 				boolean result;
@@ -275,7 +280,7 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 		}
 		case PLUS:
 		{
-			if(resultType == BasicType.TEXT|| resultType == BasicType.STRING){
+			if(resultType == BASIC.TEXT|| resultType == BASIC.STRING){
 				//XPilot: replaced getStringValue() with toString()
 				String s1 = lVal.toString();
 				String s2 = rVal.toString();
@@ -289,7 +294,7 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 		case MOD:
 		{
 			//If one of both operands is float, then the result is float, else int
-			if(resultType == BasicType.FLOAT){
+			if(resultType == BASIC.FLOAT){
 				Fixed f1 = lVal.getFixedValue();
 				Fixed f2 = rVal.getFixedValue();
 				Fixed result;
@@ -320,7 +325,7 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 		}
 		case EQEQ:
 		case NOTEQ:
-			if(left == BasicType.BOOL&&right == BasicType.BOOL){
+			if(left == BASIC.BOOL&&right == BASIC.BOOL){
 				boolean b1 = lVal.getBoolValue();
 				boolean f2 = rVal.getBoolValue();
 				boolean result;
@@ -336,7 +341,7 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 		case GT:
 		case LTEQ:
 		case GTEQ:
-			if(left == BasicType.FLOAT||right == BasicType.FLOAT){
+			if(left == BASIC.FLOAT||right == BASIC.FLOAT){
 				Fixed f1 = lVal.getFixedValue();
 				Fixed f2 = rVal.getFixedValue();
 				boolean result;

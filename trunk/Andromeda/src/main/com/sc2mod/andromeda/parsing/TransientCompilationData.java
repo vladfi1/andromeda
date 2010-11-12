@@ -6,6 +6,7 @@ import mopaqlib.MoPaQ;
 
 import com.sc2mod.andromeda.codegen.CodeGenVisitor;
 import com.sc2mod.andromeda.codegen.INameProvider;
+import com.sc2mod.andromeda.codegen.IndexInformation;
 import com.sc2mod.andromeda.codegen.NameGenerationVisitor;
 import com.sc2mod.andromeda.environment.access.Invocation;
 
@@ -18,7 +19,16 @@ public class TransientCompilationData {
 	private String outputName;
 	private ArrayList<Invocation> virtualInvocations = new ArrayList<Invocation>();
 	private int maxVCTSize;
+	private IndexInformation indexInformation;
 	
+	public IndexInformation getIndexInformation() {
+		return indexInformation;
+	}
+
+	public void setIndexInformation(IndexInformation indexInformation) {
+		this.indexInformation = indexInformation;
+	}
+
 	public int getMaxVCTSize() {
 		return maxVCTSize;
 	}

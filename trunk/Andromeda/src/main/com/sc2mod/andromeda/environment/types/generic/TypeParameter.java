@@ -14,6 +14,7 @@ import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -32,9 +33,9 @@ public class TypeParameter extends TypeImpl {
 
 	private IType typeBound;
 	
-	public TypeParameter(INamedType forType, TypeParamNode node, int index, IType typeBound) {
-		super(forType);
-		if(typeBound != null && typeBound.getBaseType() != BasicType.INT){
+	public TypeParameter(INamedType forType, TypeParamNode node, int index, IType typeBound, TypeProvider t) {
+		super(forType, t);
+		if(typeBound != null && typeBound.getBaseType() != tprov.BASIC.INT){
 			throw Problem.ofType(ProblemId.INVALID_TYPE_BOUND).at(node.getTypeBound())
 				.raiseUnrecoverable();
 		}
@@ -72,7 +73,7 @@ public class TypeParameter extends TypeImpl {
 	
 	@Override
 	public String getGeneratedName() {
-		return BasicType.INT.getGeneratedName();
+		return tprov.BASIC.INT.getGeneratedName();
 	}
 
 	

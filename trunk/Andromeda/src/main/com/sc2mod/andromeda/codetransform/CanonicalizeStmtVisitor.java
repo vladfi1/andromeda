@@ -39,7 +39,7 @@ public class CanonicalizeStmtVisitor extends TransformationVisitor {
 
 	public CanonicalizeStmtVisitor(Configuration options, TypeProvider typeProvider) {
 		super(new CanonicalizeExprVisitor(options, typeProvider),
-				options, true);
+				typeProvider, options, true);
 	}
 
 	protected void pushBeforeReturn(

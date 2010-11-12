@@ -70,7 +70,7 @@ public class CanonicalizeExprVisitor extends TransformationExprVisitor {
 			throw new Error(e.toString());
 		if(val.doNotInline()) return false;
 		
-		parent.replaceExpression = val.getExpression();
+		parent.replaceExpression = val.getExpression(typeProvider);
 		if(isFieldAccess){
 			VarAccess vd = (VarAccess) e.getSemantics();
 			vd.getAccessedElement().registerInline();
@@ -149,7 +149,7 @@ public class CanonicalizeExprVisitor extends TransformationExprVisitor {
 	
 	@Override
 	public void visit(KeyOfExprNode keyOfExpression) {
-		parent.replaceExpression = keyOfExpression.getValue().getExpression();
+		parent.replaceExpression = keyOfExpression.getValue().getExpression(typeProvider);
 	}
 	
 	

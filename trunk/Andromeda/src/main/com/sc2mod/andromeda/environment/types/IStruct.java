@@ -13,7 +13,7 @@ import java.util.HashSet;
 
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.parsing.CompilationFileManager;
+import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 

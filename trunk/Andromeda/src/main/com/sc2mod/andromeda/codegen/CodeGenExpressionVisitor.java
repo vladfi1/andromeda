@@ -22,10 +22,12 @@ import com.sc2mod.andromeda.environment.access.VarAccess;
 import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
+import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.options.Configuration;
@@ -55,6 +57,16 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	private CodeGenVisitor parent;
 	ClassGenerator classGen;
 	private Signature desiredSignature;
+	private BasicTypeSet BASIC;
+	private TypeCastCodeProvider typeCastProvider;
+	
+	public CodeGenExpressionVisitor(CodeGenVisitor codeGenVisitor, TypeProvider tp) {
+		super(codeGenVisitor);
+		this.parent = codeGenVisitor;
+		this.classGen = codeGenVisitor.classGen;
+		this.BASIC = tp.BASIC;
+		this.typeCastProvider = new TypeCastCodeProvider(tp);
+	}
 	
 	public Signature getDesiredSignature() {
 		return desiredSignature;
@@ -80,11 +92,11 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		
 		//Special case for int to fixed if the value to be cast is a literal
 		if(exp instanceof LiteralExprNode){
-			if(from==BasicType.INT && to==BasicType.FLOAT){
+			if(from==BASIC.INT && to==BASIC.FLOAT){
 				invokeSelf(exp);
 				curExprBuffer.append(".0");
 				return;
-			} else if(from==SpecialType.NULL){
+			} else if(from==BASIC.NULL){
 				//For null literals we just set their type. This will trigger the correct code gen
 				exp.setInferedType(to);
 				invokeSelf(exp);
@@ -93,15 +105,11 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 			
 		}
 		
-		surround(curExprBuffer,exp,CodegenUtil.getCastOp(from, to));
+		surround(curExprBuffer,exp,typeCastProvider.getCastOp(from, to));
 	}
 	
 
-	public CodeGenExpressionVisitor(CodeGenVisitor codeGenVisitor) {
-		super(codeGenVisitor);
-		this.parent = codeGenVisitor;
-		this.classGen = codeGenVisitor.classGen;
-	}
+
 	
 	protected void surround(SimpleBuffer buffer,SyntaxNode s, String left, String right){
 		buffer.append(left);
@@ -344,19 +352,19 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		IType et = e.getInferedType();
 		if(t!=et){
 			//If this is a cast to byte, check if we actually need it or if a cast to int is sufficient
-			if(t.getBaseType()==BasicType.BYTE){
+			if(t.getBaseType()==BASIC.BYTE){
 				SyntaxNode sn = castExpression.getParent();
 				if(sn instanceof AssignmentExprNode){
-					if(((AssignmentExprNode)sn).getInferedType().getBaseType()==BasicType.BYTE){
-						t = BasicType.INT;
+					if(((AssignmentExprNode)sn).getInferedType().getBaseType()==BASIC.BYTE){
+						t = BASIC.INT;
 					}
 				} else if(sn instanceof VarAssignDeclNode){
-					if(((VarAssignDeclNode)sn).getName().getInferedType().getBaseType()==BasicType.BYTE){
-						t = BasicType.INT;
+					if(((VarAssignDeclNode)sn).getName().getInferedType().getBaseType()==BASIC.BYTE){
+						t = BASIC.INT;
 					}
 				} else if(sn instanceof ReturnStmtNode){
-					if(((Operation)sn.getSemantics()).getReturnType().getBaseType()==BasicType.BYTE){
-						t = BasicType.INT;
+					if(((Operation)sn.getSemantics()).getReturnType().getBaseType()==BASIC.BYTE){
+						t = BASIC.INT;
 					}
 				}
 				
@@ -365,7 +373,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 			
 			//If the argument of the cast is in parenthesis, we don't need these
 			//since the cast adds parenthesis.
-			StringPair op = CodegenUtil.getCastOp(et, t);
+			StringPair op = typeCastProvider.getCastOp(et, t);
 			if(op != null && e instanceof ParenthesisExprNode){
 				e = e.getExpression();
 			}

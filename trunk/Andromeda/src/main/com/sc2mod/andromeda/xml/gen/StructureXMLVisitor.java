@@ -14,20 +14,17 @@ import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
-import com.sc2mod.andromeda.environment.access.AccessorAccess;
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;
-import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.NonParamDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
-import com.sc2mod.andromeda.parsing.CompilationFileManager;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.Source;
-import com.sc2mod.andromeda.parsing.SourceFileInfo;
+import com.sc2mod.andromeda.parsing.SourceInfo;
+import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
@@ -38,6 +35,7 @@ import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
+import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
@@ -46,7 +44,7 @@ public class StructureXMLVisitor extends VoidVisitorAdapter{
 
 	
 	private XMLWriter writer;
-	private CompilationFileManager env;
+	private SourceManager env;
 	private boolean inRecord;
 	private Configuration options;
 	
@@ -54,14 +52,14 @@ public class StructureXMLVisitor extends VoidVisitorAdapter{
 		this.options = options;
 	}
 	
-	public void genXml(CompilationFileManager env, File xmlFile, SourceFileNode code) throws XMLStreamException, IOException{
+	public void genXml(SourceManager env, File xmlFile, SourceListNode code) throws XMLStreamException, IOException{
 		writer = new XMLWriter(xmlFile);
 		this.env = env;
 		inRecord = false;
 		
 		writer.writeStartDocument();
 		writer.writeStartElement("andromedaStructure");
-		code.getContent().childrenAccept(this);
+		code.childrenAccept(this);
 		writer.writeEndElement();
 		writer.writeEndDocument();
 	
@@ -79,8 +77,8 @@ public class StructureXMLVisitor extends VoidVisitorAdapter{
 	@Override
 	public void visit(SourceFileNode andromedaFile) {
 		XMLWriter writer = this.writer;
-		SourceFileInfo info = andromedaFile.getFileInfo();
-		InclusionType inclusionType = info.getInclusionType();
+		SourceInfo info = andromedaFile.getSourceInfo();
+		InclusionType inclusionType = info.getType();
 		
 		//Omit natives if not desired to output them
 		if(inclusionType==InclusionType.NATIVE&&!options.getParamBool(Parameter.XML_OUTPUT_NATIVES)){

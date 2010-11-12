@@ -16,7 +16,7 @@ import java.util.List;
 
 import com.sc2mod.andromeda.environment.Annotations;
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.Util;
+import com.sc2mod.andromeda.environment.StructureUtil;
 import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
@@ -100,8 +100,8 @@ public class Function extends Operation {
 		this.body = decl.getBody();
 		this.scope = scope;
 		decl.setSemantics(this);
-		Util.processModifiers(this, decl.getHeader().getModifiers());
-		Util.processAnnotations(this, decl.getHeader().getAnnotations());
+		StructureUtil.processModifiers(this, decl.getHeader().getModifiers());
+		StructureUtil.processAnnotations(this, decl.getHeader().getAnnotations());
 	
 	}
 	
@@ -114,7 +114,7 @@ public class Function extends Operation {
 		this.body = decl.getBody();
 		this.scope = scope;
 		decl.setSemantics(this);
-		Util.processAnnotations(this, decl.getAnnotations());
+		StructureUtil.processAnnotations(this, decl.getAnnotations());
 	}
 	
 

@@ -19,11 +19,13 @@ public class TriggerSource extends Source {
 	private String code;
 	private String name;
 	private File mapFile;
+	private Language anticipatedLanguage;
 	
-	public TriggerSource(File mapFile,String name, String code){
+	public TriggerSource(File mapFile,Language anticipatedLanguage, String name, String code){
 		this.name = name;
 		this.code = code;
 		this.mapFile = mapFile;
+		this.anticipatedLanguage = anticipatedLanguage;
 	}
 	
 	@Override
@@ -54,6 +56,16 @@ public class TriggerSource extends Source {
 	@Override
 	public String getFullPath() {
 		return "trigger://" + mapFile.getAbsolutePath() + ":" + getName();
+	}
+
+	@Override
+	public Language getAnticipatedLanguage() {
+		return anticipatedLanguage;
+	}
+
+	@Override
+	public String getPathInSourceFolder() {
+		return null;
 	}
 	
 }

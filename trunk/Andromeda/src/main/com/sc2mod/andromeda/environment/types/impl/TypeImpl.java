@@ -16,18 +16,25 @@ import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
 public abstract class TypeImpl extends BlockScope implements IType{
 
-	private static int curCount = 1;
-	private int hashCode;
+	private final int hashCode;
+	protected final TypeProvider tprov;
 	
-	protected TypeImpl(IScope parentScope) {
+	protected TypeImpl(IScope parentScope, TypeProvider tprov) {
 		super(parentScope);
-		hashCode = curCount++;
+		this.tprov = tprov;
+		hashCode = tprov.getNextTypeIndex();
+	}
+	
+	@Override
+	public TypeProvider getTypeProvider() {
+		return tprov;
 	}
 
 	/**

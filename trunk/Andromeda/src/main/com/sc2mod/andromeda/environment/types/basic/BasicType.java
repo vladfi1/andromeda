@@ -19,7 +19,6 @@ import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
-import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.impl.NamedTypeImpl;
@@ -33,106 +32,41 @@ public class BasicType extends NamedTypeImpl {
 	
 	
 	
-	private static ArrayList<BasicType> basicTypeList = new ArrayList<BasicType>(35);
-
-	public static final BasicType STRING = new TypeString();
-	public static final BasicType INT = new TypeInt();
-	public static final BasicType SHORT = new TypeShort();
-	public static final BasicType BYTE = new TypeByte();
-	public static final BasicType BOOL = new TypeBool();
-	public static final BasicType CHAR = new TypeChar();
-	public static final BasicType FLOAT = new TypeFixed();
-	public static final BasicType TEXT = new TypeText();
-	private static final String[] additionalBasicTypes = 
-				{
-					"abilcmd",
-					"actor",
-				    "actorscope",
-				    "aifilter",
-				    "animtarget",
-				    "bank",
-				    "camerainfo",
-				    "color",
-				    "doodad",
-				    "handle",
-				    "marker",
-				    "order",
-				    "playergroup",
-				    "point",
-				    "region",
-				    "revealer",
-				    "sound",
-				    "soundlink",
-				    "timer",
-				    "transmissionsource",
-				    "trigger",
-				    "unit",
-				    "unitfilter",
-				    "unitgroup",
-				    "unitref",
-				    "wave",
-				    "waveinfo",
-				    "wavetarget"
-				};
-
-    
+	//private static ArrayList<BasicType> basicTypeList = new ArrayList<BasicType>(35);
 
 	@Override
 	public int getRuntimeType() {
 		return RuntimeType.OTHER;
 	}
 	
-	public static ArrayList<BasicType> getBasicTypeList() {
-		return basicTypeList;
-	}
 
 
-	public BasicType(String name) {
-		this(null,name); //Basic types have no scope
+
+	public BasicType(String name, TypeProvider t) {
+		this(null,name, t); //Basic types have no scope
 	}
 	
 	/**
 	 * Constructor for types that do have a scope.
 	 * @param scope
 	 */
-	protected BasicType(IScope scope, String name){
-		super(scope,name);
-		if(this.getCategory()==TypeCategory.BASIC)
-			basicTypeList.add(this);
+	protected BasicType(IScope scope, String name, TypeProvider t){
+		super(scope,name, t);
+		t.registerBasicType(this);
 	}
 	
 	/**
 	 * Constructor for generic instances of a type.
 	 * @param genericParent the type for which to create a generic instance.
 	 */
-	protected BasicType(BasicType genericParent, Signature sig){
-		super(genericParent,sig);
+	protected BasicType(BasicType genericParent, Signature sig, TypeProvider t){
+		super(genericParent,sig,t);
 	}
 	
 
 	@Override
 	public boolean canBeNull() {
 		return true;
-	}
-
-	/**
-	 * registers all basic types of galaxy / andromeda
-	 * which do not have to be defined anywhere
-	 * @param t
-	 */
-	public static void registerBasicTypes(TypeProvider t) {
-		t.registerBasicType(STRING);
-		t.registerBasicType(INT);
-		t.registerBasicType(SHORT);
-		t.registerBasicType(BOOL);
-		t.registerBasicType(BYTE);
-		t.registerBasicType(CHAR);
-		t.registerBasicType(FLOAT);
-		t.registerBasicType(TEXT);
-		for(String s:additionalBasicTypes){
-			t.registerBasicType(new BasicType(s));
-		}
-		SpecialType.registerSpecialTypes(t);
 	}
 	
 

@@ -22,7 +22,7 @@ public class IndexClassNameProvider extends ClassNameProvider{
 
 	@Override
 	public String getName() {
-		return BasicType.INT.getGeneratedName();
+		return clazz.getTypeProvider().BASIC.INT.getGeneratedName();
 	}
 	
 	@Override

@@ -30,7 +30,8 @@ public class ClosureType extends UnscopedType{
 	private String uid;
 	private LinkedHashSet<OperationAccess> usages;
 	
-	public ClosureType(Signature sig2, IType returnType) {
+	public ClosureType(Signature sig2, IType returnType, TypeProvider t) {
+		super(t);
 		this.sig = sig2;
 		this.returnType = returnType;
 	}
@@ -82,12 +83,12 @@ public class ClosureType extends UnscopedType{
 	
 	@Override
 	public String getGeneratedDefinitionName() {
-		return BasicType.INT.getGeneratedName();
+		return tprov.BASIC.INT.getGeneratedName();
 	}
 	
 	@Override
 	public String getGeneratedName() {
-		return BasicType.INT.getGeneratedName();
+		return tprov.BASIC.INT.getGeneratedName();
 	}
 
 	public void calcIndices() {

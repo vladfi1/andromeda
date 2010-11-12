@@ -27,6 +27,7 @@ import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -44,8 +45,8 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 	
 	
 	
-	public GenericClassInstance(IClass class1, Signature s) {
-		super(class1, s);
+	public GenericClassInstance(IClass class1, Signature s, TypeProvider t) {
+		super(class1, s, t);
 		this.genericParent = class1;
 		constructors = new MethodSet(this, "<init>");
 		
@@ -91,12 +92,6 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 	@Override
 	public void generateImplementsTransClosure() {
 		throw new Error("Not allowed!");
-	}
-
-
-	@Override
-	public int getClassIndex() {
-		return genericParent.getClassIndex();
 	}
 
 

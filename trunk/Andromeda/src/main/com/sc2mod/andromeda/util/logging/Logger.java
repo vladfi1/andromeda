@@ -16,15 +16,21 @@ import com.sc2mod.andromeda.notifications.Message;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.SourceLocation;
 import com.sc2mod.andromeda.parsing.SourceReader;
-import com.sc2mod.andromeda.parsing.CompilationFileManager;
+import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.util.Debug;
 
 public abstract class Logger {
 	
+	public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.PHASE;
+	
 	private LogLevel logLevel;
-	private int level;
+	private int level = DEFAULT_LOG_LEVEL.getLevel();
 	private LogLevel lastLevel;
+	
+	public void setLogLevel(LogLevel l){
+		this.level = l.getLevel();
+	}
 	
 	public void println(LogLevel logLevel, LogFormat logFormat, String message){
 		print(logLevel,logFormat,message + "\n");

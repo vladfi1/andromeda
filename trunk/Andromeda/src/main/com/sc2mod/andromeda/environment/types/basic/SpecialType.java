@@ -7,22 +7,20 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.environment.types;
+package com.sc2mod.andromeda.environment.types.basic;
 
 
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class SpecialType extends BasicType {
 
-	public static SpecialType NULL = new TypeUnknown();
-	public static SpecialType VOID = new SpecialType("void");
 	
-	
-	protected SpecialType(String name) {
-		super(name);
+	protected SpecialType(String name, TypeProvider t) {
+		super(name,t);
 	}
 
 
@@ -35,13 +33,6 @@ public class SpecialType extends BasicType {
 	public TypeCategory getCategory() {
 		return TypeCategory.OTHER;
 	}
-
-
-	public static void registerSpecialTypes(TypeProvider t) {
-		t.registerBasicType(VOID);
-		t.registerBasicType(NULL);
-	}
-	
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }

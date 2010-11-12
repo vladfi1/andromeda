@@ -11,12 +11,13 @@ package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.PointerType;
-import com.sc2mod.andromeda.environment.types.SpecialType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
+import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.types.casting.CastUtil;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
@@ -31,10 +32,12 @@ public class ExpressionAnalyzer {
 
 	private ConstantResolveVisitor constResolve;
 	private TypeProvider typeProvider;
+	private BasicTypeSet BASIC;
 	private LValueDecisionVisitor lValueDecider = new LValueDecisionVisitor();
 	
 	public ExpressionAnalyzer(ConstantResolveVisitor constResolver, TypeProvider typeProvider){
 		this.typeProvider = typeProvider;
+		this.BASIC = typeProvider.BASIC;
 		constResolve = constResolver;
 	}
 	
@@ -44,23 +47,24 @@ public class ExpressionAnalyzer {
 		BinOpSE op = binaryExpression.getBinOp();
 		ExprNode lExpr = binaryExpression.getLeftExpression();
 		ExprNode rExpr = binaryExpression.getRightExpression();
+		BasicTypeSet BASIC = this.BASIC;
 		//System.out.println(binaryExpression);
 		
 		IType left = lExpr.getInferedType();
 		IType right = rExpr.getInferedType();
 		
-		if(left == SpecialType.VOID) 
+		if(left == BASIC.VOID) 
 			throw Problem.ofType(ProblemId.BINOP_ON_VOID).at(lExpr)
 					.raiseUnrecoverable();
-		if(right == SpecialType.VOID)
+		if(right == BASIC.VOID)
 			throw Problem.ofType(ProblemId.BINOP_ON_VOID).at(rExpr)
 					.raiseUnrecoverable();
 		
 		//If we do checks with null, we need to cast the null to the other type (if possible)
-		if(left == SpecialType.NULL){
+		if(left == BASIC.NULL){
 			left = right;
 			lExpr.setInferedType(right);
-		} else if(right == SpecialType.NULL){
+		} else if(right == BASIC.NULL){
 			right = left;
 			rExpr.setInferedType(left);
 		}
@@ -73,29 +77,29 @@ public class ExpressionAnalyzer {
 		case OROR:
 		case ANDAND:
 			//Bool op: both operands must be bool
-			if(lBase != BasicType.BOOL) 
+			if(lBase != BASIC.BOOL) 
 				throw Problem.ofType(ProblemId.TYPE_ERROR_BINOP_OPERAND_TYPE).at(lExpr)
 					.details("left","boolean","type bool",left)
 					.raiseUnrecoverable();
 					
-			if(rBase != BasicType.BOOL) 
+			if(rBase != BASIC.BOOL) 
 				throw Problem.ofType(ProblemId.TYPE_ERROR_BINOP_OPERAND_TYPE).at(rExpr)
 				.details("right","boolean","type bool",right)
 				.raiseUnrecoverable();
 			binaryExpression.setInferedType(left.getCommonSupertype(right));
-			binaryExpression.setLeftExpectedType(BasicType.BOOL);
-			binaryExpression.setRightExpectedType(BasicType.BOOL);
+			binaryExpression.setLeftExpectedType(BASIC.BOOL);
+			binaryExpression.setRightExpectedType(BASIC.BOOL);
 			break;
 		case XOR:
 			//XOR can be bool op and int op
 			//Bool op: both operands must be bool
-			if(lBase == BasicType.BOOL){
-				 if(rBase != BasicType.BOOL) 
+			if(lBase == BASIC.BOOL){
+				 if(rBase != BASIC.BOOL) 
 					 throw Problem.ofType(ProblemId.TYPE_ERROR_BINOP_OPERAND_TYPE).at(rExpr)
 						.details("right","boolean XOR","type bool",right)
 						.raiseUnrecoverable();
-				 binaryExpression.setLeftExpectedType(BasicType.BOOL);
-				 binaryExpression.setRightExpectedType(BasicType.BOOL);
+				 binaryExpression.setLeftExpectedType(BASIC.BOOL);
+				 binaryExpression.setRightExpectedType(BASIC.BOOL);
 			}else if(lBase.isIntegerType()){
 				 if(!rBase.isIntegerType()) 
 					 throw Problem.ofType(ProblemId.TYPE_ERROR_BINOP_OPERAND_TYPE).at(rExpr)
@@ -112,48 +116,48 @@ public class ExpressionAnalyzer {
 			break;
 		case PLUS:
 			//Plus can be string concat or text concat
-			if(lBase == BasicType.TEXT || rBase == BasicType.TEXT){
-				if(lBase ==BasicType.TEXT && rBase == BasicType.TEXT){
+			if(lBase == BASIC.TEXT || rBase == BASIC.TEXT){
+				if(lBase ==BASIC.TEXT && rBase == BASIC.TEXT){
 					binaryExpression.setInferedType(left.getCommonSupertype(right));
-				} else if(lBase == BasicType.TEXT){
-					if(!CastUtil.canConcatenateCast(right,BasicType.TEXT))
+				} else if(lBase == BASIC.TEXT){
+					if(!CastUtil.canConcatenateCast(right,BASIC.TEXT))
 						throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_BINOP_OPERANDS).at(binaryExpression)
 							.details("+",left,right)
 							.raiseUnrecoverable();
 					binaryExpression.setInferedType(left);
 				} else {
-					if(!CastUtil.canConcatenateCast(left,BasicType.TEXT)) 
+					if(!CastUtil.canConcatenateCast(left,BASIC.TEXT)) 
 						throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_BINOP_OPERANDS).at(binaryExpression)
 						.details("+",left,right)
 						.raiseUnrecoverable();
 					binaryExpression.setInferedType(right);
 				}
 				
-				binaryExpression.setLeftExpectedType(BasicType.TEXT);
-				binaryExpression.setRightExpectedType(BasicType.TEXT);
+				binaryExpression.setLeftExpectedType(BASIC.TEXT);
+				binaryExpression.setRightExpectedType(BASIC.TEXT);
 				break;				
 			}
 			
-			if(lBase == BasicType.STRING || rBase == BasicType.STRING){
-				if(lBase ==BasicType.STRING && rBase == BasicType.STRING){
+			if(lBase == BASIC.STRING || rBase == BASIC.STRING){
+				if(lBase ==BASIC.STRING && rBase == BASIC.STRING){
 					//The inferred type is the common super type
 					binaryExpression.setInferedType(left.getCommonSupertype(right));
-				} else if(lBase == BasicType.STRING){
-					if(!CastUtil.canConcatenateCast(right,BasicType.STRING)) 
+				} else if(lBase == BASIC.STRING){
+					if(!CastUtil.canConcatenateCast(right,BASIC.STRING)) 
 						throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_BINOP_OPERANDS).at(binaryExpression)
 						.details("+",left,right)
 						.raiseUnrecoverable();
 					binaryExpression.setInferedType(left); //Inferred type is the left one
 				} else {
-					if(!CastUtil.canConcatenateCast(left,BasicType.STRING))
+					if(!CastUtil.canConcatenateCast(left,BASIC.STRING))
 						throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_BINOP_OPERANDS).at(binaryExpression)
 						.details("+",left,right)
 						.raiseUnrecoverable();
 					binaryExpression.setInferedType(right); //Inferred type is the right one
 				}
 				
-				binaryExpression.setLeftExpectedType(BasicType.STRING);
-				binaryExpression.setRightExpectedType(BasicType.STRING);
+				binaryExpression.setLeftExpectedType(BASIC.STRING);
+				binaryExpression.setRightExpectedType(BASIC.STRING);
 				break;				
 			}
 		case MINUS:
@@ -161,21 +165,21 @@ public class ExpressionAnalyzer {
 		case MULT:
 		case MOD:
 			//Numeric operations
-			if(!lBase.isIntegerType() && lBase != BasicType.FLOAT) 
-				 if(rBase != BasicType.BOOL) 
+			if(!lBase.isIntegerType() && lBase != BASIC.FLOAT) 
+				 if(rBase != BASIC.BOOL) 
 					 throw Problem.ofType(ProblemId.TYPE_ERROR_BINOP_OPERAND_TYPE).at(lExpr)
 						.details("left","arithmetic binary","a numeric type",left)
 						.raiseUnrecoverable();
-			if(!rBase.isIntegerType() && rBase != BasicType.FLOAT)
-				 if(rBase != BasicType.BOOL) 
+			if(!rBase.isIntegerType() && rBase != BASIC.FLOAT)
+				 if(rBase != BASIC.BOOL) 
 					 throw Problem.ofType(ProblemId.TYPE_ERROR_BINOP_OPERAND_TYPE).at(rExpr)
 						.details("right","arithmetic binary","a numeric type",right)
 						.raiseUnrecoverable();
 			
 			//If one of both operands is float, then the result is float, else int
-			if(lBase == BasicType.FLOAT||rBase == BasicType.FLOAT){
-				binaryExpression.setLeftExpectedType(BasicType.FLOAT);
-				binaryExpression.setRightExpectedType(BasicType.FLOAT);
+			if(lBase == BASIC.FLOAT||rBase == BASIC.FLOAT){
+				binaryExpression.setLeftExpectedType(BASIC.FLOAT);
+				binaryExpression.setRightExpectedType(BASIC.FLOAT);
 			} else {
 				binaryExpression.setLeftExpectedType(lBase);
 				binaryExpression.setRightExpectedType(rBase);
@@ -185,36 +189,36 @@ public class ExpressionAnalyzer {
 		case EQEQ:
 		case NOTEQ:
 			boolean error = false;
-			binaryExpression.setInferedType(BasicType.BOOL);
+			binaryExpression.setInferedType(BASIC.BOOL);
 			
 			//Equalty and not equalty, can compare many things...
 			if(lBase == rBase){
-				if(lBase == BasicType.BOOL){
+				if(lBase == BASIC.BOOL){
 					binaryExpression.setInferedType(left.getCommonSupertype(right));
 				}
 				//Equalty of two values with the same (basic) type			
-			} else if(left == SpecialType.NULL||right == SpecialType.NULL){
+			} else if(left == BASIC.NULL||right == BASIC.NULL){
 				//Reference equalty on basic types with a null pointer
 				if((!left.canBeNull())) 
 					if(error) 
 						throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_COMPARISON).at(lExpr)
-								.details(left,SpecialType.NULL)
+								.details(left,BASIC.NULL)
 								.raiseUnrecoverable();
 				if((!right.canBeNull())) 
 					throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_COMPARISON).at(rExpr)
-					.details(right,SpecialType.NULL)
+					.details(right,BASIC.NULL)
 					.raiseUnrecoverable();
-			} else if(lBase == BasicType.INT||lBase == BasicType.FLOAT){
+			} else if(lBase == BASIC.INT||lBase == BASIC.FLOAT){
 				//Numeric equalty
-				if(rBase != BasicType.INT&&rBase != BasicType.FLOAT) error = true;
+				if(rBase != BASIC.INT&&rBase != BASIC.FLOAT) error = true;
 			} else if(left.getCategory() == TypeCategory.CLASS||right.getCategory() == TypeCategory.CLASS){
 				//Reference equalty
 				if(!(left.getCategory() == TypeCategory.CLASS)||!(right.getCategory() == TypeCategory.CLASS))error = true;
 				//Error if hierarchy isn't shared
 				if(!TypeUtil.isHierarchyShared((IClass)left,(IClass) right)) error = true;
-			} else if(lBase == BasicType.BOOL){
+			} else if(lBase == BASIC.BOOL){
 				//Boolean equalty
-				if(rBase != BasicType.BOOL) error = true;
+				if(rBase != BASIC.BOOL) error = true;
 				binaryExpression.setInferedType(left.getCommonSupertype(right));
 			} else {
 				error = true;
@@ -229,15 +233,15 @@ public class ExpressionAnalyzer {
 		case LTEQ:
 		case GTEQ:
 			//Numeric compare
-			if(!lBase.isIntegerType()&&lBase != BasicType.FLOAT) 
+			if(!lBase.isIntegerType()&&lBase != BASIC.FLOAT) 
 				 throw Problem.ofType(ProblemId.TYPE_ERROR_BINOP_OPERAND_TYPE).at(lExpr)
 					.details("left","comparison","a numeric type",left)
 					.raiseUnrecoverable();
-			if(!rBase.isIntegerType()&&rBase != BasicType.FLOAT)
+			if(!rBase.isIntegerType()&&rBase != BASIC.FLOAT)
 				 throw Problem.ofType(ProblemId.TYPE_ERROR_BINOP_OPERAND_TYPE).at(rExpr)
 					.details("right","comparsion","a numeric type",right)
 					.raiseUnrecoverable();
-			binaryExpression.setInferedType(BasicType.BOOL);
+			binaryExpression.setInferedType(BASIC.BOOL);
 			break;
 		case AND:
 		case OR:
@@ -272,7 +276,7 @@ public class ExpressionAnalyzer {
 		IType type = unaryExpression.getExpression().getInferedType();
 		UnOpSE op = unaryExpression.getUnOp();
 		ExprNode expr = unaryExpression.getExpression();
-		if(type == SpecialType.VOID) 
+		if(type == BASIC.VOID) 
 			throw Problem.ofType(ProblemId.UNOP_ON_VOID).at(unaryExpression)
 				.raiseUnrecoverable();
 			
@@ -292,11 +296,11 @@ public class ExpressionAnalyzer {
 						.raiseUnrecoverable();
 			}
 		case MINUS:
-			if(base == BasicType.INT){
+			if(base == BASIC.INT){
 				unaryExpression.setInferedType(type);
 				break;
 			} 
-			if(base == BasicType.FLOAT){
+			if(base == BASIC.FLOAT){
 				unaryExpression.setInferedType(type);
 				break;
 			}
@@ -304,7 +308,7 @@ public class ExpressionAnalyzer {
 					.details("negation","a numeric type",type)
 					.raiseUnrecoverable();
 		case COMP:			
-			if(base == BasicType.INT){
+			if(base == BASIC.INT){
 				unaryExpression.setInferedType(type);
 				break;
 			} 
@@ -313,11 +317,11 @@ public class ExpressionAnalyzer {
 					.raiseUnrecoverable();
 		case NOT:
 			//Not can be a boolean not or a test for "not null"
-			if(base == BasicType.BOOL|| type.canBeNull()){
-				if(base == BasicType.BOOL)
+			if(base == BASIC.BOOL|| type.canBeNull()){
+				if(base == BASIC.BOOL)
 					unaryExpression.setInferedType(type);
 				else
-					unaryExpression.setInferedType(BasicType.BOOL);
+					unaryExpression.setInferedType(BASIC.BOOL);
 				break;
 			} 
 			throw Problem.ofType(ProblemId.TYPE_ERROR_UNOP_OPERAND_TYPE).at(unaryExpression)

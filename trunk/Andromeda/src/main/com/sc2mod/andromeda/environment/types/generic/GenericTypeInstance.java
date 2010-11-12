@@ -15,6 +15,7 @@ import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
@@ -29,8 +30,8 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 	private IDeclaredType genericParent;
 	private Signature typeArguments;
 	
-	protected GenericTypeInstance(IDeclaredType genericParent, Signature s) {
-		super(genericParent.getScope());
+	protected GenericTypeInstance(IDeclaredType genericParent, Signature s, TypeProvider t) {
+		super(genericParent.getScope(), t);
 		this.genericParent = genericParent;
 		this.typeArguments = s;
 		//We have to recreate the content set here because the first creation

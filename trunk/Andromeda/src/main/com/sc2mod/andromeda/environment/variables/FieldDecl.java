@@ -25,7 +25,6 @@ public class FieldDecl extends NonLocalVarDecl {
 
 	private FieldDeclNode fieldDeclaration;
 	private final int index;
-	private int fieldIndex;
 	private FieldDecl usesField;
 	private ArrayList<FieldDecl> usedByFields;
 	private boolean isStatic;
@@ -39,21 +38,21 @@ public class FieldDecl extends NonLocalVarDecl {
 
 	}	
 	
-	public ArrayList<FieldDecl> getUsedByFields() {
-		return usedByFields;
-	}
-	
-	public FieldDecl getUsesField() {
-		return usesField;
-	}
-
-	public void setUsesField(FieldDecl usesField) {
-		this.usesField = usesField;
-		if(usesField.usedByFields == null){
-			usesField.usedByFields = new ArrayList<FieldDecl>(3);
-		}
-		usesField.usedByFields.add(this);
-	}
+//	public ArrayList<FieldDecl> getUsedByFields() {
+//		return usedByFields;
+//	}
+//	
+//	public FieldDecl getUsesField() {
+//		return usesField;
+//	}
+//
+//	public void setUsesField(FieldDecl usesField) {
+//		this.usesField = usesField;
+//		if(usesField.usedByFields == null){
+//			usesField.usedByFields = new ArrayList<FieldDecl>(3);
+//		}
+//		usesField.usedByFields.add(this);
+//	}
 	
 	@Override
 	public String getGeneratedName() {
@@ -74,14 +73,6 @@ public class FieldDecl extends NonLocalVarDecl {
 	@Override
 	public int getIndex() {
 		return index;
-	}
-
-	public void setFieldIndex(int fieldIndex) {
-		this.fieldIndex = fieldIndex;
-	}
-
-	public int getFieldIndex() {
-		return fieldIndex;
 	}
 	
 	public IType getContainingType(){

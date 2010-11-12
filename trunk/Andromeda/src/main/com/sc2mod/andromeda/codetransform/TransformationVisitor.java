@@ -12,28 +12,20 @@ package com.sc2mod.andromeda.codetransform;
 import java.util.ArrayList;
 
 import com.sc2mod.andromeda.environment.operations.Function;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.InclusionType;
-import com.sc2mod.andromeda.parsing.SourceFileInfo;
+import com.sc2mod.andromeda.parsing.SourceInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ContinueStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.DoWhileStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ExplicitConsCallStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ForEachStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ForStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.GlobalStaticInitDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.GlobalStructureListNode;
-import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.IfStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
-import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.LocalVarDeclStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
@@ -45,14 +37,14 @@ import com.sc2mod.andromeda.syntaxNodes.VarAssignDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.WhileStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
+import com.sc2mod.andromeda.util.visitors.VoidTreeScanVisitor;
 
 /**
  * General superclass for all visitors that can do transformations to the syntax tree.
  * (Expressions can be exchanged, statements can be appended before the processed statement)
  * @author J. 'gex' Finis 
  */
-public abstract class TransformationVisitor extends VoidVisitorAdapter {
+public abstract class TransformationVisitor extends VoidTreeScanVisitor {
 
 	protected static ArrayList<StmtNode> EMPTY_LIST = new ArrayList<StmtNode>(0);
 	private ArrayList<StmtNode> insertBeforeStmts = new ArrayList<StmtNode>();
@@ -104,8 +96,8 @@ public abstract class TransformationVisitor extends VoidVisitorAdapter {
 	protected boolean pushLoopContinue = true;
 	private boolean flushAfterExpression;
 		
-	public TransformationVisitor(TransformationExprVisitor exprVisitor, Configuration options, boolean flushAfterExpression) {
-		syntaxGenerator = new SyntaxGenerator();
+	public TransformationVisitor(TransformationExprVisitor exprVisitor, TypeProvider tp, Configuration options, boolean flushAfterExpression) {
+		syntaxGenerator = new SyntaxGenerator(tp);
 		this.exprVisitor = exprVisitor;
 		this.options = options;
 		this.flushAfterExpression = flushAfterExpression;
@@ -137,54 +129,15 @@ public abstract class TransformationVisitor extends VoidVisitorAdapter {
 	}
 	
 	//*********** GLOBAL CONSTRUCTS (just loop through) **********
+	
+	
 	@Override
 	public void visit(SourceFileNode andromedaFile) {
-		SourceFileInfo fi = andromedaFile.getFileInfo();
+		SourceInfo fi = andromedaFile.getSourceInfo();
 		
 		//Natives are not transformed
-		if(fi.getInclusionType()==InclusionType.NATIVE) return;
+		if(fi.getType()==InclusionType.NATIVE) return;
 		andromedaFile.childrenAccept(this);
-	}
-	
-	@Override
-	public void visit(GlobalStructureListNode fileContent) {
-		fileContent.childrenAccept(this);
-	}
-	
-	@Override
-	public void visit(IncludeNode includedFile) {		
-		includedFile.childrenAccept(this);
-	}
-	@Override
-	public void visit(ClassDeclNode classDeclaration) {
-		classDeclaration.getBody().childrenAccept(this);
-	}	
-	@Override
-	public void visit(InterfaceDeclNode interfaceDeclaration) {
-		interfaceDeclaration.getBody().accept(this);
-	}	
-	@Override
-	public void visit(GlobalFuncDeclNode functionDeclaration) {
-		functionDeclaration.childrenAccept(this);
-	}
-	@Override
-	public void visit(GlobalVarDeclNode globalVarDeclaration) {
-		globalVarDeclaration.childrenAccept(this);
-	}
-	
-	@Override
-	public void visit(GlobalStaticInitDeclNode g) {
-		g.getInitDecl().accept(this);
-	}
-	
-	@Override
-	public void visit(EnrichDeclNode enrichDeclaration) {
-		enrichDeclaration.getBody().childrenAccept(this);
-	}
-	@Override
-	public void visit(FieldDeclNode fieldDeclaration) {
-		VarDeclListNode v = fieldDeclaration.getDeclaredVariables();
-		v.childrenAccept(this);
 	}
 	
 	@Override

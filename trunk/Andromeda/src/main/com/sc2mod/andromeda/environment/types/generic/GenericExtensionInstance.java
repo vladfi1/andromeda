@@ -2,6 +2,7 @@ package com.sc2mod.andromeda.environment.types.generic;
 
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.types.IExtension;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
@@ -10,8 +11,8 @@ public class GenericExtensionInstance extends GenericTypeInstance {
 
 	private final IExtension genericParent;
 
-	public GenericExtensionInstance(IExtension i, Signature s){
-		super(i,s);
+	public GenericExtensionInstance(IExtension i, Signature s, TypeProvider t){
+		super(i,s,t);
 		this.genericParent = i;
 		
 	}

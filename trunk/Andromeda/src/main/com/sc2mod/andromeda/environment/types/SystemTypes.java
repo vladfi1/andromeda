@@ -18,7 +18,7 @@ import com.sc2mod.andromeda.util.Strings;
 
 public abstract class SystemTypes {
 
-	private TypeProvider typeProvider;
+	protected TypeProvider typeProvider;
 	private Environment env;
 	private IScope rootScope;
 	private HashMap<String, IType> resolvedSystemTypes = new HashMap<String, IType>();
@@ -26,9 +26,9 @@ public abstract class SystemTypes {
 	
 	private boolean resolved = false;
 	
-	public SystemTypes(Environment env){
+	public SystemTypes(Environment env, TypeProvider tp){
 		this.env = env;
-		this.typeProvider = env.typeProvider;
+		this.typeProvider = tp;
 		this.rootScope = env.getDefaultPackage();
 	}
 	

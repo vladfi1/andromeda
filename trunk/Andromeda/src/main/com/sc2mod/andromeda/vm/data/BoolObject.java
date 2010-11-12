@@ -11,6 +11,7 @@ package com.sc2mod.andromeda.vm.data;
 
 import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
@@ -21,8 +22,6 @@ public class BoolObject extends DataObject{
 	
 	private static final BoolObject TRUE = new BoolObject(true);
 	private static final BoolObject FALSE = new BoolObject(false);
-	private static LiteralExprNode TRUE_LITERAL = TRUE.getLiteralExpr(LiteralTypeSE.BOOL);
-	private static LiteralExprNode FALSE_LITERAL = FALSE.getLiteralExpr(LiteralTypeSE.BOOL);
 	
 	public static BoolObject getBool(boolean val)
 	{
@@ -43,14 +42,14 @@ public class BoolObject extends DataObject{
 	}
 	
 	@Override
-	public ExprNode getExpression() {
-		if(val) return TRUE_LITERAL;
-		return FALSE_LITERAL;
+	public ExprNode getExpression(TypeProvider tp) {
+		if(val) return TRUE.getLiteralExpr(tp,LiteralTypeSE.BOOL);
+		return FALSE.getLiteralExpr(tp, LiteralTypeSE.BOOL);
 	}
 	
 	@Override
-	public IType getType() {
-		return BasicType.BOOL;
+	public IType getType(TypeProvider tp) {
+		return tp.BASIC.BOOL;
 	}
 	
 	@Override

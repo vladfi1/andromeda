@@ -3,10 +3,11 @@ package com.sc2mod.andromeda.environment.types.impl;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.sc2mod.andromeda.environment.Util;
+import com.sc2mod.andromeda.environment.StructureUtil;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
@@ -24,13 +25,13 @@ public abstract class DeclaredTypeImpl extends NamedTypeImpl implements IDeclare
 	private Visibility visibility = Visibility.DEFAULT;
 	private GlobalStructureNode declaration;
 	
-	protected DeclaredTypeImpl(GlobalStructureNode declaration, IScope parentScope) {
-		super(parentScope, declaration.getName());
+	protected DeclaredTypeImpl(GlobalStructureNode declaration, IScope parentScope, TypeProvider t) {
+		super(parentScope, declaration.getName(),t);
 		this.declaration = declaration;
 		declaration.setSemantics(this);
 		
-		Util.processModifiers(this,declaration.getModifiers());
-		Util.processAnnotations(this, declaration.getAnnotations());
+		StructureUtil.processModifiers(this,declaration.getModifiers());
+		StructureUtil.processAnnotations(this, declaration.getAnnotations());
 	}
 	
 	@Override

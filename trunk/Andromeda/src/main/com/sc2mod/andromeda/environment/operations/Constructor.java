@@ -29,11 +29,11 @@ public class Constructor extends Method {
 
 	private ConstructorInvocation invokedConstructor;
 	
-	public static final List<ParamDecl> IMPLICIT_CONSTRUCTOR_PARAMS = new LinkedList<ParamDecl>();
+	//public static final List<ParamDecl> IMPLICIT_CONSTRUCTOR_PARAMS = new LinkedList<ParamDecl>();
 	
-	static{
-		IMPLICIT_CONSTRUCTOR_PARAMS.add(new ParamDecl(null, BasicType.INT, new IdentifierNode("A__cid")));
-	}
+//	static{
+//		IMPLICIT_CONSTRUCTOR_PARAMS.add(new ParamDecl(null, BasicType.INT, new IdentifierNode("A__cid")));
+//	}
 	
 	public ConstructorInvocation getInvokedConstructor() {
 		return invokedConstructor;

@@ -17,7 +17,7 @@ import com.sc2mod.andromeda.environment.IDefined;
 import com.sc2mod.andromeda.environment.IIdentifiable;
 import com.sc2mod.andromeda.environment.IModifiable;
 import com.sc2mod.andromeda.environment.SemanticsElement;
-import com.sc2mod.andromeda.environment.Util;
+import com.sc2mod.andromeda.environment.StructureUtil;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
@@ -74,7 +74,7 @@ public abstract class VarDecl extends Variable{
 		this.mods = mods;
 		this.scope = scope;
 		def.setSemantics(this);
-		Util.processModifiers(this, mods);
+		StructureUtil.processModifiers(this, mods);
 	}
 	
 	public VarDecl(ModifierListNode mods,IType type,IdentifierNode def, IScope scope) {

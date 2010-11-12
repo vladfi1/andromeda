@@ -32,9 +32,11 @@ public class LongNameProvider implements INameProvider {
 	private Object token = new Object();
 	private Hashtable<String, Object> localNames = new Hashtable<String, Object>();
 	private FunctionIndexProvider indexProvider;
+	private IndexInformation indexInfo;
 	
-	public LongNameProvider(Environment semEnv) {
+	public LongNameProvider(IndexInformation indexInfo, Environment semEnv) {
 		this.indexProvider = new FunctionIndexProvider(semEnv);
+		this.indexInfo = indexInfo;
 	}
 	
 	@Override
@@ -154,11 +156,10 @@ public class LongNameProvider implements INameProvider {
 			b.append("__");
 			b.append(decl.getUid());
 		} else {
-			ArrayList<FieldDecl> fieldsUsed = decl.getUsedByFields();
 			b.append(clazz.getUid());		
 			b.append("__");
 			b.append(decl.getUid());
-			if(fieldsUsed!=null){
+			if(indexInfo.isFieldAliased(decl)){
 				b.append("_mult");
 			}
 		}

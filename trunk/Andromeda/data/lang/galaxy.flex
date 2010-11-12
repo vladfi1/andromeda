@@ -6,25 +6,23 @@
 package com.sc2mod.andromeda.parser;
 
 import com.sc2mod.andromeda.parsing.SourceReader;
-import com.sc2mod.andromeda.parsing.SourceFileInfo;
 import com.sc2mod.andromeda.parsing.InclusionType;
+import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.Symbol;
 %%
 
 %public
-%class GalaxyScanner
+%class AndromedaScanner
 %implements sym, Scanner
-%function nextToken
-
 %unicode
+%function nextToken
 
 %char
 
 
 %type Symbol
-
 //%cup
 //%cupdebug
 
@@ -38,25 +36,6 @@ curInclusionType = ((SourceReader)in).getInclusionType();
   
   protected int curFile;
   protected InclusionType curInclusionType;
-  
-  private Symbol processInclude(InclusionType inclusionType, boolean isImport){
-  	if(curInclusionType == InclusionType.NATIVE){
-  		inclusionType = InclusionType.NATIVE;
-  	}
-  	int includeToken;
-  	String s;
-  	if(isImport){
-		includeToken = IMPORT_START; 	
-		s = yytext();
-  	} else {
-  		s = null;
-  		includeToken = INCLUDE_START;
-  	}
-  	SourceReader ar = this.zzReader.getSourceEnvironment().getReaderFromInclude(yytext(), yychar|curFile, (yylength()+yychar)|curFile,inclusionType,isImport);
-  	if(ar == null) return null;
-  	yypushStream(ar);
-  	return symbol(includeToken,new SourceFileInfo(curFile,inclusionType,s));
-  }
 
   
   private Symbol symbol(int type) {
@@ -128,7 +107,11 @@ Exponent = [eE] [+-]? [0-9]+
 StringCharacter = [^\r\n\"\\]
 SingleCharacter = [^\r\n\'\\]
 
+/*
 IncludeFile = [ \t\f]*\"[a-zA-Z0-9_\.\/-]+\"
+LibIncludeFile = [ \t\f]*\<[a-zA-Z0-9_\.\/-]+\>
+LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
+*/
 
 %state STRING, CHARLITERAL
 
@@ -160,6 +143,7 @@ IncludeFile = [ \t\f]*\"[a-zA-Z0-9_\.\/-]+\"
   "else"                         { return symbol(ELSE); }
   "enrich"						 { return symbol(ENRICH); }
   "extends"                      { return symbol(EXTENDS); }
+  "extension"					 { return symbol(EXTENSION); }
   "final"                        { return symbol(FINAL); }
   "finally"                      { return symbol(FINALLY); }
 //  "float"                        { return symbol(FLOAT); }
@@ -167,6 +151,7 @@ IncludeFile = [ \t\f]*\"[a-zA-Z0-9_\.\/-]+\"
   "default"                      { return symbol(DEFAULT); }
   "implements"                   { return symbol(IMPLEMENTS); }
   "import"                       { return symbol(IMPORT); }
+  "include"						 { return symbol(INCLUDE); }
   "instanceof"                   { return symbol(INSTANCEOF); }
   "int"                          { return symbol(INT); }
   "fixed"                        { return symbol(FIXED); }
@@ -177,6 +162,8 @@ IncludeFile = [ \t\f]*\"[a-zA-Z0-9_\.\/-]+\"
 //  "goto"                         { return symbol(GOTO); }
   "if"                           { return symbol(IF); }
   "inline"						 { return symbol(INLINE); }
+  ".inline"						 { return symbol(DOTINLINE); }
+  "internal"					 { return symbol(INTERNAL); }
   "public"                       { return symbol(PUBLIC); }
   "short"                        { return symbol(SHORT); }
   "super"                        { return symbol(SUPER); }
@@ -189,6 +176,7 @@ IncludeFile = [ \t\f]*\"[a-zA-Z0-9_\.\/-]+\"
   "void"                         { return symbol(VOID); }
   "static"                       { return symbol(STATIC); }
   "while"                        { return symbol(WHILE); }
+  "this"                         { return symbol(THIS); }
   "throw"                        { return symbol(THROW); }
   "throws"                       { return symbol(THROWS); }
   "try"                          { return symbol(TRY); }
@@ -224,10 +212,12 @@ IncludeFile = [ \t\f]*\"[a-zA-Z0-9_\.\/-]+\"
   ">"                            { return symbol(GT); }
   "<"                            { return symbol(LT); }
   "!"                            { return symbol(NOT); }
+  "!!"                            { return symbol(NOTNOT); }  
   "~"                            { return symbol(COMP); }
   "?"                            { return symbol(QUESTION); }
   ":"                            { return symbol(COLON); }
   ".."							 { return symbol(DOTDOT); }
+  "=>"							 { return symbol(ARROW); }
   "=="                           { return symbol(EQEQ); }
   "<="                           { return symbol(LTEQ); }
   ">="                           { return symbol(GTEQ); }
@@ -294,10 +284,17 @@ IncludeFile = [ \t\f]*\"[a-zA-Z0-9_\.\/-]+\"
   {Identifier}                   { return symbol(IDENTIFIER, yytext()); }  
   
   /* include */
+  /*
   "include"{IncludeFile}   { Symbol s = processInclude(InclusionType.INCLUDE,false);
   							 if(s != null) return s; }
+  "include"{LibIncludeFile} { Symbol s = processInclude(InclusionType.LIBRARY,false);
+  							 if(s != null) return s; }
+  "import"{LibImportFile} { Symbol s = processInclude(InclusionType.LIBRARY,true);
+  							 if(s != null) return s; }
+  							 
+   */
 
-	<<EOF>>        { if (yymoreStreams()){ yypopStream(); return symbol(INCLUDE_END);}else return symbol(EOF); }
+	<<EOF>>        { if (yymoreStreams()){ yypopStream(); throw new Error("Stacked readers?"); }else return symbol(EOF); }
   
  
 }
@@ -320,11 +317,12 @@ IncludeFile = [ \t\f]*\"[a-zA-Z0-9_\.\/-]+\"
                         				   string.append( val ); }
   
   /* error cases */
-  \\.                           {   	  throw Problem.ofType(ProblemId.SYNTAX_ILLEGAL_ESCAPE_SEQUENCE).at(curFile+yychar,curFile+yychar+yylength())
+  \\.                            {   	  throw Problem.ofType(ProblemId.SYNTAX_ILLEGAL_ESCAPE_SEQUENCE).at(curFile+yychar,curFile+yychar+yylength())
 				        	  				.details(yytext())
 				        	  				.raiseUnrecoverable(); }
-	  {LineTerminator}           { throw Problem.ofType(ProblemId.SYNTAX_UNTERMINATED_STRING).at(curFile+yychar-string.length()-1,curFile+yychar)
-									  	  			.raiseUnrecoverable();}
+  {LineTerminator}               { throw Problem.ofType(ProblemId.SYNTAX_UNTERMINATED_STRING).at(curFile+yychar-string.length()-1,curFile+yychar)
+								  	  			.raiseUnrecoverable();
+								 }
 }
 
 <CHARLITERAL> {
@@ -350,6 +348,6 @@ IncludeFile = [ \t\f]*\"[a-zA-Z0-9_\.\/-]+\"
 
 /* error fallback */
 .|\n                             { throw Problem.ofType(ProblemId.SYNTAX_ILLEGAL_CHARACTER).at(curFile+yychar,curFile+yychar+yylength())
-			        	  			.details(yytext())
-			        	  			.raiseUnrecoverable(); }
+				        	  			.details(yytext())
+				        	  			.raiseUnrecoverable(); }
 <<EOF>>                          { return symbol(EOF); }
