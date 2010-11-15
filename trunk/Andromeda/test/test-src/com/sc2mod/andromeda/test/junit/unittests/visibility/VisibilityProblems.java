@@ -8,9 +8,16 @@ import com.sc2mod.andromeda.test.junit.AndromedaSingleRunTest;
 public class VisibilityProblems extends AndromedaSingleRunTest {
 
 	@Test
-	public void visibility1(){
-		callAndromeda("PrivateVisibility.a");
+	public void privateVisibility(){
+		callAndromeda("PrivateVisibility.a","PrivateVisibility_2.a");
 		assertOnlyProblem(ProblemId.FIELD_NOT_VISIBLE);
+	}
+	
+	@Test
+	public void protectedVisibility(){
+		callAndromeda("ProtectedVisibility.a","ProtectedVisibility_2.a","ProtectedVisibility_3.a");
+		assertNoMoreProblems();
+		checkOutput();
 	}
 	
 }

@@ -1,0 +1,24 @@
+static{
+	//!
+	X.i = 2;
+	
+	//works
+	X.j = 1;
+}
+
+class Y extends X{
+	static{
+		//!
+		X.i = 3;
+		//works
+		X.j = 6;
+	}
+}
+
+enrich X{
+
+	static{
+		X.i = 2;
+		X.j = 7;
+	}
+}

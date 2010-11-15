@@ -1,0 +1,14 @@
+package b => Y;
+
+class Y extends X{
+	static{
+		X.j = 3;
+	}
+}
+
+enrich X{
+	static{
+		X.j = 3;
+	}
+
+}

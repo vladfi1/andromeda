@@ -85,6 +85,8 @@ public class ParserScheduler {
 		
 	}
 	
+	//FIXME: Change private visibility to reflect the spec
+	
 	//FIXME: Test cases for include and import
 	public synchronized void registerInclude(IncludeNode sn){
 		

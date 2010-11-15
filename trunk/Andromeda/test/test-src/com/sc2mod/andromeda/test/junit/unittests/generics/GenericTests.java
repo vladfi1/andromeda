@@ -2,6 +2,7 @@ package com.sc2mod.andromeda.test.junit.unittests.generics;
 
 import org.junit.Test;
 
+import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.test.junit.AndromedaSingleRunTest;
 
@@ -67,5 +68,23 @@ public class GenericTests extends AndromedaSingleRunTest {
 		checkOutput();
 	}
 	
+	@Test
+	public void typeParamVisibility(){
+		callAndromeda("typeParamVisibility.a");
+		assertOnlyProblem(ProblemId.UNKNOWN_TYPE);
+	}
+	
+	@Test
+	public void typeParamInEnrichment(){
+		callAndromeda("typeParamInEnrichment.a");
+		assertOnlyProblem(ProblemId.UNKNOWN_TYPE);
+	}
+	
+	@Test
+	public void typeParamInEnrichment2(){
+		callAndromeda("typeParamInEnrichment2.a");
+		assertNoMoreProblems();
+		checkOutput();
+	}
 	
 }

@@ -1,0 +1,18 @@
+
+
+class X <T> {
+	
+
+}
+
+enrich X{
+
+	T getT(){ return null; }
+}
+
+
+static {
+	X<X<int>> x = new X<X<int>>();
+	int i = x.getT().getT();
+	
+}

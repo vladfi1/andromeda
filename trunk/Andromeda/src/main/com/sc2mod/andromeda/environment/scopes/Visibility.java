@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.environment.scopes;
 
+import com.sc2mod.andromeda.environment.types.Enrichment;
 import com.sc2mod.andromeda.environment.types.IType;
 
 /**
@@ -28,6 +29,9 @@ public abstract class Visibility {
 		public boolean checkAccessible(IScope from, IScope target) {
 			if(ScopeUtil.isInSubpackageOf(from, target))
 				return true;
+			if(from instanceof Enrichment){
+				from = ((Enrichment)from).getEnrichedType();
+			}
 			if(from instanceof IType){
 				//TODO: Insert checks that protected is not used outside of types
 				if(((IType)from).isSubtypeOf((IType)target)){
@@ -45,7 +49,7 @@ public abstract class Visibility {
 	};
 	public static final Visibility PRIVATE = new Visibility("private",3){
 		public boolean checkAccessible(IScope from, IScope target) {
-			return ScopeUtil.isChildOf(from,target);
+			return ScopeUtil.getFileScopeOfScope(from) == ScopeUtil.getFileScopeOfScope(target);
 		}
 		
 		@Override

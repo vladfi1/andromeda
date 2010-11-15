@@ -52,10 +52,12 @@ public abstract class AndromedaSingleRunTest extends AndromedaTestRun {
 		return result;
 	}
 	
-	protected void callAndromeda(String sourceFile){
+	protected void callAndromeda(String... sourceFile){
 
 		ArrayList<Source> input = new ArrayList<Source>();
-		input.add(new FileSource(new File(packageToString(this.getClass().getPackage()),sourceFile).getAbsolutePath(),null));
+		for(String s : sourceFile){
+			input.add(new FileSource(new File(packageToString(this.getClass().getPackage()),s).getAbsolutePath(),null));	
+		}
 		Configuration o = getDefaultOptions();
 		try {
 			o.setParam(Parameter.FILES_OUT_DIR, new File("out/test"));

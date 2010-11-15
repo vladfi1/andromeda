@@ -98,7 +98,7 @@ public class TypeParameter extends TypeImpl {
 	 */
 	@Override
 	public Visibility getVisibility() {
-		return Visibility.PUBLIC;
+		return Visibility.PROTECTED;
 	}
 
 	@Override

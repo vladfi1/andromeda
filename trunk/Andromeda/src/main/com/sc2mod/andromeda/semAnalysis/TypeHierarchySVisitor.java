@@ -81,7 +81,7 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 			if(superType != null){
 				//TODO Testcases for extensions with modifiers (static, final, ...)
 				if(superType.isFinal())
-					throw Problem.ofType(ProblemId.FINAL_TYPE_EXTENDED).at(extension.getDefinition().getSuperClass())
+					throw Problem.ofType(ProblemId.FINAL_TYPE_EXTENDED).at(extension.getDefinition())
 								.details(superType.getName())
 								.raiseUnrecoverable();
 				//only add as descendant if this extension is not distinct

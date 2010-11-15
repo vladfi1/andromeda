@@ -1,0 +1,7 @@
+package a => X;
+
+//Three private access errors
+class X{
+	protected static int j = 1;
+}
+

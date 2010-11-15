@@ -73,44 +73,44 @@ public abstract class DeclaredTypeImpl extends NamedTypeImpl implements IDeclare
 	
 	@Override public boolean isNative() { return false; }
 	@Override public void setNative() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
+		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
 					.details("Type definitions","native")
-					.raiseUnrecoverable();
+					.raise();
 	}
 	
 	@Override public boolean isOverride() { return false; }
 	@Override public void setOverride() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
+		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
 		.details("Type definitions","override")
-		.raiseUnrecoverable(); 
+		.raise(); 
 	}
 		
 	@Override public boolean isStatic() { return false; }
 	@Override public void setStatic() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
+		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
 					.details("This kind of type","static")
-					.raiseUnrecoverable();
+					.raise();
 	}
 	
 	@Override public boolean isConst() { return false; }
 	@Override public void setConst() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
+		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
 			.details("Type definitions","const")
-			.raiseUnrecoverable();
+			.raise();
 	}
 	
 	@Override public boolean isAbstract() { return false; }
 	@Override public void setAbstract() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
+		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
 					.details("This kind of type","abstract")
-					.raiseUnrecoverable();
+					.raise();
 	}
 	
 	@Override public boolean isFinal() { return false; }
 	@Override public void setFinal() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
+		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
 					.details("This kind of type","final")
-					.raiseUnrecoverable();
+					.raise();
 	}
 	
 	

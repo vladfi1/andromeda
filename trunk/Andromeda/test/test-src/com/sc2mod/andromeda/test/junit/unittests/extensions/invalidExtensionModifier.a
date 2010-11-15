@@ -1,0 +1,3 @@
+
+
+native const abstract static override extension C extends int;

@@ -50,6 +50,22 @@ public class ExtensionTests extends AndromedaSingleRunTest {
 		checkOutput();
 	}
 	
+	@Test
+	public void finalExtensionInherited(){
+		callAndromeda("finalExtensionInherited.a");
+		assertOnlyProblem(ProblemId.FINAL_TYPE_EXTENDED);
+	}
+	
+	@Test
+	public void invalidExtensionModifier(){
+		callAndromeda("invalidExtensionModifier.a");
+		assertProblem(ProblemId.INVALID_MODIFIER);
+		assertProblem(ProblemId.INVALID_MODIFIER);
+		assertProblem(ProblemId.INVALID_MODIFIER);
+		assertProblem(ProblemId.INVALID_MODIFIER);
+		assertOnlyProblem(ProblemId.INVALID_MODIFIER);
+	}
+	
 	
 	
 	

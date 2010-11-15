@@ -39,6 +39,7 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 	private BasicType extendedBaseType;
 	private boolean isDistinct;
 	
+	private boolean isFinal;
 	private boolean isKey;
 	private int hierarchyLevel;
 	private boolean copiedDown;
@@ -239,5 +240,15 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 	@Override
 	public boolean isTopType() {
 		return isDistinct || extendedType.getCategory() != TypeCategory.EXTENSION;
+	}
+	
+	@Override
+	public boolean isFinal() {
+		return isFinal;
+	}
+	
+	@Override
+	public void setFinal() {
+		isFinal = true;
 	}
 }

@@ -69,7 +69,7 @@ public enum ProblemId {
 	DUPLICATE_LOCAL_VARIABLE ("Duplicate local variable '%s'"),
 	GLOBAL_VAR_ACCESS_BEFORE_DECL("Accessing a global variable from above its declaration is forbidden"),
 	
-	UNKNOWN_TYPE("Type %s does not exist"),
+	UNKNOWN_TYPE("Type %s does not exist or is not visible"),
 	
 	NAME_EXPR_IS_NOT_A_VAR_OR_OP("A name expression must be a variable or operation name but it is a %s"),
 	

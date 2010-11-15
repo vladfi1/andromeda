@@ -1,0 +1,10 @@
+
+
+class X <T> {
+	
+
+}
+
+enrich X<T>{ // not allowed, use raw type X instead
+
+}

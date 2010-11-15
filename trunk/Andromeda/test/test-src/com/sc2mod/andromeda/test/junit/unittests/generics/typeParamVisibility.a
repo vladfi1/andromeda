@@ -1,0 +1,10 @@
+
+
+class X <T> {
+	
+
+}
+
+class Y extends X<int>{
+	T t; //no type T visible	
+}
