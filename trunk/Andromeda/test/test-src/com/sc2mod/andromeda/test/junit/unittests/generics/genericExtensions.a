@@ -5,6 +5,9 @@ extension X <T,T2> extends int{
 	
 	void setX(T t){
 	}
+	
+	void setY(){
+	}
 
 }
 
@@ -17,7 +20,10 @@ class Z{
 }
 
 static{
-	X<int,int> xxx = new Y(); // works
-	X<Z,int> xx = new Y(); // does not work
+	X<int,int> xxx;
+	X<Z,int> xx; 
+	Y y;
+	y.setY();
+	y.setX(3);	
 		
 }

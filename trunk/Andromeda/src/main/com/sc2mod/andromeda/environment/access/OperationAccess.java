@@ -81,9 +81,6 @@ public class OperationAccess extends NameAccess{
 //		return new FunctionObject(this);
 //	}
 
-	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
-	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
-	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 
 	@Override
 	public AccessType getAccessType() {
@@ -99,4 +96,8 @@ public class OperationAccess extends NameAccess{
 	public IScope getPrefixScope() {
 		throw new Error("Not implemented!");
 	}
+
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 }

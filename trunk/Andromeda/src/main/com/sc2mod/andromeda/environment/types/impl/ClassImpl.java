@@ -196,7 +196,7 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	}
 	
 	@Override
-	public boolean isTopClass(){
+	public boolean isTopType() {
 		return superClass == null;
 	}
 

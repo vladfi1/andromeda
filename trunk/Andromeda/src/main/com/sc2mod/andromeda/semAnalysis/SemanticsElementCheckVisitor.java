@@ -221,7 +221,7 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	 */
 	private void checkImplicitConstructor(IClass c) {
 		//If we are in a top class or we have constructors, everything is fine
-		if(c.isTopClass()) return;
+		if(c.isTopType()) return;
 		if(c.hasConstructors()) return;
 		
 		IClass superClass = c.getSuperClass();

@@ -44,6 +44,18 @@ public class OverrideProblems extends AndromedaSingleRunTest {
 	}
 	
 	@Test
+	public void overrideField(){
+		callAndromeda("overrideField.a");
+		assertOnlyProblem(ProblemId.OVERRIDE_FORBIDDEN_ELEMENT);
+	}
+	
+	@Test
+	public void overrideField2(){
+		callAndromeda("overrideField2.a");
+		assertOnlyProblem(ProblemId.OVERRIDE_FORBIDDEN_ELEMENT);
+	}
+	
+	@Test
 	public void wrongReturnType(){
 		callAndromeda("wrongReturnType.a");
 		assertOnlyProblem(ProblemId.OVERRIDE_RETURN_TYPE_MISMATCH);

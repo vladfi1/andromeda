@@ -9,6 +9,7 @@ import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class InheritableContentSet extends ScopeContentSet {
 
@@ -60,8 +61,11 @@ public class InheritableContentSet extends ScopeContentSet {
 		IScopedElement o = getContentSet().get(name);
 		if(o != null){
 			//Op set present, add the method to it
+			Operation op = set.getAny();
 			if(o.getElementType() != ScopedElementType.OP_SET){
-				throw new Error("Trying to override non op set with operation");
+				throw Problem.ofType(ProblemId.OVERRIDE_FORBIDDEN_ELEMENT).at(o.getDefinition())
+				.details(op.getElementTypeName(),op.toString(),o.getElementTypeName())
+				.raiseUnrecoverable();
 			}
 			OperationSet os = (OperationSet) o;
 			os.addAllInherited(set);
@@ -103,8 +107,20 @@ public class InheritableContentSet extends ScopeContentSet {
 	private IScopedElement handleInheritance(IScopedElement superElem, IScopedElement subElem) {
 		//Different types? Fail
 		if(superElem.getElementType() != subElem.getElementType()){
-			//FIXME Test cases for this error
-			throw Problem.ofType(ProblemId.OVERRIDE_FORBIDDEN_ELEMENT).at(subElem.getDefinition())
+			SyntaxNode[] definitions;
+			if(subElem.getElementType() == ScopedElementType.OP_SET){
+				OperationSet opSet = ((OperationSet)subElem);
+				definitions = new SyntaxNode[opSet.size()];
+				int i = 0;
+				for(Operation op : opSet){
+					definitions[i++]=op.getDefinition();
+					subElem = op;
+				}
+			} else {
+				definitions = new SyntaxNode[]{subElem.getDefinition()};
+			}
+			
+			throw Problem.ofType(ProblemId.OVERRIDE_FORBIDDEN_ELEMENT).at(definitions)
 				.details(superElem.getElementTypeName(),superElem.toString(),subElem.getElementTypeName())
 				.raiseUnrecoverable();
 		}

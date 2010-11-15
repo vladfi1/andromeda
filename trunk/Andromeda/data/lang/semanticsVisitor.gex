@@ -2,6 +2,9 @@
 package com.sc2mod.andromeda.environment
 top SemanticsElement
 
+package com.sc2mod.andromeda.environment.annotations
+Annotation
+
 package com.sc2mod.andromeda.environment.scopes
 ScopeImpl
 FileScope
@@ -26,9 +29,6 @@ Enrichment
 ClosureType
 NonReferentialType
 PointerType
-SpecialType
-StaticDecl
-TypeUnknown
 
 package com.sc2mod.andromeda.environment.types.basic
 BasicType
@@ -40,6 +40,8 @@ TypeInt
 TypeShort
 TypeString
 TypeText
+SpecialType
+TypeUnknown
 
 package com.sc2mod.andromeda.environment.types.impl
 ClassImpl

@@ -21,7 +21,7 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-//FIXME Why are here two classes GenericMethodProxz and GenericFunctionProxy??
+
 public class GenericMethodProxy extends Operation {
 
 	private Operation method;
@@ -305,12 +305,13 @@ public class GenericMethodProxy extends Operation {
 		return method.getOverrideInformation();
 	}
 
-	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
-	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
-	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 
 	@Override
 	public AnnotationSet getAnnotations(boolean createIfNotExistant) {
 		return method.getAnnotations(createIfNotExistant);
 	}
+
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 }

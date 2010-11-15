@@ -1,22 +1,30 @@
 package com.sc2mod.andromeda.environment.annotations;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public enum BasicAnnotations implements IAnnotationType {
 	
-	KEEP_AFTER_FOREACH, INLINE;
+	KEEP_AFTER_FOREACH("KeepAfterForeach"),
+	INLINE("Inline");
+	
+	private String name;
+	
+	private BasicAnnotations(String name){
+		this.name = name;
+	}
 
-	public static Iterable<IAnnotationType> getBasicAnnotationTypes(){
-		return null;
+	public static Iterable<BasicAnnotations> getBasicAnnotationTypes(){
+		return Arrays.asList(values());
 	}
 
 	@Override
 	public boolean checkAllowed(IAnnotatable s) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+		return true;
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+		return name;
 	}
 }

@@ -285,7 +285,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 			while(true){
 				//Superclass has no constructors
 				if(!superClass.hasConstructors()){
-					if(superClass.isTopClass()){
+					if(superClass.isTopType()){
 						//If the superclass is a topclass we call the allocator
 						return new ConstructorInvocation(superClass,implicit,wrappedFieldInits);
 					} else {

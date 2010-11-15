@@ -10,6 +10,7 @@
 package com.sc2mod.andromeda.environment.types.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
@@ -116,4 +117,10 @@ public class InterfaceImpl extends ReferentialTypeImpl implements IInterface {
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	@Override
+	public boolean isTopType() {	
+		HashSet<IInterface> ifc = getInterfaces();
+		return ifc == null || ifc.isEmpty();
+	}
 }

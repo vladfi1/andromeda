@@ -76,8 +76,6 @@ public interface IClass extends IReferentialType {
 
 	public void setHierarchyFields(ArrayList<Variable> hierarchyFields);
 
-	public boolean isTopClass();
-
 	public IClass getTopClass();
 	
 	public ClassNameProvider getNameProvider();

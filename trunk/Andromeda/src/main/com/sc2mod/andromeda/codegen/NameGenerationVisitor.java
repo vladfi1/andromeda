@@ -142,7 +142,7 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 		IClass c = (IClass)classDeclaration.getSemantics();
 		ClassNameProvider className = c.getNameProvider();
 		//If this is a top class we need a name for its alloc method
-		if(c.isTopClass()){
+		if(c.isTopType()){
 			className.setAllocatorName(nameProvider.getGlobalNameRawNoPrefix("alloc___" + c.getName()));
 			className.setDeallocatorName(nameProvider.getGlobalNameRawNoPrefix("dealloc___" + c.getName()));
 		} else {

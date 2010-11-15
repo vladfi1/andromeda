@@ -55,7 +55,7 @@ public abstract class OperationSet implements IScopedElement, Iterable<Operation
 		addAllInherited(set);
 	}
 
-	//FIXME: Use better map here, since most operation sets have only one operation. An implementation where no array is used if only one op exists would be better
+	//TODO: Use better map here, since most operation sets have only one operation. An implementation where no array is used if only one op exists would be better
 	private LinkedHashMap<Signature, Operation> opSet = new LinkedHashMap<Signature, Operation>(2);
 	private int numUnimplementedMethods;
 	
@@ -229,7 +229,7 @@ public abstract class OperationSet implements IScopedElement, Iterable<Operation
 	@Override public Visibility getVisibility() { throw new InternalProgramError("Cannot get the visibility of an op set!"); }
 	@Override public boolean isStatic() {	throw new InternalProgramError("Cannot decide if a operation set is static"); }
 	@Override public SyntaxNode getDefinition() {	throw new InternalProgramError("Cannot get the definition of an operation set"); }
-	@Override public IType getContainingType() { throw new InternalProgramError("Cannot get the containing type of an op set"); }
+	@Override public IType getContainingType() { return getAny().getContainingType(); }
 	@Override public String getElementTypeName() { return "operation set"; }
 	
 	public boolean isEmpty() {

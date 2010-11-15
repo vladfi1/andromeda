@@ -1,0 +1,5 @@
+extension C extends E{}
+
+extension E extends D;
+
+extension D extends C;

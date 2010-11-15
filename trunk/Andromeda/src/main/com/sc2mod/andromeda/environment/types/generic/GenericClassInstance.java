@@ -69,11 +69,6 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 	}
 
 	@Override
-	public LinkedList<IRecordType> getDescendants() {
-		return genericParent.getDescendants();
-	}
-	
-	@Override
 	public ClassDeclNode getDefinition() {
 		return genericParent.getDefinition();
 	}
@@ -159,12 +154,6 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 	@Override
 	public boolean hasConstructors() {
 		return genericParent.hasConstructors();
-	}
-
-
-	@Override
-	public boolean isTopClass() {
-		return genericParent.isTopClass();
 	}
 
 

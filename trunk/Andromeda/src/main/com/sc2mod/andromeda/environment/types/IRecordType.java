@@ -33,8 +33,6 @@ import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
  */
 public interface IRecordType extends IDeclaredType {
 	
-
-	LinkedList<IRecordType> getDescendants();
 	
 	int calcByteSize();
 }

@@ -41,7 +41,7 @@ public class IndexClassFieldCalculator extends ClassFieldCalculator {
 	@Override
 	protected ArrayList<Variable> generateImplicitFields(IClass c) {
 		ArrayList<Variable> result = new ArrayList<Variable>();
-		if(c.isTopClass()){
+		if(c.isTopType()){
 			BasicType INT = typeProvider.BASIC.INT;
 			result.add(createField(c,INT,"__id"));
 			result.add(createField(c,INT,"__type"));

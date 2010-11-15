@@ -33,10 +33,6 @@ public class GenericInterfaceInstance extends GenericTypeInstance implements IIn
 		return genericParent.calcByteSize();
 	}
 
-	@Override
-	public LinkedList<IRecordType> getDescendants() {
-		return genericParent.getDescendants();
-	}
 	
 	@Override
 	public InterfaceDeclNode getDefinition() {

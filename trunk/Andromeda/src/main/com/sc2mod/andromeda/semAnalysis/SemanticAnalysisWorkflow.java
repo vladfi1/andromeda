@@ -14,6 +14,7 @@ import java.util.List;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.IExtension;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
@@ -48,15 +49,11 @@ public class SemanticAnalysisWorkflow {
 				resolveTypeAlias(tprov, i._1,i._2);
 			}
 			
-			List<IRecordType> recordTypes = tprov.getRecordTypes();
-			for(IRecordType r : recordTypes){
+			List<IDeclaredType> declaredTypes = tprov.getDeclaredTypes();
+			for(IDeclaredType r : declaredTypes){
 				r.accept(resolver);
 			}
-			
-			List<IExtension> extensionTypes = tprov.getExtensionType();
-			for(IExtension e: extensionTypes){
-				e.accept(resolver);
-			}
+		
 
 	
 	}
@@ -94,7 +91,7 @@ public class SemanticAnalysisWorkflow {
 		//Check some additional things for classes and other record types, which can only be
 		//checked after their type hierarchy was built and their members have been registered and copied down
 		SemanticsElementCheckVisitor classChecks = new SemanticsElementCheckVisitor(env);
-		for(IRecordType c : env.typeProvider.getRecordTypes()){
+		for(IDeclaredType c : env.typeProvider.getDeclaredTypes()){
 			c.accept(classChecks);
 		}
 		

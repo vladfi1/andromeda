@@ -29,6 +29,7 @@ import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
 import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
@@ -74,7 +75,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		
 		for(IClass r: arrayList){
 			// non top classes are left out because they re visited recursively
-			if(r.isTopClass()){
+			if(r.isTopType()){
 				generateClass(r);
 			}
 		}
@@ -111,7 +112,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		
 		
 		if(!c.isStatic()){
-			if(c.isTopClass()){
+			if(c.isTopType()){
 
 				
 				//Generate Class Struct
@@ -126,7 +127,7 @@ public class IndexClassGenerator extends ClassGenerator {
 				generationCount++;
 				
 				//generate child classes
-				for(IRecordType c2 : c.getDescendants()){
+				for(IDeclaredType c2 : c.getDescendants()){
 					generateClass((IClass) c2);
 				}
 			} else {

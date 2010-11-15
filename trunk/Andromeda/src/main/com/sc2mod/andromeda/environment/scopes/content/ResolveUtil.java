@@ -124,7 +124,9 @@ public final class ResolveUtil {
 	 */
 	public static Operation resolvePrefixedOperation(IScope prefix, String name, Signature sig, IScope from, SyntaxNode where, boolean staticAccess){
 		Operation op = (Operation) prefix.getContent().resolve(name,from,UsageType.OTHER,sig,where,RESOLVE_OPS);
-		//TODO: Check what if op is null
+		if(op == null)
+			return null;
+		
 		//Check for static/non-static misuse
 		checkStaticAccess(staticAccess, op, where);
 	
@@ -133,7 +135,9 @@ public final class ResolveUtil {
 	
 	public static Invocation resolvePrefixedInvocation(IScope prefix, String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer, boolean staticAccess, boolean disallowVirtualInvocation){
 		IScopedElement elem = prefix.getContent().resolve(name,from,UsageType.OTHER,sig,where,allowFuncPointer?RESOLVE_OPS_AND_VARS:RESOLVE_OPS);
-	
+		if(elem == null)
+			return null;
+		
 		//Check for static/non-static misuse
 		checkStaticAccess(staticAccess, elem, where);
 	

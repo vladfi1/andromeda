@@ -2,6 +2,7 @@ package com.sc2mod.andromeda.environment.types.generic;
 
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.types.IExtension;
+import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
@@ -21,9 +22,11 @@ public class GenericExtensionInstance extends GenericTypeInstance implements IEx
 		
 	}
 	
-	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
-	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
-	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+	@Override
+	public IExtension getGenericParent() {
+		return genericParent;
+	}
+	
 
 	@Override
 	public int getExtensionHierachryLevel() {
@@ -55,4 +58,8 @@ public class GenericExtensionInstance extends GenericTypeInstance implements IEx
 	public TypeExtensionDeclNode getDefinition() {
 		return genericParent.getDefinition();
 	}
+
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 }

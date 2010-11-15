@@ -53,7 +53,7 @@ public enum ProblemId {
 
 	STATIC_MEMBER_MISUSE ("Trying to access the static member '%s' in a non-static way."),
 	NONSTATIC_MEMBER_MISUSE("Trying to access the non-static member '%s' in a static way."),
-	NO_SUCH_METHOD("No visible method %s(%s) exists for type %s"),	//CHECK> DIFFERENT ERROR FOR NO METHOD AND WRONG SIG
+	NO_SUCH_METHOD("No visible method %s(%s) exists for %s"),	//TODO DIFFERENT ERROR FOR NO METHOD AND WRONG SIG
 	NO_SUCH_FUNCTION("No visible function or method %s(%s) found. Misspelled? Wrong types?"),
 
 	SUPER_OUTSIDE_OF_CLASS("The 'super' expression can only be used in classes."),
@@ -89,7 +89,7 @@ public enum ProblemId {
 	CLASS_IMPLEMENTS_NON_INTERFACE("The types in an implements clause must be an interface."),
 	DUPLICATE_IMPLEMENTS("Duplicate interface in implements clause."),
 	STATIC_CLASS_HAS_IMPLEMENTS("Static classes cannot implement interfaces"),
-	FINAL_CLASS_EXTENDED("Cannot extend class %s because it is final"),
+	FINAL_TYPE_EXTENDED("Cannot extend type %s because it is final"),
 	STATIC_CLASS_HAS_EXTENDS("Static classes cannot extend other classes"),
 	STATIC_CLASS_EXTENDED("Cannot extend class %s because it is static"),
 	STATIC_CLASS_HAS_CONSTRUCTOR("Static classes cannot have constructors."),

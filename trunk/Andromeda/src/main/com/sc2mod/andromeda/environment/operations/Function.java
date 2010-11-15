@@ -116,7 +116,7 @@ public class Function extends Operation {
 		this.body = decl.getBody();
 		this.scope = scope;
 		decl.setSemantics(this);
-		env.annotationRegistry.processAnnotations(this, decl.getHeader().getAnnotations());
+		env.annotationRegistry.processAnnotations(this, decl.getAnnotations());
 	}
 	
 
@@ -368,9 +368,6 @@ public class Function extends Operation {
 
 
 
-	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
-	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
-	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 
 
 	@Override
@@ -380,4 +377,8 @@ public class Function extends Operation {
 		}
 		return annotations;
 	}
+
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 }

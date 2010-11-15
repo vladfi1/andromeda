@@ -1,0 +1,9 @@
+
+
+class A{
+	int x;
+}
+
+class B extends A{
+	void x(){} //error, field overriding method?
+}

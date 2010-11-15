@@ -2,6 +2,7 @@ package com.sc2mod.andromeda.codegen;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
@@ -19,10 +20,10 @@ public class TypeIndexGenerator extends VoidSemanticsVisitorAdapter{
 	private IndexGenerationVisitor visitor = new IndexGenerationVisitor();
 	public IndexInformation createIndexInformation(Environment env){
 		visitor.info = new IndexInformation();
-		for(IRecordType t : env.typeProvider.getRecordTypes()){
+		for(IDeclaredType t : env.typeProvider.getDeclaredTypes()){
 			switch(t.getCategory()){
 			case CLASS:
-				if(((IClass)t).isTopClass())
+				if(t.isTopType())
 					t.accept(visitor);
 				break;
 			case INTERFACE:
@@ -42,7 +43,7 @@ private class IndexGenerationVisitor extends VoidSemanticsVisitorAdapter{
 	public void visit(ClassImpl classImpl) {
 		int minInstanceofIndex = curClassIndex;
 		
-		for(IRecordType r: classImpl.getDescendants()){
+		for(IDeclaredType r: classImpl.getDescendants()){
 			((IClass)r).accept(this);
 		}
 		

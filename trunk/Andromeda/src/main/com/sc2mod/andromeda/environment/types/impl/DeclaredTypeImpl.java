@@ -2,6 +2,7 @@ package com.sc2mod.andromeda.environment.types.impl;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.ModifierUtil;
@@ -9,6 +10,7 @@ import com.sc2mod.andromeda.environment.annotations.AnnotationSet;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
+import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.notifications.Problem;
@@ -27,6 +29,10 @@ public abstract class DeclaredTypeImpl extends NamedTypeImpl implements IDeclare
 	private Visibility visibility = Visibility.DEFAULT;
 	private GlobalStructureNode declaration;
 	private AnnotationSet annotations;
+	//Hierarchy for topologic sorting and stuff
+	protected LinkedList<IDeclaredType> descendants = new LinkedList<IDeclaredType>();
+	
+	
 	
 	protected DeclaredTypeImpl(GlobalStructureNode declaration, IScope parentScope, Environment env) {
 		super(parentScope, declaration.getName(),env.typeProvider);
@@ -43,6 +49,11 @@ public abstract class DeclaredTypeImpl extends NamedTypeImpl implements IDeclare
 			annotations = new AnnotationSet();
 		}
 		return annotations;
+	}
+	
+	@Override
+	public LinkedList<IDeclaredType> getDescendants() {
+		return descendants;
 	}
 	
 	@Override

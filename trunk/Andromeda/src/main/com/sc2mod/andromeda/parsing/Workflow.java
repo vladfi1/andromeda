@@ -65,8 +65,8 @@ public class Workflow {
 					}
 				} catch (UnrecoverableProblem e) {
 					Log.print(LogLevel.PHASE," ABORTED (" + phaseTimer.getTime() + " ms)\n");
-					if(logPhases&&p.doLog())
-						Log.print(LogLevel.PHASE,LogFormat.ERROR,"--- Compilation aborted due to errors! ---\n\n");
+					//if(logPhases&&p.doLog())
+					//	Log.print(LogLevel.PHASE,LogFormat.ERROR,"--- Compilation aborted due to errors! ---\n\n");
 				}
 			}
 		}

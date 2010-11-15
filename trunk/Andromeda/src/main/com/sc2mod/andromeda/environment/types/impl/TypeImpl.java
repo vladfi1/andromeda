@@ -225,7 +225,7 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	 */
 	@Override
 	public IType getSuperType(){
-		return this;
+		return null;
 	}
 	
 	@Override
@@ -237,7 +237,7 @@ public abstract class TypeImpl extends BlockScope implements IType{
 		return result;
 	}
 
-	
+
 	/**
 	 * Returns true if this type is the given type or a subtype of it
 	 * @return

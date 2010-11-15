@@ -2,6 +2,7 @@ package com.sc2mod.andromeda.environment.types.generic;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.annotations.AnnotationSet;
@@ -320,10 +321,20 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 	public void setVisibility(Visibility visibility) {
 		genericParent.setVisibility(visibility);
 	}
+	
+	@Override
+	public boolean isTopType() {
+		return genericParent.isTopType();
+	}
 
 	@Override
 	public AnnotationSet getAnnotations(boolean createIfNotExistant) {
 		return genericParent.getAnnotations(createIfNotExistant);
+	}
+	
+	@Override
+	public LinkedList<IDeclaredType> getDescendants() {
+		return genericParent.getDescendants();
 	}
 
 	@Override

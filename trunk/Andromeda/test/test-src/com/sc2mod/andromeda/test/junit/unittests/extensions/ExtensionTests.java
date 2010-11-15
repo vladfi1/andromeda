@@ -32,6 +32,18 @@ public class ExtensionTests extends AndromedaSingleRunTest {
 	}
 	
 	@Test
+	public void extensionCircle(){
+		callAndromeda("extensionCircle.a");
+		assertOnlyProblem(ProblemId.INHERITANCE_CYCLE);
+	}
+	
+	@Test
+	public void distinctExtensionOfExtension(){
+		callAndromeda("distinctExtensionOfExtension.a");
+		assertOnlyProblem(ProblemId.DISJOINT_EXTENSION_BASED_ON_EXTENSION);
+	}
+	
+	@Test
 	public void enrichmentBase(){
 		callAndromeda("enrichmentBase.a");
 		assertNoMoreProblems();

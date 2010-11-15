@@ -36,9 +36,7 @@ import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
 
 public abstract class RecordTypeImpl extends DeclaredTypeImpl implements IRecordType , SemanticsVisitorNode {
 
-	//Hierarchy for topologic sorting and stuff
-	protected LinkedList<IRecordType> descendants = new LinkedList<IRecordType>();
-
+	
 	private int byteSize = -1;
 	private boolean copiedDown;
 	
@@ -46,10 +44,7 @@ public abstract class RecordTypeImpl extends DeclaredTypeImpl implements IRecord
 		super(g,s,env);
 	}
 	
-	@Override
-	public LinkedList<IRecordType> getDescendants() {
-		return descendants;
-	}
+
 
 
 	

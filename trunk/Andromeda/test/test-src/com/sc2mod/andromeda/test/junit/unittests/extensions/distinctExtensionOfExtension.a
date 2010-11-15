@@ -1,0 +1,3 @@
+extension C extends int{}
+
+extension E uses C;

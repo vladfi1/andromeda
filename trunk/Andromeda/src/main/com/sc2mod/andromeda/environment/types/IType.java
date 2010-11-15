@@ -107,12 +107,7 @@ public interface IType extends IScope, IScopedElement{
 	 * @return
 	 */
 	 IType getReachableBaseType();
-//	 
-//	 /**
-//	  * Returns all direct ancestors in the type hierarchy of this type
-//	  * @return
-//	  */
-//	 Iterable<IType> getSuperTypes();
+
 	
 	/**
 	 * Returns true iff this is a generic type without concrete parameters.
@@ -151,10 +146,11 @@ public interface IType extends IScope, IScopedElement{
 	 IType getCommonSupertype(IType t);
 	
 	/**
-	 * Returns the super type of this type or this type if it has no super type.
-	 * @return super type or self
+	 * Returns the super type of this type or null if it has no super type.
+	 * @return super type or null
 	 */
 	 IType getSuperType();
+	 
 	
 	
 	IType getNthAncestor(int n);

@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OverrideInformation;
 import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.parsing.TransientCompilationData;
@@ -37,7 +38,7 @@ public class VirtualCallTable {
 		for(IClass clazz : env.typeProvider.getClasses()) {
 			//Create a class table for all top classes, these will
 			//then recursively create VCTs for child classes.
-			if(clazz.isTopClass()) {
+			if(clazz.isTopType()) {
 //				System.out.println("Generating VCT for " + clazz.getFullName());
 				new VirtualCallTable(clazz, env, transientData);
 			}
@@ -100,7 +101,7 @@ public class VirtualCallTable {
 		if(m != null && m.getContainingType() == clazz) processMethod(m,transientData);
 		
 		//Generate tables for subclasses
-		for(IRecordType r : clazz.getDescendants()) {
+		for(IDeclaredType r : clazz.getDescendants()) {
 			new VirtualCallTable((IClass) r, env, transientData);
 		}
 	}

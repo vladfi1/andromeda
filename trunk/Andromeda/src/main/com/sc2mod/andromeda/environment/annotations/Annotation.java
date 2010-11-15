@@ -23,27 +23,15 @@ public class Annotation implements SemanticsElement, IDefined{
 	}
 	
 
-	@Override
-	public void accept(VoidSemanticsVisitor visitor) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
 
-	@Override
-	public <P> void accept(NoResultSemanticsVisitor<P> visitor, P state) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
 
-	@Override
-	public <P, R> R accept(ParameterSemanticsVisitor<P, R> visitor, P state) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
 
 	@Override
 	public AnnotationNode getDefinition() {
 		return an;
 	}
 
+	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
+	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
+	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
 }

@@ -78,7 +78,7 @@ public class InstanceLimitChecker {
 		ExprNode instanceLimitExpr = ils.getInstanceLimit();
 		
 		IClass c = (IClass)t;
-		if(!c.isTopClass()) {
+		if(!c.isTopType()) {
 			throw Problem.ofType(ProblemId.CHILD_CLASS_HAS_INSTANCELIMIT).at(ils)
 				.raiseUnrecoverable();
 		}
