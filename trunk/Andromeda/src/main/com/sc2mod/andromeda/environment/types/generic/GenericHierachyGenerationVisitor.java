@@ -4,45 +4,53 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 
-public class GenericMemberGenerationVisitor extends VoidSemanticsVisitorAdapter {
+public class GenericHierachyGenerationVisitor extends VoidSemanticsVisitorAdapter {
 	
 	private TypeProvider tprov;
 
-	public GenericMemberGenerationVisitor(TypeProvider tprov){
+	GenericHierachyGenerationVisitor(TypeProvider tprov){
 		this.tprov = tprov;
 	}
+
 	
-	private void copyGenericContent(GenericTypeInstance instance){
-		GenericUtil.copyContentFromGenericParent(tprov,instance.getContent(), instance.getGenericParent().getContent(), instance.getTypeArguments());
+	private void setGenericSuperType(GenericTypeInstance i){
+		IType t = i.getSuperType();
+		if(t != null)
+			i.setGenericSuperType(tprov.insertTypeArgs(t, i.getTypeArguments()));
 	}
 
 	@Override
 	public void visit(GenericClassInstance genericClassInstance) {
-		copyGenericContent(genericClassInstance);
-		
-		Signature typeArgs = genericClassInstance.getTypeArguments();
-		OperationSet constructors = genericClassInstance.getConstructors();
-		for(Operation op : genericClassInstance.getGenericParent().getConstructors()){
-			constructors.add(GenericUtil.getGenericOperation(tprov, op, typeArgs));
-		}
+
+		genericClassInstance.setGenericHierarchyCopied(true);
+		setGenericSuperType(genericClassInstance);
+		//TODO: Generic super interface type argument insertion
 	}
 	
 	@Override
 	public void visit(GenericExtensionInstance genericExtensionInstance) {
-		copyGenericContent(genericExtensionInstance);
+
+		genericExtensionInstance.setGenericHierarchyCopied(true);
+		setGenericSuperType(genericExtensionInstance);
+
 	}
 	
 	@Override
 	public void visit(GenericInterfaceInstance genericInterfaceInstance) {
-		copyGenericContent(genericInterfaceInstance);
+		//TODO: Generic super interface type argument insertion
+
+		genericInterfaceInstance.setGenericHierarchyCopied(true);
 	}
 	
 	@Override
 	public void visit(GenericStructInstance genericStructInstance) {
-		copyGenericContent(genericStructInstance);
+
+		genericStructInstance.setGenericHierarchyCopied(true);
 	}
+	
 	
 }

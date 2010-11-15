@@ -218,9 +218,6 @@ public class StructureXMLVisitor extends VoidVisitorAdapter{
 		if(f.isOverride()){
 			writer.writeAttribute("override", "true");
 		}
-		if(f.isStrcall()){
-			writer.writeAttribute("strcall", "true");
-		}
 		writer.writeAttribute("signature", f.getSignature().toString());
 		writer.writeAttribute("returnType", f.getReturnType().getUid());
 		

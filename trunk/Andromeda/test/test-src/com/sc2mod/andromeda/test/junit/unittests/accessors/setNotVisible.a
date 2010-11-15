@@ -1,7 +1,7 @@
 
 class X{
 	
-	public static int getX(){
+	static int getX(){
 	return 0;
 	}
 	

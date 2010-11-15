@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.environment.operations;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IClass;
@@ -28,18 +29,18 @@ import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
 public class Deallocator extends Destructor{
 
 	private Deallocator(MethodDeclNode functionDeclaration, IClass clazz,
-			IScope scope) {
-		super(functionDeclaration, clazz, scope);
+			IScope scope, Environment env) {
+		super(functionDeclaration, clazz, scope, env);
 		this.setReturnType(clazz.getTypeProvider().BASIC.VOID);
 		this.setResolvedParameters(new ParamDecl[0]);
 		setLocals(new LocalVarDecl[0]);
 
 	}
 	
-	public static Deallocator createDeallocator(TypeProvider tp,IClass clazz){
+	public static Deallocator createDeallocator(Environment env,IClass clazz){
 		MethodHeaderNode mh = new MethodHeaderNode(null,null, null, clazz.getName(), null, null);
 		MethodDeclNode md = new MethodDeclNode(MethodTypeSE.DESTRUCTOR, mh, new BlockStmtNode(new StmtListNode()));
-		Deallocator da = new Deallocator(md, clazz, clazz.getScope());
+		Deallocator da = new Deallocator(md, clazz, clazz.getScope(), env);
 		return da;
 	}
 

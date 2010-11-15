@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.environment.types.impl;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
@@ -27,8 +28,8 @@ public class StructImpl extends RecordTypeImpl implements IStruct{
 
 	private StructDeclNode declaration;
 
-	public StructImpl(StructDeclNode declaration, IScope scope, TypeProvider t) {
-		super(declaration, scope,t);
+	public StructImpl(StructDeclNode declaration, IScope scope, Environment env) {
+		super(declaration, scope, env);
 		this.declaration = declaration;
 	}
 	

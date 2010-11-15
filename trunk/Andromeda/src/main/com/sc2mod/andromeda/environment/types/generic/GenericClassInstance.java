@@ -20,6 +20,7 @@ import com.sc2mod.andromeda.classes.VirtualCallTable;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.Destructor;
+import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.content.MethodSet;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
 import com.sc2mod.andromeda.environment.types.IClass;
@@ -29,28 +30,33 @@ import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
+import com.sc2mod.andromeda.util.Debug;
 
 public class GenericClassInstance extends GenericTypeInstance implements IClass {
 
 	private IClass genericParent;
 	private OperationSet constructors;
+	private boolean constructorsCopiedDown;
+	
+	//TODO: Super interfaces generic
 	
 	
 	
 	
-	
-	public GenericClassInstance(IClass class1, Signature s, TypeProvider t) {
+	public GenericClassInstance(ClassImpl class1, Signature s, TypeProvider t) {
 		super(class1, s, t);
 		this.genericParent = class1;
 		constructors = new MethodSet(this, "<init>");
 		
 	}
+	
 
 	@Override
 	public IClass getGenericParent() {
@@ -74,6 +80,13 @@ public class GenericClassInstance extends GenericTypeInstance implements IClass 
 	
 	@Override
 	public OperationSet getConstructors() {
+		if(!constructorsCopiedDown){
+			constructorsCopiedDown = true;
+			Signature typeArgs = this.getTypeArguments();
+			for(Operation op : this.getGenericParent().getConstructors()){
+				constructors.add(GenericUtil.getGenericOperation(tprov, op, typeArgs));
+			}
+		}
 		return constructors;
 	}
 

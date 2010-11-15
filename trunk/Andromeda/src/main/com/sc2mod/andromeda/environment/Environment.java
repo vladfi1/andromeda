@@ -11,6 +11,7 @@ package com.sc2mod.andromeda.environment;
 
 import java.util.Iterator;
 
+import com.sc2mod.andromeda.environment.annotations.AnnotationRegistry;
 import com.sc2mod.andromeda.environment.scopes.GlobalScope;
 import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
@@ -30,6 +31,7 @@ public final class Environment {
 	private GlobalScope theGlobalScope = new GlobalScope();
 	private Package defaultPackage = new Package(this, "<default>", null);
 	public final TypeProvider typeProvider = new TypeProvider(this);
+	public final AnnotationRegistry annotationRegistry = new AnnotationRegistry();
 	
 	public Iterable<IScopedElement> iterateOverContent(final boolean stepIntoOperations,final boolean stepIntoPackages){
 		return new Iterable<IScopedElement>() {

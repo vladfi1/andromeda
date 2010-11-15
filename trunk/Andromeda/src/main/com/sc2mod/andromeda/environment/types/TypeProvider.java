@@ -10,8 +10,10 @@
 package com.sc2mod.andromeda.environment.types;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.Environment;
@@ -22,7 +24,8 @@ import com.sc2mod.andromeda.environment.scopes.GlobalScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
-import com.sc2mod.andromeda.environment.types.generic.GenericMemberGenerationVisitor;
+import com.sc2mod.andromeda.environment.types.generic.GenericHierachyGenerationVisitor;
+import com.sc2mod.andromeda.environment.types.generic.GenericTypeInstance;
 import com.sc2mod.andromeda.environment.types.generic.TypeParamInstanciationVisitor;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
@@ -43,6 +46,7 @@ public class TypeProvider {
 
 	//*** TYPE COLLECTIONS***
 	//private LinkedHashMap<String,Type> types = new LinkedHashMap<String,Type>();
+	private Environment env;
 	
 	private ArrayList<IRecordType> rootRecordTypes = new ArrayList<IRecordType>();
 	private ArrayList<IRecordType> recordTypes = new ArrayList<IRecordType>();
@@ -52,9 +56,6 @@ public class TypeProvider {
 	
 	
 	private SystemTypes systemTypes;
-	
-	private boolean resolveGenerics;
-	private GenericMemberGenerationVisitor genericsResolver = new GenericMemberGenerationVisitor(this);
 
 	private HashMap<IType,IType> pointerTypes = new HashMap<IType,IType>();
 	private HashMap<IType,HashMap<Integer,IType>> arrayTypes = new HashMap<IType,HashMap<Integer,IType>>();
@@ -74,6 +75,7 @@ public class TypeProvider {
 	}
 	
 	public TypeProvider(Environment env){
+		this.env = env;
 		globalScope = env.getTheGlobalScope();
 		BASIC = new BasicTypeSet(this);
 		systemTypes = new AndromedaSystemTypes(env,this);
@@ -120,13 +122,6 @@ public class TypeProvider {
 		return typeAliases;
 	}
 	
-	public boolean doResolveGenerics() {
-		return resolveGenerics;
-	}
-
-	public void setResolveGenerics(boolean resolveGenerics) {
-		this.resolveGenerics = resolveGenerics;
-	}
 
 	
 	//==========================================
@@ -155,18 +150,18 @@ public class TypeProvider {
 	}
 	
 	public void registerStruct(StructDeclNode d, IScope scope) {
-		registerRecordType(new StructImpl(d,scope,this));
+		registerRecordType(new StructImpl(d,scope,env));
 	}
 
 	public void registerClass(ClassDeclNode d, IScope scope) {
 		IClass c;		
-		c = new ClassImpl(d,scope,this);
+		c = new ClassImpl(d,scope,env);
 		registerRecordType(c);
 		classes.add(c);
 	}
 
 	public void registerInterface(InterfaceDeclNode d, IScope scope) {
-		registerRecordType(new InterfaceImpl(d,scope,this));
+		registerRecordType(new InterfaceImpl(d,scope,env));
 	}
 	
 	public void registerRootRecord(IRecordType class1) {
@@ -182,7 +177,7 @@ public class TypeProvider {
 	public void registerTypeExtension(TypeExtensionDeclNode typeExtension, IScope scope) {
 		
 		//Create it
-		IExtension e = new ExtensionImpl(typeExtension,scope,this);
+		IExtension e = new ExtensionImpl(typeExtension,scope,env);
 		
 		//Entry into scope
 		registerSimpleType(e);
@@ -298,6 +293,7 @@ public class TypeProvider {
 		return result;
 	}
 	
+	
 	/**
 	 * Gets a generic instance of a generic type. Tries to get a cached type before creating a new one.
 	 * @param s the signature of the type values to replace the parameters.
@@ -305,7 +301,11 @@ public class TypeProvider {
 	 */
 	public INamedType getGenericInstance(INamedType t, Signature s){
 		if(!t.isGenericDecl()){
-			throw new InternalProgramError("Trying to create a generic instance of the non generic type " + t.getName());
+			if(!t.isGenericInstance()){
+				throw new InternalProgramError("Trying to create a generic instance of the non generic type " + t.getFullName());
+			} else {
+				t = ((GenericTypeInstance)t).getGenericParent();
+			}
 		}
 		
 		if(s.size() != t.getTypeParameters().length){
@@ -323,19 +323,15 @@ public class TypeProvider {
 		INamedType g = instances.get(s);
 		if(g == null){
 			g = t.createGenericInstance(s);
-			//If immediate generic resolving is activated, then the generic instance members are copied down
-			if(doResolveGenerics()){
-				g.accept(genericsResolver);
-			}
-			
 			instances.put(s, g);
 		}
 		return g;
 	}
+
 	
-	private static Iterable<INamedType> EMPTY = new ArrayList<INamedType>(0);
+	private static Collection<INamedType> EMPTY = new ArrayList<INamedType>(0);
 	
-	public Iterable<INamedType> getGenericInstances(INamedType t){
+	public Collection<INamedType> getGenericInstances(INamedType t){
 		HashMap<Signature, INamedType> instances = genericInstances.get(t);
 		if(instances == null){
 			return EMPTY;
@@ -372,6 +368,8 @@ public class TypeProvider {
 			}
 		}
 	}
+
+
 
 
 

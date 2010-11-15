@@ -29,8 +29,10 @@ public class ParserThread extends CompilerThread {
 	private ParserInput input;
 	private String typeName;
 	private int numParsed;
-	ParserThread(ParserScheduler ps, CompilationEnvironment se, IParser parser) {
-		super(se);
+	boolean packageDeclParsed;
+	
+	ParserThread(int num, ParserScheduler ps, CompilationEnvironment se, IParser parser) {
+		super(se,"Parser Thread " + num);
 		scheduler = ps;
 		this.parser = parser;
 	}
@@ -43,7 +45,11 @@ public class ParserThread extends CompilerThread {
 				if(interrupted)
 					break;
 			}
-			doParseFile(parser,input,typeName);
+			try{
+				doParseFile(parser,input,typeName);
+			} catch (Throwable t){
+				scheduler.registerException(this, t);
+			}
 			input = null;
 			typeName = null;
 			idle = true;
@@ -58,6 +64,7 @@ public class ParserThread extends CompilerThread {
 		//this.parser = parser;
 		this.input = input;
 		this.typeName = typeName;
+		packageDeclParsed = false;
 
 		synchronized(this){
 			idle = false;
@@ -121,6 +128,7 @@ public class ParserThread extends CompilerThread {
 	
 	public static void packageRead(PackageDeclNode pd){
 		ParserThread t = (ParserThread)Thread.currentThread();
+		t.packageDeclParsed = true;
 		t.scheduler.registerPackageDecl(pd);
 
 	}
@@ -130,6 +138,10 @@ public class ParserThread extends CompilerThread {
 		this.notifyAll();
 	}
 	
+	@Override
+	public String toString() {
+		return "Parser Thread" + getId();
+	}
 	
 
 }

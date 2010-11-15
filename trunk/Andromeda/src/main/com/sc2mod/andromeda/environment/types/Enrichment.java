@@ -29,6 +29,8 @@ import com.sc2mod.andromeda.environment.IDefined;
 import com.sc2mod.andromeda.environment.scopes.BlockScope;
 import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
+import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -55,6 +57,21 @@ public class Enrichment extends BlockScope implements IDefined {
 	
 	public IType getEnrichedType() {
 		return enrichedType;
+	}
+	
+	@Override
+	protected ScopeContentSet createContentSet() {
+		return null;
+	}
+	
+	@Override
+	public ScopeContentSet getContent() {
+		return enrichedType.getContent();
+	}
+	
+	@Override
+	public void addContent(String name, IScopedElement elem) {
+		enrichedType.addContent(name, elem);
 	}
 	
 	

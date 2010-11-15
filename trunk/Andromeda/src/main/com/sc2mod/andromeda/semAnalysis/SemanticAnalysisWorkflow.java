@@ -19,7 +19,6 @@ import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
-import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeAliasDeclNode;
 import com.sc2mod.andromeda.util.Pair;
@@ -31,24 +30,6 @@ import com.sc2mod.andromeda.util.Pair;
  */
 public class SemanticAnalysisWorkflow {
 
-	public static void todo(){
-
-		//FROM: Environment.resolveClassHierarchy
-		//Resolve system classes and types
-//		typeProvider.resolveSystemTypes();
-//		
-//		//Resolve inheritance
-//		typeProvider.resolveInheritance();
-//		
-//		//Check type hierarchy
-//		typeProvider.checkHierarchy();
-//		//Generate class indices
-//		typeProvider.generateClassAndInterfaceIndex();
-//		
-//		//Resolve enrichments (We can now merge enrichments of one type)
-//		typeProvider.resolveEnrichments();
-		
-	}
 	
 	/**
 	 * Resolves the type alias relation:
@@ -87,10 +68,7 @@ public class SemanticAnalysisWorkflow {
 		compEnv.setSemanticEnvironment(env);
 		SourceListNode syntax = compEnv.getSyntaxTree();
 		TransientAnalysisData analysisData = new TransientAnalysisData();
-		
-		//Cannot resolve generics until members have copied down
-		env.typeProvider.setResolveGenerics(false);
-		
+				
 		//--- ConstantResolveVisitor constResolve = new ConstantResolveVisitor();
 		
 		//+++++++++++++++++++++++++++++++++++++++++++
@@ -109,11 +87,9 @@ public class SemanticAnalysisWorkflow {
 		// 3.) Register fields, methods and other constructs (also resolve their types and signatures)
 		syntax.accept( new StructureRegistryTreeScanner(env, analysisData), null );
 		
+		
 		//Copy down members from super to subclasses
 		new CopyDownVisitor(env).execute();
-		
-		//Now, the type provider can resolve generics right away
-		env.typeProvider.setResolveGenerics(true);
 		
 		//Check some additional things for classes and other record types, which can only be
 		//checked after their type hierarchy was built and their members have been registered and copied down

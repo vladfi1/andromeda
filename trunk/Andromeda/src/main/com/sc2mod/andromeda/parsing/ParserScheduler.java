@@ -8,8 +8,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.notifications.UnrecoverableProblem;
 import com.sc2mod.andromeda.syntaxNodes.ImportNode;
 import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
 import com.sc2mod.andromeda.syntaxNodes.PackageDeclNode;
@@ -33,6 +35,8 @@ public class ParserScheduler {
 	private CompilationEnvironment env;
 	private LanguageImpl language;
 	private ImportResolver importResolver;
+	private Throwable threadExeption = null;
+	
 	private HashMap<String,PackageDeclNode> readCompilationUnits = new HashMap<String, PackageDeclNode>();
 	
 	public ParserScheduler(int numThreads, CompilationEnvironment env, List<Pair<Source,InclusionType>> inputSources, LanguageImpl language) {
@@ -94,6 +98,16 @@ public class ParserScheduler {
 		this.notifyAll();
 	}
 	
+	private void decrementRemainingInputFiles(){
+		if(remainingInputFiles > 0){
+			remainingInputFiles--;
+			if(remainingInputFiles == 0){
+				//wakes up the thread, so it can parse the imported files
+				this.notifyAll();
+			}
+		}
+	}
+	
 	public synchronized void registerPackageDecl(PackageDeclNode packageDecl){
 		if(packageDecl != null){
 			String pkg = importResolver.resolvePackage(packageDecl);
@@ -110,13 +124,7 @@ public class ParserScheduler {
 			}
 		}
 		
-		if(remainingInputFiles > 0){
-			remainingInputFiles--;
-			if(remainingInputFiles == 0){
-				//wakes up the thread, so it can parse the imported files
-				this.notifyAll();
-			}
-		}
+		decrementRemainingInputFiles();
 		
 	}
 	
@@ -143,7 +151,7 @@ public class ParserScheduler {
 		
 		//Create and start parser threads
 		for(int i = 0; i < numThreads; i++){
-			ParserThread p = new ParserThread(this, env, language.createParser(env));
+			ParserThread p = new ParserThread(i,this, env, language.createParser(env));
 			p.start();
 			idleWorkerThreads.add(p);
 			workerThreads[i] = p;
@@ -199,7 +207,28 @@ public class ParserScheduler {
 			thread.setInterrupted();
 		}
 		
+		//If there were exceptions, throw them.
+		if(threadExeption != null){
+			if(threadExeption instanceof UnrecoverableProblem){
+				throw (UnrecoverableProblem)threadExeption;
+			} else {
+				throw new InternalProgramError(threadExeption);
+			}
+		}
+		
 		return constructSourceList(collectedSources);
+		
+	}
+
+
+	public synchronized void registerException(ParserThread pt, Throwable t) {
+		//If the thread couldn't parse its package decl before an exception occurred,
+		//we must decrement the remaining input files (which is normally done after a package decl
+		//was parsed).
+		if(!pt.packageDeclParsed){
+			decrementRemainingInputFiles();
+		}
+		threadExeption = t;
 		
 	}
 

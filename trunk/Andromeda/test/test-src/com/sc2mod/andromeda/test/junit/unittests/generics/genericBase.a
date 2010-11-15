@@ -2,21 +2,21 @@
 
 class X <T,T2> {
 	
-	public X(T t){
+	X(T t){
 		this.t = t;
 	}
 	T t;
 	T2 t2;
 	
-	public T x(){
+	T x(){
 		return t;
 	}
 	
-	public void x(T2 t2){
+	void x(T2 t2){
 		this.t2 = t2;
 	}
 	
-	public static void xyz(){
+	static void xyz(){
 	
 	}
 
@@ -28,6 +28,7 @@ class Z{
 
 static{
 	X<Z,int> xx = new X<Z,int>(new Z());
+	X<X<int,int>,X<int,int>> y = new X<X<int,int>,X<int,int>>(null);
 	xx.t = new Z();
 	
 	Z z = xx.x();

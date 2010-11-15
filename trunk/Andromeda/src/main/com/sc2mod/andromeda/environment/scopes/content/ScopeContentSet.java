@@ -28,8 +28,12 @@ public abstract class ScopeContentSet {
 	
 	
 	private ResolveResult lastResolveResult;
-	protected HashMap<String, IScopedElement> contentSet = new LinkedHashMap<String, IScopedElement>();
+	private HashMap<String, IScopedElement> contentSet = new LinkedHashMap<String, IScopedElement>();
 	private ArrayList<StaticInit> staticInits = null;
+	
+	protected HashMap<String, IScopedElement> getContentSet(){
+		return contentSet;
+	}
 	
 	/**
 	 * Factory method to create new operation sets.

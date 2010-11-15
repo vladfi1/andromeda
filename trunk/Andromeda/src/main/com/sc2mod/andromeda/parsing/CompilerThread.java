@@ -10,6 +10,11 @@ public class CompilerThread extends Thread {
 	private HashSet<Integer> uniqueEvent = new HashSet<Integer>();
 	
 	CompilerThread(CompilationEnvironment se){
+		this(se,"Compiler Thread");
+	}
+	
+	protected CompilerThread(CompilationEnvironment se, String name){
+		super(name);
 		this.compilationEnvironment = se;
 	}
 	
@@ -29,4 +34,5 @@ public class CompilerThread extends Thread {
 		return t.uniqueEvent.add(raiseNumber);
 		
 	}
+
 }

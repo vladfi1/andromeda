@@ -13,7 +13,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import com.sc2mod.andromeda.environment.StructureUtil;
+import com.sc2mod.andromeda.environment.Environment;
+import com.sc2mod.andromeda.environment.ModifierUtil;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IClass;
@@ -39,9 +40,10 @@ public abstract class RecordTypeImpl extends DeclaredTypeImpl implements IRecord
 	protected LinkedList<IRecordType> descendants = new LinkedList<IRecordType>();
 
 	private int byteSize = -1;
+	private boolean copiedDown;
 	
-	public RecordTypeImpl(GlobalStructureNode g, IScope s, TypeProvider t) {
-		super(g,s,t);
+	public RecordTypeImpl(GlobalStructureNode g, IScope s, Environment env) {
+		super(g,s,env);
 	}
 	
 	@Override
@@ -79,4 +81,15 @@ public abstract class RecordTypeImpl extends DeclaredTypeImpl implements IRecord
 		}
 		return byteSize;
 	}
+	
+	@Override
+	public boolean hasCopiedDownContent(){
+		return copiedDown;
+	}
+	 
+	@Override
+	public void setCopiedDownContent(){
+		copiedDown = true;
+	}
+
 }

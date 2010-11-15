@@ -12,11 +12,11 @@ package com.sc2mod.andromeda.environment.operations;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sc2mod.andromeda.environment.IAnnotatable;
 import com.sc2mod.andromeda.environment.IModifiable;
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.OperationAccess;
+import com.sc2mod.andromeda.environment.annotations.IAnnotatable;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.types.IType;
@@ -48,8 +48,6 @@ public abstract class Operation implements SemanticsElement, IScopedElement, IMo
 	 * @return null
 	 */
 	public abstract IType getContainingType();
-
-	public abstract boolean isStrcall();
 	
 	public abstract String getDescription();
 	

@@ -57,7 +57,6 @@ public class OverrideInformation {
 	}
 
 	public void addOverride(Operation overrider) {
-//		System.out.println(overrider.getDescription() + " -> " + this.getDescription());
 		overrider.getOverrideInformation().setOverriddenMethod(meth);
 		overrideCount++;
 		if(overriders==null) overriders = new ArrayList<Operation>(2);

@@ -257,7 +257,7 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   "%"                            { return symbol(MOD); }
   "<<"                           { return symbol(LSHIFT); }
   ">>"                           { return symbol(RSHIFT); }
-  ">>>"                          { return symbol(URSHIFT); }
+//  ">>>"                          { return symbol(URSHIFT); }
   "+="                           { return symbol(PLUSEQ); }
   "-="                           { return symbol(MINUSEQ); }
   "*="                           { return symbol(MULTEQ); }

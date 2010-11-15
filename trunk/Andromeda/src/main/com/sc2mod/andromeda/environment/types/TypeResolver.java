@@ -5,7 +5,7 @@ import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
-import com.sc2mod.andromeda.environment.types.generic.GenericMemberGenerationVisitor;
+import com.sc2mod.andromeda.environment.types.generic.GenericHierachyGenerationVisitor;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;

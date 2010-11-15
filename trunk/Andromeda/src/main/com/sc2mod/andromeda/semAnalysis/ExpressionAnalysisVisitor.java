@@ -101,11 +101,12 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		rightSideType = rightSideTypeBefore;
 		
 		//Is the assignment type valid?
-		if(!rExpr.getInferedType().canImplicitCastTo(lExpr.getInferedType()))
+		if(!rExpr.getInferedType().canImplicitCastTo(lExpr.getInferedType())){
 			throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_ASSIGNMENT).at(assignment)
 							.details(rExpr.getInferedType(),lExpr.getInferedType())
 							.raiseUnrecoverable();
-		
+		}
+			
 		//The type of an assignment is the type of its left side
 		assignment.setInferedType(lExpr.getInferedType());
 		

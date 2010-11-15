@@ -9,16 +9,19 @@
  */
 package com.sc2mod.andromeda.environment.types.impl;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.BlockScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
+import com.sc2mod.andromeda.environment.scopes.content.NonInheritanceContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
+import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
 public abstract class TypeImpl extends BlockScope implements IType{
@@ -26,10 +29,10 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	private final int hashCode;
 	protected final TypeProvider tprov;
 	
-	protected TypeImpl(IScope parentScope, TypeProvider tprov) {
+	protected TypeImpl(IScope parentScope, TypeProvider tp) {
 		super(parentScope);
-		this.tprov = tprov;
-		hashCode = tprov.getNextTypeIndex();
+		this.tprov = tp;
+		hashCode = tp.getNextTypeIndex();
 	}
 	
 	@Override
@@ -287,11 +290,6 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	}
 	
 	@Override
-	protected ScopeContentSet createContentSet() {
-		return new InheritableContentSet(this);
-	}
-	
-	@Override
 	public void addInheritedContent(IScope parentScope) {
 		((InheritableContentSet)getContent()).addInheritedContent(parentScope.getContent());
 	}
@@ -301,5 +299,19 @@ public abstract class TypeImpl extends BlockScope implements IType{
 		return "type";
 	}
 	
-
+	@Override
+	public boolean hasCopiedDownContent() {
+		return false;
+	}
+	
+	@Override
+	public void setCopiedDownContent() {
+		throw new InternalProgramError("Cannot copy down content for " + this);
+	}
+	
+	@Override
+	protected ScopeContentSet createContentSet() {
+		return new InheritableContentSet(this);
+	}
+	
 }

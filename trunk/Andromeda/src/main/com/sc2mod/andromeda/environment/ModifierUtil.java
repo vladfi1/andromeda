@@ -12,6 +12,7 @@ package com.sc2mod.andromeda.environment;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.sc2mod.andromeda.environment.annotations.IAnnotatable;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.notifications.Problem;
@@ -20,33 +21,9 @@ import com.sc2mod.andromeda.syntaxNodes.AnnotationListNode;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 
-public final class StructureUtil {
+public final class ModifierUtil {
 
-	private StructureUtil(){}
-	
-	public static void processAnnotations(IAnnotatable annotatable, AnnotationListNode al){
-		if(al==null) return;
-		HashMap<String, AnnotationNode> annotations = new HashMap<String, AnnotationNode>();
-		HashSet<String> allowedAnnotations = annotatable.getAllowedAnnotations();
-		annotatable.setAnnotationTable(annotations);
-		int size = al.size();
-		for(int i=0; i<size; i++){
-			AnnotationNode a = al.elementAt(i);
-			String name = a.getName();
-			if(!allowedAnnotations.contains(name)){
-				throw Problem.ofType(ProblemId.UNKNOWN_ANNOTATION).at(a)
-						.details(name,annotatable.getDescription())
-						.raiseUnrecoverable();
-			}
-			AnnotationNode old = annotations.put(name, a);
-			if(old != null){
-				throw Problem.ofType(ProblemId.UNKNOWN_ANNOTATION).at(a)
-				.details(name,annotatable.getDescription())
-				.raiseUnrecoverable();
-			}
-		}
-		annotatable.afterAnnotationsProcessed();
-	}
+	private ModifierUtil(){}
 	
 	public static void processModifiers(IModifiable m, ModifierListNode mods){
 		if(mods==null) return;

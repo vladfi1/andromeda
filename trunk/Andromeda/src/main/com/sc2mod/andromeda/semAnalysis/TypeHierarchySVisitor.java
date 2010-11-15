@@ -7,6 +7,8 @@ import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
+import com.sc2mod.andromeda.environment.types.generic.GenericInterfaceInstance;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
@@ -59,6 +61,12 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 	//****** Classes *******
 
 	protected void buildClassHierarchy(IClass clazz, TypeProvider typeProvider,HashSet<IRecordType> marked) {
+		//If called for a generic instance, call for the declaration instead.
+		if(clazz.isGenericInstance()){
+			buildClassHierarchy(((GenericClassInstance)clazz).getGenericParent(), typeProvider, marked);
+			return;
+		}
+		
 		IClass superClass = clazz.getSuperClass();
 		
 		//Build hierarchy
@@ -107,6 +115,12 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 	//****** Interfaces *******
 	
 	protected void buildInterfaceHierarchy(IInterface interfac, TypeProvider typeProvider,HashSet<IRecordType> marked) {
+		//If called for a generic instance, call for the declaration instead.
+		if(interfac.isGenericInstance()){
+			buildInterfaceHierarchy(((GenericInterfaceInstance)interfac).getGenericParent(), typeProvider, marked);
+			return;
+		}
+		
 		HashSet<IInterface> interfaces = interfac.getInterfaces();
 		if(!alreadyChecked.contains(interfac)){
 			if(!interfaces.isEmpty()){

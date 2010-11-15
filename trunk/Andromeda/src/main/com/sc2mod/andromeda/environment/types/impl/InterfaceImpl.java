@@ -11,6 +11,7 @@ package com.sc2mod.andromeda.environment.types.impl;
 
 import java.util.ArrayList;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IClass;
@@ -35,8 +36,8 @@ public class InterfaceImpl extends ReferentialTypeImpl implements IInterface {
 	private int tableIndex;
 	private ArrayList<IClass> implementingClasses = new ArrayList<IClass>();
 	
-	public InterfaceImpl(InterfaceDeclNode declaration, IScope scope, TypeProvider t) {
-		super(declaration,scope,t);
+	public InterfaceImpl(InterfaceDeclNode declaration, IScope scope, Environment env) {
+		super(declaration,scope,env);
 		super.setAbstract();
 		this.declaration = declaration;
 	}

@@ -9,6 +9,7 @@ v0.2.0
  $ will treat the following relative path as relative to the andromeda dir
  & will treat the following relative path as relative to the current working directory
 -Altered the parser generator to make the parser perform better. On my machine it is now around 20-30% faster than before
+-The parser is now able recognize nested generics without whitespaces in the closing sharp brackets (like T<T<x>> )
 
 v0.1.6
 -Fixed certain fixed-point arithmetic bugs

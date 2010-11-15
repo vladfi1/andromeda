@@ -6,12 +6,13 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.notifications.ProblemId;
 
 public class InheritableContentSet extends ScopeContentSet {
 
-	public InheritableContentSet(IScope scope) {
+	public InheritableContentSet(IType scope) {
 		super(scope);
 	}
 
@@ -36,7 +37,7 @@ public class InheritableContentSet extends ScopeContentSet {
 	}
 	
 	public void addInheritedContent(ScopeContentSet parentSet) {
-		for(Entry<String, IScopedElement> e : parentSet.contentSet.entrySet()){
+		for(Entry<String, IScopedElement> e : parentSet.getContentSet().entrySet()){
 			IScopedElement elem = e.getValue();
 			
 			//Operation set handling
@@ -56,7 +57,7 @@ public class InheritableContentSet extends ScopeContentSet {
 	}
 	
 	private void addInheritedOpSet(String name, OperationSet set){
-		IScopedElement o = contentSet.get(name);
+		IScopedElement o = getContentSet().get(name);
 		if(o != null){
 			//Op set present, add the method to it
 			if(o.getElementType() != ScopedElementType.OP_SET){
@@ -66,7 +67,7 @@ public class InheritableContentSet extends ScopeContentSet {
 			os.addAllInherited(set);
 		} else {
 			//Op set not present, create new one
-			contentSet.put(name, createInheritedOperationSet(set));
+			getContentSet().put(name, createInheritedOperationSet(set));
 		}
 	}
 

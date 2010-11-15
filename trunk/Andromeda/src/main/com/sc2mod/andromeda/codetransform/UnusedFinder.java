@@ -55,8 +55,6 @@ public class UnusedFinder {
 	}
 
 	private static void checkFunction(Operation f, InclusionType inclusionType){
-		//Strcall functions are never uncalled
-		if(f.isStrcall()) return;
 		//methods that are called virtually should not be omitted
 		if(f.getInvocationCount()==0 /* && !(f instanceof Method && f.isCalledVirtually()) */) {
 			boolean isLib;
@@ -72,7 +70,6 @@ public class UnusedFinder {
 				isLib = false;
 			}
 			if(isLib){
-				//System.out.println(f.getDescription());
 				f.setCreateCode(false);
 			} else {
 				handleUnusedFunction(f);

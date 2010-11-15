@@ -1,0 +1,4 @@
+
+extension E extends int{
+	private int a;
+}

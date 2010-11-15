@@ -191,7 +191,8 @@ public interface IType extends IScope, IScopedElement{
 	
 	 void addInheritedContent(IScope parentScope);
 
-	
-	
+	 boolean hasCopiedDownContent();
+	 
+	 void setCopiedDownContent();
 
 }

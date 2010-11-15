@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.access.Invocation;
+import com.sc2mod.andromeda.environment.annotations.BasicAnnotations;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
@@ -229,6 +230,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 					}
 				}
 			}
+			//TODO remove this test coe
 			t.canImplicitCastTo(decl.getType());
 			if(error)
 				throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_ASSIGNMENT).at(variableAssignDecl)
@@ -298,7 +300,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 					}
 				} else {
 					//Superclass has constructors
-					Constructor con = (Constructor) superClass.getConstructors().get(Signature.EMPTY_SIGNATURE, def, from);
+					Operation con = superClass.getConstructors().get(Signature.EMPTY_SIGNATURE, def, from);
 					if(con == null)
 						throw Problem.ofType(ProblemId.NO_IMPLICIT_SUPER_CONSTRUCTOR).at(def)
 									.details(superClass.getFullName())
@@ -693,7 +695,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 			//destroy after foreach
 			if(iteratorType instanceof IClass){
 				IClass c = (IClass)iteratorType;
-				if(!c.hasAnnotation("KeepAfterForeach")){
+				if(!c.getAnnotations(false).hasAnnotation(BasicAnnotations.KEEP_AFTER_FOREACH)){
 					destroyAfter = true;
 				}
 			}

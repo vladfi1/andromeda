@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.annotations.AnnotationSet;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
+import com.sc2mod.andromeda.environment.scopes.content.GenericContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
@@ -29,7 +31,12 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 
 	private IDeclaredType genericParent;
 	private Signature typeArguments;
+	private IType genericSuperType;
+	private boolean copiedDown;
+	private boolean hierarchyCopied;
 	
+
+
 	protected GenericTypeInstance(IDeclaredType genericParent, Signature s, TypeProvider t) {
 		super(genericParent.getScope(), t);
 		this.genericParent = genericParent;
@@ -43,8 +50,13 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 		if(genericParent == null){
 			return null;
 		}
-		return new InheritableContentSet(genericParent.getScope());
+		return new GenericContentSet(genericParent,this);
 	}
+
+	public void setGenericSuperType(IType iType) {
+		this.genericSuperType = iType;
+	}
+
 	
 	public INamedType getGenericParent(){
 		return genericParent;
@@ -64,7 +76,7 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 	}
 
 	public TypeParameter[] getTypeParameters() {
-		throw new InternalProgramError("Type parameters for a generic instance");
+		return genericParent.getTypeParameters();
 	}
 	
 	@Override
@@ -81,6 +93,19 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 		return new StringBuilder().append(getUid()).append("<").append(typeArguments.getFullName()).append(">").toString();
 	}
 	
+	@Override
+	public boolean isSubtypeOf(IType t) {
+		if(!hierarchyCopied){
+			this.accept(new GenericHierachyGenerationVisitor(tprov));
+		}
+		if(t == this)
+			return true;
+		if(genericSuperType != null){
+			return t == genericSuperType || genericSuperType.isSubtypeOf(t);
+		}
+		return false;
+	}
+	
 	//*********** DELEGATED METHODS *******
 
 
@@ -88,12 +113,7 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 		return genericParent.canBeNull();
 	}
 	
-	@Override
-	public boolean isSubtypeOf(IType t) {
-		if(t == this|| t == genericParent)
-			return true;
-		return genericParent.isSubtypeOf(t);
-	}
+
 
 
 	public boolean canHaveFields() {
@@ -301,25 +321,28 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 		genericParent.setVisibility(visibility);
 	}
 
-	public void afterAnnotationsProcessed() {
-		genericParent.afterAnnotationsProcessed();
+	@Override
+	public AnnotationSet getAnnotations(boolean createIfNotExistant) {
+		return genericParent.getAnnotations(createIfNotExistant);
 	}
 
-	public HashSet<String> getAllowedAnnotations() {
-		return genericParent.getAllowedAnnotations();
+	@Override
+	public boolean hasCopiedDownContent(){
+		return copiedDown;
+	}
+	 
+	@Override
+	public void setCopiedDownContent(){
+		copiedDown = true;
 	}
 
-	public boolean hasAnnotation(String name) {
-		return genericParent.hasAnnotation(name);
+	public boolean isGenericHierarchyCopied() {
+		return hierarchyCopied;
 	}
 
-	public void setAnnotationTable(HashMap<String, AnnotationNode> annotations) {
-		genericParent.setAnnotationTable(annotations);
+	public void setGenericHierarchyCopied(boolean hierarchyCopied) {
+		this.hierarchyCopied = hierarchyCopied;
 	}
-
-	
-	
-	
 
 	
 	

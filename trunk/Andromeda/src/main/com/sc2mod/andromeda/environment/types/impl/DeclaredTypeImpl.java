@@ -3,7 +3,9 @@ package com.sc2mod.andromeda.environment.types.impl;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.sc2mod.andromeda.environment.StructureUtil;
+import com.sc2mod.andromeda.environment.Environment;
+import com.sc2mod.andromeda.environment.ModifierUtil;
+import com.sc2mod.andromeda.environment.annotations.AnnotationSet;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
@@ -24,14 +26,23 @@ public abstract class DeclaredTypeImpl extends NamedTypeImpl implements IDeclare
 
 	private Visibility visibility = Visibility.DEFAULT;
 	private GlobalStructureNode declaration;
+	private AnnotationSet annotations;
 	
-	protected DeclaredTypeImpl(GlobalStructureNode declaration, IScope parentScope, TypeProvider t) {
-		super(parentScope, declaration.getName(),t);
+	protected DeclaredTypeImpl(GlobalStructureNode declaration, IScope parentScope, Environment env) {
+		super(parentScope, declaration.getName(),env.typeProvider);
 		this.declaration = declaration;
 		declaration.setSemantics(this);
 		
-		StructureUtil.processModifiers(this,declaration.getModifiers());
-		StructureUtil.processAnnotations(this, declaration.getAnnotations());
+		ModifierUtil.processModifiers(this,declaration.getModifiers());
+		env.annotationRegistry.processAnnotations(this, declaration.getAnnotations());
+	}
+	
+	@Override
+	public AnnotationSet getAnnotations(boolean createIfNotExistant) {
+		if(annotations == null && createIfNotExistant){
+			annotations = new AnnotationSet();
+		}
+		return annotations;
 	}
 	
 	@Override
@@ -96,26 +107,5 @@ public abstract class DeclaredTypeImpl extends NamedTypeImpl implements IDeclare
 	public TypeParameter[] getTypeParams(){
 		throw new Error("Trying to call getTypeParams for record type!");
 	}
-	
-	//FIXME: Rework annotations
-
-	private HashMap<String, AnnotationNode> annotations;
-	@Override
-	public void afterAnnotationsProcessed() {}
-	
-	@Override
-	public HashSet<String> getAllowedAnnotations() {
-	return null;
-	}
-	
-	@Override
-	public void setAnnotationTable(HashMap<String, AnnotationNode> annotations) {
-	}
-	
-	@Override
-	public boolean hasAnnotation(String name) {
-		return false;
-	}
-	
 
 }

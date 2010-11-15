@@ -30,6 +30,7 @@ public class ConsoleLog extends Logger{
 		switch(problem.getSeverity()){
 		case ERROR:
 		case FATAL_ERROR:
+		case WARNING:
 			out = System.err;
 			break;
 		default:

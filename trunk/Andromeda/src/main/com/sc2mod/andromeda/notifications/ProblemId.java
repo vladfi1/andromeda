@@ -54,8 +54,6 @@ public enum ProblemId {
 	STATIC_MEMBER_MISUSE ("Trying to access the static member '%s' in a non-static way."),
 	NONSTATIC_MEMBER_MISUSE("Trying to access the non-static member '%s' in a static way."),
 	NO_SUCH_METHOD("No visible method %s(%s) exists for type %s"),	//CHECK> DIFFERENT ERROR FOR NO METHOD AND WRONG SIG
-	TYPE_CANNOT_HAVE_METHODS ("The left side of a method call must be a class, struct or an " +
-					"enriched basic type. However, no enrichment for the type '%s' exists.") , 
 	NO_SUCH_FUNCTION("No visible function or method %s(%s) found. Misspelled? Wrong types?"),
 
 	SUPER_OUTSIDE_OF_CLASS("The 'super' expression can only be used in classes."),
@@ -80,7 +78,9 @@ public enum ProblemId {
 	DUPLICATE_VISIBILITY_MODIFIER("Duplicate visibility modifier"),
 	INVALID_MODIFIER("%s cannot be declared '%s'"),
 	INVALID_VISIBILITY_MODIFIER("%s cannot have a visibility modifier"),
-	UNKNOWN_ANNOTATION("Unknown annotation '%s' for %s"),
+	UNKNOWN_ANNOTATION("Unknown annotation '%s'"),
+	ANNOTATION_NOT_ALLOWED("The annotation '%s' is not allowed on this construct"),
+	DUPLICATE_ANNOTATION("Duplicate annotation '%s'"),
 	
 	KEYOF_USED_ON_NONKEY ("The keyof operator can only be used on key type extensions (extensions with the iskey modifier). The type %s is no key type."),
 	
@@ -96,7 +96,7 @@ public enum ProblemId {
 	STATIC_CLASS_HAS_NON_STATIC_MEMBER("Static classes cannot have non-static members"),
 	ABSTRACT_METHOD_IN_NON_ABSTRACT_CLASS("Cannot define an abstract method in a non-abstract class"),
 	NON_ABSTRACT_CLASS_MISSES_IMPLEMENTATIONS("The non-abstract class %s must implement the abstract method '%s' defined in type %s"),
-	CONSTRUCTOR_REQUIRED("The super class %s has no parameterless, visible constructor, so the class % must specify a constructor"),
+	CONSTRUCTOR_REQUIRED("The super class %s has no parameterless, visible constructor, so the class %s must specify a constructor"),
 	DUPLICATE_DESTRUCTOR("Duplicate destructor."),
 	DUPLICATE_CONSTRUCTOR("Duplicate constructor %s"),
 	
@@ -120,7 +120,7 @@ public enum ProblemId {
 	EXTENSION_OF_KEY_TYPE("Key types cannot be extended."),
 	INVALID_BASE_TYPE_FOR_KEY_TYPE("Only int and string are allowed to be used as base types for key types."),
 	
-	NATIVE_ENRICHMENT_HAS_FIELD("Enrichments of native types cannot contain fields"),
+	NATIVE_ENRICHMENT_HAS_FIELD("Only class enrichments can contain non-static fields"),
 	NATIVE_ENRICHMENT_METHOD_DECLARED_OVERRIDE("Methods of enrichments of native types cannot be declared 'override'"),
 	
 	//**** INSTANCE LIMIT ****
@@ -242,7 +242,10 @@ public enum ProblemId {
 	UNIT_NAME_MISSING(ProblemSeverity.WARNING,"A package declaration should contain a compilation unit name. Otherwise, you cannot reference this compilation unit with imports."), 
 	
 	//TODO: sort these:
-	DUPLICATE_COMPILATION_UNIT("Two compilation units with the same qualified name found.");
+	DUPLICATE_COMPILATION_UNIT("Two compilation units with the same qualified name found."), 
+	UNSIGNED_RIGHT_SHIFT_USED("Unsigned rightshift is not possible in galaxy :("), 
+	CONSTRUCTOR_OUTSIDE_OF_CLASS("Only classes can contain constructors. (Or method return type missing, if this is intended to be a normal method)"),
+	DESTRUCTOR_OUTSIDE_OF_CLASS("Only classes can contain destructors.");
 	
 	String message;
 	private ProblemSeverity severity;
@@ -285,8 +288,12 @@ public enum ProblemId {
 		Matcher m = TOKEN_PATTERN.matcher(msgTemplate);
 		for(int i = 0;i < messageTokens.length; i++){
 			m.find();
-			m.appendReplacement(builder, escapeStr(String.valueOf(messageTokens[i])));
-
+			try{
+				m.appendReplacement(builder, escapeStr(String.valueOf(messageTokens[i])));
+			} catch (IllegalStateException e){
+				throw new InternalProgramError(e);
+			}
+			
 		}
 		m.appendTail(builder);
 		return builder.toString();

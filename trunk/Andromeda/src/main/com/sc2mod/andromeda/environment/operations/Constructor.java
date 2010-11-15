@@ -12,6 +12,7 @@ package com.sc2mod.andromeda.environment.operations;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IClass;
@@ -43,8 +44,8 @@ public class Constructor extends Method {
 		this.invokedConstructor = invokedConstructor;
 	}
 
-	public Constructor(MethodDeclNode functionDeclaration, IClass clazz, IScope scope) {
-		super(functionDeclaration,clazz, scope);
+	public Constructor(MethodDeclNode functionDeclaration, IClass clazz, IScope scope, Environment env) {
+		super(functionDeclaration,clazz, scope, env);
 	}
 	
 	@Override

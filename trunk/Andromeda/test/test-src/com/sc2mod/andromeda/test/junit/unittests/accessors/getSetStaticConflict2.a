@@ -1,11 +1,11 @@
 
 class X{
 	
-	public int getX(){
+	int getX(){
 	return 0;
 	}
 	
-	public static void setX(int i){
+	static void setX(int i){
 	} 
 
 }

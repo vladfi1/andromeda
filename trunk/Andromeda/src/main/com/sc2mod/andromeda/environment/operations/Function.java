@@ -15,9 +15,12 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.sc2mod.andromeda.environment.Annotations;
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.StructureUtil;
+import com.sc2mod.andromeda.environment.ModifierUtil;
 import com.sc2mod.andromeda.environment.access.OperationAccess;
+import com.sc2mod.andromeda.environment.annotations.AnnotationSet;
+import com.sc2mod.andromeda.environment.annotations.BasicAnnotations;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
@@ -66,19 +69,17 @@ public class Function extends Operation {
 	private String generatedName;
 	private int inlineCount;
 	private int invocationCount;
-	private HashMap<String, AnnotationNode> annotations;
 	
 	private boolean isFinal;
-	private boolean isInline;
 	private boolean isNative;
 	private boolean isOverride;
-	private boolean isStrcall;
 	private LocalVarDecl[] locals;
 	private String name;
 	protected ParamDecl[] params;
 	protected List<ImplicitParamDecl> implicitParams;
 	private List<ReturnStmtNode> returnStmts = new ArrayList<ReturnStmtNode>(4);
 	private IType returnType;
+	private AnnotationSet annotations;
 	
 	private OperationAccess pointerDecl;
 	
@@ -89,32 +90,33 @@ public class Function extends Operation {
 	private Visibility visibility = Visibility.DEFAULT;
 	private HashMap<String, AnnotationNode> annotationTable;
 
-	public Function(GlobalFuncDeclNode functionDeclaration, IScope scope) {
-		this(functionDeclaration.getFuncDecl(),scope);
+	public Function(GlobalFuncDeclNode functionDeclaration, IScope scope, Environment env) {
+		this(functionDeclaration.getFuncDecl(),scope, env);
 	}
 	
-	protected Function(MethodDeclNode decl, IScope scope){
+	
+	protected Function(MethodDeclNode decl, IScope scope, Environment env){
 		this.declaration = decl;
 		this.header = decl.getHeader();
 		this.name = header.getName();
 		this.body = decl.getBody();
 		this.scope = scope;
 		decl.setSemantics(this);
-		StructureUtil.processModifiers(this, decl.getHeader().getModifiers());
-		StructureUtil.processAnnotations(this, decl.getHeader().getAnnotations());
+		ModifierUtil.processModifiers(this, decl.getHeader().getModifiers());
+		env.annotationRegistry.processAnnotations(this, decl.getHeader().getAnnotations());
 	
 	}
 	
 	//XPilot: for function proxies
 	protected Function() {}
 	
-	protected Function(StaticInitDeclNode decl, IScope scope){
+	protected Function(StaticInitDeclNode decl, IScope scope, Environment env){
 		this.declaration = decl;
 		this.name = "static init";
 		this.body = decl.getBody();
 		this.scope = scope;
 		decl.setSemantics(this);
-		StructureUtil.processAnnotations(this, decl.getAnnotations());
+		env.annotationRegistry.processAnnotations(this, decl.getHeader().getAnnotations());
 	}
 	
 
@@ -254,7 +256,7 @@ public class Function extends Operation {
 	
 
 	public boolean isInline() {
-		return isInline;
+		return annotations != null && annotations.hasAnnotation(BasicAnnotations.INLINE);
 	}
 	
 	@Override
@@ -273,11 +275,6 @@ public class Function extends Operation {
 	@Override
 	public boolean isStatic() {
 		return true;
-	}
-
-	@Override
-	public boolean isStrcall() {
-		return isStrcall;
 	}
 
 
@@ -356,26 +353,6 @@ public class Function extends Operation {
 		return isNative?OperationType.NATIVE:OperationType.FUNCTION;
 	}
 	
-	
-
-	
-	@Override
-	public HashSet<String> getAllowedAnnotations() {
-		return allowedAnnotations;
-	}
-	@Override
-	public boolean hasAnnotation(String name) {
-		return annotationTable.containsKey(name);
-	}
-	@Override
-	public void setAnnotationTable(HashMap<String, AnnotationNode> annotations) {
-		annotationTable = annotations;
-	}
-	@Override
-	public void afterAnnotationsProcessed() {
-		isStrcall = annotationTable.containsKey(Annotations.STRING_CALL);
-		isInline = annotationTable.containsKey(Annotations.INLINE);
-	}
 	@Override
 	public OperationAccess getPointerDecl(TypeProvider typeProvider) {
 		if(pointerDecl!=null) return pointerDecl;
@@ -394,4 +371,13 @@ public class Function extends Operation {
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+
+	@Override
+	public AnnotationSet getAnnotations(boolean createIfNotExistant) {
+		if(annotations == null && createIfNotExistant){
+			annotations = new AnnotationSet();
+		}
+		return annotations;
+	}
 }

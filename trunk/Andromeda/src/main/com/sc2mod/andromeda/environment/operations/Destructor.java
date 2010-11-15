@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.environment.operations;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IClass;
@@ -32,8 +33,8 @@ public class Destructor extends Method {
 		this.invokedConstructor = invokedConstructor;
 	}
 
-	public Destructor(MethodDeclNode functionDeclaration, IClass clazz, IScope scope) {
-		super(functionDeclaration,clazz, scope);
+	public Destructor(MethodDeclNode functionDeclaration, IClass clazz, IScope scope, Environment env) {
+		super(functionDeclaration,clazz, scope, env);
 	}
 	
 	@Override

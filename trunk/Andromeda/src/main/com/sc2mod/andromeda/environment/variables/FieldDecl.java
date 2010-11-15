@@ -94,7 +94,10 @@ public class FieldDecl extends NonLocalVarDecl {
 		isStatic = true;
 	}
 	
-
+	@Override
+	public String toString() {
+		return VarUtil.getNameAndTypeAndPrefix(this);
+	}
 
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }

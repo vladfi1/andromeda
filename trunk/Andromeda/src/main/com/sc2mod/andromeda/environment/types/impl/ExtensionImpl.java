@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.environment.types.impl;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IExtension;
@@ -40,6 +41,7 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 	
 	private boolean isKey;
 	private int hierarchyLevel;
+	private boolean copiedDown;
 	
 	//TODO: Factor to type provider or something like that
 	private static int curKey = 0;
@@ -50,8 +52,8 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 	 * via the setResolvedExtendedType method.
 	 * @param def the definition
 	 */
-	public ExtensionImpl(TypeExtensionDeclNode def, IScope scope, TypeProvider t) {
-		super(def,scope,t);
+	public ExtensionImpl(TypeExtensionDeclNode def, IScope scope, Environment env) {
+		super(def,scope,env);
 		isDistinct = def.isDisjoint();
 		this.definition = def;
 		this.isKey = def.isKey();
@@ -219,7 +221,15 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 		return extendedBaseType.getByteSize();
 	}
 
-
+	@Override
+	public boolean hasCopiedDownContent(){
+		return copiedDown;
+	}
+	 
+	@Override
+	public void setCopiedDownContent(){
+		copiedDown = true;
+	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }

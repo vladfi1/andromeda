@@ -20,5 +20,5 @@ abstract class B2 extends A{
 class C extends B2{
 	override void x(){}
 	override void y(){}
-	override public void z(){}
+	override void z(){}
 }

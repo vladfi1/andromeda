@@ -102,3 +102,64 @@ public class Fixed {
 		return f1.value == f2.value;
 	}
 }
+class F<T>{}
+class G<T> extends F<G<F<T>>>{
+	
+//	G<F<T>> getT(){
+//		return null;
+//	}
+	
+	G<F<T>> getT(){
+		return null;
+	}
+	
+	static{
+		G<Integer> g = new G<Integer>();
+		G<F<Integer>> g2 = g.getT();
+		G<F<F<Integer>>> g3 = g2.getT(); 
+	}
+}
+//
+//class X <T,T2> {
+//
+//	Y<A> a;
+//	
+//
+//	static T t;
+//	
+//	T2 getT2(){
+//		return null;
+//	}
+//	
+//	T getTT(){
+//		return t;
+//	}
+//
+//	void testA(){
+//		A u = a.t;
+//	}
+//
+//}
+//
+//class Y<T> extends X<T,Integer>{
+//
+//	
+//	 Integer getT2(){
+//		return 2;
+//	}
+//	
+//	 T getTT(){
+//		return t;
+//	}
+//}
+//
+//class F<T>{}
+//
+//class G<T>{
+//	
+//	G<F<T>> getT(){
+//		return null;
+//	}
+//}
+
+

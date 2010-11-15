@@ -128,7 +128,7 @@ public class StructureRegistryTreeScanner extends
 	public void visit(GlobalStaticInitDeclNode globalInitDeclaration,
 			Pair<IScope, IType> scopes) {
 			StaticInitDeclNode sid = globalInitDeclaration.getInitDecl();
-			StaticInit s = new StaticInit(sid,scopes._1);
+			StaticInit s = new StaticInit(sid,scopes._1, env);
 			resolver.checkAndResolve(s);
 			//global static inits are added to their scope (file)
 			ScopeUtil.addStaticInit(scopes._1, s);
@@ -152,7 +152,7 @@ public class StructureRegistryTreeScanner extends
 	@Override
 	public void visit(GlobalFuncDeclNode functionDeclaration,
 			Pair<IScope, IType> scopes) {
-		Function f = new Function(functionDeclaration, scopes._1);
+		Function f = new Function(functionDeclaration, scopes._1, env);
 		//resolve types and do other checks
 		resolver.checkAndResolve(f);
 		scopes._1.addContent(f.getName(), f);
@@ -185,13 +185,14 @@ public class StructureRegistryTreeScanner extends
 	 * enriched type if we are in an enrichment.
 	 */
 	private void entry(Pair<IScope, IType> scopes, IScopedElement elem) {
-		String uid = elem.getUid();
+		//String uid = elem.getUid();
 		IScope scope = scopes._1;
-		IType type = scopes._2;
-		scope.addContent(uid, elem);
-		if (type != scope) {
-			type.addContent(uid, elem);
-		}
+		//IType type = scopes._2;
+		//TODO: Cleanup, inline?
+		scope.addContent(elem.getUid(), elem);
+		//if (type != scope) {
+		//	type.addContent(uid, elem);
+		//}
 	}
 
 	@Override
@@ -203,7 +204,7 @@ public class StructureRegistryTreeScanner extends
 			FieldDecl decl = new FieldDecl(field, declNode, scopes._2,
 					scopes._1);
 			resolver.checkAndResolve(decl);
-			// Add field into scope (and type if we are in an enrichment)
+			// Add field into scope
 			entry(scopes, decl);
 		}
 		
@@ -221,19 +222,22 @@ public class StructureRegistryTreeScanner extends
 		switch(methodDeclNode.getMethodType()){
 		case CONSTRUCTOR:
 		{
+			checkForClass(methodDeclNode,state._2,ProblemId.CONSTRUCTOR_OUTSIDE_OF_CLASS);
 			IClass c = (IClass)state._2;
-			Constructor con = new Constructor(methodDeclNode,c,state._1);
+			Constructor con = new Constructor(methodDeclNode,c,state._1, env);
 			resolver.checkAndResolve(con);
 			c.addConstructor(con);
 		}	break;
 		case DESTRUCTOR:
-		{	IClass c = (IClass)state._2;
-			Destructor destr = new Destructor(methodDeclNode,c,state._1);
+		{	
+			checkForClass(methodDeclNode,state._2,ProblemId.DESTRUCTOR_OUTSIDE_OF_CLASS);
+			IClass c = (IClass)state._2;
+			Destructor destr = new Destructor(methodDeclNode,c,state._1, env);
 			resolver.checkAndResolve(destr);
 			c.setDestructor(destr);
 		}	break;
 		case METHOD:
-			Method op = new Method(methodDeclNode,state._2,state._1);
+			Method op = new Method(methodDeclNode,state._2,state._1, env);
 			resolver.checkAndResolve(op);
 			entry(state, op);
 			break;
@@ -241,10 +245,17 @@ public class StructureRegistryTreeScanner extends
 		
 	}
 
+	private void checkForClass(MethodDeclNode methodDeclNode, IType type, ProblemId pid) {
+		if(type.getCategory() != TypeCategory.CLASS){
+			throw Problem.ofType(pid).at(methodDeclNode)
+				.raiseUnrecoverable();
+		}
+	}
+
 	@Override
 	public void visit(StaticInitDeclNode staticInitDeclNode,
 			Pair<IScope, IType> state) {
-		StaticInit s = new StaticInit(staticInitDeclNode,state._1);
+		StaticInit s = new StaticInit(staticInitDeclNode,state._1, env);
 		resolver.checkAndResolve(s);
 		
 		//non-global static inits are always only added to their type.

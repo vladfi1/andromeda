@@ -2,6 +2,7 @@ package com.sc2mod.andromeda.environment.types.impl;
 
 import java.util.HashSet;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.IReferentialType;
@@ -18,8 +19,8 @@ public abstract class ReferentialTypeImpl extends RecordTypeImpl implements IRef
 		return interfaces;
 	}
 
-	public ReferentialTypeImpl(GlobalStructureNode g, IScope s, TypeProvider t) {
-		super(g, s, t);
+	public ReferentialTypeImpl(GlobalStructureNode g, IScope s, Environment env) {
+		super(g, s, env);
 	}
 	
 	@Override

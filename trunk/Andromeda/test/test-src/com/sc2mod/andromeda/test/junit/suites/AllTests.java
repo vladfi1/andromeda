@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
 import com.sc2mod.andromeda.test.junit.unittests.ExampleTest;
 import com.sc2mod.andromeda.test.junit.unittests.accessors.AccessorProblems;
 import com.sc2mod.andromeda.test.junit.unittests.classes.ClassProblems;
+import com.sc2mod.andromeda.test.junit.unittests.extensions.ExtensionTests;
 import com.sc2mod.andromeda.test.junit.unittests.generics.GenericTests;
 import com.sc2mod.andromeda.test.junit.unittests.misc.MiscProblems;
 import com.sc2mod.andromeda.test.junit.unittests.names.NameProblems;
@@ -28,7 +29,8 @@ import junit.framework.TestSuite;
         MiscProblems.class,
         ClassProblems.class,
         AccessorProblems.class,
-        NameProblems.class
+        NameProblems.class,
+        ExtensionTests.class
 })
 
 public class AllTests {

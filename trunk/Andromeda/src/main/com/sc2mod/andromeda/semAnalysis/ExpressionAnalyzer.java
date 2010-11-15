@@ -48,7 +48,6 @@ public class ExpressionAnalyzer {
 		ExprNode lExpr = binaryExpression.getLeftExpression();
 		ExprNode rExpr = binaryExpression.getRightExpression();
 		BasicTypeSet BASIC = this.BASIC;
-		//System.out.println(binaryExpression);
 		
 		IType left = lExpr.getInferedType();
 		IType right = rExpr.getInferedType();
@@ -260,7 +259,8 @@ public class ExpressionAnalyzer {
 			binaryExpression.setInferedType(left.getCommonSupertype(right));
 			break;
 		case URSHIFT:
-			throw new InternalProgramError(binaryExpression,"Unsigned rightshift is not possible in galaxy :(");
+			throw Problem.ofType(ProblemId.UNSIGNED_RIGHT_SHIFT_USED).at(binaryExpression)
+				.raiseUnrecoverable();
 		default:
 			throw new InternalProgramError(binaryExpression,"Unknown binary operator!");
 		}

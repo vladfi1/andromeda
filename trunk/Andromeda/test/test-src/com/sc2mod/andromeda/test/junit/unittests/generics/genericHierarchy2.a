@@ -1,0 +1,91 @@
+
+
+class X <T,T2> {
+
+	Y<A> a;
+	
+	X(T t){
+		this.t = t;
+	}
+	T t;
+	
+	T2 getT2(){
+		return null;
+	}
+	
+	T getTT(){
+		return t;
+	}
+
+	void testA(){
+		A u = a.t;
+	}
+	
+	void getXX(T2 t){
+	
+	}
+
+}
+
+class Y<T> extends X<T,int>{
+	Y(){
+		super((!! T)3);
+	}
+	
+	override int getT2(){
+		return 2;
+	}
+	
+	override T getTT(){
+		return t;
+	}
+}
+
+class Y2<T> extends X<T,Y2<X<T,T>>> {
+
+	Y2(T t){
+		super(t);
+	}
+
+	override Y2<X<T,T>> getT2(){
+		return null;
+	}
+}
+
+
+
+class Z extends Y<int>{
+
+
+	
+}
+
+class Z2 extends Y2<int>{
+	Z2(int i){
+		super(i);
+	}
+
+	override int getTT(){
+		return t;
+	}
+	
+	
+	override void getXX(Y2<X<int,int>> t){
+	
+	}
+}
+
+class A{
+
+}
+
+static{
+	X<int,int> x1 = new Z(); // works		
+	Y<int> x2 = new Z(); // works
+	X<int,Y2<X<int,int>>> x3 = new Z2(4); // works		
+	Y2<int> x4 = new Z2(3); // works
+
+	
+	
+
+}

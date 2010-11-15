@@ -1,0 +1,26 @@
+
+
+class X <T,T2> {
+	
+	X(T t){
+		this.t = t;
+	}
+	T t;
+
+}
+
+class Y<T> extends X<T,int>{
+	Y(){
+		super((!! T)3);
+	}
+}
+
+class Z extends Y<int>{
+
+}
+
+
+static{
+	X<Z,int> xxx = new Z(); // does not work
+		
+}

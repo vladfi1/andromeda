@@ -1,6 +1,7 @@
 package com.sc2mod.andromeda.environment.scopes;
 
 import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
+import com.sc2mod.andromeda.environment.scopes.content.NonInheritanceContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -33,7 +34,7 @@ public class BlockScope extends ScopeImpl {
 
 	@Override
 	protected ScopeContentSet createContentSet() {
-		return new InheritableContentSet(this);
+		return new NonInheritanceContentSet(this);
 	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }

@@ -1,0 +1,3 @@
+class C{}
+
+extension E extends C;

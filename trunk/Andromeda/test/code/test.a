@@ -1,4 +1,9 @@
 package a.b => Blub;
 public class X{
 
+
+  static{
+  	bool b  = 4 >>> 3;
+  
+  }
 }

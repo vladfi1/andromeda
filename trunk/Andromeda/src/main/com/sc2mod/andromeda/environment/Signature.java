@@ -114,12 +114,7 @@ public class Signature implements Iterable<IType> {
 	
 	@Override
 	public String toString() {
-		StringBuilder b = new StringBuilder(64);
-		for(int i=0;i<sig.length;i++){
-			b.append(sig[i].getUid());
-			if(i+1!=sig.length) b.append(",");
-		}
-		return b.toString();
+		return getFullName();
 	}
 
 	public int size() {

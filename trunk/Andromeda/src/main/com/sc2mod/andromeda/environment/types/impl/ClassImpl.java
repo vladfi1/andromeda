@@ -8,6 +8,7 @@ import com.sc2mod.andromeda.classes.ClassNameProvider;
 import com.sc2mod.andromeda.classes.VirtualCallTable;
 import com.sc2mod.andromeda.classes.indexSys.IndexClassNameProvider;
 import com.sc2mod.andromeda.environment.Annotations;
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.Destructor;
@@ -95,8 +96,8 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	private String metaClassName;
 
 	
-	public ClassImpl(ClassDeclNode declaration, IScope scope, TypeProvider t) {
-		super(declaration, scope, t);
+	public ClassImpl(ClassDeclNode declaration, IScope scope, Environment env) {
+		super(declaration, scope, env);
 		this.nameProvider = new IndexClassNameProvider(this);
 		interfacesTransClosure = new HashMap<String,IInterface>();
 		this.declaration = declaration;
@@ -235,6 +236,10 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 		return superClass;
 	}
 	
+	@Override
+	public IType getSuperType() {
+		return superClass;
+	}
 	
 	@Override
 	public boolean isSubtypeOf(IType c){

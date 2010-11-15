@@ -1,0 +1,31 @@
+class C<T>{
+
+	protected void setT(){
+		setU();
+	}
+}
+
+enrich C{
+	int blu;
+	
+	C(int f){
+		
+	}
+	
+	protected void setU(){
+		setT();
+	}
+	
+	 void getTT(T t){
+	
+	}
+}
+
+
+static{
+	C c =new C(3);
+	
+	c.setT();
+	c.setU();
+	c.blu = 3;
+}

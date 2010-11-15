@@ -194,6 +194,8 @@ public class GenericVarProxy extends Variable {
 	public void setValue(DataObject value) {
 		wrappedDecl.setValue(value);
 	}
+	
+	
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }

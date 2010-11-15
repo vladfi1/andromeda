@@ -1,0 +1,12 @@
+
+
+class X <T,T2> {
+
+}
+
+enrich X {
+	
+	T getT(){
+		return null;
+	}
+}

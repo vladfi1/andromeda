@@ -495,6 +495,8 @@ typeParametersOpt ::= typeParameters:t {: RESULT = t; :}
 		
 //Type arguments
 typeArguments ::= LT:l actualTypeParamList:al GT:r {: RESULT = al; RESULT.setPos(lleft,rright); :}
+		| LT:lo actualTypeParamList:al COMMA name:t LT:l actualTypeParamList:al2 RSHIFT:r {: al2.setPos(lleft,rright-1); TypeNode tn = ParserHelper.getExpressionType(t, al2); tn.setPos(tleft,rright-1); al.append(tn); RESULT = al; RESULT.setPos(loleft,rright); :}
+		| LT:lo name:t LT:l actualTypeParamList:al2 RSHIFT:r {: al2.setPos(lleft,rright-1); TypeNode tn = ParserHelper.getExpressionType(t, al2); tn.setPos(tleft,rright-1);  RESULT = new TypeListNode(tn); RESULT.setPos(loleft,rright); :}
 		;
 		
 actualTypeParamList ::= actualTypeParam:a {: RESULT = new TypeListNode(a); RESULT.setPos(aleft,aright); :}
@@ -1104,7 +1106,7 @@ abstractMethodDeclaration ::=
 							additiveExpression:e {: RESULT = e; :}
 						|	shiftExpression:e1 LSHIFT additiveExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.LSHIFT); RESULT.setPos(e1left,e2right); :}
 						|	shiftExpression:e1 RSHIFT additiveExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.RSHIFT); RESULT.setPos(e1left,e2right); :}
-						|	shiftExpression:e1 URSHIFT additiveExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.URSHIFT); RESULT.setPos(e1left,e2right); :}
+						|	shiftExpression:e1 RSHIFT:l GT:r additiveExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.URSHIFT); RESULT.setPos(e1left,e2right); if(lright < rleft) parser.syntax_error(stack.elementAt(stack$Top - 2)); :}
 						;
 					//We need to seperate instanceof here, or we'll get a collision with generic < >
 					instanceofExpression ::= 

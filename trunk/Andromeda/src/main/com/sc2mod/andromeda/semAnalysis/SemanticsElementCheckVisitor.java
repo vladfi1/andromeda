@@ -13,6 +13,7 @@ import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
@@ -39,6 +40,28 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	public SemanticsElementCheckVisitor(Environment env) {
 		this.tprov = env.typeProvider;
 	}
+	
+	//*************************************************************
+	//***														***
+	//***						FIELDS							***
+	//***														***
+	//*************************************************************
+	@Override
+	public void visit(FieldDecl fieldDecl) {
+		IType t = fieldDecl.getContainingType();
+		if(t != null && !fieldDecl.isStatic()){
+			switch(t.getCategory()){
+			case CLASS:
+			case STRUCT:
+				break;
+			default:
+				throw Problem.ofType(ProblemId.NATIVE_ENRICHMENT_HAS_FIELD).at(fieldDecl.getDefinition())
+					.raiseUnrecoverable();
+			}
+		}
+		
+	}
+	
 	
 	//*************************************************************
 	//***														***

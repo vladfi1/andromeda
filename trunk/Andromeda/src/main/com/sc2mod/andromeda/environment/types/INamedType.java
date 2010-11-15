@@ -11,9 +11,9 @@ package com.sc2mod.andromeda.environment.types;
 
 import java.util.HashMap;
 
-import com.sc2mod.andromeda.environment.IAnnotatable;
 import com.sc2mod.andromeda.environment.IModifiable;
 import com.sc2mod.andromeda.environment.Signature;
+import com.sc2mod.andromeda.environment.annotations.IAnnotatable;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.notifications.InternalProgramError;

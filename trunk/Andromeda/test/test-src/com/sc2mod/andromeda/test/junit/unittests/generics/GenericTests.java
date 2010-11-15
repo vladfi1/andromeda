@@ -27,6 +27,45 @@ public class GenericTests extends AndromedaSingleRunTest {
 		assertOnlyProblem(ProblemId.INVALID_TYPE_BOUND);
 	}
 	
+	@Test
+	public void genericHierarchy(){
+		callAndromeda("genericHierarchy.a");
+		assertOnlyProblem(ProblemId.TYPE_ERROR_INCOMPATIBLE_ASSIGNMENT);
+	}
+	
+	@Test
+	public void genericHierarchy2(){
+		callAndromeda("genericHierarchy2.a");
+		assertNoMoreProblems();
+		checkOutput();
+	}
+	
+	@Test
+	public void genericHierarchy3(){
+		callAndromeda("genericHierarchy3.a");
+		assertOnlyProblem(ProblemId.TYPE_ERROR_INCOMPATIBLE_ASSIGNMENT);
+	}
+	
+	@Test
+	public void genericHierarchy4(){
+		callAndromeda("genericHierarchy4.a");
+		assertNoMoreProblems();
+		checkOutput();
+	}
+	
+	@Test
+	public void genericExtensions(){
+		callAndromeda("genericExtensions.a");
+		assertNoMoreProblems();
+		checkOutput();
+	}
+	
+	@Test
+	public void genericClassEnrichment(){
+		callAndromeda("genericClassEnrichment.a");
+		assertNoMoreProblems();
+		checkOutput();
+	}
 	
 	
 }

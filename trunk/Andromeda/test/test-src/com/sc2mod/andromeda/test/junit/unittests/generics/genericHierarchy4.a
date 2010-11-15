@@ -1,0 +1,16 @@
+
+class F<T>{}
+
+class G<T> extends F<G<F<T>>>{
+	
+	G<F<T>> getT(){
+		return null;
+	}
+}
+
+static{
+	new G<int>();
+	
+	
+
+}

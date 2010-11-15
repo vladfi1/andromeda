@@ -55,7 +55,8 @@ public class TypeParameter extends TypeImpl {
 	public TypeCategory getCategory() {
 		return TypeCategory.TYPE_PARAM;
 	}
-
+	
+	
 	@Override
 	public String getDescription() {
 		return "type parameter";
@@ -78,7 +79,7 @@ public class TypeParameter extends TypeImpl {
 
 	
 	public int getRuntimeType() {
-		return RuntimeType.OTHER;
+		return RuntimeType.INT;
 	}
 	
 	@Override
@@ -97,7 +98,7 @@ public class TypeParameter extends TypeImpl {
 	 */
 	@Override
 	public Visibility getVisibility() {
-		return Visibility.PRIVATE;
+		return Visibility.PUBLIC;
 	}
 
 	@Override

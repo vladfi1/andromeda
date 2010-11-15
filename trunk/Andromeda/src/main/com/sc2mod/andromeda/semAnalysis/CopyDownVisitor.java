@@ -1,5 +1,6 @@
 package com.sc2mod.andromeda.semAnalysis;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.sc2mod.andromeda.environment.Environment;
@@ -10,7 +11,7 @@ import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.types.generic.GenericMemberGenerationVisitor;
+import com.sc2mod.andromeda.environment.types.generic.GenericHierachyGenerationVisitor;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 
@@ -24,11 +25,13 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 
 	private TypeProvider tprov;
-	private GenericMemberGenerationVisitor genericsVisitor;
+	private Environment env;
+	//private GenericHierachyGenerationVisitor genericsVisitor;
 	
 	public CopyDownVisitor(Environment env) {
 		this.tprov = env.typeProvider;
-		this.genericsVisitor = new GenericMemberGenerationVisitor(tprov);
+		this.env = env;
+		//this.genericsVisitor = new GenericMemberGenerationVisitor(tprov);
 	}
 	
 	/**
@@ -49,15 +52,18 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 	@Override
 	public void visit(ClassImpl class1) {
 		copyDownInheritedMembers(class1);
-		
 		setDestructor(class1);
+		class1.setCopiedDownContent();
 		
-		//Copy generic members for all generic instances that are already present at this point
-		if(class1.isGenericDecl()){
-			for(INamedType genericInstance : tprov.getGenericInstances(class1)){
-				copyGenericMembers(genericInstance);
-			}
-		}
+		//TODO Cleanup
+//		//Copy generic members for all generic instances that are already present at this point
+//		if(class1.isGenericDecl()){
+//			//we copy to array list since this operation might create new generic members (concurrent modification)
+//			for(INamedType genericInstance : new ArrayList<INamedType>(tprov.getGenericInstances(class1))){
+//				copyGenericMembers(genericInstance);
+//			}
+//		}
+		
 		
 		//Recursive call for subclasses
 		LinkedList<IRecordType> decendants = class1.getDescendants();
@@ -66,9 +72,9 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 		}
 	}
 	
-	private void copyGenericMembers(INamedType genericInstance) {
-		genericInstance.accept(genericsVisitor);
-	}
+//	private void copyGenericMembers(INamedType genericInstance) {
+//		genericInstance.accept(genericsVisitor);
+//	}
 
 	/**
 	 * Sets the destructor for this class appropriately, if it has
@@ -91,7 +97,7 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 			if(destructor == null){
 				//If we are in a top class and have no destructor, the deallocator is
 				//the destructor
-				class1.setDestructor(Deallocator.createDeallocator(tprov,class1));		
+				class1.setDestructor(Deallocator.createDeallocator(env,class1));		
 			}
 			
 		}
@@ -107,6 +113,7 @@ public class CopyDownVisitor extends VoidSemanticsVisitorAdapter{
 			class1.addInheritedContent(i);
 		}
 		if(superClass != null){
+			System.out.println("Adding from " + superClass.getFullName() + " to " + class1.getFullName());
 			class1.addInheritedContent(superClass);
 		}
 	}

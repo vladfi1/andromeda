@@ -127,7 +127,7 @@ public class UglyExprTransformer {
 		//Variable vd = null;
 		ExprNode prefix = null;
 		String accessorName = null;
-		boolean isPrefixSimple = false;
+		boolean isPrefixSimple = true;
 		boolean isAccessor = false;
 		NameAccess acc = (NameAccess)leftSide.getSemantics();
 		if(TransformUtil.isFieldAccess(leftSide)){
@@ -135,9 +135,10 @@ public class UglyExprTransformer {
 			switch(acc.getAccessType()){
 			case ACCESSOR:
 				isAccessor = true;
-				if(!acc.isStatic() && leftSide instanceof FieldAccessExprNode){
+				if(leftSide instanceof FieldAccessExprNode){
 					prefix = leftSide.getLeftExpression();
-					isPrefixSimple = simpleDecider.isSimple(prefix);
+					if(!acc.isStatic())
+						isPrefixSimple = simpleDecider.isSimple(prefix);
 					
 				}
 				accessorName = leftSide.getName();
@@ -288,7 +289,7 @@ public class UglyExprTransformer {
 					if(isPrefixSimple){
 						debugCase = "a9s";
 						//(9) prefix simple
-						//R: seta(X,geta(X)+Y)
+						//R: X.seta(X.geta()+Y)
 						ExprNode get = syntaxGenerator.createAccessorGet((AccessorAccess) acc, prefix, accessorName);
 						BinOpSE op = TransformUtil.getOpFromAssignOp(operator);
 						ExprNode binary = syntaxGenerator.genBinaryExpression(get,rightSide,op,get.getInferedType(),get.getInferedType(),get.getInferedType());
@@ -298,7 +299,7 @@ public class UglyExprTransformer {
 						debugCase = "a9";
 						//(9) simple
 						//z = X
-						//R: seta(z,geta(z)+Y)
+						//R: z.seta(z.geta()+Y)
 						z = varProvider.getImplicitLocalVar(leftSide.getInferedType());
 						parent.addStatementBefore(syntaxGenerator.genAssignStatement(z, prefix, AssignOpSE.EQ));
 						ExprNode get = syntaxGenerator.createAccessorGet((AccessorAccess) acc, z, accessorName);

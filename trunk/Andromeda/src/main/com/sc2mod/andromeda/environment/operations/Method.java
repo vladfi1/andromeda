@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.environment.operations;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -25,8 +26,8 @@ public class Method extends Function {
 	private IType containingType;
 	private OverrideInformation overrideInformation;
 	
-	public Method( MethodDeclNode functionDeclaration, IType containingType, IScope scope) {
-		super(functionDeclaration,scope);
+	public Method( MethodDeclNode functionDeclaration, IType containingType, IScope scope, Environment env) {
+		super(functionDeclaration,scope,env);
 		this.containingType = containingType;
 		if(!isStatic){
 			overrideInformation = new OverrideInformation(this);

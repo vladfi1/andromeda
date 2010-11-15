@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.OperationAccess;
+import com.sc2mod.andromeda.environment.annotations.AnnotationSet;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
@@ -136,19 +137,7 @@ public class GenericMethodProxy extends Operation {
 	}
 
 	@Override
-	public void afterAnnotationsProcessed() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
 	public boolean flowReachesEnd() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public HashSet<String> getAllowedAnnotations() {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
@@ -176,8 +165,7 @@ public class GenericMethodProxy extends Operation {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+		return method.getName();
 	}
 
 	@Override
@@ -207,11 +195,6 @@ public class GenericMethodProxy extends Operation {
 		return method.getVisibility();
 	}
 
-	@Override
-	public boolean hasAnnotation(String name) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
 
 	@Override
 	public boolean hasBody() {
@@ -244,18 +227,6 @@ public class GenericMethodProxy extends Operation {
 	@Override
 	public boolean isOverride() {
 		return method.isOverride();
-	}
-
-	@Override
-	public boolean isStrcall() {
-		return method.isStrcall();
-	}
-
-
-	@Override
-	public void setAnnotationTable(HashMap<String, AnnotationNode> annotations) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
 	}
 
 	@Override
@@ -337,4 +308,9 @@ public class GenericMethodProxy extends Operation {
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	@Override
+	public AnnotationSet getAnnotations(boolean createIfNotExistant) {
+		return method.getAnnotations(createIfNotExistant);
+	}
 }

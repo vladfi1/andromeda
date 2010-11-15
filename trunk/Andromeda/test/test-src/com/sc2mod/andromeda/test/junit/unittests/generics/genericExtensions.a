@@ -1,0 +1,23 @@
+
+
+	
+extension X <T,T2> extends int{
+	
+	void setX(T t){
+	}
+
+}
+
+extension Y extends X<int,int>{
+
+}
+
+class Z{
+	int z;
+}
+
+static{
+	X<int,int> xxx = new Y(); // works
+	X<Z,int> xx = new Y(); // does not work
+		
+}
