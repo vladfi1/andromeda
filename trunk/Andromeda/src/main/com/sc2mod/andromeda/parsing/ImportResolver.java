@@ -20,7 +20,7 @@ public class ImportResolver {
 		this.sourceManager = sourceManager;
 	}
 	
-	public String getImportString(ImportNode i){
+	public static String getImportString(ImportNode i){
 		return dotNameFromInputName(i.getImportName()).toString();
 	}
 	
@@ -30,7 +30,7 @@ public class ImportResolver {
 		return sourceManager.resolveInclude(name, i);
 	}
 	
-	private StringBuilder nameFromInputName(CompilationUnitIdentifierNode importName) {
+	private static StringBuilder nameFromInputName(CompilationUnitIdentifierNode importName) {
 		if(importName.getPrefix() != null){
 			 return nameFromInputName(importName.getPrefix()).append(File.separator).append(importName.getName().getId());
 		} else {
@@ -38,9 +38,9 @@ public class ImportResolver {
 		}
 	}
 	
-	private StringBuilder dotNameFromInputName(CompilationUnitIdentifierNode importName) {
+	private static StringBuilder dotNameFromInputName(CompilationUnitIdentifierNode importName) {
 		if(importName.getPrefix() != null){
-			 return nameFromInputName(importName.getPrefix()).append(".").append(importName.getName().getId());
+			 return dotNameFromInputName(importName.getPrefix()).append(".").append(importName.getName().getId());
 		} else {
 			return new StringBuilder(importName.getName().getId());
 		}

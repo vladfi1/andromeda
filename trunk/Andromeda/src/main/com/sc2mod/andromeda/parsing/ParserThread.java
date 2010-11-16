@@ -30,6 +30,7 @@ public class ParserThread extends CompilerThread {
 	private String typeName;
 	private int numParsed;
 	boolean packageDeclParsed;
+	private String qualifiedCUName;
 	
 	ParserThread(int num, ParserScheduler ps, CompilationEnvironment se, IParser parser) {
 		super(se,"Parser Thread " + num);
@@ -110,6 +111,7 @@ public class ParserThread extends CompilerThread {
 		SourceInfo fileInfo = compilationEnvironment.getSourceManager().getSourceInfoById(a.getFileId());
 		if(fileInfo == null)
 			throw new InternalProgramError("File has no file info");
+		fileInfo.setQualifiedName(qualifiedCUName);
 		fi.setSourceInfo(fileInfo);
 		input.connect(fi);
 		return fi;
@@ -129,7 +131,7 @@ public class ParserThread extends CompilerThread {
 	public static void packageRead(PackageDeclNode pd){
 		ParserThread t = (ParserThread)Thread.currentThread();
 		t.packageDeclParsed = true;
-		t.scheduler.registerPackageDecl(pd);
+		t.qualifiedCUName = t.scheduler.registerPackageDecl(pd);
 
 	}
 

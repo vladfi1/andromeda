@@ -22,7 +22,7 @@ import com.sc2mod.andromeda.util.Debug;
 
 public abstract class Logger {
 	
-	public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.PHASE;
+	public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.DETAIL;
 	
 	private LogLevel logLevel;
 	private int level = DEFAULT_LOG_LEVEL.getLevel();

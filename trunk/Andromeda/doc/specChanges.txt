@@ -1,0 +1,494 @@
+I will add all changes to the Andromeda language specification to this file, so you can already start reading about the changes. Once 0.2.0 is out, this file will be merged into the specification.
+
+
+[hl=1]Notational conventions[/hl]
+
+[hl=2]EBNF[/hl]
+To define the possible syntax of certain constructs, I will use an [url='http://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_Form']EBNF[/url] derivate.
+EBNF uses so-called grammar rules to define the syntax of a language. These rules have the form DEFINED_NON_TERMINAL ::= LIST_OF_DEFINITIONS. This rule defines the new non terminal on the left side of the ::= sign.
+
+The LIST_OF_DEFINITIONS can contain following things:
+Any name in [emph]UPPERCASE_LETTERS[/emph] is considered a non-terminal that will (or is already) be explained in another definition. Words in lower case letters are terminals,i.e. simply things you write into the code as they are stated here. So if you see [emph]public BLA[/emph], then public is a keyword that you can write into your code as-is and BLA is a non terminal which is defined somewhere else.
+
+I use [emph][X][/emph] for optional expressions (X can occur once or not at all), [emph]{X}[/emph] for repetition (X can occur arbitrarily often or not at all) and [emph]X | Y[/emph] for alternative (either X or Y can occur exactly once). I will use parenthesis [emph]( )[/emph] to group expressions.
+Wheenever I want to express that any of the used symbols should be in the source code as a terminal, I will wrap it with [emph]""[/emph] (normal EBNF wraps all terminals with "" but I omit the "" for everything that is no EBNF operator).
+
+
+Examples:
+[galaxy]
+ARITHMETIC_BINARY_OP ::=
+EXPR ( + | - | * | / ) EXPR
+[/galaxy]
+This would define the non terminal ARITHMETIC_BINARY_OP. Which is any expression (EXPR) followed by an arithmetic operator and another expression. Of course, EXPR is again a nonterminal and thus has to be defined in another rule. 
+
+A definition of EXPR could be the following:
+[galaxy]
+EXPR ::=
+ARITHMETIC_BINARY_OP |
+NUMBER |
+IDENTIFIER
+[/galaxy]
+So an expression can again be an arithmetic operation, a number or an identifier. Normally I had to define NUMBER and IDENTIFIER now, but I just say that it is numbers and identifiers (variable names) like you know them.
+With these rules, the following would be examples of a valid binary operation
+[galaxy]
+5 + a
+3 / 7
+3 + 5 - b //Subexpression
+3 * a - blub / 34[/galaxy]
+
+Another example:
+[galaxy]
+FUNCTION_CALL ::=
+IDENTIFIER "(" [ EXPR {, EXPR} ] ")"[/galaxy]
+So a function call is an identifier (the function's name) followed by a opening parenthesis (I use "(" here because a parenthesis without quotation would mean an EBNF grouping parenthesis). Inside the parenthesis, an arbitrary number of expressions: the parameters. This is stated by [emph][ EXPR {, EXPR} ][/emph]. The square bracket tell that the whole thing is optional, so you can also use no parameters in case of a parameterless function. If you do use parameters, you need at least one and can then append an arbitrary number of other parameters, seperated by commas (denoted by [emph]{, EXPR}[/emph]).
+
+Valid function calls (with the above definition of EXPR are:
+[galaxy]
+a() //parameterless
+b(3,5)
+foo(s - 5, 3 / 23, x, z)[/galaxy]
+
+[hl=2]Basic Nonterminals[/hl]
+
+In this section, I will define basic nonterminal symbols that will be used by many grammar rules.
+
+[lhead]IDENTIFIER[/lhead]
+
+An identifier, or name, is just any variable, type or function name. Identifiers in Andromeda can consist of an arbitrary mixture of letters and the underscore ( _ ) character. Anything behind the first character can also be a digit. There is one exception: You may not use identifiers with two successive underscore characters.
+
+Examples:
+[galaxy]
+a_3 // ok
+abcd // ok
+a123_34_adfs //ok
+_1 //ok
+a__2 //invalid, two successive underscores
+3abc //invalid starts with a digit
+[/galaxy]
+
+[lhead]QUALIFIED_NAME[/lhead]
+
+A qualified name is a dot-seperated list of identifiers. It is used in the package and compilation unit structure of andromeda.
+[galaxy]
+QUALIFIED_NAME ::= {IDENTIFIER . } IDENTIFIER [/galaxy]
+
+Examples:
+[galaxy]
+a.b.c.d
+x
+a.lang.Object[/galaxy]
+
+
+
+[hl=1]Andromeda Source Code Structure and File Names[/hl]
+
+Andromeda code is written into files or custom script sections in map triggers. A single file or custom section in a trigger is called [emph]compilation unit[/emph].
+If external files are used, these [emph]MUST[/emph] have either the file extension [emph].a[/emph] or [emph].galaxy[/emph] if it is a galaxy only file. Note that a galaxy compiler will be used for .galaxy files, so you cannot use Andromeda constructs in them.
+
+The content of a compilation unit is an optional package declaration, followed by an optional list of imports clauses and then any andromeda constructs. Since the package declaration and the imports are optional, also raw andromeda constructs are valid content for a compilation unit. This means that you can also use galaxy files (where neither packages nor imports exist) as Andromeda compilation units.
+
+[lhead]Andromeda compilation unit structure:[/lhead]
+[galaxy]
+COMPILATION_UNIT ::=
+[PACKAGE_DECL]
+{IMPORT_CLAUSE}
+CONTENT
+[/galaxy]
+The file [emph]CONTENT[/emph] is a list of Andromeda/galaxy constructs, like global variables, functions, classes, enrichments,...
+
+[hl=2]Packages[/hl]
+
+[hl=3]Package declaration[/hl]
+An Andromeda package declaration has the following form:
+[galaxy]
+PACKAGE_DECL ::=
+  package QUALIFIED_NAME [ => IDENTIFIER ] ;
+| package => IDENTIFIER; [/galaxy]
+
+The qualifierd name is the name of the package of this compilation unit. If it is missing, the [emph]default[/emph], unnamed package is used. Packages are used for visibility, auto scoping and for locating external files. More about that later.
+The identifier is the name of the compilation unit. If it is missing, then the compilation unit is considered [emph]unnamed[/emph]. Unnamed compilation units cannot be imported by other compilation units (since they have no name), so they are only of limited use.
+
+Examples:
+[galaxy]
+package a.lang => Object; //package a.lang, compilation unit Object
+package x.y; //package x.y, unnamed compilation unit
+package => Bla; //default package, compilation unit Bla[/galaxy]
+
+By convention, package names should be [emph]camel case[/emph] starting with a [emph]lower case letter[/emph]. If the compilation unit is a dedicated file which is added to the compilation by importing it, then the package structure should also reflect the directory structure in the lib directory (otherwise Andromeda will not find that file).
+So if your package is [emph]"x.y.z"[/emph], then the compilation unit should be in the [emph]x/y/z[/emph] subfolder of the lib directory.
+
+By convention, compilation unit names should be [emph]camel case[/emph] starting with an [emph]upper case[/emph] letter.
+If they are stored in a dedicated file, the file [emph]must[/emph] have the compilation unit name, followed by the file extension.
+
+[hl=3]Semantics of Packages[/hl]
+
+As stated before you can assign dot-seperated package names to your compilation units. These packages build a hierarchy and that hierarchy is denoted by the dots. For example, the package declaration [galaxy=inline]a.b.c => Blub[/galaxy] in a compilation unit has the following semantics:
+
+There is a top-level package [emph]a[/emph] which contains a package [emph]b[/emph]. The package [emph]b[/emph] contains a package [emph]c[/emph]. The package [emph]c[/emph] finally contains the compilation unit named [emph]Blub[/emph]. In addition, the package [emph]c[/emph] also contains all top-level content of the compilation unit. Top-level means all content which is not nested inside other content. A field of a class for example, is no top-level content, since it is inside the class body and thus nested.
+The following sections will list for which features this hierarchy is used.
+
+[lhead]Qualified names[/lhead]
+
+The package structure is used to determine the qualified names of the compilation unit and its content:
+[list][*][lhead]Qualified name of the compilation unit:[/lhead] The qualified name is exactly its package name followed by the compilation unit name, but the => is replaced by another dot. So the qualified name of the above example would be [emph]a.b.c.Blub[/emph]
+[*][lhead]Qualified name of the top-level content:[/lhead] The top level content's qualified name is the package name plus a dot and the simple name of the content. For example, consider the above example compilation unit Blub. Assume it has a class in it called XY. Then the qualified name of this class is a.b.c.XY. As you see, the compilation unit name is [emph]not[/emph] included into the qualified name of the content.
+[/list]
+
+Those qualified names are used in the following situations:
+[list][*]The qualified name of the compilation unit is used in import clauses to import it.
+[*]The qualified name of content is only used very rarely. There is only one situation where you must use it: If you have two types or variables with the same name (in different packages for example) and want to use both in one file, then you must use the qualified names to make a distinction between them.
+[/list]
+
+[lhead]External file lookup[/lhead]
+When importing a compilation unit, Andromeda has to know where to find that compilation unit. However, it can find the file if the package hierarchy is mirrored in the directory hierarchy used in the library directory or other source directories. This is why the package structure must always reflect the directory structure and why the file name must always match the compilation unit name.
+
+[lhead]Visibility[/lhead]
+Packages are used to determine the visibility of constructs that have either the [galaxy=inline]internal[/galaxy] or the [galaxy=inline]protected[/galaxy] modifier (same as in java). More about this in the chapter about visibility.
+
+[lhead]Lookup hierarchy[/lhead]
+The content of the package is considered before the all other global content when resolving names.
+
+Example:
+Assume you have those compilation units:
+[galaxy]
+package x => A;
+
+int foo;
+[/galaxy]
+[galaxy]
+package y => B;
+
+int foo;
+[/galaxy]
+[galaxy]
+package x => C;
+void bar{
+  foo = 2;
+}
+[/galaxy]
+The first two compilation units declare a global variable foo and the third one uses a foo variable. Since it is in the same package as the first one, the foo in the last compilation unit refers to the first one.
+
+
+[hl=2]Import clauses[/hl]
+
+Import clauses have the following form:
+[galaxy]IMPORT_CLAUSE ::=
+import [!] QUALIFIED_COMPILATION_UNIT_NAME ;[/galaxy]
+[emph]QUALIFIED_COMPILATION_UNIT_NAME[/emph] is the qualified name of a compilation unit to import.
+
+The import clause tells the compiler that this compilation unit uses content of the imported compilation unit.
+It causes the following things:
+[list]
+[*]If the compilation unit is not in the sources that were already read, it is searched in an external file.
+[*]The content of the imported compilation unit is considered when resolving names, even before the package is checked for the name (see chapter name resolution and scoping).
+[*]Unless there is a cycle in the import relation (like when A imports B and B imports A), it is guaranteed that static blocks in the imported compilation unit get executed before static blocks in the importing compilation unit and global/static fields in the imported compilation unit get initilized before fields in the importing compilation unit. 
+The optional exclamation mark (!) behind the import ensures this property: The static initializers of the imported compilation unit will certainly be executed before the ones in the importing compilation unit. Imports with exclamation mark are called [emph]strict imports[/emph]. If there is an import cycle that only involves strict imports, an error will be raised.
+[/list]
+
+Note a diffence to java:
+If you are working with external files, especially library files, you should also import files from the same package, if you need them. The reason is simple: Andromeda will only read library files that are imported somewhere. If you do not import a compilation unit in the same package if you need it, the content of that file will not be parsed.
+
+Andromeda explicitly deprecates galaxy's include statements. [emph]Never[/emph] use an include statement, when you could also import the file (since this might lead to double includes and other unpredicted behaviour). Only use include if you cannot import a file. This is the case if it is a galaxy file (which has no package declaration of course). Note that Andromeda still has double include protection, so if you include a file twice only the first include will actually include it. But note that since the compiler is multi threaded, "the first include" is not specified. So if you have more than one include to the same file in your program, any of them could be the "the first" one, where the file is actually included. This will affect the order of static inits in these files. While imports (especially strict imports) guarantee an order for the static blocks, duplicate includes might even switch the order in two compilation runs of the same input. This is one of the reasons why include is deprecated.
+
+Note that if the compilation unit was added by an include, the third feature of imports (the static init and field order) is not available. This is because the semantics of includes: The included content gets included right where the include statement was. There is no possibility to move it around. This might result in unpredicted behaviour, so to be said again: Do not use includes!
+
+[hl=1]Name resolution and scoping[/hl]
+Name resolution is the process in which Andromeda checks which definition a variable name is referring to. Since there might be equally named constructs (for example a local and a global variable x), there have to be rules, which of those constructs to refer to, when the name is found in the code.
+Name resolution is performed for each identifier in a program, especially variable and method names.
+In contrast to other languages, [emph]every kind of name shares the same namespace[/emph] in Andromeda. This means that you cannot have a field x and a method x() inside a class or a global function with the same name as a global variable inside of the same package. Although this might seem limiting, it is the solution for ambiguities that would occurs since Andromeda has function pointers (the name x could either be the variable x or a pointer to the method x).
+
+[hl=2]Scope resolution order[/hl]
+Andromeda performs name resolution in the following steps. If a name is found in one of them, then it is used.
+[list=1][*]Procedure local variables and function parameters
+[*]Names in the same scope (for example in a class)
+[*]Top-level names in the same compilation unit (top-level = not nested inside a scope like class fields, since these need an extra class prefix, if not used inside the class itself)
+[*]Top-level names in imported compilation units
+[*]Top-level names in the same package
+[*]All other top-level names
+[/list]
+So if, for example, there is a name [emph]x[/emph] somewhere in a class method, then first the local variables are checked for that name x. If no local variable named x exists, then the class will be searched for a field named x. If no such field exists, then global variables named x in the same file and imported files will be checked. If none exist, then the package is searched for global x variables. If even the package doesn't have such a variable, then the complete code is checked for a global x variable. If it cannot be found anywhere, an error is raised.
+All of these lookups assume of course, that the name, if found, is visible. If it is not (because it is private for example), then it will also not be considered.
+
+
+Example:
+[galaxy]
+int x; //(1)
+
+class A{
+  int x; //(2)
+
+  void bla(int x /* (3) */){
+    x = 3; //refers to the parameter x (3)
+  }
+
+  void blub(){
+    x = 3; //refers to the class field x (2)
+  }
+
+}
+
+void foo(){
+   x = 3; //refers to the global x variable (1)
+}
+[/galaxy]
+
+Note that when resolving a name, for example [emph]x[/emph], also methods named getX and setX, respectively, with the appropriate signatures will be considered if the name itself cannot be found inside a scope but the methods can. This is called automatic get/set resolution and is discussed in its own chapter.
+
+[hl=1]Constructs for reducing boilerplate code[/hl]
+
+Andromeda has special constructs for writing code that is written very often and requires much boilerplate in other languages.
+
+[hl=2]Accessor methods and automatic get/set resolution[/hl]
+
+
+
+Andromeda gives special meaning to methods or functions with a special name prefix which is [emph]get[/emph] and [emph]set[/emph]. Methods starting with get and set are well-known from many programming languages as so-called getters and setters. They are also called [emph]accessors[/emph] because they normally grant access to private variables. While in other languages it is just a convention to name accessor methods this way, it has a special meaning in Andromeda (comparable to the groovy scripting language):
+If you access a field x, then getX and setX methods will be considered to be called instead of accessing the field, if the field itself cannot be found or is not visible in this scope.
+
+
+This example shows the common usage of accessor methods:
+[galaxy]
+class Foo {
+  private int x;
+
+  int getX(){
+    return x;
+  }
+
+  void setX(int x){
+    this.x = x;
+  }
+}
+
+static{
+  int i;  
+  Foo f = new Foo();
+
+  //** Get and set methods **
+  f.setX(3); //(1) sets x to 3
+  i = f.getX(); //(2) gets x
+  f.setX(f.getX()+2); //(3) increases x by 2
+
+  //** Field syntax **
+  f.x = 3; //(1)
+  i = f.x; //(2)
+  f.x += 2; //(3)
+}
+[/galaxy]
+In this example, the getX and setX methods grant access to the private variable x. The static block shows the common usage of accessor methods. In (1) the variable is set, in (2) it is retrieved and in (3) it is altered. However, this is much code to write. So Andromeda allows you the syntax shown under "field syntax". This feature is called [emph]automatic get/set resolution[/emph]. Even if this looks like x was accessed directly, that is not the case. Since x is private, it cannot be accessed directly. Instead, this compiles to exactly the same code as the upper usage of the get and set methods. The numbers in the comments behind them show which line is semantically equivalent to which explicit method invocation.
+
+Here is the formal specification of the automatic get/set resolution:
+[list][*]After not finding a variable in a scope when trying to resolve a name, andromeda also tries to check, if there are get and set methods that could be used instead.
+[*]The names of the accessors are calculated in the following way:
+[list][*]The first letter of the variable name is converted to upper case. If the variable is already upper case, then the get and set method check is skipped. That means that [color=#ff0000]you cannot use the automatic get/set resolution for variables that start with an upper case letter[/color]. However, by convention, you should [emph]never[/emph] start a variable with an upper case letter (unless it is constant, but then you do not need accessors).
+[*]Either [emph]get[/emph] or [emph]set[/emph] is prepended to the name to get the getter or setter method, respectively.
+[*]Example:
+blub => getBlub, setBlub
+Foo => //Not possible! starts with upper case letter.
+[/list][*]Depending on the position of the name, either the get or the set method is searched:
+[list][*]If the name is used on the left hand side or an assignment (like a in [galaxy=inline]a = b;[/galaxy]), then the type of the right hand side is evaluated. Then a [emph]set[/emph] method with the signature [emph](TYPE)[/emph] is searched, where TYPE is the type of the right hand side of the assignment.
+[*]If the name is used on the left hande side of an adjusting assignment (like a in [galaxy=inline]a += b;[/galaxy]), then the type of the right hand side is evaluated. Then a [emph]get[/emph] and [emph]set[/emph] method in the same scope are searched. The signature of the get method must match the return type of the set method, and the get method must have an empty signature.
+[*]Otherwise, the a [emph]get[/emph] method with an empty signature is searched.
+[/list][*]If no such method is found the resolution continues with the next scope.
+In the case where a get and set method are necessary, and only one of them exists, then an error is raised.
+[*]If the corresponding get or set method is found, then the code is changed to call that method.
+[/list]
+
+The check for get and set methods is done [emph]after[/emph] the normal check for a variable for a specific scope when resolving a name. This means that a get/set method in the same scope even shadows variables from outer scopes, if the name is matching. This example will show this fact:
+[galaxy]
+int x;
+
+class Foo{
+   int getX(){ ... }
+   void setX(int i){ ... }
+
+  Foo(){
+    x = 20; //setX is called
+  }
+}
+[/galaxy] 
+Even if there exists a global variable [galaxy=inline]x[/galaxy], the expresssion [galaxy=inline]x = 20[/galaxy] will instead be replaced by [galaxy=inline]setX(20)[/galaxy] because the class scope is checked before the file scope (see scope resolution order in the previous section).
+
+If the set method is overloaded, the one with the signature, specified by the type of the right hand side of the assignment will be called. Example:
+[galaxy]
+class Foo{
+   void setX(int i){ ... } //(1)
+   void setX(string s){ ... } //(2)
+
+  Foo(){
+    x = 20; // (1) is called
+    x = "sdf"; // (2) is called
+  }
+}
+[/galaxy] 
+If the type of the right hand side does not match a signature perfectly and could be cast implicitly to more than one signature, then an ambiguous method access error is raised:
+[galaxy]
+class Foo{
+   void setX(int i){ ... } //(1)
+   void setX(fixed f){ ... } //(2)
+
+  Foo(){
+    byte b = 2;
+    x = b; // ambiguous access, either (1) or (2) could be called.
+    int i = 4;
+    x = i; // (1) is called since i is a perfect match on int
+  }
+}
+[/galaxy]
+
+Please note that it is discouraged to "abuse" this feature. This means that methods prefixed with get and set should really be only get and set methods (of course, small conversions, logging and other small tasks are possible). It is heavily discouraged to call a method [galaxy=inline]getX[/galaxy] or [galaxy=inline]setX[/galaxy] that performs heavy computations and does not at all access a property just to be able to call it by just writing [galaxy=inline]x[/galaxy], as this will confuse anybody that wants to read and understand the code.
+The examples with an overloaded setX method are only used for explaining the semantics. There are only few cases where overloading a set method is encouraged.
+
+[hl=2]Indexers[/hl]
+
+As already stated in the last section, methods starting with get or set yield special semantics in Andromeda. While [galaxy=inline]get()[/galaxy] and [galaxy=inline]set(T t)[/galaxy] methods grant an easy field syntax for accessing properties, get and set methods with longer signatures allow an array syntax for fields. Those methods are commonly called [emph]indexers[/emph].
+
+When using array access syntax ( [galaxy=inline]a[b][/galaxy] or [galaxy=inline]a[b,c,d][/galaxy] in the multidimensional case) and no variable with that name (especially no array) can be found, then andromeda will check
+for a corresponding get or set method, respectively. The rules are the same as for the automatic get/set resolution. The parameters in the brackets are just prepended to the signature of the get or set method.
+
+Example:
+[galaxy]
+class X{
+  private static int[20] x;
+   
+  static int getX (int index) {
+      return x[index];
+  }
+  
+  static void setX (int index,int value){
+      x[index] = value;
+  }
+  
+  static void setY (int index,string index2, bool value){
+      //...
+  }
+}
+
+static{
+   X.x[3] = 5; //x is not visible, instead X.setX(5,3) is called.
+   int i = X.x[2] //x is not visible, instead i = X.getX(2) is called.
+   
+   y[3,"abc"] = true; //will call setY(3,"abc",true);
+}
+[/galaxy]
+
+As shown in the example, the signature of get methods used as indexers should match the parameters in the brackets used to access them. For set methods, the signature should be the parameters in the brackets, followed by a parameter for the value that should be assigned.
+
+Of course, beware of overusing indexers. This is the same as for the normal get/set resolution. Replacing all methods by indexers and only calling them with array syntax will be very annoying for anybody who is willing to understand the code. Indexers are only useful when indeed trying to mimic array or equivalent behaviour. For example, a matrix class, accessed with [int,int] could be used to get or set certain fields in that matrix. Also a hashtable class could benefit from this syntax.
+
+[hl=2]Self Indexers[/hl]
+
+If a method is just called [galaxy=inline]get[/galaxy] or [galaxy=inline]set[/galaxy], then it is an indexer referring to the declaring type itself. Assume there is a hashtable class and one wants to access content with indexer syntax. If there were only normal indexers, one had to chose a name for using the indexing. However, it is preferred to use the array access syntax right on the hashtable instance (like this: [galaxy=inline]ht["ab"] = 2;[/galaxy]) instead of using it on a member name (like [galaxy=inline]ht.table["ab"] = 2;[/galaxy]).
+By defining a get or set method without any name suffix, exactly this feature is provided.
+
+Example:
+[galaxy]
+class StringTable{
+  
+  int get(string index) {
+      return ...
+  }
+  
+  void set(string index,int value){
+      ...
+  }
+
+}
+
+static{
+	StringTable table = new StringTable();
+
+	table["ab"] = 2;
+}
+[/galaxy]
+
+Even if the self indexing feature is useful in many situations, it provides an ambiguity. Even if this ambiguity is very rare, it has to be addressed here.
+
+Assume this example:
+
+[galaxy]
+class A{
+
+   int get(int i){ //(1)
+     return ...
+   }
+   
+}
+
+class B{
+   
+   A getX(){ //(2)
+     return ...
+   }
+   
+   int getX(int i){ //(3)
+   	 return ...
+   }
+ 
+}
+
+static{
+	B foo = new B();
+	int i = foo.x[2];
+	
+}
+[/galaxy]
+The expression [galaxy]foo.x[2][/galaxy] yields the ambiguity. Either (2) could be called which yields a result of type A. Onto this result, the self indexer (1) would be called to return the int result. On the other hand, the construct could also just call the indexer (3) could be called.
+
+Andromeda solves this ambiguity by prefering the second solution: If a class has an indexer with the same name as an accessor and this name is used in an array access like expression, then the indexer is called, not the accessor (even if the accessor would return a value which would then have a self indexer, like in the example).
+However, one should avoid a class which yields this situation at all costs.
+
+
+
+[hl=2]Accessor Short Notation[/hl]
+Languages like Java use get and set methods to access private members of classes (accessor methods). The automatic get/set resolution presented in the last chapter, already showed how Andromeda allows to call those accessor methods with less boilerplate by calling them like fields. However, defining get and set methods requires even more boilerplate code than calling them. So Andromeda offers a feature to reduce this boilerplate when defining accessor methods. When defining fields or global variables, accessor method definitions can be appended to them right behind their definition. This is just an abbreviating syntax for writing those methods normally and is called [emph]accessor short notation[/emph].
+
+An accessor method declaration has the following form:
+[galaxy]
+ACCESSOR_DECL ::=
+ => {ANNOTATIONS} {MODIFIERS} [RETURN_TYPE] NAME_PREFIX [ "(" PARAMETERS ")" ] (BODY | ;)
+[/galaxy]
+This is basically a normal method declaration. The only difference is that an arrow (=>) is prepended to it and the return type (RETURN_TYPE) and the list of parameters, including the parenthesis (PARAMETERS) can be omitted.
+NAME_PREFIX is a normal identifier describing the accessor's name. ANNOTATIONS and MODIFIERS are normal annotations and modifiers, as allowed for normal methods. BODY is a normal function body.
+
+An arbitrary number of accessor definitions can be appended behind a field declaration. However, most of the time, there will only be up to two accessors, namely get and set.
+As already meantioned, an accessor definition is basically a normal method declaration, just with an arrow in front of it and it is also treated like a normal method.
+But before it is treated like a method, it gets the following transformations:
+[list][*]Its name is changed by appending the field name with the first char converted to upper case to the NAME_PREFIX.
+[*]If it is not declared abstract and has no body, a default implementation is added. (either [emph]FIELDNAME = value;[/emph] if the name prefix is "set", or [emph]return FIELDNAME;[/emph] otherwise, where FIELDNAME is the name of the field under which the accessor is declared)
+[*]If the field is static, each accessor also gets a static modifier implicitly
+[*]The return type may be omitted. If it is, either [emph]void[/emph] for 'set' accessors or the field's type for all other accessors is used.
+[*]The parameterlist may be omitted (including the parenthesis). If it is, then an empty parameterlist is inserted. For 'set' accessors, [galaxy](FIELDTYPE value)[/galaxy] is inserted where FIELDTYPE is the field's type.
+[/list]
+So basically this is just an abbreviation for methods. But it is one that really saves boilerplate code and reduces normal get and set methods to their essentials. A get and set method with a default implementation can just be added with [galaxy]=> get; => set;[/galaxy].
+
+Examples:
+[galaxy]
+private int x;
+ => get; //normal default get method
+ => set(int a, int b) { x = a * b; } //set with special parameters and explicit body
+ => bool is { return x == 0; } //isX() method that returns true if x is null. Note the explicit return type
+ => void add(int a) { x += a; } //explicit return type, parameters, and body 
+[/galaxy]
+
+Note that it is discouraged to "abuse" the accessor short notation, just like the automatic get/set resolution.
+This means that methods defined with the accessor short notation should only be used for accessing private members (or to mimic non existant members in native types for example).
+Defining methods that actually perform logic and do not only access a member with the accessor short notation will annoy anybody that reads the code.
+As a rule of thumb, most methods defined with the accessor short notation, should neither have a body, nor a return type nor parameters, they should just be an accessor for granting access to an otherwise private variable.
+If they have a body, it should only perform small logging or conversion tasks.
+
+[hl=1]Generic types[/hl]
+
+... (all types can be generic now)
+
+[hl=1]Visibility[/hl]
+
+Andromeda enhances galaxy's visibility system by adding more visibility modifiers.
+
+The only visibility modifier galaxy has is [galaxy=inline]static[/galaxy]. Andromeda still allows this modifier for global functions and variables to ensure compatibility to galaxy. However, you should not use it in Andromeda code as static has another meaning if used inside of class or enrichment bodies. Andromeda uses the keyword [galaxy=inline]private[/galaxy] instead. In addition, Andromeda provides additional visibility modifying keywords, which are:
+
+[list][*][lhead]public (or no prefix):[/lhead] The property is visible everywhere. Note that using the public keyword explicitly is deprecated and only possible for backward compatibility reasons.
+[*][lhead]private:[/lhead] The property is only visible in this compilation unit (i.e. this trigger or this file). Same as [galaxy=inline]static[/galaxy] in galaxy.
+[*][lhead]internal:[/lhead] The property is visible in all compilation units in the same package or subpackages.
+[*][lhead]protected:[/lhead] This visibility modifier can only be used inside of class bodies or enrichment bodies. It is the same as internal (also allows access from the same package), but in addition also allows subtypes and enrichments of that type to access the property.
+[/list]

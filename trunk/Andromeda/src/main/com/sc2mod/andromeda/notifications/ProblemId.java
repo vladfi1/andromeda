@@ -245,7 +245,8 @@ public enum ProblemId {
 	DUPLICATE_COMPILATION_UNIT("Two compilation units with the same qualified name found."), 
 	UNSIGNED_RIGHT_SHIFT_USED("Unsigned rightshift is not possible in galaxy :("), 
 	CONSTRUCTOR_OUTSIDE_OF_CLASS("Only classes can contain constructors. (Or method return type missing, if this is intended to be a normal method)"),
-	DESTRUCTOR_OUTSIDE_OF_CLASS("Only classes can contain destructors.");
+	DESTRUCTOR_OUTSIDE_OF_CLASS("Only classes can contain destructors."), 
+	CYCLE_IN_STRICT_IMPORTS("Cycle found in strict import hierarchy:\n%s");
 	
 	String message;
 	private ProblemSeverity severity;

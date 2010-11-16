@@ -83,10 +83,12 @@ public class ParserScheduler {
 		//add to import queue
 		importQueue.add(ParserInputFactory.create(collectedSources, src._1, src._2, importStr, sn));
 		
+		//wake up threads so somebody handles this
+		this.notifyAll();
+		
 	}
 	
-	//FIXME: Change private visibility to reflect the spec
-	
+	//FIXME: Duplicate compilation unit tests
 	//FIXME: Test cases for include and import
 	public synchronized void registerInclude(IncludeNode sn){
 		
@@ -110,9 +112,10 @@ public class ParserScheduler {
 		}
 	}
 	
-	public synchronized void registerPackageDecl(PackageDeclNode packageDecl){
+	public synchronized String registerPackageDecl(PackageDeclNode packageDecl){
+		String pkg = null;
 		if(packageDecl != null){
-			String pkg = importResolver.resolvePackage(packageDecl);
+			pkg = importResolver.resolvePackage(packageDecl);
 			if(pkg == null){
 				Problem.ofType(ProblemId.UNIT_NAME_MISSING).at(packageDecl)
 				.raise();
@@ -128,6 +131,8 @@ public class ParserScheduler {
 		
 		decrementRemainingInputFiles();
 		
+		return pkg;
+		
 	}
 	
 	private synchronized void registerIdleThread(ParserThread thread){
@@ -141,6 +146,9 @@ public class ParserScheduler {
 	
 	
 	private SourceListNode constructSourceList(List<SourceFileNode> srcs){
+		
+		srcs = new InputSorter().sort(srcs);
+		
 		SourceListNode result = new SourceListNode();
 		
 		for(SourceFileNode f : srcs){

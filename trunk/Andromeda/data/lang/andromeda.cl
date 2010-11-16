@@ -24,6 +24,7 @@ CompilationUnitIdentifierNode ::=
 					
 ImportNode ::=
 		CompilationUnitIdentifierNode: importName
+		"boolean": strict
 		
 ImportListNode ::=	ImportNode*
 				 

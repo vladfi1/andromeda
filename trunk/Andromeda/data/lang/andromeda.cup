@@ -408,7 +408,8 @@ packageDeclaration ::=
 	|	PACKAGE:l ARROW IDENTIFIER:i SEMICOLON:r {: IdentifierNode ident = new IdentifierNode(i); ident.setPos(ileft,iright); RESULT = new PackageDeclNode(null,ident); RESULT.setPos(lleft,rright); ParserThread.packageRead(RESULT); :}
 	;
 importDeclaration ::=  
-		IMPORT:l compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new ImportNode(c); RESULT.setPos(lleft,rright); ParserThread.importRead(RESULT); :}
+		IMPORT:l NOT compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new ImportNode(c,true); RESULT.setPos(lleft,rright); ParserThread.importRead(RESULT); :}
+	|	IMPORT:l compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new ImportNode(c,false); RESULT.setPos(lleft,rright); ParserThread.importRead(RESULT); :}
 	;
 	
 includeDeclaration ::=
