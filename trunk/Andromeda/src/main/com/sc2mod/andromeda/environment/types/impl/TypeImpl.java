@@ -21,7 +21,7 @@ import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
 public abstract class TypeImpl extends BlockScope implements IType{

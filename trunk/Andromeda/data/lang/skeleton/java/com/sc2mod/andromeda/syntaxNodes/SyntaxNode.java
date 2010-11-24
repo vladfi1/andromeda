@@ -11,7 +11,7 @@ package com.sc2mod.andromeda.syntaxNodes;
 
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.syntaxNodes.util.VisitorNode;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 
 public abstract class SyntaxNode implements VisitorNode {
 	private int left;

@@ -66,7 +66,7 @@ public class ClassEnricher {
 			if(m.matches()){
 				if(mapTo!=null){
 					System.out.println("Adding semantics to " + m.group(1));
-					w.write("import com.sc2mod.andromeda.notifications.InternalProgramError;\n");
+					w.write("import com.sc2mod.andromeda.problems.InternalProgramError;\n");
 					w.write("import com.sc2mod.andromeda.environment.SemanticsElement;\n");
 					if(pkg != null){
 						w.write("import " + pkg + ";\n\n");

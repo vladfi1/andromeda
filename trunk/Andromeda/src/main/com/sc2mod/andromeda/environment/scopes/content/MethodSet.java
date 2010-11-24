@@ -3,8 +3,8 @@ package com.sc2mod.andromeda.environment.scopes.content;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 
 public class MethodSet extends OperationSet {
 

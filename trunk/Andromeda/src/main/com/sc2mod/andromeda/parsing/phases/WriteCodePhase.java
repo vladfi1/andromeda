@@ -9,13 +9,13 @@ import mopaqlib.MoPaQ;
 import mopaqlib.MoPaQException;
 
 import com.sc2mod.andromeda.codegen.CodeGenVisitor;
-import com.sc2mod.andromeda.notifications.ErrorUtil;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.OutputMemoryStats;
 import com.sc2mod.andromeda.parsing.StringBufferWriter;
 import com.sc2mod.andromeda.parsing.Workflow;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
+import com.sc2mod.andromeda.problems.ErrorUtil;
 import com.sc2mod.andromeda.program.MapFormatException;
 import com.sc2mod.andromeda.program.ScriptInjector;
 

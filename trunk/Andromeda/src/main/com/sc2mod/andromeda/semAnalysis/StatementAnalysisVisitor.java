@@ -37,12 +37,12 @@ import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
+import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ArrayInitNode;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.BreakStmtNode;
@@ -176,20 +176,12 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	}
 	
 	
-
-	
 	@Override
-	public void visit(FieldDeclNode fieldDeclaration) {
-
-		VarDeclListNode v = fieldDeclaration.getDeclaredVariables();
-		
-		int size = v.size();
-		for(int i=0;i<size;i++){
-			VarDeclNode vd = v.elementAt(i);
-			VarDecl decl = vd.getName().getSemantics();
-			vd.accept(this);
-		}
+	public void visit(FieldDeclNode fieldDeclNode) {
+		//Only visit declared variables, not the type!
+		fieldDeclNode.getDeclaredVariables().accept(this);
 	}
+	
 	
 	@Override
 	public void visit(UninitedVarDeclNode variableDecl) {
@@ -327,7 +319,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		StmtListNode stmts = body.getStatements();
 			
 		
-		if(stmts.isEmpty()||!(stmts.elementAt(0) instanceof ExplicitConsCallStmtNode)){
+		if(stmts.isEmpty()||!(stmts.get(0) instanceof ExplicitConsCallStmtNode)){
 			//No explicit constructor invocation
 			
 			if(superClass!=null){
@@ -338,7 +330,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 
 		} else {
 			//Explicit constructor invocation
-			ExplicitConsCallStmtNode explicitInvocation = (ExplicitConsCallStmtNode) stmts.elementAt(0);
+			ExplicitConsCallStmtNode explicitInvocation = (ExplicitConsCallStmtNode) stmts.get(0);
 			explicitInvocation.getArguments().accept(exprAnalyzer, ExpressionContext.STATEMENT);
 			boolean useSuper = explicitInvocation.isUseSuper();
 			if(useSuper&&superClass==null)
@@ -445,7 +437,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		boolean deadCode = false;
 		boolean remove = false;
 		for(int i=0;i<size;i++){
-			stmt = statementList.elementAt(i);
+			stmt = statementList.get(i);
 			
 			//Top frame empty? Dead code!
 			if(execPathStack.isTopFrameEmpty()&&!deadCode){
@@ -467,7 +459,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 			stmt.accept(this);
 			
 			if(remove){
-				statementList.removeElementAt(i);
+				statementList.get(i);
 				size--;
 				i--;
 			}
@@ -857,9 +849,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		IType t = typeProvider.resolveType(l.getVarDeclaration().getType(),curScope);
 		
 		//Register and init all variables in the correct order
-		int size = decls.size();
-		for(int i=0;i<size;i++){
-			VarDeclNode decl = decls.elementAt(i);
+		for(VarDeclNode decl : decls){
 			
 			//Register the local var
 			nameResolver.registerLocalVar(new LocalVarDecl(l.getVarDeclaration().getModifiers(),t, decl, isOnTop, curScope));

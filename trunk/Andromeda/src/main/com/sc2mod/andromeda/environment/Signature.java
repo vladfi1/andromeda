@@ -42,7 +42,7 @@ public class Signature implements Iterable<IType> {
 		int size = e.size();
 		sig = new IType[size];
 		for(int i=size-1;i>=0;i--){
-			sig[i] = e.elementAt(i).getInferedType();
+			sig[i] = e.get(i).getInferedType();
 		}
 		calcHashcode();
 	}

@@ -19,8 +19,8 @@ import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 
 /**
  * This visitor performs checks on newly created semantics elements.

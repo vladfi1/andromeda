@@ -15,6 +15,7 @@ import java.util.Calendar;
 
 import com.sc2mod.andromeda.codegen.CodeGenVisitor;
 import com.sc2mod.andromeda.codegen.CodeWriter;
+import com.sc2mod.andromeda.parsing.options.Configuration;
 
 /**
  * Final buffer for writing the different generated sections into a file. 
@@ -23,12 +24,19 @@ import com.sc2mod.andromeda.codegen.CodeWriter;
  */
 public class FileBuffer {
 
-	public SimpleBuffer forwardDeclarations = new SimpleBuffer(16536);
-	public SimpleBuffer variables = new SimpleBuffer(16536);
-	public SimpleBuffer functions = new SimpleBuffer(32000);
-	public SimpleBuffer types = new SimpleBuffer(8192);
-	public SimpleBuffer typedefs = new SimpleBuffer(512);
+	public AdvancedBuffer forwardDeclarations;
+	public AdvancedBuffer variables;
+	public AdvancedBuffer functions;
+	public AdvancedBuffer types;
+	public AdvancedBuffer typedefs;
 	
+	public FileBuffer(Configuration conf) {
+		forwardDeclarations = new AdvancedBuffer(16536,conf);
+		variables = new AdvancedBuffer(16536,conf);
+		functions = new AdvancedBuffer(32000,conf);
+		types = new AdvancedBuffer(8192,conf);
+		typedefs = new AdvancedBuffer(512,conf);
+	}
 	
 	public StringBuffer flush(CodeGenVisitor cgf, File map, File backup) throws IOException{
 		int bufferSize = (typedefs.length()+types.length()+forwardDeclarations.length()+

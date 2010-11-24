@@ -2,8 +2,8 @@ package com.sc2mod.andromeda.environment.annotations;
 
 import java.util.HashMap;
 
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationListNode;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 
@@ -56,8 +56,8 @@ public class AnnotationRegistry {
 	public void processAnnotations(IAnnotatable annotatable, AnnotationListNode al){
 		if(al == null)
 			return;
-		for(int i = 0;i<al.size();i++){
-			processAnnotationNode(annotatable, al.elementAt(i));
+		for(AnnotationNode a : al){
+			processAnnotationNode(annotatable, a);
 		}
 	}
 }

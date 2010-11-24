@@ -10,6 +10,9 @@
 package com.sc2mod.andromeda.codegen.buffers;
 
 import com.sc2mod.andromeda.codegen.CodeGenerator;
+import com.sc2mod.andromeda.parsing.options.Configuration;
+import com.sc2mod.andromeda.parsing.options.Parameter;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 
 /**
  * 
@@ -32,12 +35,18 @@ public class SimpleBuffer extends CodeBuffer {
 		}
 	}
 	
-	protected StringBuffer buffer;
+	protected StringBuilder buffer;
 	protected int charSinceNewLine;
 	protected boolean containsNewLine;
+	protected int indentLvl = 0;
 	
-	public SimpleBuffer(int initialSize) {
-		buffer = new StringBuffer(initialSize);
+	private boolean newLines;
+	private boolean indent;
+	
+	public SimpleBuffer(int initialSize, Configuration conf) {
+		buffer = new StringBuilder(initialSize);
+		newLines = conf.getParamBool(Parameter.CODEGEN_NEW_LINES);
+		indent = conf.getParamBool(Parameter.CODEGEN_USE_INDENT);
 	}
 
 	/**
@@ -70,12 +79,12 @@ public class SimpleBuffer extends CodeBuffer {
 			//Insert
 			if(pos>=0){
 				buffer.append(s.substring(0, pos));
-				newLine();
+				nl();
 				buffer.append(s.substring(pos+1));
-				charSinceNewLine = s.length()-(pos+1);
+				charSinceNewLine = indentLvl+s.length()-(pos+1);
 			} else {
-				newLine();
-				charSinceNewLine = s.length();
+				nl();
+				charSinceNewLine = indentLvl+s.length();
 				buffer.append(s);
 			}
 			return;
@@ -117,18 +126,37 @@ public class SimpleBuffer extends CodeBuffer {
 		return this;
 	}
 
-	public void newLine(int indent){
+	public SimpleBuffer nl(){
+		if(!newLines)
+			return this;
 		buffer.append(LINE_SEPERATOR);
-		containsNewLine = true;
-		if(indent>0){
-			if(indent > MAX_INDENTS) indent = MAX_INDENTS;
-			buffer.append(indentStrs[indent]);
+		if(indent){
+			containsNewLine = true;
+			if(indentLvl>0){
+				if(indentLvl > MAX_INDENTS) indentLvl = MAX_INDENTS;
+				buffer.append(indentStrs[indentLvl]);
+			} else {
+				if(indentLvl<0)
+					throw new InternalProgramError("negative indent level!");
+			}
+			charSinceNewLine = indentLvl;
+		} else {
+			containsNewLine = true;
+			charSinceNewLine = 0;
 		}
-		charSinceNewLine = indent;
+		return this;
 	}
 	
-	public void newLine(){
-		newLine(0);
+	public SimpleBuffer indent(){
+		if(indent)
+			indentLvl++;
+		return this;
+	}
+	
+	public SimpleBuffer unindent(){
+		if(indent)
+			indentLvl--;
+		return this;
 	}
 	
 	public boolean isEmpty(){

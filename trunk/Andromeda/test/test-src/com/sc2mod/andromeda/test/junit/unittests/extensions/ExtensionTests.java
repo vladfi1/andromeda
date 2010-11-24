@@ -2,7 +2,7 @@ package com.sc2mod.andromeda.test.junit.unittests.extensions;
 
 import org.junit.Test;
 
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.test.junit.AndromedaSingleRunTest;
 
 public class ExtensionTests extends AndromedaSingleRunTest {

@@ -12,17 +12,17 @@ package com.sc2mod.andromeda.util.logging;
 import java.io.PrintStream;
 import java.util.List;
 
-import com.sc2mod.andromeda.notifications.Message;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.SourceLocation;
 import com.sc2mod.andromeda.parsing.SourceReader;
 import com.sc2mod.andromeda.parsing.SourceManager;
+import com.sc2mod.andromeda.problems.Message;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.SourceLocation;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.util.Debug;
 
 public abstract class Logger {
 	
-	public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.DETAIL;
+	public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.PHASE;
 	
 	private LogLevel logLevel;
 	private int level = DEFAULT_LOG_LEVEL.getLevel();

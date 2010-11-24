@@ -7,10 +7,12 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.parsing;
+package com.sc2mod.andromeda.parsing.framework;
 
 import java.io.IOException;
 import java.io.Reader;
+
+import com.sc2mod.andromeda.parsing.Language;
 
 public abstract class Source {
 

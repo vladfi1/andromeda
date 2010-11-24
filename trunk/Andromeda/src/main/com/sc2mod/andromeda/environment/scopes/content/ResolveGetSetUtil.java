@@ -7,10 +7,10 @@ import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.notifications.ErrorUtil;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.notifications.UnrecoverableProblem;
+import com.sc2mod.andromeda.problems.ErrorUtil;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
+import com.sc2mod.andromeda.problems.UnrecoverableProblem;
 import com.sc2mod.andromeda.semAnalysis.AccessorTransformer;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 

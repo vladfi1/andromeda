@@ -2,8 +2,9 @@ package com.sc2mod.andromeda.parsing;
 
 import java.io.File;
 
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.parsing.framework.Source;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.CompilationUnitIdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.ImportNode;

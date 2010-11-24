@@ -5,12 +5,12 @@ import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
-import com.sc2mod.andromeda.notifications.ErrorUtil;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Workflow;
 import com.sc2mod.andromeda.parsing.options.Configuration;
+import com.sc2mod.andromeda.problems.ErrorUtil;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.xml.gen.ResultXMLWriter;
 import com.sc2mod.andromeda.xml.gen.StructureXMLVisitor;
 

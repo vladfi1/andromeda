@@ -5,6 +5,8 @@ import java.util.EnumMap;
 import java.util.List;
 
 import com.sc2mod.andromeda.environment.Environment;
+import com.sc2mod.andromeda.parsing.framework.IParserInterface;
+import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
@@ -19,9 +21,13 @@ public class CompilationEnvironment {
 	private SourceListNode syntaxTree;
 	private TransientCompilationData transientData = new TransientCompilationData();
 	private final EnumMap<InclusionType,List<Source>> parserInput = new EnumMap<InclusionType, List<Source>>(InclusionType.class);
+	private final IParserInterface parserInterface = new IParserInterface(){};
 	
 	
-	
+	public IParserInterface getParserInterface() {
+		return parserInterface;
+	}
+
 	public TransientCompilationData getTransientData() {
 		return transientData;
 	}

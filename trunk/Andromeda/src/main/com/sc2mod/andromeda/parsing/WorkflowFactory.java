@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.parsing.phases.CallHierarchyPhase;
@@ -19,13 +20,13 @@ import com.sc2mod.andromeda.parsing.phases.SemanticAnalysisPhase;
 import com.sc2mod.andromeda.parsing.phases.WriteCodePhase;
 import com.sc2mod.andromeda.parsing.phases.WriteXMLPhase;
 
-public class ParserFactory {
+public class WorkflowFactory {
 
 
 
 	private Language lang;
 
-	public ParserFactory(Language lang) {
+	public WorkflowFactory(Language lang) {
 		this.lang = lang;
 	}
 	

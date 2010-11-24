@@ -22,7 +22,7 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;

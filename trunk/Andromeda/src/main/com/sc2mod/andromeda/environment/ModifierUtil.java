@@ -14,23 +14,27 @@ import java.util.HashSet;
 
 import com.sc2mod.andromeda.environment.annotations.IAnnotatable;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationListNode;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
+import com.sc2mod.andromeda.syntaxNodes.ModifierSE;
 
 public final class ModifierUtil {
+	
+	//FIXME modifiers into own set
 
 	private ModifierUtil(){}
 	
 	public static void processModifiers(IModifiable m, ModifierListNode mods){
 		if(mods==null) return;
+
 		int size = mods.size();
 		boolean visibilityWasThere = false;
-		for(int i=0;i<size;i++){
-			switch(mods.elementAt(i)){
+		for(ModifierSE mod : mods){
+			switch(mod){
 			case ABSTRACT:
 				if(m.isAbstract()) 
 					Problem.ofType(ProblemId.DUPLICATE_MODIFIER).at(mods)

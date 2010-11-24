@@ -13,7 +13,7 @@ import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.types.ClosureType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.notifications.ErrorUtil;
+import com.sc2mod.andromeda.problems.ErrorUtil;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
 

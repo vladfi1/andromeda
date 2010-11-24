@@ -1,6 +1,6 @@
 package com.sc2mod.andromeda.opt.dataflow;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.BreakStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ContinueStmtNode;
@@ -56,9 +56,7 @@ public class CFGBuilder {
 	
 		@Override
 		public ICFGNodeSet visit(StmtListNode stmtListNode, ICFGNodeSet last) {
-			int size = stmtListNode.size();
-			for(int i = 0 ; i < size ; i++){
-				StmtNode stmt = stmtListNode.elementAt(i);
+			for(StmtNode stmt : stmtListNode){
 				
 				//Visit the stmt and get its last set as next last set
 				last = stmt.accept(this,last);

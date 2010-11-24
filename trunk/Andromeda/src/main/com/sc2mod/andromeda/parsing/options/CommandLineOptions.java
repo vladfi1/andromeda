@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.FileSource;
-import com.sc2mod.andromeda.parsing.Source;
+import com.sc2mod.andromeda.parsing.framework.Source;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.util.Files;
 
 public class CommandLineOptions {

@@ -12,6 +12,8 @@ package com.sc2mod.andromeda.parsing;
 import java.io.FilterReader;
 import java.io.IOException;
 
+import com.sc2mod.andromeda.parsing.framework.Source;
+
 public class SourceReader extends FilterReader{
 
 	private int index;
@@ -29,17 +31,12 @@ public class SourceReader extends FilterReader{
 	}
 		
 	public int getFileId(){
-		return index<<24;		
+		return index;		
 	}
 
 	public SourceManager getSourceEnvironment() {
 		return environment;
 	}
-	
-//	public String getSourceName(){
-//		//TODO stub!
-//		return "bla";
-//	}
 	
 
 	

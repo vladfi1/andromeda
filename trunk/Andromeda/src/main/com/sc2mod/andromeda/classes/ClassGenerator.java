@@ -75,7 +75,7 @@ public abstract class ClassGenerator {
 
 	}
 	
-	public abstract void generateClasses(ArrayList<IClass> arrayList);
+	public abstract void generateClasses(IClass iClass, ArrayList<IClass> arrayList);
 	
 
 	public abstract void generateFieldAccessPrefix(SimpleBuffer curExprBuffer, IClass c);

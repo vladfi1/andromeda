@@ -24,6 +24,7 @@
     <pathelement path="${build-bin}"/>
   </path>
 	-->
+	
   <path id="buildLibPath">
     <pathelement location="${lib}"/>
     <fileset dir="${lib}">
@@ -34,9 +35,18 @@
     <pathelement path="${build-bin}"/>
     <pathelement path="${java.class.path}"/>
   </path>
+	
+	  <path id="classbuildLibs">
+	  	<filelist dir="lib/build">
+	  		<file name="classgen-gex.jar"/>
+	  		<file name="stringtemplate-3.2.1.jar"/>
+	  		<file name="antlr-2.7.7.jar"/>
+	  			  		
+	  	</filelist>
+	  </path>
 
   <taskdef name="jflex" classname="JFlex.anttask.JFlexTask" classpathref="buildLibPath"/>
-  <taskdef name="classgen" classname="classgen.AntTask" classpath="${lib}/classgen-gex.jar"/>
+  <taskdef name="classgen" classname="classgen.AntTask" classpathref="classbuildLibs"/>
   <taskdef name="cup" classname="java_cup.anttask.CUPTask" classpath="${lib}/java-cup-gex.jar" />
   <taskdef name="cupOld" classname="java_cup.anttask.CUPTask" classpathref="buildLibPath"/>
   <taskdef name="gexEnrich" classname="com.sc2mod.andromeda.buildUtils.ClassEnricherAntTask" classpathref="buildLibPath"/>
@@ -54,8 +64,6 @@
 	
   <target name="enrich" depends="classgen">
     <gexEnrich path="${srcOut}/com/sc2mod/andromeda/syntaxNodes" semanticsFile="${langPath}/semantics.gex"/> 
-    <gexEnrich scanner="${srcOut}/com/sc2mod/andromeda/parser/AndromedaScanner.java"/>
-  	<gexEnrich scanner="${srcOut}/com/sc2mod/andromeda/parser/GalaxyScanner.java"/>
   </target>
 
   <target name="cup" depends="init">
@@ -65,8 +73,8 @@
 
   <target name="jflex" depends="init">
   	<jflex file="${langPath}/unicode.flex" destdir="${srcOut}"/>
-    <jflex file="${langPath}/galaxy.flex" destdir="${srcOut}" skeleton="${langPath}/skeleton/flex/skeleton.nested"/>
-    <jflex file="${langPath}/andromeda.flex" destdir="${srcOut}" skeleton="${langPath}/skeleton/flex/skeleton.nested"/>
+    <jflex file="${langPath}/galaxy.flex" destdir="${srcOut}"/>
+    <jflex file="${langPath}/andromeda.flex" destdir="${srcOut}"/>
   </target>
 
   <target name="build parser" depends="jflex, cup">

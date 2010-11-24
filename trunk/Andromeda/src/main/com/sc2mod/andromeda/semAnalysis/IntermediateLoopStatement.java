@@ -10,6 +10,7 @@
 package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.util.NoParamVisitor;
 import com.sc2mod.andromeda.syntaxNodes.util.NoResultVisitor;
 import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitor;
 
@@ -23,10 +24,10 @@ public class IntermediateLoopStatement extends StmtNode {
 	}
 
 
-	@Override
-	public String toString(String tab) {
-		return "End of Loop";
-	}
+//	@Override
+//	public String toString(String tab) {
+//		return "End of Loop";
+//	}
 
 	@Override
 	public void accept(VoidVisitor visitor) {
@@ -62,6 +63,20 @@ public class IntermediateLoopStatement extends StmtNode {
 
 	@Override
 	public <P> void childrenAccept(NoResultVisitor<P> visitor, P state) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+
+	@Override
+	public <R> R accept(NoParamVisitor<R> visitor) {
+		// TODO Auto-generated method stub
+		throw new Error("Not implemented!");
+	}
+
+
+	@Override
+	public <R> R childrenAccept(NoParamVisitor<R> visitor) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}

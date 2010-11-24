@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ImportListNode;
 import com.sc2mod.andromeda.syntaxNodes.ImportNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
@@ -91,8 +91,7 @@ public class InputSorter {
 	
 			ImportListNode imports = src.getImports();
 			if(imports != null){
-				for(int i=0,size=imports.size() ; i < size ; i++ ){
-					ImportNode imp = imports.elementAt(i);
+				for(ImportNode imp : imports){
 					
 					String importName = ImportResolver.getImportString(imp);
 					GraphNode<SourceFileNode> imported = cuNameMap.get(importName);

@@ -9,7 +9,7 @@
  */
 package com.sc2mod.andromeda.util.visitors;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
 

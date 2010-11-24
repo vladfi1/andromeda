@@ -3,10 +3,10 @@ package com.sc2mod.andromeda.parsing.phases;
 import java.io.File;
 import java.io.IOException;
 
-import com.sc2mod.andromeda.notifications.ErrorUtil;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Workflow;
 import com.sc2mod.andromeda.parsing.options.Parameter;
+import com.sc2mod.andromeda.problems.ErrorUtil;
 import com.sc2mod.andromeda.program.MapRunner;
 import com.sc2mod.andromeda.program.Program;
 

@@ -15,7 +15,7 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
 import com.sc2mod.andromeda.environment.variables.Variable;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.semAnalysis.SimplicityDecisionVisitor;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.AssignOpSE;

@@ -9,50 +9,22 @@
  */
 package com.sc2mod.andromeda.test.misc;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import com.sc2mod.andromeda.util.Pair;
 
 
-interface CircleInterface {
-
-	public int getX();
-
-	public void setX(int x);
-}
-
-public class Circle implements CircleInterface{
-
-	private int x;
+public class Circle {
 	
-	static int i;
-
-	public int getX() {
-		return x;
-	}
-
-	@Override
-	public void setX(int x) {
-		this.x = x;
-	}
-}
-
-class Circle2 implements CircleInterface{
-
 	private int x;
 
-	public int getX() {
-		return x;
-	}
-
-	public void setX(int x) {
-		this.x = x;
-	}
-}
-
-class CircleUser {
+	private int y;
+	private int z;
 	
-	public static void bla(){
-		Circle c = new Circle();
-		c.setX(6);
+	public static void main(String[] args) throws SecurityException, NoSuchMethodException {
+		
 		
 	}
+	
 }

@@ -1,6 +1,6 @@
-package com.sc2mod.andromeda.parser;
+package com.sc2mod.andromeda.parser.cup;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 
 public class SymbolStack {
 

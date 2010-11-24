@@ -18,7 +18,7 @@ import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.UsageType;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public abstract class ScopeContentSet {

@@ -8,7 +8,7 @@ import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.generic.TypeParamIdentificationVisitor;
 import com.sc2mod.andromeda.environment.variables.Variable;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 
 public class TypeUtil {
 

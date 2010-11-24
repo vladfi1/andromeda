@@ -9,8 +9,8 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;

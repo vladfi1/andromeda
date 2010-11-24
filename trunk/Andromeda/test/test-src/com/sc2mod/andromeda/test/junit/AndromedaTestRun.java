@@ -7,17 +7,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.sc2mod.andromeda.notifications.Message;
-import com.sc2mod.andromeda.notifications.Problem;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.FileSource;
 import com.sc2mod.andromeda.parsing.CompilationResult;
 import com.sc2mod.andromeda.parsing.Language;
-import com.sc2mod.andromeda.parsing.Source;
+import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.ConfigFile;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.CommandLineOptions;
 import com.sc2mod.andromeda.parsing.options.InvalidParameterException;
+import com.sc2mod.andromeda.problems.Message;
+import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.program.Program;
 
 public class AndromedaTestRun {

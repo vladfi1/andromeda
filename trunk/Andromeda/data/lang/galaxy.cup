@@ -1,16 +1,13 @@
-package com.sc2mod.andromeda.parser;
+package com.sc2mod.andromeda.parser.cup;
 
 import com.sc2mod.andromeda.syntaxNodes.*;
 import com.sc2mod.andromeda.vm.data.*;
-import com.sc2mod.andromeda.parsing.ParserHelper;
-import com.sc2mod.andromeda.parsing.ParserThread;
 
 /**
  * Andromeda language grammar
  */
 
 parser code  {: 
-  
 :};
 
 terminal Type BOOLEAN; // primitiveType
@@ -286,7 +283,7 @@ sourceFile ::=
 
 fileContent ::= 
 				{: RESULT = new GlobalStructureListNode(); :}
-			| fileContent:a globalStructure:g {: a.append(g); RESULT = a;  RESULT.setPos(aleft,gright); :}
+			| fileContent:a globalStructure:g {: a.add(g); RESULT = a;  RESULT.setPos(aleft,gright); :}
 			;
 			
 globalStructure ::= typeDeclaration:f {: RESULT = f; :}
@@ -389,27 +386,31 @@ importDeclarationsOpt ::=
 	|	{: RESULT = null; :}
 	;
 typeDeclarationsOpt   ::= typeDeclarations   | ;
-packageDeclarationOpt ::= packageDeclaration:i {: RESULT = i; :} | {: RESULT = null; :};
+packageDeclarationOpt ::= 
+		packageDeclaration:i {: RESULT = i; :} 
+	| 	{: RESULT = null; parser.hook.packageDeclRead(RESULT); :}
+	;
 
 importDeclarations ::= 
 		importDeclaration:i {: RESULT = new ImportListNode(i); RESULT.setPos(ileft,iright); :}
-	|	importDeclarations:a importDeclaration:g {: a.append(g); RESULT = a;  RESULT.setPos(aleft,gright); :}
+	|	importDeclarations:a importDeclaration:g {: a.add(g); RESULT = a;  RESULT.setPos(aleft,gright); :}
 	;
 typeDeclarations ::= 
 		typeDeclaration
 	|	typeDeclarations typeDeclaration
 	;
 packageDeclaration ::= 
-		PACKAGE:l compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new PackageDeclNode(c, null); RESULT.setPos(lleft,rright); ParserThread.packageRead(RESULT); :}
-	|	PACKAGE:l compilationUnitIdentifier:c ARROW IDENTIFIER:i  SEMICOLON:r {: IdentifierNode ident = new IdentifierNode(i); ident.setPos(ileft,iright); RESULT = new PackageDeclNode(c,ident); RESULT.setPos(lleft,rright); ParserThread.packageRead(RESULT); :}
-	|	PACKAGE:l ARROW IDENTIFIER:i SEMICOLON:r {: IdentifierNode ident = new IdentifierNode(i); ident.setPos(ileft,iright); RESULT = new PackageDeclNode(null,ident); RESULT.setPos(lleft,rright); ParserThread.packageRead(RESULT); :}
+		PACKAGE:l compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new PackageDeclNode(c, null); RESULT.setPos(lleft,rright); parser.hook.packageDeclRead(RESULT); :}
+	|	PACKAGE:l compilationUnitIdentifier:c ARROW IDENTIFIER:i  SEMICOLON:r {: IdentifierNode ident = new IdentifierNode(i); ident.setPos(ileft,iright); RESULT = new PackageDeclNode(c,ident); RESULT.setPos(lleft,rright); parser.hook.packageDeclRead(RESULT); :}
+	|	PACKAGE:l ARROW IDENTIFIER:i SEMICOLON:r {: IdentifierNode ident = new IdentifierNode(i); ident.setPos(ileft,iright); RESULT = new PackageDeclNode(null,ident); RESULT.setPos(lleft,rright); parser.hook.packageDeclRead(RESULT); :}
 	;
 importDeclaration ::=  
-		IMPORT:l compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new ImportNode(c); RESULT.setPos(lleft,rright); ParserThread.importRead(RESULT); :}
+		IMPORT:l NOT compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new ImportNode(c,true); RESULT.setPos(lleft,rright); parser.hook.importRead(RESULT); :}
+	|	IMPORT:l compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new ImportNode(c,false); RESULT.setPos(lleft,rright); parser.hook.importRead(RESULT); :}
 	;
 	
 includeDeclaration ::=
-		INCLUDE:l STRING_LITERAL:s {: RESULT = new IncludeNode(s,null); RESULT.setPos(lleft,sright); ParserThread.includeRead(RESULT); :}
+		INCLUDE:l STRING_LITERAL:s {: RESULT = new IncludeNode(s,null); RESULT.setPos(lleft,sright); parser.hook.includeRead(RESULT); :}
 	;
 	
 compilationUnitIdentifier ::=
@@ -438,7 +439,7 @@ modifiersOpt::=
 	|	modifiers:m {: RESULT = m; :}
 	;
 modifiers ::= 	modifier:m {: RESULT = new ModifierListNode(m); RESULT.setPos(mleft,mright); :}
-	|	modifiers:m modifier:m2 {: m.append(m2); RESULT = m; RESULT.setPos(mleft,m2right); :}
+	|	modifiers:m modifier:m2 {: m.add(m2); RESULT = m; RESULT.setPos(mleft,m2right); :}
 	;
 modifier ::=	
 	PUBLIC {: RESULT = (ModifierSE.PUBLIC); :}
@@ -459,7 +460,7 @@ annotation ::=  AT:a IDENTIFIER:i {: RESULT = new AnnotationNode(i); RESULT.setP
 		;		
 	
 annotations ::= annotation:a {: RESULT = new AnnotationListNode(a); a.setPos(aleft,aright); :} 
-		| annotations:al annotation:a {: RESULT = al; al.append(a); al.setPos(alleft, aright); :} 
+		| annotations:al annotation:a {: RESULT = al; al.add(a); al.setPos(alleft, aright); :} 
 		;
 		
 annotationsOpt ::= annotations:a {: RESULT = a; :}
@@ -479,7 +480,7 @@ typeParam ::= IDENTIFIER:i typeBoundOpt:tb {: RESULT = new TypeParamNode(i,tb); 
 		;
 
 typeParamList ::= typeParam:t {: RESULT = new TypeParamListNode(t); RESULT.setPos(tleft,tright); :}
-		| 	typeParamList:tl COMMA typeParam:t {: RESULT = tl; tl.append(t); tl.setPos(tlleft,tright); :}
+		| 	typeParamList:tl COMMA typeParam:t {: RESULT = tl; tl.add(t); tl.setPos(tlleft,tright); :}
 		;
 
 typeParameters ::= LT:l typeParamList:tl GT:r {: RESULT = tl; RESULT.setPos(lleft,rright); :}
@@ -492,10 +493,12 @@ typeParametersOpt ::= typeParameters:t {: RESULT = t; :}
 		
 //Type arguments
 typeArguments ::= LT:l actualTypeParamList:al GT:r {: RESULT = al; RESULT.setPos(lleft,rright); :}
+		| LT:lo actualTypeParamList:al COMMA name:t LT:l actualTypeParamList:al2 RSHIFT:r {: al2.setPos(lleft,rright-1); TypeNode tn = ParserHelper.getExpressionType(t, al2); tn.setPos(tleft,rright-1); al.add(tn); RESULT = al; RESULT.setPos(loleft,rright); :}
+		| LT:lo name:t LT:l actualTypeParamList:al2 RSHIFT:r {: al2.setPos(lleft,rright-1); TypeNode tn = ParserHelper.getExpressionType(t, al2); tn.setPos(tleft,rright-1);  RESULT = new TypeListNode(tn); RESULT.setPos(loleft,rright); :}
 		;
 		
 actualTypeParamList ::= actualTypeParam:a {: RESULT = new TypeListNode(a); RESULT.setPos(aleft,aright); :}
-		|	actualTypeParamList:al COMMA actualTypeParam:a {: RESULT = al; al.append(a); al.setPos(alleft,aright); :}
+		|	actualTypeParamList:al COMMA actualTypeParam:a {: RESULT = al; al.add(a); al.setPos(alleft,aright); :}
 		;
 
 actualTypeParam ::= referenceType:r {: RESULT = r; :}
@@ -510,7 +513,7 @@ wildcard ::=
         
 //Function pointer
 funcPointerArgumentList ::= type:a {: RESULT = new TypeListNode(a); RESULT.setPos(aleft,aright); :}
-		|	funcPointerArgumentList:al COMMA type:a {: RESULT = al; al.append(a); al.setPos(alleft,aright); :}
+		|	funcPointerArgumentList:al COMMA type:a {: RESULT = al; al.add(a); al.setPos(alleft,aright); :}
 		;
 
 funcPointer ::= FUNCTION:l LT type:rt LPAREN funcPointerArgumentList:a RPAREN GT:r {: RESULT = new FuncPointerTypeNode(rt,a); RESULT.setPos(lleft,rright); :}
@@ -550,7 +553,7 @@ structDeclaration ::=
 	;
 	
 structBody ::= fieldDeclaration:d {: RESULT = new MemberDeclListNode(d); RESULT.setPos(d.getLeftPos(),dright);:}
-	| structBody:l fieldDeclaration:d {: l.append(d); RESULT = l; RESULT.setPos(lleft,dright); :}
+	| structBody:l fieldDeclaration:d {: l.add(d); RESULT = l; RESULT.setPos(lleft,dright); :}
 	;
 
 // Enrich declaration
@@ -574,7 +577,7 @@ interfacesOpt::= {: RESULT = null; :}
 	;
 interfaceTypeList ::= 
 		interfaceType:d {: RESULT = new TypeListNode(d); RESULT.setPos(dleft,dright);:}
-	|	interfaceTypeList:l COMMA interfaceType:d {: l.append(d); RESULT = l; RESULT.setPos(lleft,dright); :}
+	|	interfaceTypeList:l COMMA interfaceType:d {: l.add(d); RESULT = l; RESULT.setPos(lleft,dright); :}
 	;
 classBody ::=	LBRACE:le classBodyDeclarationsOpt:l RBRACE:r {: RESULT = l; RESULT.setPos(leleft,rright); :}
 	;
@@ -583,7 +586,7 @@ classBodyDeclarationsOpt ::= {: RESULT = new MemberDeclListNode(); :}
 	;
 classBodyDeclarations ::= 
 		classBodyDeclaration:d {: RESULT = new MemberDeclListNode(d); RESULT.setPos(dleft,dright);:}
-	|	classBodyDeclarations:l classBodyDeclaration:d {: l.append(d); RESULT = l; RESULT.setPos(lleft,dright); :}
+	|	classBodyDeclarations:l classBodyDeclaration:d {: l.add(d); RESULT = l; RESULT.setPos(lleft,dright); :}
 	;
 classBodyDeclaration ::=
 		classMemberDeclaration:d {: RESULT = d; :}
@@ -609,7 +612,7 @@ classMemberDeclaration ::=
 					;
 				variableDeclarators ::=
 						variableDeclarator:i {: RESULT = new VarDeclListNode(i); RESULT.setPos(ileft,iright);:}
-					|	variableDeclarators:v COMMA variableDeclarator:i {: v.append(i); RESULT = v; RESULT.setPos(vleft,iright);:}
+					|	variableDeclarators:v COMMA variableDeclarator:i {: v.add(i); RESULT = v; RESULT.setPos(vleft,iright);:}
 					;
 				variableDeclarator ::=
 						variableDeclaratorId:i {: RESULT = new UninitedVarDeclNode(i); RESULT.setPos(ileft,iright);:}
@@ -630,8 +633,8 @@ classMemberDeclaration ::=
 //	;
 accessorBody ::=	
 	
-		accessorBody:b accessorDeclaration:s {: RESULT = b; b.append(s); RESULT.setPos(bleft,sright); :}
-//	|	accessorBody:b accessorGet:g {: RESULT = b; b.append(g); RESULT.setPos(bleft,gright); :}
+		accessorBody:b accessorDeclaration:s {: RESULT = b; b.add(s); RESULT.setPos(bleft,sright); :}
+//	|	accessorBody:b accessorGet:g {: RESULT = b; b.add(g); RESULT.setPos(bleft,gright); :}
 //	|	accessorGet:g {: RESULT = new AccessorList(g); RESULT.setPos(gleft,gright); :}
 	|	accessorDeclaration:s {: RESULT = new AccessorList(s); RESULT.setPos(sleft,sright); :}
 	;
@@ -670,7 +673,7 @@ accessorDeclaration ::=
 					;
 				formalParameterList ::=
 						formalParameter:p {: RESULT = new ParameterListNode(p); RESULT.setPos(pleft,pright); :}
-					|	formalParameterList:l COMMA formalParameter:p {: l.append(p); RESULT = l; RESULT.setPos(lleft,pright);  :}
+					|	formalParameterList:l COMMA formalParameter:p {: l.add(p); RESULT = l; RESULT.setPos(lleft,pright);  :}
 					;
 				formalParameter ::=
 						type:t variableDeclaratorId:d {: RESULT = new ParameterNode(t,d); RESULT.setPos(tleft,dright); :}
@@ -711,7 +714,7 @@ destructorDeclarator ::=
 	
 constructorBody ::=
 		LBRACE:l explicitConstructorInvocation:e
-			blockStatements:s RBRACE:r {: RESULT = s; s.insertElementAt(e,0); RESULT.setPos(lleft,rright); :}
+			blockStatements:s RBRACE:r {: RESULT = s; s.add(0,e); RESULT.setPos(lleft,rright); :}
 	|	LBRACE:l explicitConstructorInvocation:e RBRACE:r {: RESULT = new StmtListNode(e); RESULT.setPos(lleft,rright); :}
 	|	LBRACE:l blockStatements:s RBRACE:r {: RESULT = s; RESULT.setPos(lleft,rright); :}
 	|	LBRACE:l RBRACE:r {: RESULT = new StmtListNode(); RESULT.setPos(lleft,rright); :}
@@ -735,7 +738,7 @@ extendsInterfacesOpt ::=  {: RESULT = new TypeListNode(); :}
 	;
 extendsInterfaces ::=
 		EXTENDS:l interfaceType:t {: RESULT = new TypeListNode(t); RESULT.setPos(lleft,tright); :}
-	|	extendsInterfaces:l COMMA interfaceType:t {: RESULT = l; l.append(t); l.setPos(lleft,tright); :}
+	|	extendsInterfaces:l COMMA interfaceType:t {: RESULT = l; l.add(t); l.setPos(lleft,tright); :}
 	;
 interfaceBody ::=
 		LBRACE:le interfaceMemberDeclarationsOpt:l RBRACE:r {: RESULT = l; l.setPos(leleft,rright); :}
@@ -745,7 +748,7 @@ interfaceMemberDeclarationsOpt ::= {: RESULT = new MemberDeclListNode(); :}
 	;
 interfaceMemberDeclarations ::=
 		interfaceMemberDeclaration:d {: RESULT = new MemberDeclListNode(d); RESULT.setPos(dleft,dright); :}
-	|	interfaceMemberDeclarations:l interfaceMemberDeclaration:d {: RESULT = l; l.append(d); l.setPos(lleft,dright); :}
+	|	interfaceMemberDeclarations:l interfaceMemberDeclaration:d {: RESULT = l; l.add(d); l.setPos(lleft,dright); :}
 	;
 interfaceMemberDeclaration ::=
 		constantDeclaration:d {: RESULT = d; :}
@@ -770,7 +773,7 @@ abstractMethodDeclaration ::=
 						;
 					variableInitializers ::=
 							variableInitializer:i {: RESULT = new VarInitializerListNode(i); RESULT.setPos(ileft,iright); :} 
-						|	variableInitializers:list COMMA variableInitializer:i {: list.append(i); RESULT = list; RESULT.setPos(listleft,iright); :}
+						|	variableInitializers:list COMMA variableInitializer:i {: list.add(i); RESULT = list; RESULT.setPos(listleft,iright); :}
 						;
 						
 					variableInitializer ::=
@@ -786,7 +789,7 @@ abstractMethodDeclaration ::=
 						;
 					blockStatements ::=
 							blockStatement:s {: RESULT = new StmtListNode(s); RESULT.setPos(sleft,sright);:}
-						|	blockStatements:l blockStatement:s {: l.append(s); RESULT = l; RESULT.setPos(lleft,sright); :}
+						|	blockStatements:l blockStatement:s {: l.add(s); RESULT = l; RESULT.setPos(lleft,sright); :}
 						;
 					blockStatement ::=
 							localVariableDeclarationStatement:s {: RESULT = s; :}
@@ -925,7 +928,7 @@ abstractMethodDeclaration ::=
 						;
 					statementExpressionList ::=
 							statementExpression:e {: StmtNode s = new ExprStmtNode(e); s.setPos(eleft,eright); RESULT = new StmtListNode(s); RESULT.setPos(eleft,eright); :}
-						|	statementExpressionList:l COMMA statementExpression:e {: StmtNode s = new ExprStmtNode(e); s.setPos(eleft,eright); l.append(s); RESULT = l; l.setPos(lleft,eright); :}
+						|	statementExpressionList:l COMMA statementExpression:e {: StmtNode s = new ExprStmtNode(e); s.setPos(eleft,eright); l.add(s); RESULT = l; l.setPos(lleft,eright); :}
 						;
 
 					identifierOpt ::=  {: RESULT = null; :}
@@ -999,7 +1002,7 @@ abstractMethodDeclaration ::=
 						;
 					argumentList ::=
 							expression:e {: RESULT = new ExprListNode(e); e.setPos(eleft,eright); :}
-						|	argumentList:a COMMA expression:e {: a.append(e); RESULT = a; a.setPos(aleft,eright); :}
+						|	argumentList:a COMMA expression:e {: a.add(e); RESULT = a; a.setPos(aleft,eright); :}
 						;
 //					arrayCreationExpression ::=
 //							NEW:l primitiveType:t dimExprs:d1 dimsOpt:d2 {: RESULT = new ArrayCreationExprNode(t,d1,d2,null); RESULT.setPos(lleft,d2right); :}
@@ -1008,7 +1011,7 @@ abstractMethodDeclaration ::=
 //						|	NEW:l classOrInterfaceType:t dims:d2 arrayInitializer:a {: RESULT = new ArrayCreationExprNode(t,null,d2,a); RESULT.setPos(lleft,aright); :}
 //						;
 					dimExprs ::=	dimExpr:e {: RESULT = (ExprListNode)new ExprListNode(e).setPos(eleft,eright);  :}
-						|	dimExprs:l dimExpr:e {: l.append(e); RESULT = l; l.setPos(lleft,eright); :}
+						|	dimExprs:l dimExpr:e {: l.add(e); RESULT = l; l.setPos(lleft,eright); :}
 						;
 					dimExpr ::=	LBRACK:l expression:e RBRACK:r {: RESULT = e; e.setPos(lleft,rright); :}
 						;
@@ -1101,7 +1104,7 @@ abstractMethodDeclaration ::=
 							additiveExpression:e {: RESULT = e; :}
 						|	shiftExpression:e1 LSHIFT additiveExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.LSHIFT); RESULT.setPos(e1left,e2right); :}
 						|	shiftExpression:e1 RSHIFT additiveExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.RSHIFT); RESULT.setPos(e1left,e2right); :}
-						|	shiftExpression:e1 URSHIFT additiveExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.URSHIFT); RESULT.setPos(e1left,e2right); :}
+						|	shiftExpression:e1 RSHIFT:l GT:r additiveExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.URSHIFT); RESULT.setPos(e1left,e2right); if(lright < rleft) parser.syntax_error(stack.elementAt(stack$Top - 2)); :}
 						;
 					//We need to seperate instanceof here, or we'll get a collision with generic < >
 					instanceofExpression ::= 

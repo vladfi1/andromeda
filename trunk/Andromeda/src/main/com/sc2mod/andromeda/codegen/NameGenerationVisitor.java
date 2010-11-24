@@ -85,10 +85,9 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 	
 	public void writeTypedefs(SimpleBuffer buffer) {
 		if(shortenVarNames){
-			boolean newLines = options.getParamBool(Parameter.CODEGEN_NEW_LINES);
 			for(BasicType b: tprov.BASIC){
 				buffer.append("typedef ").append(b.getName()).append(" ").append(b.getGeneratedName()).append(";");
-				if(newLines) buffer.newLine();
+				buffer.nl();
 			}
 		}
 	}
@@ -202,7 +201,7 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 		VarDeclListNode v = fieldDeclaration.getDeclaredVariables();
 		int size = v.size();
 		for(int i=0;i<size;i++){
-			FieldDecl decl = (FieldDecl) v.elementAt(i).getName().getSemantics();
+			FieldDecl decl = (FieldDecl) v.get(i).getName().getSemantics();
 			//XPilot: variables that are written to are also needed
 			if(inLib&&decl.getNumReadAccesses()==0 && decl.getNumWriteAccesses() == 0) continue;
 			decl.setGeneratedName(nameProvider.getFieldName(decl,curType));
@@ -216,7 +215,7 @@ public class NameGenerationVisitor extends VoidVisitorAdapter{
 		VarDeclListNode v = globalVarDeclaration.getFieldDecl().getDeclaredVariables();
 		int size = v.size();
 		for(int i=0;i<size;i++){
-			Variable decl = (Variable) v.elementAt(i).getName().getSemantics();
+			Variable decl = (Variable) v.get(i).getName().getSemantics();
 			if(inLib&&decl.getNumReadAccesses()==0) continue;
 			decl.setGeneratedName(nameProvider.getGlobalName(decl));
 		}

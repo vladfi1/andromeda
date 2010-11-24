@@ -9,14 +9,14 @@ import mopaqlib.MoPaQ;
 
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.CompilationResult;
-import com.sc2mod.andromeda.parsing.IParser;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.Language;
 import com.sc2mod.andromeda.parsing.LanguageImpl;
 import com.sc2mod.andromeda.parsing.ParserScheduler;
-import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.TriggerExtractor;
 import com.sc2mod.andromeda.parsing.Workflow;
+import com.sc2mod.andromeda.parsing.framework.IParser;
+import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.program.FileCollector;
 import com.sc2mod.andromeda.program.Program;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
@@ -27,7 +27,6 @@ import com.sc2mod.andromeda.util.StopWatch;
 public class ParsePhase extends Phase {
 
 	private LanguageImpl language;
-	private IParser parser;
 	private EnumMap<InclusionType, List<Source>> input;
 	LinkedList<Pair<Source,InclusionType>> startQueue;
 	
@@ -40,7 +39,6 @@ public class ParsePhase extends Phase {
 	public void execute(CompilationEnvironment env,
 			Workflow workflow) {
 
-		this.parser = language.createParser(env);
 		this.input = env.getParserInput();
 		startQueue = new LinkedList<Pair<Source,InclusionType>>();
 		addFilesOfType(InclusionType.NATIVE,"native library");
@@ -48,7 +46,7 @@ public class ParsePhase extends Phase {
 		addFilesOfType(InclusionType.MAIN,null);
 		
 	
-		SourceListNode result = new ParserScheduler(16,env,startQueue,language).parse();
+		SourceListNode result = new ParserScheduler(1,env,startQueue,language).parse();
 		
 		env.setSyntaxTree(result);
 	}

@@ -139,9 +139,9 @@ public class TransformationExprVisitor extends VoidVisitorErrorAdapater {
 	public void visit(ExprListNode e) {
 		int size = e.size();
 		for(int i=0;i<size;i++){
-			invokeSelf(e.elementAt(i));
+			invokeSelf(e.get(i));
 			if (parent.replaceExpression != null) {
-				e.setElementAt(parent.replaceExpression,i);
+				e.set(i,parent.replaceExpression);
 				parent.replaceExpression = null;
 			}
 		}

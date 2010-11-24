@@ -10,13 +10,14 @@
 package com.sc2mod.andromeda.codegen.buffers;
 
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.parsing.options.Configuration;
 
-public class GlobalVarBuffer extends SimpleBuffer{
+public class GlobalVarBuffer extends AdvancedBuffer{
 
 	private int bytes = 0;
 	
-	public GlobalVarBuffer(int initialSize) {
-		super(initialSize);
+	public GlobalVarBuffer(int initialSize, Configuration conf) {
+		super(initialSize,conf);
 	}
 	
 

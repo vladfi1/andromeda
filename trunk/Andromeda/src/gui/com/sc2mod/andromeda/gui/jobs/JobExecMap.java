@@ -13,8 +13,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.sc2mod.andromeda.parsing.Language;
-import com.sc2mod.andromeda.parsing.ParserFactory;
-import com.sc2mod.andromeda.parsing.Source;
+import com.sc2mod.andromeda.parsing.WorkflowFactory;
+import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.InvalidParameterException;
 import com.sc2mod.andromeda.parsing.options.Parameter;
@@ -45,7 +45,7 @@ public class JobExecMap implements Job{
 			e.printStackTrace();
 			return false;
 		}
-		return new ParserFactory(Language.ANDROMEDA).createWorkflow(new ArrayList<Source>(0),o).execute().getResult().isSuccessful();
+		return new WorkflowFactory(Language.ANDROMEDA).createWorkflow(new ArrayList<Source>(0),o).execute().getResult().isSuccessful();
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.sc2mod.andromeda.parsing;
 
+import com.sc2mod.andromeda.parsing.framework.Source;
+
 public class SourceInfo {
 
 	private final Source source;

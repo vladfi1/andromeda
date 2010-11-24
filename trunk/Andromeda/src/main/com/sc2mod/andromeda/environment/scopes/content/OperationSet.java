@@ -12,10 +12,10 @@ import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.CompilerThread;
+import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.util.Debug;
 

@@ -3,9 +3,9 @@ package com.sc2mod.andromeda.semAnalysis;
 import java.util.List;
 
 import com.sc2mod.andromeda.environment.access.AccessorAccess;
-import com.sc2mod.andromeda.notifications.ErrorUtil;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.ErrorUtil;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.AccessorList;
 import com.sc2mod.andromeda.syntaxNodes.AssignOpSE;
 import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
@@ -47,8 +47,9 @@ public class AccessorTransformer {
 		AccessorList accessors = getAndRemoveAccessors(field);
 		MethodDeclNode[] result = new MethodDeclNode[accessors.size()];
 		for(int i=0,size=accessors.size(); i<size ; i++){
-			MethodDeclNode md = transformAccessor(field,var,accessors.elementAt(i));
-			parent.append(md);
+			MethodDeclNode md = transformAccessor(field,var,accessors.get(i));
+			//FIXME parent.add considered harmful...
+			parent.add(md);
 			result[i] = md;
 		}
 		return result;
@@ -65,10 +66,10 @@ public class AccessorTransformer {
 		AccessorList accessors = getAndRemoveAccessors(field);
 		GlobalFuncDeclNode[] result = new GlobalFuncDeclNode[accessors.size()];
 		for(int i=0,size=accessors.size(); i<size ; i++){
-			MethodDeclNode md = transformAccessor(field,var,accessors.elementAt(i));
+			MethodDeclNode md = transformAccessor(field,var,accessors.get(i));
 			GlobalFuncDeclNode gvd = new GlobalFuncDeclNode(md);
 			gvd.setPos(md.getLeftPos(), md.getRightPos());
-			parent.append(gvd);
+			parent.add(gvd);
 			result[i] = gvd;
 		}
 		return result;
@@ -81,7 +82,7 @@ public class AccessorTransformer {
 			throw Problem.ofType(ProblemId.ACCESSOR_ON_MULTIPLE_FIELDS).at(field.getAccessors())
 				.raiseUnrecoverable();
 		}
-		VarDeclNode var = vars.elementAt(0);
+		VarDeclNode var = vars.get(0);
 		return var;
 	}
 
@@ -117,27 +118,23 @@ public class AccessorTransformer {
 	private void addStaticIfFieldIsStatic(FieldDeclNode field,
 			MethodDeclNode method) {
 		ModifierListNode mods = method.getHeader().getModifiers();
-		for(int i = 0;i<mods.size();i++){
-			ModifierSE mod = mods.elementAt(i);
-			if(mod == ModifierSE.STATIC){
-				throw Problem.ofType(ProblemId.ACCESSOR_DECLARED_STATIC).at(mods)
+
+		if(mods.contains(ModifierSE.STATIC)){
+			throw Problem.ofType(ProblemId.ACCESSOR_DECLARED_STATIC).at(mods)
 					.raiseUnrecoverable();
-			}
 		}
 		
 		boolean isStatic = false;
 		mods = field.getFieldModifiers();
-		for(int i = 0;i<mods.size();i++){
-			ModifierSE mod = mods.elementAt(i);
-			if(mod == ModifierSE.STATIC){
-				isStatic = true;
-			}
+		if(mods.contains(ModifierSE.STATIC)){
+			isStatic = true;
 		}
+	
 		if(!isStatic)
 			return;
 		
 		//Add static if field is static
-		method.getHeader().getModifiers().append(ModifierSE.STATIC);
+		method.getHeader().getModifiers().add(ModifierSE.STATIC);
 	}
 
 	private void transformSetter(FieldDeclNode field, VarDeclNode var,
@@ -174,11 +171,8 @@ public class AccessorTransformer {
 		if(method.getBody() != null)
 			return false;
 		ModifierListNode mods = method.getHeader().getModifiers();
-		for(int i = 0;i<mods.size();i++){
-			ModifierSE mod = mods.elementAt(i);
-			if(mod == ModifierSE.ABSTRACT){
-				return false;
-			}
+		if(mods.contains(ModifierSE.ABSTRACT)){
+			return false;
 		}
 		return true;
 	}

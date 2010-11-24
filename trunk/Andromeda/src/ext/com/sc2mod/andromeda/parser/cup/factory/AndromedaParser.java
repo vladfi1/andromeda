@@ -7,26 +7,18 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.parsing.andromeda;
+package com.sc2mod.andromeda.parser.cup.factory;
 
 
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.parser.AndromedaGenParser;
-import com.sc2mod.andromeda.parsing.IParser;
-import com.sc2mod.andromeda.parsing.SourceManager;
+import com.sc2mod.andromeda.parser.cup.AndromedaGenParser;
+import com.sc2mod.andromeda.parser.cup.AndromedaScanner;
+import com.sc2mod.andromeda.parser.cup.Scanner;
+import com.sc2mod.andromeda.parsing.framework.ParserInput;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 
-public class AndromedaParser extends AndromedaGenParser implements IParser {
+class AndromedaParser extends AndromedaGenParser implements ICupParser {
 
-	private SourceManager sourceEnvironment;
-
-	public SourceManager getSourceEnvironment() {
-		return sourceEnvironment;
-	}
-
-	public AndromedaParser(SourceManager env) {
-		sourceEnvironment = env;
-	}
 	
 	
 //	public SourceFileNode parse(ParserInput input)  {
@@ -49,8 +41,8 @@ public class AndromedaParser extends AndromedaGenParser implements IParser {
 
 
 	private Problem createParserProblem(String message, Object info) {
-		if (info instanceof com.sc2mod.andromeda.parser.Symbol) {
-			com.sc2mod.andromeda.parser.Symbol sym = (com.sc2mod.andromeda.parser.Symbol) info;
+		if (info instanceof com.sc2mod.andromeda.parser.cup.Symbol) {
+			com.sc2mod.andromeda.parser.cup.Symbol sym = (com.sc2mod.andromeda.parser.cup.Symbol) info;
 			return Problem.ofType(ProblemId.SYNTAX_UNEXPECTED_TOKEN).at(
 					sym.left, sym.right);
 		} else {
@@ -66,6 +58,11 @@ public class AndromedaParser extends AndromedaGenParser implements IParser {
 
 	public void report_fatal_error(String message, Object info) {
 		createParserProblem(message, info).raiseUnrecoverable();
+	}
+
+	@Override
+	public Scanner createScanner(ParserInput input) {
+		return new AndromedaScanner(input.getInputNumber(),input.getReader());
 	}
 
 }

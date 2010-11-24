@@ -9,7 +9,7 @@
  */
 package com.sc2mod.andromeda.parsing;
 
-public class Symbol extends com.sc2mod.andromeda.parser.Symbol {
+public class Symbol extends com.sc2mod.andromeda.parser.cup.Symbol {
   //private int line;
   //private int column;
 

@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import com.sc2mod.andromeda.parsing.framework.Source;
+
 public class TriggerSource extends Source {
 
 	private String code;

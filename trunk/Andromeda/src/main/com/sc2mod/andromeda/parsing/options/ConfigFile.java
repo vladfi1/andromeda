@@ -23,7 +23,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import com.sc2mod.andromeda.notifications.ConfigurationError;
+import com.sc2mod.andromeda.problems.ConfigurationError;
 import com.sc2mod.andromeda.program.ConfigSubscriber;
 
 

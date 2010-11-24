@@ -12,7 +12,7 @@ import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
 import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitorAdapter;
-import com.sc2mod.andromeda.notifications.ErrorUtil;
+import com.sc2mod.andromeda.problems.ErrorUtil;
 
 public class TypeParamInstanciationVisitor extends ParameterSemanticsVisitorAdapter<Signature, IType>{
 	

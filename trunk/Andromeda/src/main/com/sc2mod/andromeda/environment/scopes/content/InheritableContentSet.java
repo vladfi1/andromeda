@@ -7,8 +7,8 @@ import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class InheritableContentSet extends ScopeContentSet {

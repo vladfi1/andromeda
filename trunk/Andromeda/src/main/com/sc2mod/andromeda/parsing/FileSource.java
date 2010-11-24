@@ -14,7 +14,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.parsing.framework.Source;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 
 public class FileSource extends Source{
 

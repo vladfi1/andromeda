@@ -110,7 +110,7 @@ public class CanonicalizeStmtVisitor extends TransformationVisitor {
 		//add update behind body, unwrap if necessary
 		LoopSemantics semantics = forStatement.getSemantics();
 		if(forStatement.getSemantics().doesControlFlowReachEnd()){
-			forStatement.getThenStatement().getStatements().append(forStatement.getForUpdate());
+			forStatement.getThenStatement().getStatements().add(forStatement.getForUpdate());
 		}
 		
 		//while loop
@@ -168,7 +168,7 @@ public class CanonicalizeStmtVisitor extends TransformationVisitor {
 		
 		//prepend to body
 		BlockStmtNode body = forEachStatement.getThenStatement();
-		body.getStatements().insertElementAt(nextStmt, 0);
+		body.getStatements().add(0,nextStmt);
 		
 		//iterator.hasNext()
 		ExprNode condition = syntaxGenerator.createMethodInvocation(l, "getNext", SyntaxGenerator.EMPTY_EXPRESSIONS, semantics.getHasNext());

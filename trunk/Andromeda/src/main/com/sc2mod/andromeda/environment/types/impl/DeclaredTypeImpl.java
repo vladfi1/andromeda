@@ -13,8 +13,8 @@ import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 

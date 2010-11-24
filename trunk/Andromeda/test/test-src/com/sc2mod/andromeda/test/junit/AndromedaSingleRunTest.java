@@ -6,16 +6,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-import com.sc2mod.andromeda.notifications.Message;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.CompilationResult;
 import com.sc2mod.andromeda.parsing.FileSource;
 import com.sc2mod.andromeda.parsing.Language;
-import com.sc2mod.andromeda.parsing.Source;
+import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
+import com.sc2mod.andromeda.problems.Message;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.program.Program;
 
 /**

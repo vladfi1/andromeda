@@ -16,8 +16,8 @@ import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.generic.GenericTypeInstance;
 import com.sc2mod.andromeda.environment.types.generic.GenericUtil;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class GenericContentSet extends InheritableContentSet {

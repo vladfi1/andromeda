@@ -24,8 +24,8 @@ import com.sc2mod.andromeda.gui.jobs.JobHandler;
 import com.sc2mod.andromeda.gui.misc.GUIController;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Language;
-import com.sc2mod.andromeda.parsing.ParserFactory;
-import com.sc2mod.andromeda.parsing.Source;
+import com.sc2mod.andromeda.parsing.WorkflowFactory;
+import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.CLOption;
 import com.sc2mod.andromeda.parsing.options.CommandLineOptions;
 import com.sc2mod.andromeda.parsing.options.ConfigFile;
@@ -129,7 +129,7 @@ public class Program {
 	 * @throws InitializationError 
 	 */
 	public static CompilationEnvironment invokeWorkflow(List<Source> sources, Configuration options, Language language) {
-		return new ParserFactory(language).createWorkflow(sources,options).execute();
+		return new WorkflowFactory(language).createWorkflow(sources,options).execute();
 	}
 
 	public static void main(String[] args) throws URISyntaxException {

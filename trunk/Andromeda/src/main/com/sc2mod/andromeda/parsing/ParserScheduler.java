@@ -1,17 +1,17 @@
 package com.sc2mod.andromeda.parsing;
 
-import java.security.cert.CollectionCertStoreParameters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.notifications.UnrecoverableProblem;
+import com.sc2mod.andromeda.parsing.framework.ParserFactory;
+import com.sc2mod.andromeda.parsing.framework.Source;
+import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
+import com.sc2mod.andromeda.problems.UnrecoverableProblem;
 import com.sc2mod.andromeda.syntaxNodes.ImportNode;
 import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
 import com.sc2mod.andromeda.syntaxNodes.PackageDeclNode;
@@ -19,13 +19,12 @@ import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 import com.sc2mod.andromeda.util.ArrayStack;
 import com.sc2mod.andromeda.util.Pair;
-import com.sc2mod.andromeda.util.StopWatch;
 import com.sc2mod.andromeda.util.ThreadUtil;
 
 public class ParserScheduler {
 
-	private List<ParserInput> inputSources;
-	private LinkedList<ParserInput> importQueue = new LinkedList<ParserInput>();
+	private List<ComplexParserInput> inputSources;
+	private LinkedList<ComplexParserInput> importQueue = new LinkedList<ComplexParserInput>();
 	private List<SourceFileNode> collectedSources;
 	private int remainingInputFiles;
 	private int filesToParse;
@@ -36,13 +35,14 @@ public class ParserScheduler {
 	private LanguageImpl language;
 	private ImportResolver importResolver;
 	private Throwable threadExeption = null;
+	private ParserFactory parserFactory;
 	
 	private HashMap<String,PackageDeclNode> readCompilationUnits = new HashMap<String, PackageDeclNode>();
 	
 	public ParserScheduler(int numThreads, CompilationEnvironment env, List<Pair<Source,InclusionType>> inputSources, LanguageImpl language) {
 		collectedSources = Collections.synchronizedList(new ArrayList<SourceFileNode>(inputSources.size()*3));
 		 
-		List<ParserInput> srcs = this.inputSources = new ArrayList<ParserInput>(inputSources.size());
+		List<ComplexParserInput> srcs = this.inputSources = new ArrayList<ComplexParserInput>(inputSources.size());
 		for(Pair<Source, InclusionType> s : inputSources){
 			srcs.add(ParserInputFactory.create(collectedSources, s._1,s._2,null,null));
 		}
@@ -52,6 +52,7 @@ public class ParserScheduler {
 		workerThreads = new ParserThread[numThreads];
 		this.env = env;
 		this.language = language;
+		parserFactory = language.getParserFactory();
 		importResolver = new ImportResolver(env.getSourceManager());
 	}
 	
@@ -152,7 +153,7 @@ public class ParserScheduler {
 		SourceListNode result = new SourceListNode();
 		
 		for(SourceFileNode f : srcs){
-			result.append(f);
+			result.add(f);
 		}
 		return result;
 	}
@@ -161,7 +162,7 @@ public class ParserScheduler {
 		
 		//Create and start parser threads
 		for(int i = 0; i < numThreads; i++){
-			ParserThread p = new ParserThread(i,this, env, language.createParser(env));
+			ParserThread p = new ParserThread(i,this, env, parserFactory.createParser(env.getParserInterface()));
 			p.start();
 			idleWorkerThreads.add(p);
 			workerThreads[i] = p;
@@ -172,7 +173,7 @@ public class ParserScheduler {
 		
 		
 		//parse input sources
-		for(ParserInput s: inputSources){
+		for(ComplexParserInput s: inputSources){
 			ParserThread t = getThread();
 			t.parseFile(null,s, "abc");
 		}
@@ -186,7 +187,7 @@ public class ParserScheduler {
 
 		
 		outer: while(true){
-			ParserInput nextInclude;
+			ComplexParserInput nextInclude;
 			synchronized (this){
 				while(importQueue.isEmpty()){
 					if(idleWorkerThreads.size() == numThreads){

@@ -22,9 +22,9 @@ import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.NonParamDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
 import com.sc2mod.andromeda.parsing.InclusionType;
-import com.sc2mod.andromeda.parsing.Source;
 import com.sc2mod.andromeda.parsing.SourceInfo;
 import com.sc2mod.andromeda.parsing.SourceManager;
+import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
@@ -244,7 +244,7 @@ public class StructureXMLVisitor extends VoidVisitorAdapter{
 		XMLWriter writer = this.writer;
 		int size = fieldDeclaration.getDeclaredVariables().size();
 		for(int i = 0; i < size; i++){
-			SyntaxNode sn =  fieldDeclaration.getDeclaredVariables().elementAt(i);
+			SyntaxNode sn =  fieldDeclaration.getDeclaredVariables().get(i);
 			NonParamDecl fd = (NonParamDecl) sn.getSemantics();
 			
 			if(inRecord){

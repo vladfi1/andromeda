@@ -1,7 +1,7 @@
 package com.sc2mod.andromeda.environment.annotations;
 
 import com.sc2mod.andromeda.environment.SemanticsElement;
-import com.sc2mod.andromeda.notifications.Problem;
+import com.sc2mod.andromeda.problems.Problem;
 
 public interface IAnnotationType {
 	

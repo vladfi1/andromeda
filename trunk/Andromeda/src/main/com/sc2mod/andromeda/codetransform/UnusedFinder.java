@@ -24,10 +24,10 @@ import com.sc2mod.andromeda.environment.types.impl.RecordTypeImpl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.options.Configuration;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 
 /**
  * Class for finding unused content

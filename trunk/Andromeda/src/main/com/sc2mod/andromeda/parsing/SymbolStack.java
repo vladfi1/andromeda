@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Stack;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.parser.Symbol;
+import com.sc2mod.andromeda.parser.cup.Symbol;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 
 
 /**

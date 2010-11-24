@@ -1,7 +1,7 @@
 package com.sc2mod.andromeda.environment.scopes;
 
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 /**

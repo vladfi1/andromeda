@@ -24,7 +24,8 @@ public class CodeGenPhase extends Phase{
 		CodeGenVisitor c = new CodeGenVisitor(semEnv, options,snv.getNameProvider());
 		if(!semEnv.typeProvider.getClasses().isEmpty()) {
 			ClassGenerator cg = new IndexClassGenerator(env.getTransientData().getIndexInformation(),semEnv,c,snv.getNameProvider(), options);
-			cg.generateClasses(semEnv.typeProvider.getClasses());
+		
+			cg.generateClasses(semEnv.typeProvider.getSystemClass("Class"),semEnv.typeProvider.getClasses());
 		}
 		c.generateCode(snv,env.getSyntaxTree());
 		c.writeInit(env.getSyntaxTree());

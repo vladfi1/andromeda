@@ -14,8 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.options.InvalidParameterException;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.program.Program;
 
 public class Files {

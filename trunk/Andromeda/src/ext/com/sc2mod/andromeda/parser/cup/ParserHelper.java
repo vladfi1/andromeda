@@ -7,11 +7,12 @@
  *	in any form without my permission.
  *  
  */
-package com.sc2mod.andromeda.parsing;
+package com.sc2mod.andromeda.parser.cup;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
+import com.sc2mod.andromeda.syntaxNodes.BasicTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
@@ -34,8 +35,8 @@ public class ParserHelper {
 	public static void transformFunctionModifiers(ModifierListNode list){
 		int size = list.size();
 		for(int i=0;i<size;i++){
-			if(list.elementAt(i) == ModifierSE.STATIC){
-				list.setElementAt(ModifierSE.PRIVATE, i);
+			if(list.get(i) == ModifierSE.STATIC){
+				list.set(i,ModifierSE.PRIVATE);
 			}
 			
 		}
@@ -56,7 +57,6 @@ public class ParserHelper {
 	public static ArrayAccessExprNode arrayTypeToAccess(ArrayTypeNode a) {
 		
 		ExprListNode dimensions = a.getDimensions();
-		int size = dimensions.size();
 		TypeNode wrappedType = a.getWrappedType();
 		ExprNode e = null;
 		if(wrappedType instanceof SimpleTypeNode){
@@ -69,8 +69,7 @@ public class ParserHelper {
 		}
 	
 		e.setPos(wrappedType.getLeftPos(), wrappedType.getRightPos());
-		for(int i=0;i<size;i++){
-			ExprNode dim = dimensions.elementAt(i);
+		for(ExprNode dim : dimensions){
 			int right = dim.getRightPos();
 			int left = e.getLeftPos();
 			e = new ArrayAccessExprNode(e, dim);

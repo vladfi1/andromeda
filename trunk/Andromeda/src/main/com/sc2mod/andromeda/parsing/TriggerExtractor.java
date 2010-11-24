@@ -30,6 +30,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.sc2mod.andromeda.parsing.framework.Source;
+
 
 /**
  * Finds all trigger source code in a map and returns it as a list.

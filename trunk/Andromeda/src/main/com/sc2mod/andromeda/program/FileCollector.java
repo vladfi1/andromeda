@@ -13,10 +13,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
 import com.sc2mod.andromeda.parsing.FileSource;
-import com.sc2mod.andromeda.parsing.Source;
+import com.sc2mod.andromeda.parsing.framework.Source;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 
 public class FileCollector {
 

@@ -1,7 +1,7 @@
 package com.sc2mod.andromeda.semAnalysis;
 
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.InstanceLimitSetterNode;

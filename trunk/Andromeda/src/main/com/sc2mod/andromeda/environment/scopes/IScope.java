@@ -9,7 +9,7 @@ import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 
 /**
  * A scope, also called namespace, is a part of code

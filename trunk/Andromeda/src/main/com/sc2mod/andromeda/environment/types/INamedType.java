@@ -16,7 +16,7 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.annotations.IAnnotatable;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 
 
 /**

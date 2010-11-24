@@ -11,8 +11,8 @@ package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 
 /**
  * A variable stack is a datastructure that is able to register local

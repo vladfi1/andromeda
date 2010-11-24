@@ -3,8 +3,8 @@ package com.sc2mod.andromeda.parsing.options;
 import java.io.File;
 import java.io.IOException;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.ProblemResponse;
+import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.problems.ProblemResponse;
 import com.sc2mod.andromeda.program.Program;
 import com.sc2mod.andromeda.util.Files;
 import com.sc2mod.andromeda.util.Strings;

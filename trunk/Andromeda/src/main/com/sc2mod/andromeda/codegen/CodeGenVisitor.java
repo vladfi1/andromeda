@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.sc2mod.andromeda.classes.ClassGenerator;
+import com.sc2mod.andromeda.codegen.buffers.AdvancedBuffer;
 import com.sc2mod.andromeda.codegen.buffers.GlobalVarBuffer;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.Environment;
@@ -34,10 +35,10 @@ import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.Variable;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.SourceInfo;
 import com.sc2mod.andromeda.parsing.options.Configuration;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.BreakStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
@@ -79,9 +80,8 @@ public class CodeGenVisitor extends CodeGenerator {
 	private boolean noCodeGenerated;
 	public CodeGenExpressionVisitor expressionVisitor;
 
-	public SimpleBuffer curBuffer = null;
+	public AdvancedBuffer curBuffer = null;
 	// SimpleBuffer extraStatementBuffer = new SimpleBuffer(64);
-	public int curIndent;
 	private Function curFunction;
 	private IRecordType curType;
 	private boolean inLib;
@@ -124,7 +124,7 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	public CodeGenVisitor(Environment env, Configuration options, INameProvider nameProvider) {
 		super(env, options, nameProvider);
-		this.expressionVisitor = new CodeGenExpressionVisitor(this, env.typeProvider);
+		this.expressionVisitor = new CodeGenExpressionVisitor(this, env.typeProvider,options);
 	}
 
 	
@@ -205,38 +205,26 @@ public class CodeGenVisitor extends CodeGenerator {
 	@Override
 	public void visit(StructDeclNode structDeclaration) {
 		IStruct struct = (IStruct) structDeclaration.getSemantics();
-		Configuration options = this.options;
-		int curIndent = this.curIndent;
-		SimpleBuffer structBuffer = this.structBuffer;
+		AdvancedBuffer structBuffer = this.structBuffer;
 
 		structBuffer.append("struct ");
 		structBuffer.append(struct.getGeneratedName());
-		if (ownLineForOpenBraces)
-			structBuffer.newLine(curIndent);
+		structBuffer.nlBeforeBrace();
 		structBuffer.append("{");
 
-		if (useIndent)
-			curIndent++;
+		structBuffer.indent();
 		Iterable<Variable> fields = TypeUtil.getNonStaticTypeFields(struct, false);
 		for (Variable field : fields) {
-			if (newLines)
-				structBuffer.newLine(curIndent);
+			structBuffer.nl();
 			structBuffer.append(field.getType().getGeneratedName());
 			structBuffer.append(" ");
 			structBuffer.append(field.getGeneratedName());
 			structBuffer.append(";");
 			;
 		}
-		if (useIndent)
-			curIndent--;
-		if (newLines) {
-			structBuffer.newLine(curIndent);
-			structBuffer.append("};");
-			structBuffer.newLine(curIndent);
-			structBuffer.newLine(curIndent);
-		} else {
-			structBuffer.append("};");
-		}
+		structBuffer.unindent();
+		structBuffer.nl().append("}").nl().nl();
+		
 		structBuffer.flushTo(fileBuffer.types, true);
 	}
 
@@ -246,15 +234,15 @@ public class CodeGenVisitor extends CodeGenerator {
 		// Do a forward declaration
 		functionBuffer.appendTo(fileBuffer.forwardDeclarations, true);
 		fileBuffer.forwardDeclarations.append(";", true);
-		if (newLines)
-			fileBuffer.forwardDeclarations.newLine();
+		
+		fileBuffer.forwardDeclarations.nl();
 
 		curBuffer = functionBuffer;
-
-		if(ownLineForOpenBraces) functionBuffer.newLine();
+		
+		
+		functionBuffer.nlBeforeBrace();
 		functionBuffer.append("{");
-		if (useIndent)
-			curIndent++;
+		functionBuffer.indent();
 
 		// Constructor? Insert beginning stuff
 		if (isConstructor)
@@ -269,8 +257,7 @@ public class CodeGenVisitor extends CodeGenerator {
 			if (local.isConst() && local.getNumReadAccesses() == 0)
 				continue;
 
-			if (newLines)
-				functionBuffer.newLine(curIndent);
+			functionBuffer.nl();
 			functionBuffer.append(local.getType().getGeneratedName());
 			functionBuffer.append(" ");
 			functionBuffer.append(local.getGeneratedName());
@@ -306,35 +293,27 @@ public class CodeGenVisitor extends CodeGenerator {
 		if (m.flowReachesEnd()) {
 			switch(m.getOperationType()){
 			case CONSTRUCTOR:
-				functionBuffer.newLine(curIndent);
+				functionBuffer.nl();
 				functionBuffer.append("return ").append(classGen.getThisName())
 						.append(";");
 				break;
 			case DESTRUCTOR:
-				functionBuffer.newLine(curIndent);
+				functionBuffer.nl();
 				Destructor d = (Destructor)curFunction;
 				Operation overridden = d.getOverrideInformation().getOverridenMethod();
 				String destrName = overridden==null?((IClass)d.getContainingType()).getNameProvider().getDeallocatorName():overridden.getGeneratedName();
 				curBuffer.append(destrName).append("(").append(classGen.getThisName()).append(");");
-				if(newLines) curBuffer.newLine(curIndent);
+				curBuffer.nl();
 				break;
 			case STATIC_INIT:
-				functionBuffer.newLine(curIndent);
+				functionBuffer.nl();
 				functionBuffer.append("return true;");
 				break;
 			}
 			
 		}
 
-		if (useIndent)
-			curIndent--;
-		if (newLines) {
-			functionBuffer.newLine(curIndent);
-			functionBuffer.append("}");
-			functionBuffer.newLine(curIndent);
-		} else {
-			functionBuffer.append("}");
-		}
+		generateMethodFooter(functionBuffer);
 
 	}
 	
@@ -346,13 +325,10 @@ public class CodeGenVisitor extends CodeGenerator {
 		curFunction = init;
 
 		// Cache in locals for speed
-		Configuration options = this.options;
 		SimpleBuffer functionBuffer = this.functionBuffer;
 
-		String comment = null;
 		if (insertComments) {
-			functionBuffer.append("//Static init");
-			functionBuffer.newLine();
+			functionBuffer.append("//Static init").nl();
 		}
 
 		// Init header
@@ -367,9 +343,8 @@ public class CodeGenVisitor extends CodeGenerator {
 		generateFunctionBody(init, initDecl.getBody(), false);
 		
 
-		if (newLines)
-			functionBuffer.newLine(curIndent);
-	
+		functionBuffer.nl();
+		
 		functionBuffer.flushTo(fileBuffer.functions, true);
 		
 		curFunction = null;
@@ -392,7 +367,6 @@ public class CodeGenVisitor extends CodeGenerator {
 		curFunction = m;
 
 		// Cache in locals for speed
-		Configuration options = this.options;
 		SimpleBuffer functionBuffer = this.functionBuffer;
 
 		OperationType functionType = m.getOperationType();
@@ -419,9 +393,8 @@ public class CodeGenVisitor extends CodeGenerator {
 		} else
 			functionBuffer.append(";");
 
-		if (newLines)
-			functionBuffer.newLine(curIndent);
-
+		functionBuffer.nl();
+		
 		// Natives are appended to the forward declarations
 		if (m.isNative()) {
 			functionBuffer.flushTo(fileBuffer.forwardDeclarations, true);
@@ -434,13 +407,12 @@ public class CodeGenVisitor extends CodeGenerator {
 	
 	private String generateGlobalInitFunction(Variable g) {
 		List<StmtNode> initCode = g.getInitCode();
-		boolean newLines = this.newLines;
+		
 		curBuffer = functionBuffer;
 		
 		//Comment
 		if(insertComments){
-			curBuffer.append("//Variable init for " + g.getUid());
-			curBuffer.newLine();
+			curBuffer.append("//Variable init for " + g.getUid()).nl();
 		}
 		
 		curBuffer.append("static ").append(g.getType().getGeneratedName()).append(" ");
@@ -448,28 +420,24 @@ public class CodeGenVisitor extends CodeGenerator {
 		curBuffer.append(funcName).append("()");
 		
 		curBuffer.appendTo(fileBuffer.forwardDeclarations,true);
-		fileBuffer.forwardDeclarations.append(";").newLine();
+		fileBuffer.forwardDeclarations.append(";").nl();
 		
 		curBuffer.append("{");
 
-		if(useIndent)curIndent++;
-
+		curBuffer.indent();
+		
 		//Generate init code
 		for(StmtNode s: initCode){
-			if(newLines){
-				curBuffer.newLine(curIndent);
-			}
+			curBuffer.nl();
 			s.accept(this);
 		}
 		
-		if(newLines){
-			curBuffer.newLine(curIndent);
-		}
+		curBuffer.nl();
+		
 		//Generate return
 		curBuffer.append("return ");
 		invokeRValueVisitor(g.getDeclarator().getInitializer(), true, true);
 		
-		if(useIndent)curIndent--;		
 		generateMethodFooter(curBuffer);
 		
 		//Flush to functions
@@ -481,9 +449,8 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	private void generateGlobalDecl(Variable g, boolean isPrivate) {
 		GlobalVarBuffer globalVarBuffer = this.globalVarBuffer;
-		if (newLines)
-			globalVarBuffer.newLine();
-
+		globalVarBuffer.nl();
+		
 		// Modifiers
 		if (isPrivate)
 			globalVarBuffer.append("static ");
@@ -512,15 +479,16 @@ public class CodeGenVisitor extends CodeGenerator {
 		globalVarBuffer.flushTo(fileBuffer.variables, true);
 	}
 
-	public void generateFieldInit(SimpleBuffer buffer,IClass c,Variable f) {
+	public void generateFieldInit(AdvancedBuffer buffer,IClass c,Variable f) {
 		
-		SimpleBuffer curBufferBefore = curBuffer;
+		AdvancedBuffer curBufferBefore = curBuffer;
 		curBuffer = buffer;
 
 		//Explicit init side effects?
 		if(f.getInitCode() != null){
 			for(StmtNode s: f.getInitCode()){
 				s.accept(this);
+				buffer.nl();
 			}
 		}
 		
@@ -543,7 +511,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		VarDeclListNode f = gvd.getFieldDecl().getDeclaredVariables();
 		int size = f.size();
 		for (int i = 0; i < size; i++) {
-			Variable field = f.elementAt(i).getName().getSemantics();
+			Variable field = f.get(i).getName().getSemantics();
 			if (inLib && field.getNumReadAccesses() == 0)
 				continue;
 			generateGlobalDecl(field,
@@ -556,7 +524,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		VarDeclListNode f = fieldDeclaration.getDeclaredVariables();
 		int size = f.size();
 		for (int i = 0; i < size; i++) {
-			Variable field = f.elementAt(i).getName().getSemantics();
+			Variable field = f.get(i).getName().getSemantics();
 			//XPilot: don't remove a variable if it is written to
 			if (inLib && field.getNumReadAccesses() == 0 && field.getNumWriteAccesses() == 0)
 				continue;
@@ -577,13 +545,11 @@ public class CodeGenVisitor extends CodeGenerator {
 		SimpleBuffer curBuffer = this.curBuffer;
 		if(doBraces){
 			curBuffer.append("{");
-			if (useIndent)
-				curIndent++;
+			curBuffer.indent();
 		}
 		
 		if (codeBefore != null && !codeBefore.isEmpty()) {
-			if (newLines)
-				curBuffer.newLine(curIndent);
+			curBuffer.nl();
 			codeBefore.flushTo(curBuffer, false);
 		}
 
@@ -593,11 +559,8 @@ public class CodeGenVisitor extends CodeGenerator {
 			codeAfter.flushTo(curBuffer, false);
 
 		if(doBraces){
-			if (useIndent)
-				curIndent--;
-	
-			if (newLines)
-				curBuffer.newLine(curIndent);
+			curBuffer.unindent();
+			curBuffer.nl();
 			curBuffer.append("}");
 		}
 	}
@@ -616,12 +579,11 @@ public class CodeGenVisitor extends CodeGenerator {
 		noCodeGenerated = false;
 
 		for (int i = 0; i < size; i++) {
-			if (newLines) {
-				if (!noCodeGenerated)
-					curBuffer.newLine(curIndent);
-				noCodeGenerated = false;
-			}
-			statementList.elementAt(i).accept(this);
+			if (!noCodeGenerated)
+				curBuffer.nl();
+			noCodeGenerated = false;
+		
+			statementList.get(i).accept(this);
 		}
 
 		// Restore generated code
@@ -637,7 +599,7 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	@Override
 	public void visit(IfStmtNode ifThenElseStatement) {
-		SimpleBuffer curBuffer = this.curBuffer;
+		AdvancedBuffer curBuffer = this.curBuffer;
 
 		// if / condition
 		invokeRValueVisitor(ifThenElseStatement.getCondition(), false, 
@@ -648,36 +610,18 @@ public class CodeGenVisitor extends CodeGenerator {
 
 		// then statement
 		StmtNode stmt = ifThenElseStatement.getThenStatement();
-		if (ownLineForOpenBraces)
-			curBuffer.newLine(curIndent);
+		curBuffer.nlBeforeBrace();
 		visitExt((BlockStmtNode) stmt, null, null, true);
-		
-//		if (newLines && !(stmt instanceof BlockStatement)) {
-//			curBuffer.newLine(curIndent + 1);
-//			stmt.accept(this);
-//			curBuffer.newLine(curIndent);
-//		} else {
-//			if (ownLineForOpenBraces)
-//				curBuffer.newLine(curIndent);
-//			
-//			stmt.accept(this);
-//		}
 
 		// else statement
 		stmt = ifThenElseStatement.getElseStatement();
 		if (stmt != null) {
-
-			if (newLines && ownLineForOpenBraces) {
-				if (whitespaceInExprs)
-					curBuffer.append(" else");
-				else
-					curBuffer.append("else");
-				curBuffer.newLine(curIndent);
-			} else if (whitespaceInExprs)
-				curBuffer.append(" else ");
-			else
-				curBuffer.append("else ");
-			
+	
+			curBuffer.exprWhitespace();
+			curBuffer.append("else");
+			curBuffer.exprWhitespace();
+			curBuffer.nlBeforeBrace();
+		
 			if(stmt instanceof BlockStmtNode){
 				visitExt((BlockStmtNode) stmt, null, null, true);
 			} else {
@@ -690,69 +634,23 @@ public class CodeGenVisitor extends CodeGenerator {
 	@Override
 	public void visit(ForEachStmtNode forEachStatement) {
 		throw new InternalProgramError("ForEach loops cannot exist in the code generation phase!");
-//		SimpleBuffer curBuffer = this.curBuffer;
-//
-//		ForeachSemantics semantics = (ForeachSemantics) forEachStatement.getSemantics();
-//		NameExprNode iter = semantics.getIterator();
-//		
-//		
-//		//Comment
-//		if(insertComments){
-//			curBuffer.append("//Generated for each loop");
-//			curBuffer.newLine(curIndent);
-//		}
-//		
-//		//Init (iterator = leftside.getIterator();)
-//		curBuffer.append(((Variable)iter.getSemantics()).getGeneratedName()).append("=");		
-//		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getGetIterator(), forEachStatement.getExpression(), SyntaxGenerator.EMPTY_EXPRESSIONS);
-//		curBuffer.append(";");
-//		
-//		if(newLines) curBuffer.newLine(curIndent);
-//		
-//		//Condition: (while(iterator.hasNext()))
-//		curBuffer.append("while(");
-//		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getHasNext(), iter, SyntaxGenerator.EMPTY_EXPRESSIONS);
-//		curBuffer.append("){");
-//		
-//		if(newLines){
-//			if(useIndent)curIndent++;
-//			curBuffer.newLine(curIndent);
-//		}
-//		
-//		//Update: itervar = iterator.next();
-//		LocalVarDecl iterVarDecl = semantics.getIterVarDecl();
-//		curBuffer.append(iterVarDecl.getGeneratedName()).append("=");
-//		expressionVisitor.generateMethodInvocation(curBuffer, semantics.getNext(), iter, SyntaxGenerator.EMPTY_EXPRESSIONS);
-//		curBuffer.append(";").newLine(curIndent);		
-//
-//		// loop body
-//		BlockStmtNode stmt = (BlockStmtNode) forEachStatement.getThenStatement();
-//		visitExt(stmt, null, null,false);
-//		
-//		// loop end and delete afterwards, if desired
-//		if(newLines){
-//			if(useIndent)curIndent--;
-//			curBuffer.newLine(curIndent);
-//		}
-//		curBuffer.append("}");
-//		
-//		if(semantics.doDestroyAfter()){
-//			curBuffer.newLine(curIndent);
-//			semantics.getDelStatement().accept(this);
-//		}
-		
-		
-		
-
 	}
+	
+	@Override
+	public void visit(ForStmtNode forStatement) {
+		throw new InternalProgramError("For loops cannot exist in the code gen phase");
+	}
+	
+	
 	
 	@Override
 	public void visit(WhileStmtNode whileStatement) {
 		SimpleBuffer curBuffer = this.curBuffer;
 
-		curIndent++;
+		
+		expressionVisitor.curExprBuffer.indent();
 		invokeRValueVisitor(whileStatement.getCondition(), false, false);
-		curIndent--;
+		expressionVisitor.curExprBuffer.unindent();
 		
 		curBuffer.append("while(");
 		expressionVisitor.curExprBuffer.flushTo(curBuffer, false);
@@ -768,44 +666,27 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	@Override
 	public void visit(DoWhileStmtNode doWhileStatement) {
-		SimpleBuffer curBuffer = this.curBuffer;
-		Configuration options = this.options;
-
+		AdvancedBuffer curBuffer = this.curBuffer;
+		
 		// do
 		curBuffer.append("do");
 
 		// loop body
 		BlockStmtNode stmt = (BlockStmtNode) doWhileStatement.getThenStatement();
-		if (newLines) {
-			if (ownLineForOpenBraces)
-				curBuffer.newLine(curIndent);
-			curBuffer.append("{");
-			if (useIndent)
-				curIndent++;
-			stmt.childrenAccept(this);
-			if (useIndent)
-				curIndent--;
-		} else {
-			curBuffer.append("{");
-			stmt.childrenAccept(this);
-		}
-
+		curBuffer.nlBeforeBrace().append("{");
+		curBuffer.indent();
+		stmt.childrenAccept(this);
+		curBuffer.unindent();
+	
 		// while
 		ExprNode cond = doWhileStatement.getCondition();
-		if (useIndent)
-			curIndent++;
+		expressionVisitor.curExprBuffer.indent();
 		invokeRValueVisitor(cond, false, false);
-
-		if (useIndent)
-			curIndent--;
-
-		// Block end
-		if (newLines) {
-			curBuffer.newLine(curIndent);
-			curBuffer.append("}");
-		} else {
-			curBuffer.append("}");
-		}
+		expressionVisitor.curExprBuffer.unindent();
+		
+		//block end
+		curBuffer.nl().append("}");
+		
 		// actual while
 		curBuffer.append("while(");
 		expressionVisitor.curExprBuffer.flushTo(curBuffer, false);
@@ -813,82 +694,24 @@ public class CodeGenVisitor extends CodeGenerator {
 
 	}
 
-	@Override
-	public void visit(ForStmtNode forStatement) {
-		throw new InternalProgramError("For loops cannot exist in the code gen phase");
-//		SimpleBuffer curBuffer = this.curBuffer;
-//		Configuration options = this.options;
-//
-//		// comment
-//		if (newLines && insertComments) {
-//			curBuffer.append("//generated for-loop");
-//			curBuffer.newLine(curIndent);
-//		}
-//
-//		// init
-//		StmtNode s = forStatement.getForInit();
-//		s.accept(this);
-//
-//		// for
-//		if (newLines)
-//			curBuffer.newLine(curIndent);
-//		curIndent++;
-//		invokeRValueVisitor(forStatement.getCondition(), false, false);
-//		curIndent--;
-//
-//		curBuffer.append("while(");
-//		expressionVisitor.curExprBuffer.flushTo(curBuffer, false);
-//		curBuffer.append(")");
-//
-//		// loop body
-//		StmtNode stmt = forStatement.getThenStatement();
-//		if (newLines) {
-//			if (ownLineForOpenBraces)
-//				curBuffer.newLine(curIndent);
-//			curBuffer.append("{");
-//			if (useIndent)
-//				curIndent++;
-//			stmt.childrenAccept(this);
-//			curBuffer.newLine(curIndent);
-//		} else {
-//			curBuffer.append("{");
-//			stmt.childrenAccept(this);
-//		}
-//
-//		// for-update
-//		forStatement.getForUpdate().getStatements().accept(this);
-//		if (useIndent)
-//			curIndent--;
-//
-//		// Block end
-//		if (newLines) {
-//			curBuffer.newLine(curIndent);
-//			curBuffer.append("}");
-//		} else {
-//			curBuffer.append("}");
-//		}
-
-
-	}
+	
 
 
 
 	@Override
 	public void visit(ExprListNode el) {
 		SimpleBuffer curBuffer = this.curBuffer;
-		Configuration options = this.options;
-
+		
 		int size = el.size();
 		for (int i = 0; i < size; i++) {
-			if (newLines && i != 0)
-				curBuffer.newLine(curIndent);
-			invokeRValueVisitor(el.elementAt(i), true, true);
+			curBuffer.nl();
+			invokeRValueVisitor(el.get(i), true, true);
 		}
 	}
 
 	@Override
 	public void visit(LocalVarDeclStmtNode l) {
-		SimpleBuffer curBuffer = this.curBuffer;
+		AdvancedBuffer curBuffer = this.curBuffer;
 
 		LocalVarDeclNode def = l.getVarDeclaration();
 		VarDeclListNode decls = def.getDeclarators();
@@ -896,7 +719,7 @@ public class CodeGenVisitor extends CodeGenerator {
 
 		int numGenerated = 0;
 		for (int i = 0; i < size; i++) {
-			VarDeclNode decl = decls.elementAt(i);
+			VarDeclNode decl = decls.get(i);
 
 			// Get semantics
 			LocalVarDecl v = (LocalVarDecl) decl.getName().getSemantics();
@@ -938,10 +761,9 @@ public class CodeGenVisitor extends CodeGenerator {
 			if (isOnlyDecl) {
 				// An overriding declaration must be inited with the default
 				// value of the type
-				if (whitespaceInExprs)
-					curBuffer.append(" = ");
-				else
-					curBuffer.append("=");
+				curBuffer.exprWhitespace();
+				curBuffer.append("=");
+				curBuffer.exprWhitespace();
 				curBuffer.append(v.getType().getDefaultValueStr());
 				curBuffer.append(";");
 			} else
@@ -980,7 +802,7 @@ public class CodeGenVisitor extends CodeGenerator {
 				Operation overridden = d.getOverrideInformation().getOverridenMethod();
 				String destrName = overridden==null?((IClass)d.getContainingType()).getNameProvider().getDeallocatorName():overridden.getGeneratedName();
 				curBuffer.append(destrName).append("(").append(classGen.getThisName()).append(");");
-				if(newLines) curBuffer.newLine(curIndent);
+				curBuffer.nl();
 				curBuffer.append("return;");
 				break;
 			default:

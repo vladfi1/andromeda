@@ -81,7 +81,7 @@ public abstract class TransformationVisitor extends VoidTreeScanVisitor {
 			StmtListNode stmts = statement.getStatements();
 			int length = stmts.size();
 			for(int i = 0;i<length;i++){
-				insertBeforeStmts.add(stmts.elementAt(i));
+				insertBeforeStmts.add(stmts.get(i));
 			}
 		} else {
 			insertBeforeStmts.add(statement);
@@ -121,7 +121,7 @@ public abstract class TransformationVisitor extends VoidTreeScanVisitor {
 	protected int insertStatementsAt(StmtListNode where, int index){
 		int size = where.size();
 		for(StmtNode insert: insertBeforeStmts){
-			where.insertElementAt(insert,index++);
+			where.add(index++,insert);
 			size++;
 		}
 		insertBeforeStmts.clear();
@@ -145,7 +145,7 @@ public abstract class TransformationVisitor extends VoidTreeScanVisitor {
 		VarDeclListNode vds = l.getVarDeclaration().getDeclarators();
 		int size = vds.size();
 		for(int i=0;i<size;i++){
-			VarDeclNode vd = vds.elementAt(i);
+			VarDeclNode vd = vds.get(i);
 			vd.accept(this);
 		}
 	}
@@ -201,7 +201,7 @@ public abstract class TransformationVisitor extends VoidTreeScanVisitor {
 		if(!insertBeforeStmts.isEmpty()){
 			
 			//Create an aborting if
-			whileStatement.getThenStatement().getStatements().insertElementAt(syntaxGenerator.createLoopAbortIf(whileStatement.getCondition()),0);
+			whileStatement.getThenStatement().getStatements().add(0,syntaxGenerator.createLoopAbortIf(whileStatement.getCondition()));
 			
 			//Insert the additional statements before that if
 			insertStatementsAt(whileStatement.getThenStatement().getStatements(),0);
@@ -310,7 +310,7 @@ public abstract class TransformationVisitor extends VoidTreeScanVisitor {
 		if(!insertBeforeStmts.isEmpty()){
 			
 			//Create an aborting if
-			forStatement.getThenStatement().getStatements().insertElementAt(syntaxGenerator.createLoopAbortIf(forStatement.getCondition()),0);
+			forStatement.getThenStatement().getStatements().add(0,syntaxGenerator.createLoopAbortIf(forStatement.getCondition()));
 			
 			//Insert the additional statements before that if
 			insertStatementsAt(forStatement.getThenStatement().getStatements(),0);
@@ -347,19 +347,19 @@ public abstract class TransformationVisitor extends VoidTreeScanVisitor {
 	public void visit(StmtListNode statementList) {
 		int size = statementList.size();
 		for(int i=0;i<size;i++){
-			StmtNode s = statementList.elementAt(i);
+			StmtNode s = statementList.get(i);
 			s.accept(this);
 			
 			//Do statement replacement if desired
 			if(replaceStatement != null){
-				statementList.setElementAt(replaceStatement, i);
+				statementList.set(i,replaceStatement);
 				replaceStatement = null;
 			}
 			
 			//Do before insertion if desired
 			if(!insertBeforeStmts.isEmpty()){
 				for(StmtNode insert: insertBeforeStmts){
-					statementList.insertElementAt(insert,i++);
+					statementList.add(i++,insert);
 					size++;
 				}
 				insertBeforeStmts.clear();

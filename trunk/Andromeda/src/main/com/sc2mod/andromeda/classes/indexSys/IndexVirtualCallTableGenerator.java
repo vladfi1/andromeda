@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.classes.VirtualCallTable;
 import com.sc2mod.andromeda.classes.VirtualCallTableGenerator;
 import com.sc2mod.andromeda.codegen.CodeGenerator;
 import com.sc2mod.andromeda.codegen.INameProvider;
+import com.sc2mod.andromeda.codegen.buffers.AdvancedBuffer;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Method;
@@ -37,11 +38,9 @@ import com.sc2mod.andromeda.parsing.options.Parameter;
 public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 
 	private ArrayList<Operation> methodLine = new ArrayList<Operation>(20);
-	private SimpleBuffer buffer = new SimpleBuffer(512);
-	private SimpleBuffer paramBuffer = new SimpleBuffer(64);
+	private AdvancedBuffer buffer;
+	private AdvancedBuffer paramBuffer;
 	private SimpleBuffer flushTo;
-	private boolean newLine;
-	private boolean useIndent;
 	private boolean returnsVoid;
 	private CodeGenerator generator;
 	private boolean insertDescriptionComments;
@@ -54,9 +53,9 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 	
 	public IndexVirtualCallTableGenerator(BasicTypeSet basic, ClassGenerator classGen,IClass metaClass,INameProvider nameProvider, CodeGenerator generator, SimpleBuffer flushTo, Configuration options) {
 		super(basic, metaClass,nameProvider,generator,flushTo,options);
+		buffer = new AdvancedBuffer(512,options);
+		paramBuffer = new AdvancedBuffer(64,options);
 		this.flushTo = flushTo;
-		this.newLine = options.getParamBool(Parameter.CODEGEN_NEW_LINES);
-		this.useIndent = options.getParamBool(Parameter.CODEGEN_USE_INDENT);
 		this.generator = generator;
 		this.classGen = classGen;
 		this.nameProvider = nameProvider;
@@ -75,7 +74,7 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 		int size = table.size();
 		for(int i = startOffset;i<size;i++){
 			
-			generateMethodLine(vct,i);
+			generateTableMethod(vct,i);
 		}
 		for(VirtualCallTable child: vct.subTables){
 			if(child.table.size()>size) generateTable(child,size);
@@ -103,7 +102,7 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 		}
 	}
 	
-	private void generateMethodLine(VirtualCallTable vct, int i){
+	private void generateTableMethod(VirtualCallTable vct, int i){
 
 		virtualCallerName = nameProvider.getGlobalNameRawNoPrefix("vcall___".concat(vct.table.get(i).getGeneratedName()));
 		
@@ -124,8 +123,7 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 								,null,true);
 		//Forward declaration
 		buffer.appendTo(generator.fileBuffer.forwardDeclarations, true);
-		generator.fileBuffer.forwardDeclarations.append(";");
-		if(newLine) generator.fileBuffer.forwardDeclarations.newLine();
+		generator.fileBuffer.forwardDeclarations.append(";").nl();
 		
 		buffer.append("{");
 		
@@ -134,8 +132,7 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 
 		
 		
-		
-		if(newLine)buffer.newLine(useIndent?1:0);
+		buffer.indent().nl().unindent();
 		buffer.append(BASIC.INT.getGeneratedName()).append(" ").append(deciderName).append("=");
 		buffer.append(metaClass
 				.getNameProvider()
@@ -149,7 +146,8 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 		
 		generateSignature(m);
 		
-		writeMethodLine(0,findTwopow(methodLine.size()),useIndent?1:0);
+		buffer.indent();
+		writeMethodLine(0,findTwopow(methodLine.size()));
 		
 		methodLine.clear();
 		
@@ -178,9 +176,9 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 		}
 	}
 
-	private void writeMethodLine(int start, int length, int indent) {
+	private void writeMethodLine(int start, int length) {
 		if(length==1){
-			if(newLine)buffer.newLine(indent);
+			buffer.nl();
 			if(!returnsVoid){
 				buffer.append("return ");
 			}
@@ -198,17 +196,25 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 			
 			boolean needIf = offset<methodLine.size();
 			if(needIf){
-				if(newLine)buffer.newLine(indent);
+				buffer.nl();
 				buffer.append("if(").append(deciderName).append("<").append(offset).append("){");
 			}
-			writeMethodLine(start,length,useIndent?(needIf?indent+1:indent):0);		
+			if(needIf){
+				buffer.indent();
+			}
+			writeMethodLine(start,length);		
+			if(needIf){
+				buffer.unindent();
+			}
 			
 			if(needIf){
-				if(newLine)buffer.newLine(indent);
+				buffer.nl();
 				buffer.append("}");
 				buffer.append("else{");
-				writeMethodLine(offset,length,useIndent?indent+1:0);
-				if(newLine)buffer.newLine(indent);
+				buffer.indent();
+				writeMethodLine(offset,length);
+				buffer.unindent();
+				buffer.nl();
 				buffer.append("}");
 			}
 		}		

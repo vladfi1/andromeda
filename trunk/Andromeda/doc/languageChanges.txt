@@ -1,9 +1,9 @@
 -Packages should now work correctly and you should be able to use qualified names, if necessary
 -Scoping and visibility now works correctly
--You only have one namespace for fields, accessors and methods now,
+-You only have one namespace for fields and methods now,
 	so you cannot have a method x() if you have a field x.
 	This solves some ambiguities.
--You can now enrich almost any type.
+-You can now enrich almost any type now.
 -Changes to the visibility system:
 		=> things without any visibility modifier are now considered public.
 			Using "public" explicitly is deprecated but will still compile.
@@ -17,7 +17,7 @@
 			Even enrichments of a class cannot use the classes private fields.
 -Improved the generic type system. Now you can not only have generic classes, also structs,
 	interfaces and even extensions can be generic.	
--Changed the syntax for type extensions. This was necessary because the grammar got ambiguous by adding
+-Changed the syntax for type extensions and type aliases. This was necessary because the grammar got ambiguous by adding
 	generic type extensions
 -You are now able to enrich a type extension without a additional enrich block by adding a body to the extension declaration
 	This has the same effect as explicitly adding a type extension
@@ -27,4 +27,8 @@
 -Method return types are now covariant. That means that if you override a method in a subclass,
 	you can give the overriding method another return type as the overridden method, if the
 	new return type is a subtype of the overridden return type
--Removed accessors. They were replaced by the accessor quick notation and the auto method calling.
+-Removed accessors. They were replaced by the accessor quick notation and the automatic get/set resolution
+-Introduced uncheck casts
+-Removed key extensions
+-Removed @StringCall (use .name for functions instead)
+-Removed overriding of native functions (this feature might appear in another form in a future release)

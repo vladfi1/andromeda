@@ -4,8 +4,8 @@ import static com.sc2mod.andromeda.parsing.options.ParamType.*;
 
 import java.io.File;
 
-import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.ProblemResponse;
+import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.problems.ProblemResponse;
 import com.sc2mod.andromeda.util.Files;
 
 public enum Parameter implements ICLOption, IConfigFileEntry{

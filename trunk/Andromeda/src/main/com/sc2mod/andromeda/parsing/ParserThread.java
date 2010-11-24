@@ -2,14 +2,12 @@ package com.sc2mod.andromeda.parsing;
 
 import java.io.FileNotFoundException;
 
-import com.sc2mod.andromeda.notifications.ErrorUtil;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.notifications.UnrecoverableProblem;
-import com.sc2mod.andromeda.parser.AndromedaScanner;
-import com.sc2mod.andromeda.parser.Symbol;
-import com.sc2mod.andromeda.syntaxNodes.ImportListNode;
+import com.sc2mod.andromeda.parsing.framework.IParser;
+import com.sc2mod.andromeda.parsing.framework.ParserInput;
+import com.sc2mod.andromeda.problems.ErrorUtil;
+import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ImportNode;
 import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
 import com.sc2mod.andromeda.syntaxNodes.PackageDeclNode;
@@ -26,7 +24,7 @@ public class ParserThread extends CompilerThread {
 	private boolean idle = true;
 	private boolean interrupted;
 	private IParser parser;
-	private ParserInput input;
+	private ComplexParserInput input;
 	private String typeName;
 	private int numParsed;
 	boolean packageDeclParsed;
@@ -58,7 +56,7 @@ public class ParserThread extends CompilerThread {
 		}
 	}
 	
-	public void parseFile(IParser parser,  ParserInput input , String typeName){
+	public void parseFile(IParser parser,  ComplexParserInput input , String typeName){
 		if(!idle){
 			throw ErrorUtil.defaultInternalError();
 		}
@@ -74,7 +72,7 @@ public class ParserThread extends CompilerThread {
 	}
 		
 	
-	public void doParseFile(IParser parser,  ParserInput input , String typeName){
+	public void doParseFile(IParser parser,  ComplexParserInput input , String typeName){
 		//if(typeName == null) typeName = input.getSource().getTypeName();
 		StopWatch timer = new StopWatch();
 		timer.start();
@@ -83,7 +81,7 @@ public class ParserThread extends CompilerThread {
 			Log.println(LogLevel.DETAIL,"    => Parsed " + typeName + " ["+ input.getSource().getName() +"] " + " (" + timer.getTime() + " ms) (" + ++numParsed + ")");
 	}
 	
-	private SourceFileNode parse(IParser parser, ParserInput input)  {
+	private SourceFileNode parse(IParser parser, ComplexParserInput input)  {
 		SourceReader a;
 		try {
 			a = compilationEnvironment.getSourceManager().getReader(input.getSource(), input.getInclusionType());
@@ -98,16 +96,8 @@ public class ParserThread extends CompilerThread {
 		}
 		if (a == null)
 			return null;
-		parser.setScanner(new AndromedaScanner(a));
-		Symbol sym;
-		try {
-			sym = parser.parse();
-		} catch (UnrecoverableProblem e){
-			throw e;
-		} catch (Exception e) {
-			throw new InternalProgramError(e);
-		}
-		SourceFileNode fi = ((SourceFileNode) sym.value);
+		SyntaxNode result = parser.parse(new ParserInput(a, a.getFileId()));
+		SourceFileNode fi = ((SourceFileNode) result);
 		SourceInfo fileInfo = compilationEnvironment.getSourceManager().getSourceInfoById(a.getFileId());
 		if(fileInfo == null)
 			throw new InternalProgramError("File has no file info");

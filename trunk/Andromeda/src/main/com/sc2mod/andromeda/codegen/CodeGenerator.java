@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.sc2mod.andromeda.classes.ClassGenerator;
+import com.sc2mod.andromeda.codegen.buffers.AdvancedBuffer;
 import com.sc2mod.andromeda.codegen.buffers.FileBuffer;
 import com.sc2mod.andromeda.codegen.buffers.GlobalVarBuffer;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
@@ -35,12 +36,12 @@ import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
 
 public abstract class CodeGenerator extends VoidVisitorAdapter {
 	
-	public FileBuffer fileBuffer = new FileBuffer();
-	public SimpleBuffer structBuffer = new SimpleBuffer(2048);
-	public SimpleBuffer functionBuffer = new SimpleBuffer(8192);
-	public GlobalVarBuffer globalVarBuffer = new GlobalVarBuffer(256);
-	public SimpleBuffer typedefBuffer = new SimpleBuffer(256);
-	public SimpleBuffer classInitBuffer = new SimpleBuffer(512);
+	public FileBuffer fileBuffer;
+	public AdvancedBuffer structBuffer;
+	public AdvancedBuffer functionBuffer;
+	public GlobalVarBuffer globalVarBuffer;
+	public AdvancedBuffer typedefBuffer;
+	public AdvancedBuffer classInitBuffer;
 	
 	private int stringLiteralBytes;
 	private int bytesOut;
@@ -60,29 +61,33 @@ public abstract class CodeGenerator extends VoidVisitorAdapter {
 	protected Operation errorMethod;
 	
 	protected boolean insertComments;
-	protected boolean newLines;
-	protected boolean whitespaceInExprs;
-	protected boolean useIndent;
-	protected boolean ownLineForOpenBraces;
 	
 	public void generateErrorCallPrefix(SimpleBuffer buffer){
 		buffer.append(errorMethod.getGeneratedName()).append("(");
 	}
 	
+	private void createBuffers(Configuration c) {
+		fileBuffer = new FileBuffer(c);
+		structBuffer = new AdvancedBuffer(2048,c);
+		functionBuffer = new AdvancedBuffer(8192,c);
+		globalVarBuffer = new GlobalVarBuffer(256,c);
+		typedefBuffer = new AdvancedBuffer(256,c);
+		classInitBuffer = new AdvancedBuffer(512,c);
+	}
+	
 	public CodeGenerator(Environment env2, Configuration options2, INameProvider np) {
+		createBuffers(options2);
 		this.env = env2;
 		this.options = options2;
 		this.nameProvider = np;
 		this.insertComments = options2.getParamBool(Parameter.CODEGEN_DESCRIPTION_COMMENTS);
-		this.newLines = options2.getParamBool(Parameter.CODEGEN_NEW_LINES);
-		this.useIndent = options2.getParamBool(Parameter.CODEGEN_USE_INDENT);
-		this.whitespaceInExprs = options2.getParamBool(Parameter.CODEGEN_WHITESPACES_IN_EXPRS);
-		this.ownLineForOpenBraces = options2.getParamBool(Parameter.CODEGEN_OWN_LINE_FOR_OPEN_BRACES);
 		
 		if(!env.typeProvider.getClasses().isEmpty()){
 			errorMethod = env.typeProvider.getSystemFunction(AndromedaSystemTypes.M_ERROR);
 		}
 	}
+
+
 
 	public CodeGenerator(CodeGenerator codeGenVisitor) {
 		this(codeGenVisitor.env, codeGenVisitor.options, codeGenVisitor.nameProvider);
@@ -102,8 +107,7 @@ public abstract class CodeGenerator extends VoidVisitorAdapter {
 		boolean isConstructor = m.getOperationType()==OperationType.CONSTRUCTOR;
 		
 		if(description!=null&&insertComments){
-			functionBuffer.append(description);
-			functionBuffer.newLine();
+			functionBuffer.append(description).nl();
 		}
 		
 		//Modifiers
@@ -173,55 +177,42 @@ public abstract class CodeGenerator extends VoidVisitorAdapter {
 	}
 	
 	public void generateMethodFooter(SimpleBuffer buffer) {
-		if(newLines){
-			buffer.newLine();
-			buffer.append("}");
-			buffer.newLine();
-			buffer.newLine();
-		} else {
-			buffer.append("}");
-	
-		}
+		buffer.unindent().nl().append("}").nl().nl();
 	}
 	
 	public void writeInit(SyntaxNode ast) {
 		SimpleBuffer buffer = functionBuffer;
-		boolean newLines = this.newLines;
 		
 		buffer.append("void initAndromeda(){");
-		int indent = 0;
-		if(useIndent)indent++;
-
-		if(newLines)buffer.newLine(indent);	
+		buffer.indent();
+		
+		buffer.nl();
 		buffer.append("trigger t;");
-		if(newLines)buffer.newLine(indent);	
+		buffer.nl();
 		
 		//Only append class init function if there are classes
 		if(classGen!=null)
 			buffer.append(classGen.getInitFunctionName()).append("();");
 		
 		//Get sorted static inits
-		List<StaticInit> staticInits = new StaticInitSorter().getSortedInits(ast);
+		List<StaticInit> staticInits = new StaticInitCollector().getSortedInits(ast);
 	
 		
 		for(StaticInit s : staticInits) {
-			writeStaticInit(s, indent);
+			writeStaticInit(s);
 		}
 		
 		generateMethodFooter(buffer);
-		if (newLines)
-			functionBuffer.newLine();
+		functionBuffer.nl();
 		
 		functionBuffer.flushTo(fileBuffer.functions, true);
 		
 	}
 
-	private void writeStaticInit(StaticInit s, int indent) {
+	private void writeStaticInit(StaticInit s) {
 		SimpleBuffer buffer = functionBuffer;
-		if(newLines)buffer.newLine(indent);
-		buffer.append("t = TriggerCreate(\"" + s.getGeneratedName() + "\");");
-		if(newLines)buffer.newLine(indent);
-		buffer.append("TriggerAddEventMapInit(t);");
+		buffer.nl().append("t = TriggerCreate(\"" + s.getGeneratedName() + "\");");
+		buffer.nl().append("TriggerAddEventMapInit(t);");
 	}
 	
 

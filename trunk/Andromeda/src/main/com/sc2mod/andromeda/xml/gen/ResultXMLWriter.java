@@ -14,10 +14,10 @@ import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.SourceLocation;
 import com.sc2mod.andromeda.parsing.CompilationResult;
-import com.sc2mod.andromeda.parsing.Source;
+import com.sc2mod.andromeda.parsing.framework.Source;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.SourceLocation;
 
 public class ResultXMLWriter {
 

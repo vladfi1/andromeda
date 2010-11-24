@@ -6,8 +6,8 @@ import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.generic.GenericHierachyGenerationVisitor;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.BasicTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.FuncPointerTypeNode;
@@ -66,7 +66,7 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 			IType[] typeArgs = new IType[size];
 			for(int i=0;i<size;i++){
 				//Resolve arguments
-				IType t = args.elementAt(i).accept(this,scope);
+				IType t = args.get(i).accept(this,scope);
 				typeArgs[i]=t;				
 			}
 			INamedType genericInstance = tprov.getGenericInstance(((INamedType)result),new Signature(typeArgs));

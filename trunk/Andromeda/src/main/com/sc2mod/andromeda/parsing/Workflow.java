@@ -3,11 +3,12 @@ package com.sc2mod.andromeda.parsing;
 import java.io.File;
 import java.util.List;
 
-import com.sc2mod.andromeda.notifications.ErrorUtil;
-import com.sc2mod.andromeda.notifications.UnrecoverableProblem;
+import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.parsing.phases.Phase;
+import com.sc2mod.andromeda.problems.ErrorUtil;
+import com.sc2mod.andromeda.problems.UnrecoverableProblem;
 import com.sc2mod.andromeda.util.StopWatch;
 import com.sc2mod.andromeda.util.logging.Log;
 import com.sc2mod.andromeda.util.logging.LogFormat;

@@ -21,8 +21,7 @@ import com.sc2mod.andromeda.util.visitors.VoidTreeScanVisitor;
  * @author gex
  *
  */
-//TODO: Implement proper sorting algorithm (further discuss on sc2mod.com)
-public class StaticInitSorter {
+public class StaticInitCollector {
 
 
 	private ArrayList<StaticInit> result;
@@ -32,13 +31,8 @@ public class StaticInitSorter {
 		
 		input.accept(new StaticInitVisitor());
 		
-		//XPilot: sort global inits by scope (high inclusion type => call it first)
-		Collections.sort(result, new Comparator<StaticInit>() {
-			@Override
-			public int compare(StaticInit arg0, StaticInit arg1) {
-				return ScopeUtil.getFileScopeOfScope(arg1.getScope()).getInclusionType().getPriority() - ScopeUtil.getFileScopeOfScope(arg0.getScope()).getInclusionType().getPriority();
-			}
-		});
+		//No sorting has to be done anymore, this was done earlier (directly after the parsing) by sorting
+		//the compilation units topologically
 		
 		return result;
 	}

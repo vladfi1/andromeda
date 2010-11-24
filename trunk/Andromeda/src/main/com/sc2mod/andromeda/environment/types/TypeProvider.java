@@ -31,7 +31,7 @@ import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
 import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
@@ -224,7 +224,7 @@ public class TypeProvider {
 		int size = tl.size();
 		IType[] types = new IType[size];
 		for(int i=0; i<size ; i++){
-			types[i] = resolveType(tl.elementAt(i), scope);
+			types[i] = resolveType(tl.get(i), scope);
 		}
 		IType t = resolveType(type.getReturnType(), scope);
 		Signature sig = new Signature(types);
@@ -273,9 +273,8 @@ public class TypeProvider {
 	}
 	
 	IType getArrayType(IType wrappedType, ExprListNode dimensions) {
-		int size= dimensions.size();
-		for(int i=0;i<size;i++){
-			wrappedType = getSingleArrayType(wrappedType, dimensions.elementAt(i));
+		for(ExprNode e : dimensions){
+			wrappedType = getSingleArrayType(wrappedType, e);
 		}
 		return wrappedType;
 	}

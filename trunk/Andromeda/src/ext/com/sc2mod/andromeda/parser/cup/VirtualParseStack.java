@@ -1,5 +1,5 @@
 
-package com.sc2mod.andromeda.parser;
+package com.sc2mod.andromeda.parser.cup;
 
 import java.util.Stack;
 

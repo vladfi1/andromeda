@@ -10,6 +10,7 @@
 package com.sc2mod.andromeda.codegen;
 
 import com.sc2mod.andromeda.classes.ClassGenerator;
+import com.sc2mod.andromeda.codegen.buffers.AdvancedBuffer;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.AccessType;
@@ -29,8 +30,8 @@ import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
 import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.Variable;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
 import com.sc2mod.andromeda.parsing.options.Configuration;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
 import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
@@ -60,8 +61,9 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	private BasicTypeSet BASIC;
 	private TypeCastCodeProvider typeCastProvider;
 	
-	public CodeGenExpressionVisitor(CodeGenVisitor codeGenVisitor, TypeProvider tp) {
+	public CodeGenExpressionVisitor(CodeGenVisitor codeGenVisitor, TypeProvider tp, Configuration conf) {
 		super(codeGenVisitor);
+		this.curExprBuffer = new AdvancedBuffer(64,conf);
 		this.parent = codeGenVisitor;
 		this.classGen = codeGenVisitor.classGen;
 		this.BASIC = tp.BASIC;
@@ -76,7 +78,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		this.desiredSignature = desiredSignature;
 	}
 
-	SimpleBuffer curExprBuffer = new SimpleBuffer(64);
+	AdvancedBuffer curExprBuffer;
 	
 	private void invokeSelf(SyntaxNode s){
 		s.accept(this);
@@ -192,7 +194,9 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 
 		//This is a statement expression.
 		invokeSelf(assignment.getLeftExpression());
-		curExprBuffer.append(CodegenUtil.getAssignOp(assignment.getAssignOp(), whitespaceInExprs));
+		curExprBuffer.exprWhitespace();
+		curExprBuffer.append(CodegenUtil.getAssignOp(assignment.getAssignOp()));
+		curExprBuffer.exprWhitespace();
 		surroundTypeCastIfNecessary(assignment.getRightExpression(),assignment.getLeftExpression().getInferedType());
 		
 	}
@@ -203,7 +207,9 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		surroundTypeCastIfNecessary(
 				binaryExpression.getLeftExpression(),binaryExpression.getLeftExpectedType());
 		
-		curExprBuffer.append(CodegenUtil.getBinaryOp(binaryExpression.getBinOp(), whitespaceInExprs));
+		curExprBuffer.exprWhitespace();
+		curExprBuffer.append(CodegenUtil.getBinaryOp(binaryExpression.getBinOp()));
+		curExprBuffer.exprWhitespace();
 		
 		surroundTypeCastIfNecessary(
 				binaryExpression.getRightExpression(),binaryExpression.getRightExpectedType());
@@ -225,7 +231,6 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 			return;
 		VarAccess vAccess = (VarAccess) access;
 		
-		boolean notStatic = !access.isStatic();
 		if(AccessUtil.isClassFieldAccess(access)){
 			IClass c = (IClass) access.getAccessedElement().getContainingType();
 			classGen.generateFieldAccessPrefix(curExprBuffer,c);
@@ -297,9 +302,9 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		curExprBuffer.append(")");
 	}
 	
-	public void generateMethodInvocation(SimpleBuffer curBuffer, Invocation i, ExprNode prefix, ExprListNode arguments){
+	public void generateMethodInvocation(AdvancedBuffer curBuffer, Invocation i, ExprNode prefix, ExprListNode arguments){
 		
-		SimpleBuffer curExprBufferBefore = curExprBuffer;
+		AdvancedBuffer curExprBufferBefore = curExprBuffer;
 		curExprBuffer = curBuffer;
 		
 		InvocationType accessType = i.getInvocationType();
@@ -388,31 +393,23 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	public void visit(ExprListNode expressionList) {
 		if(desiredSignature == null) throw new Error("No desired signature set!");
 		int size = expressionList.size();
-		SimpleBuffer curBuffer = curExprBuffer;
-		Configuration options = this.options;
+		AdvancedBuffer curBuffer = curExprBuffer;
 		
 		for(int i=0;i<size;){
-			ExprNode e = expressionList.elementAt(i);
+			ExprNode e = expressionList.get(i);
 			surroundTypeCastIfNecessary(e, desiredSignature.get(i));
 			if(++i<size){
-				if(whitespaceInExprs){
-					curBuffer.append(", ");
-				} else {
-					curBuffer.append(",");
-				}
+				curBuffer.append(",");
+				curBuffer.exprWhitespace();
 			}
 		}
 	}
 	
 	@Override
 	public void visit(VarAssignDeclNode variableAssignDecl) {
-		SimpleBuffer buffer = curExprBuffer;
-		if(whitespaceInExprs){
-			buffer.append(" = ");
-		} else {
-			buffer.append("=");
-		}
-		
+		AdvancedBuffer buffer = curExprBuffer;
+		buffer.exprWhitespace().append("=");
+		buffer.exprWhitespace();
 		surroundTypeCastIfNecessary(variableAssignDecl.getInitializer(), variableAssignDecl.getName().getInferedType());
 	}
 	
@@ -428,7 +425,7 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 	public void visit(NewExprNode c) {
 		ConstructorInvocation ci = (ConstructorInvocation) c.getSemantics();
 		IClass clazz = (IClass)c.getInferedType();
-		SimpleBuffer bufferBefore = parent.curBuffer;
+		AdvancedBuffer bufferBefore = parent.curBuffer;
 		parent.curBuffer = curExprBuffer;
 		classGen.generateConstructorInvocation(ci, c.getArguments(), clazz);
 		parent.curBuffer = bufferBefore;

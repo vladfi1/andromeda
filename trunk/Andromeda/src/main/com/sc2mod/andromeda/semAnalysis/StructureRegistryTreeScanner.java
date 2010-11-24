@@ -16,8 +16,8 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
@@ -163,8 +163,7 @@ public class StructureRegistryTreeScanner extends
 		FieldDeclNode field = g.getFieldDecl();
 		VarDeclListNode list = field.getDeclaredVariables();
 
-		for (int i = 0, size = list.size(); i < size; i++) {
-			VarDeclNode declNode = list.elementAt(i);
+		for(VarDeclNode declNode : list){
 			GlobalVarDecl decl = new GlobalVarDecl(field, declNode, scopes._1);
 			resolver.checkAndResolve(decl);
 			scopes._1.addContent(decl.getUid(), decl);
@@ -199,8 +198,7 @@ public class StructureRegistryTreeScanner extends
 	public void visit(FieldDeclNode field, Pair<IScope, IType> scopes) {
 		VarDeclListNode list = field.getDeclaredVariables();
 
-		for (int i = 0, size = list.size(); i < size; i++) {
-			VarDeclNode declNode = list.elementAt(i);
+		for(VarDeclNode declNode : list){
 			FieldDecl decl = new FieldDecl(field, declNode, scopes._2,
 					scopes._1);
 			resolver.checkAndResolve(decl);

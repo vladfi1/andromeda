@@ -3,14 +3,15 @@
  * Copyright (C) J. 'gex' Finis @2010 (gekko_tgh@gmx.de, sc2mod.com)
  * See doc/license.txt for license information.
  */
-package com.sc2mod.andromeda.parser;
+package com.sc2mod.andromeda.parser.cup;
 
-import com.sc2mod.andromeda.parsing.SourceReader;
-import com.sc2mod.andromeda.parsing.InclusionType;
-import com.sc2mod.andromeda.notifications.InternalProgramError;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.parsing.Symbol;
+import java.io.Reader;
+
+import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
+
+
 %%
 
 %public
@@ -26,45 +27,34 @@ import com.sc2mod.andromeda.parsing.Symbol;
 //%cup
 //%cupdebug
 
-%init{
-curFile = ((SourceReader)in).getFileId();
-curInclusionType = ((SourceReader)in).getInclusionType();
-%init}
+//%init{
+//curFile = ((SourceReader)in).getFileId();
+//curInclusionType = ((SourceReader)in).getInclusionType();
+//%init}
 
 %{
+
+  public AndromedaScanner(int curFile, Reader r){
+  	this(r);
+  	this.curFile = curFile<<24;
+  }
+  
   StringBuffer string = new StringBuffer();
   
   protected int curFile;
-  protected InclusionType curInclusionType;
-  
-  /*
-  private Symbol processInclude(InclusionType inclusionType, boolean isImport){
-  	if(curInclusionType == InclusionType.NATIVE){
-  		inclusionType = InclusionType.NATIVE;
-  	}
-  	int includeToken;
-  	String s;
-  	if(isImport){
-		includeToken = IMPORT_START; 	
-		s = yytext();
-  	} else {
-  		s = null;
-  		includeToken = INCLUDE_START;
-  	}
-  	SourceReader ar = this.zzReader.getSourceEnvironment().getReaderFromInclude(yytext(), yychar|curFile, (yylength()+yychar)|curFile,inclusionType,isImport);
-  	if(ar == null) return null;
-  	yypushStream(ar);
-  	return symbol(includeToken,new SourceFileInfo(curFile,inclusionType,s));
-  } 
-  */
-
   
   private Symbol symbol(int type) {
-    return new Symbol(type, yychar|curFile, (yylength()+yychar)|curFile);
+    return new Symbol(type, yychar|curFile, (yylength()+yychar)|curFile, null);
   }
 
   private Symbol symbol(int type, Object value) {
     return new Symbol(type, yychar|curFile, (yylength()+yychar)|curFile, value);
+  }
+  
+  private final SymbolFactory symbolFactory = new SymbolFactory();
+  
+  public SymbolFactory getSymbolFactory(){
+  	return symbolFactory;
   }
 
   /** 
@@ -315,7 +305,8 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   							 
    */
 
-	<<EOF>>        { if (yymoreStreams()){ yypopStream(); throw new Error("Stacked readers?"); }else return symbol(EOF); }
+//	<<EOF>>        { if (yymoreStreams()){ yypopStream(); throw new Error("Stacked readers?"); }else return symbol(EOF); }
+	<<EOF>>        { return symbol(EOF); }
   
  
 }

@@ -20,11 +20,12 @@ import java.util.regex.Pattern;
 
 import mopaqlib.MoPaQ;
 
-import com.sc2mod.andromeda.notifications.ErrorUtil;
-import com.sc2mod.andromeda.notifications.Problem;
-import com.sc2mod.andromeda.notifications.ProblemId;
-import com.sc2mod.andromeda.notifications.SourceLocationContent;
+import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
+import com.sc2mod.andromeda.problems.ErrorUtil;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
+import com.sc2mod.andromeda.problems.SourceLocationContent;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.util.Pair;
 
@@ -187,7 +188,7 @@ public class SourceManager {
 	}
 
 	public synchronized Pair<Source, InclusionType> resolveInclude(String fileName, SyntaxNode where){
-		int fileId = (where.getLeftPos()&0xFF000000);
+		int fileId = (where.getLeftPos()&0xFF000000)>>24;
 		if(!sources.containsKey(fileId)) throw new InternalError("Unknown file id!");
 		SourceInfo f = sources.get(fileId);
 		Pair<Source, InclusionType> toRead = resolveFile(fileName, f.getType());
@@ -209,7 +210,7 @@ public class SourceManager {
 	
 	public String getSourceInformation(int left, int right){
 		//Retrieve the file
-		int fileId = (left&0xFF000000);
+		int fileId = (left&0xFF000000)>>24;
 		int pos = (left&0x00FFFFFF);
 		int length = (right&0x00FFFFFF)-pos;
 		String result = "";

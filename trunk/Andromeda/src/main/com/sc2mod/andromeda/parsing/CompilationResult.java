@@ -2,7 +2,7 @@ package com.sc2mod.andromeda.parsing;
 
 import java.util.ArrayList;
 
-import com.sc2mod.andromeda.notifications.Problem;
+import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.util.Debug;
 import com.sc2mod.andromeda.util.logging.Log;
 

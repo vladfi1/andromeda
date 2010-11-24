@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.classes.VirtualCallTableGenerator;
 import com.sc2mod.andromeda.codegen.CodeGenVisitor;
 import com.sc2mod.andromeda.codegen.INameProvider;
 import com.sc2mod.andromeda.codegen.IndexInformation;
+import com.sc2mod.andromeda.codegen.buffers.AdvancedBuffer;
 import com.sc2mod.andromeda.codegen.buffers.GlobalVarBuffer;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.Environment;
@@ -52,8 +53,6 @@ public class IndexClassGenerator extends ClassGenerator {
 	private String classInitLocal;
 	private String allocParamTypeName;
 	private String classInitFunctionName;
-	private boolean newLines;
-	private boolean useIndent;
 	private boolean insertDescriptionComments;
 	private IndexInformation indexInformation;
 	
@@ -61,8 +60,6 @@ public class IndexClassGenerator extends ClassGenerator {
 	public IndexClassGenerator(IndexInformation indexInformation, Environment env, CodeGenVisitor c,INameProvider nameProvider,Configuration options) {
 		super(env,c,nameProvider,options);
 		this.indexInformation = indexInformation;
-		newLines = options.getParamBool(Parameter.CODEGEN_NEW_LINES);
-		useIndent = options.getParamBool(Parameter.CODEGEN_USE_INDENT);
 		insertDescriptionComments = options.getParamBool(Parameter.CODEGEN_DESCRIPTION_COMMENTS);
 		allocParamTypeName = metaClass.getGeneratedName();
 		metaClassConstructor = env.typeProvider.getSystemFunction(AndromedaSystemTypes.CONS_CLASS);
@@ -70,8 +67,13 @@ public class IndexClassGenerator extends ClassGenerator {
 		
 	}
 	
-	public void generateClasses(ArrayList<IClass> arrayList){
+	public void generateClasses(IClass metaClass, ArrayList<IClass> arrayList){
 		generateClassInitHeader(arrayList);
+		
+		//remove metaClass from list (it has to be processed first)
+		arrayList.remove(metaClass);
+		
+		generateClass(metaClass);
 		
 		for(IClass r: arrayList){
 			// non top classes are left out because they re visited recursively
@@ -101,8 +103,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		SimpleBuffer buffer = codeGenVisitor.classInitBuffer;
 		classInitFunctionName = nameProvider.getGlobalNameRaw("classInit");
 		buffer.append(BASIC.VOID.getGeneratedName()).append(" ").append(classInitFunctionName).append("(){");
-		if(newLines)
-			buffer.newLine(1);
+		buffer.indent().nl();
 		buffer.append(metaClass.getGeneratedName()).append(" ").append(classInitLocal).append(";");
 
 		
@@ -145,8 +146,6 @@ public class IndexClassGenerator extends ClassGenerator {
 	private void generateClassInit(IClass c){
 		SimpleBuffer buffer = codeGenVisitor.classInitBuffer;
 		Configuration options = this.options;
-		boolean newLines = this.newLines;
-		int indent = 1;
 		
 		//Implicit params
 		String classLocal = classInitLocal;
@@ -158,7 +157,7 @@ public class IndexClassGenerator extends ClassGenerator {
 //		}
 		
 		//Create class: A__class = new metaclass(id, name);
-		if(newLines)buffer.newLine(indent);
+		buffer.nl();
 		buffer.append(classLocal).append("=").append(metaClassConstructor.getGeneratedName());
 		buffer.append("(").append(indexInformation.getClassIndex(c)).append(",").append(indexInformation.getClassIndex(c)).append(",").appendStringLiteral(c.getUid(), codeGenVisitor).append(");");
 		
@@ -167,9 +166,9 @@ public class IndexClassGenerator extends ClassGenerator {
 		
 		codeGenVisitor.globalVarBuffer.beginVarDecl(metaClass, name).append(";");
 		codeGenVisitor.globalVarBuffer.flushTo(codeGenVisitor.fileBuffer.variables, true);
-		if(newLines)codeGenVisitor.globalVarBuffer.newLine();
+		codeGenVisitor.globalVarBuffer.nl();
 		
-		if(newLines)buffer.newLine(indent);
+		buffer.nl();
 		buffer.append(name).append("=").append(classLocal).append(";");
 		
 		
@@ -180,7 +179,7 @@ public class IndexClassGenerator extends ClassGenerator {
 			String vctName = ResolveUtil.rawResolveField(metaClass,"vct", null, false).getGeneratedName();
 			int size = vct.size();
 			for(int i=0;i<size;i++){
-				if(newLines)buffer.newLine(indent);
+				buffer.nl();
 				Operation m = vct.get(i);
 				generateFieldAccess(buffer,memoryName,classLocal).append(vctName).append("[").append(i).append("]");
 				if(m.isAbstract()){
@@ -205,26 +204,23 @@ public class IndexClassGenerator extends ClassGenerator {
 	private void generateClassStruct(IClass c){
 		ArrayList<Variable> fields = c.getHierarchyFields();
 		SimpleBuffer buffer = codeGenVisitor.structBuffer;
-		int indent = codeGenVisitor.curIndent;
+		
 		
 		buffer.append("struct ");
 		buffer.append(c.getNameProvider().getStructName());
 		buffer.append("{");
-		if(useIndent) indent++;		
+		buffer.indent();
 		for(Variable f: fields){
-			if(newLines)buffer.newLine(indent);	
+			buffer.nl();
 			buffer.append(f.getType().getGeneratedName());
 			buffer.append(" ");
 			buffer.append(f.getGeneratedName());
 			buffer.append(";");
 		}
-		if(useIndent) indent--;
-		if(newLines)buffer.newLine(indent);	
+		buffer.unindent();
+		buffer.nl();
 		buffer.append("};");
-		if(newLines){
-			buffer.newLine(indent);	
-			buffer.newLine(indent);	
-		}
+		buffer.nl().nl();
 		buffer.flushTo(codeGenVisitor.fileBuffer.types,true);
 	}
 	
@@ -251,7 +247,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	
 	private void generateAllocator(IClass c){
 		ArrayList<Variable> fields = c.getHierarchyFields();
-		SimpleBuffer buffer = codeGenVisitor.functionBuffer;
+		AdvancedBuffer buffer = codeGenVisitor.functionBuffer;
 		Configuration options = this.options;
 		String className = c.getGeneratedName();
 		String typeFieldName = fields.get(1).getGeneratedName();
@@ -263,8 +259,7 @@ public class IndexClassGenerator extends ClassGenerator {
 		
 		//Comment
 		if(this.insertDescriptionComments){
-			buffer.append("//Allocator for class " + c.getName());
-			buffer.newLine(codeGenVisitor.curIndent);
+			buffer.append("//Allocator for class " + c.getName()).nl();
 		}
 		
 		buffer.append(className).append(" ").append(c.getNameProvider().getAllocatorName()).append("(");
@@ -272,108 +267,80 @@ public class IndexClassGenerator extends ClassGenerator {
 		
 		//Forward decl
 		buffer.appendTo(codeGenVisitor.fileBuffer.forwardDeclarations, true);
-		codeGenVisitor.fileBuffer.forwardDeclarations.append(";");
-		if(newLines) codeGenVisitor.fileBuffer.forwardDeclarations.newLine();
+		codeGenVisitor.fileBuffer.forwardDeclarations.append(";").nl();
 		
 		buffer.append("{");
-		if(useIndent) codeGenVisitor.curIndent++;
-		if(newLines) buffer.newLine(codeGenVisitor.curIndent);
+		buffer.indent().nl();
 		buffer.append(className).append(" ").append(curThisName).append(";");
 		generateAllocCode(c,buffer);
 
-		
-		if(newLines) buffer.newLine(codeGenVisitor.curIndent);
-		
+		buffer.nl();
 		generateFieldAccess(buffer,nameMemory,curThisName).append(typeFieldName).append("=").append(curClassIdName).append(";");
-		if(newLines) buffer.newLine(codeGenVisitor.curIndent);
+		buffer.nl();
 		generateFieldAccess(buffer,nameMemory,curThisName).append(idFieldName).append("=(").append(curClassIdName).append("<<").append(TYPE_BIT_OFFSET).append(")|this;");
 		
 		for(Variable f: TypeUtil.getNonStaticTypeFields(c, false)){
 			if(f.isInitedInDecl()){
-				if(newLines) buffer.newLine(codeGenVisitor.curIndent);
+				buffer.nl();
 				codeGenVisitor.generateFieldInit(buffer,c,f);
 			}
 		}
-		if(newLines) buffer.newLine(codeGenVisitor.curIndent);
+		buffer.nl();
 		buffer.append("return ").append(curThisName).append(";");
-		if(useIndent) codeGenVisitor.curIndent--;
-		if(newLines) buffer.newLine(codeGenVisitor.curIndent);
+		buffer.unindent().nl();
 		buffer.append("}");
-		if(newLines) buffer.newLine(codeGenVisitor.curIndent);
-		if(newLines) buffer.newLine(codeGenVisitor.curIndent);
-		
+		buffer.nl().nl();
 		
 		buffer.flushTo(codeGenVisitor.fileBuffer.functions, true);
 	}
 
 
 	private void generateAllocCode(IClass c, SimpleBuffer buffer) {
-		boolean newLines = this.newLines;
-		boolean useIndent = this.useIndent;
 		int maxAlloc = (c.getInstanceLimit()+1);
-		int indent = codeGenVisitor.curIndent;
 		String className = c.getGeneratedDefinitionName();
 		IType typeInt = BASIC.INT;
-		
-
 		
 		//Create local variables
 		GlobalVarBuffer globalsBuffer = codeGenVisitor.globalVarBuffer;
 		globalsBuffer.beginVarDecl(typeInt, nameAllocPtr).append("=1;");
-		if(newLines)globalsBuffer.newLine();
+		globalsBuffer.nl();
 		globalsBuffer.beginVarDecl(typeInt,nameFreePtr).append(";");
-		if(newLines)globalsBuffer.newLine();
+		globalsBuffer.nl();
 		globalsBuffer.beginArrayDecl(c,c.getNameProvider().getStructName(),maxAlloc,nameMemory).append(";");
-		if(newLines)globalsBuffer.newLine();
+		globalsBuffer.nl();
 		globalsBuffer.beginArrayDecl(c,maxAlloc,nameFreeStack).append(";");
-		if(newLines)globalsBuffer.newLine();
+		globalsBuffer.nl();
 		globalsBuffer.flushTo(codeGenVisitor.fileBuffer.variables, true);
 		
 		//Create alloc function code
-		if(newLines)buffer.newLine(indent);
+		buffer.nl();
 		buffer.append("if(").append(nameFreePtr).append(">0){");
-		if(newLines){
-			if(useIndent)indent++;
-			buffer.newLine(indent);
-		}
+		buffer.indent().nl();
+		
 		//Free stack case
-		buffer.append(nameFreePtr).append("-=1;");
-		if(newLines)buffer.newLine(indent);
+		buffer.append(nameFreePtr).append("-=1;").nl();
 		buffer.append(curThisName).append("=").append(nameFreeStack).append("[").append(nameFreePtr).append("];");
-		if(newLines){
-			if(useIndent)indent--;
-			buffer.newLine(indent);
-		}
+		buffer.unindent().nl();
+		
 		buffer.append("}else if(").append(nameAllocPtr).append("<").append(maxAlloc).append("){");
-		if(newLines){
-			if(useIndent)indent++;
-			buffer.newLine(indent);
-		}
+		buffer.indent().nl();
+		
 		//Alloc new case
 		buffer.append(curThisName).append("=").append(nameAllocPtr).append(";");
-		if(newLines)buffer.newLine(indent);
+		buffer.nl();
 		buffer.append(nameAllocPtr).append("+=1;");
-		if(newLines){
-			if(useIndent)indent--;
-			buffer.newLine(indent);
-		}
+		buffer.unindent().nl();
 		buffer.append("}else{");
-		if(newLines){
-			if(useIndent)indent++;
-			buffer.newLine(indent);
-		}
+		buffer.indent().nl();
+		
 		//Error case
 		codeGenVisitor.generateErrorCallPrefix(buffer);
 		String s = "Instance limit reached for class " + c.getName() + ". Allocation failed!";
 		buffer.appendStringLiteral(s, codeGenVisitor).append(");");
 	
-		if(newLines)buffer.newLine(indent);
+		buffer.nl();
 		buffer.append("return 0;");
-		if(newLines){
-			if(useIndent)indent--;
-			buffer.newLine(indent);
-		}
-		buffer.append("}");
+		buffer.unindent().nl().append("}");
 
 	
 	}
@@ -382,16 +349,14 @@ public class IndexClassGenerator extends ClassGenerator {
 		ArrayList<Variable> fields = c.getHierarchyFields();
 		SimpleBuffer buffer = codeGenVisitor.functionBuffer;
 		curThisName = nameProvider.getLocalNameRaw("this", 1);
-		boolean newLines = this.newLines;
-		boolean useIndent = this.useIndent;
-		int indent = codeGenVisitor.curIndent;
+		
 		String idFieldName = fields.get(0).getGeneratedName();
 		String typeFieldName = fields.get(1).getGeneratedName();
 		
 		//Comment
 		if(insertDescriptionComments){
 			buffer.append("//Deallocator for class " + c.getName());
-			buffer.newLine(codeGenVisitor.curIndent);
+			buffer.nl();
 		}
 		
 		buffer.append("void ").append(c.getNameProvider().getDeallocatorName()).append("(");
@@ -399,67 +364,44 @@ public class IndexClassGenerator extends ClassGenerator {
 		
 		//Forward decl
 		buffer.appendTo(codeGenVisitor.fileBuffer.forwardDeclarations, true);
-		codeGenVisitor.fileBuffer.forwardDeclarations.append(";");
-		if(newLines) codeGenVisitor.fileBuffer.forwardDeclarations.newLine();
+		codeGenVisitor.fileBuffer.forwardDeclarations.append(";").nl();
 		
 		buffer.append("{");
-		if(newLines){
-			if(useIndent)indent++;
-			buffer.newLine(indent);
-		}
+		buffer.indent().nl();
 		buffer.append("if(");
 		generateFieldAccess(buffer,nameMemory,curThisName).append(idFieldName).append("==0){");
-		if(newLines){
-			if(useIndent)indent++;
-			buffer.newLine(indent);
-		}
+		buffer.indent().nl();
 		codeGenVisitor.generateErrorCallPrefix(buffer);
 		String s = "Double free of class "+ c.getName();
 		buffer.appendStringLiteral(s, codeGenVisitor);
 		buffer.append(");");
-		if(newLines)buffer.newLine(indent);
+		buffer.nl();
 		buffer.append("return;");
-		if(newLines){
-			if(useIndent)indent--;
-			buffer.newLine(indent);
-		}
+		buffer.unindent().nl();
 		buffer.append("}");
-		if(newLines)buffer.newLine(indent);
+		buffer.nl();
 		generateFieldAccess(buffer,nameMemory,curThisName).append(idFieldName).append("=0;");
-		if(newLines)buffer.newLine(indent);
+		buffer.nl();
 		generateFieldAccess(buffer,nameMemory,curThisName).append(typeFieldName).append("=0;");
-		if(newLines)buffer.newLine(indent);
+		buffer.nl();
 		buffer.append(nameFreeStack).append("[").append(nameFreePtr).append("]=").append(curThisName).append(";");
-		if(newLines)buffer.newLine(indent);
+		buffer.nl();
 		buffer.append(nameFreePtr).append("+=1;");
-		if(newLines){
-			if(useIndent)indent--;
-			buffer.newLine(indent);
-		}
-		buffer.append("}");
-		if(newLines){
-			buffer.newLine(indent);
-			buffer.newLine(indent);
-		}
-		
-		
-		
+		buffer.unindent().nl();
+		buffer.append("}").nl().nl();
 		buffer.flushTo(codeGenVisitor.fileBuffer.functions, true);
 	}
 	
 
 	private void generateFieldInit(IClass c){
 		Iterable<Variable> fields = TypeUtil.getNonStaticTypeFields(c, false);
-		SimpleBuffer buffer = codeGenVisitor.functionBuffer;
+		AdvancedBuffer buffer = codeGenVisitor.functionBuffer;
 		curThisName = nameProvider.getLocalNameRaw("this", 1);
-		boolean newLines = this.newLines;
-		boolean useIndent = this.useIndent;
-		int indent = codeGenVisitor.curIndent;
 		
 		//Comment
 		if(insertDescriptionComments){
 			buffer.append("//Field init for class " + c.getName());
-			buffer.newLine(indent);
+			buffer.nl();
 		}
 		
 		buffer.append(c.getGeneratedName()).append(" ").append(c.getNameProvider().getAllocatorName()).append("(");
@@ -467,28 +409,20 @@ public class IndexClassGenerator extends ClassGenerator {
 		
 		//Forward decl
 		buffer.appendTo(codeGenVisitor.fileBuffer.forwardDeclarations, true);
-		codeGenVisitor.fileBuffer.forwardDeclarations.append(";");
-		if(newLines) codeGenVisitor.fileBuffer.forwardDeclarations.newLine();
+		codeGenVisitor.fileBuffer.forwardDeclarations.append(";").nl();
 		
 		buffer.append("{");
-		if(newLines){
-			if(useIndent)indent++;
-		}
+		buffer.indent();
 		for(Variable f: fields){
 			if(f.isInitedInDecl()){
-				if(newLines) buffer.newLine(indent);
+				buffer.nl();
 				codeGenVisitor.generateFieldInit(buffer,c,f);
 			}
 		}
-		if(newLines) buffer.newLine(indent);
+		buffer.nl();
 		buffer.append("return ").append(curThisName).append(";");
-		if(newLines){
-			if(useIndent)indent--;
-			buffer.newLine(indent);
-		}
-		buffer.append("}");
-		if(newLines) buffer.newLine(indent);
-		if(newLines) buffer.newLine(indent);
+		buffer.unindent().nl();
+		buffer.append("}").nl().nl();
 		
 		buffer.flushTo(codeGenVisitor.fileBuffer.functions, true);
 	}
@@ -501,7 +435,7 @@ public class IndexClassGenerator extends ClassGenerator {
 
 		//No construct or invoked? This must be a top class, so call the allocator
 		if(i.isImplicit()){
-			if(newLines)buffer.newLine(codeGenVisitor.curIndent);
+			buffer.nl();
 			buffer.append(c.getGeneratedName()).append(" ").append(curThisName).append("=");
 			generateConstructorInvocation(i, null,null);
 			buffer.append(";");
