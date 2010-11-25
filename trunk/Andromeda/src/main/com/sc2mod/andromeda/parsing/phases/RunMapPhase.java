@@ -23,7 +23,7 @@ public class RunMapPhase extends Phase{
 			new MapRunner(Program.platform,env.getConfig(),Program.config).test(mapOut);
 		} catch (IOException e) {
 			ErrorUtil.raiseIOProblem(e, false);
-			System.err.println("--- Map run unsuccessful! ---");
+			System.err.println("\n--- Map run unsuccessful! ---");
 		}
 	}
 

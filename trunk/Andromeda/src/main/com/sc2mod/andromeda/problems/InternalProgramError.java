@@ -21,6 +21,11 @@ public class InternalProgramError extends Error{
 	public InternalProgramError(Throwable e) {
 		super(e);
 	}
+
+	public InternalProgramError(String message, Throwable cause) {
+		super(message, cause);
+	}
+	
 	
 
 }

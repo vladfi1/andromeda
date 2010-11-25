@@ -175,13 +175,13 @@ public class Program {
 		
 		if(invokeWorkflow(files, o, Language.ANDROMEDA).getResult().isSuccessful()){
 
-			//again
-			CompilationEnvironment cr = invokeWorkflow(files, o, Language.ANDROMEDA);
-			//again
-			 cr = invokeWorkflow(files, o, Language.ANDROMEDA);
-			//again
-			 cr = invokeWorkflow(files, o, Language.ANDROMEDA);
-			
+//			//again
+//			CompilationEnvironment cr = invokeWorkflow(files, o, Language.ANDROMEDA);
+//			//again
+//			 cr = invokeWorkflow(files, o, Language.ANDROMEDA);
+//			//again
+//			 cr = invokeWorkflow(files, o, Language.ANDROMEDA);
+//			
 			System.exit(0);
 		} else {
 			System.exit(-1);

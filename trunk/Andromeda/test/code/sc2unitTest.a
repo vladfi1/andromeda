@@ -1,0 +1,61 @@
+
+class SingleThreadTestSuite{
+
+	private bank progressBank = null;
+	private string curTestCase = null;
+	private int testCaseCount = 0;
+	
+	Test(string name){
+		progressBank = BankLoad("test_" + name,0);
+		BankSave(progressBank);
+		setMiscValue("progress","0");
+	}
+	
+	void finish(){
+		finishLastTestCase();
+		setMiscValue("progress","finished");
+	}
+	
+	void start(string testCaseName){
+		finishLastTestCase();
+		curTestCase = "test_" + testCaseName;
+		testCaseCount++;
+		setTestValue("progress","started");
+		setTestValue("id",(string)testCaseCount);
+		setMiscValue("progress",(string)testCaseCount);
+	}
+	
+	void fail(string testCase, string message){
+		setTestValue("progress","failed");
+		setTestValue("failMsg", message);
+		curTestCase = null;
+	}
+	
+	private void setAndSave(string key1, string key2, string value){
+		BankValueSetFromString(progressBank,key1,key2,value);
+		BankSave(progressBank);
+	}
+	
+	private void setTestValue(string key, string value){
+		setAndSave(curTestCase,key,value);
+	}
+	
+	private void setMiscValue(string key, string value){
+		setAndSave("misc",key,value);
+	}
+	
+	private void finishLastTestCase(){
+		if(curTestCase != null){
+			setTestValue("progress","succeeded");
+		}
+	}
+	
+	void assertEquals(int result, int anticipatedResult){
+		if(result != desiredResult){
+			fail("Integer did not match:\nAnticipated: " + anticipatedResult + "\nReceived: " + result);
+		}
+	}
+
+
+
+}
