@@ -4,6 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sc2mod.andromeda.environment.Environment;
+import com.sc2mod.andromeda.environment.types.NoSystemTypes;
+import com.sc2mod.andromeda.environment.types.SystemTypes;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.parser.cup.factory.CupFactory;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Language;
@@ -26,6 +30,11 @@ public class Galaxy extends LanguageImpl{
 	@Override
 	public ParserFactory getParserFactory() {
 		return CupFactory.getFactory(Language.GALAXY);
+	}
+	
+	@Override
+	public SystemTypes getSystemTypes(Environment env, TypeProvider tprov) {
+		return new NoSystemTypes(env, tprov);
 	}
 
 }

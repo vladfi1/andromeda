@@ -4,6 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sc2mod.andromeda.environment.Environment;
+import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
+import com.sc2mod.andromeda.environment.types.SystemTypes;
+import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.parser.cup.factory.CupFactory;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Language;
@@ -35,6 +39,11 @@ public class Andromeda extends LanguageImpl{
 	@Override
 	public ParserFactory getParserFactory() {
 		return CupFactory.getFactory(Language.ANDROMEDA);
+	}
+
+	@Override
+	public SystemTypes getSystemTypes(Environment env, TypeProvider tprov) {
+		return new AndromedaSystemTypes(env, tprov);
 	}
 
 

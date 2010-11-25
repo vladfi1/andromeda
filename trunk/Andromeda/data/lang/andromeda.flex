@@ -16,7 +16,7 @@ import com.sc2mod.andromeda.problems.ProblemId;
 
 %public
 %class AndromedaScanner
-%implements sym, Scanner
+%implements AndromedaSymbols, Scanner
 %unicode
 %function nextToken
 

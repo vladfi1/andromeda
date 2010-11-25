@@ -34,13 +34,13 @@ public class AccessorProblems extends AndromedaSingleRunTest {
 	
 	@Test
 	public void getNotVisible(){
-		callAndromeda("getNotVisible.a");
+		callAndromeda("getNotVisible.a","getNotVisible_2.a");
 		assertOnlyProblem(ProblemId.ACCESSOR_GET_OR_SET_NOT_VISIBLE);
 	}
 	
 	@Test
 	public void setNotVisible(){
-		callAndromeda("setNotVisible.a");
+		callAndromeda("setNotVisible.a","setNotVisible_2.a");
 		assertOnlyProblem(ProblemId.ACCESSOR_GET_OR_SET_NOT_VISIBLE);
 	}
 	

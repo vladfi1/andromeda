@@ -48,8 +48,6 @@ public class AndromedaTestRun {
 	 * if there are any parse errors (warnings are ignored).
 	 */
 	protected void checkOutput(){
-		//TODO: Enable output checking again, once code creation is working again.
-		if(true)return;
 		reset();
 		ArrayList<Source> input = new ArrayList<Source>();
 		input.add(new FileSource(new File("out/test/Andromeda.galaxy").getAbsolutePath(),null));

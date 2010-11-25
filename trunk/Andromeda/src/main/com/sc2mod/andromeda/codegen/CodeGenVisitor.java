@@ -390,10 +390,9 @@ public class CodeGenVisitor extends CodeGenerator {
 		StmtNode body = methodDeclaration.getBody();
 		if (body != null) {
 			generateFunctionBody(m, body, OperationType.CONSTRUCTOR == functionType);
-		} else
-			functionBuffer.append(";");
+		} else 
+			functionBuffer.append(";").nl();
 
-		functionBuffer.nl();
 		
 		// Natives are appended to the forward declarations
 		if (m.isNative()) {

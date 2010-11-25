@@ -7,6 +7,7 @@ import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Workflow;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.problems.ErrorUtil;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.program.MapRunner;
 import com.sc2mod.andromeda.program.Program;
 
@@ -24,6 +25,9 @@ public class RunMapPhase extends Phase{
 		} catch (IOException e) {
 			ErrorUtil.raiseIOProblem(e, false);
 			System.err.println("\n--- Map run unsuccessful! ---");
+		} catch (Throwable t){
+			System.err.println("\n--- Map run unsuccessful! ---");
+			throw new InternalProgramError(t);
 		}
 	}
 

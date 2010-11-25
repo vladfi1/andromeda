@@ -1,0 +1,5 @@
+
+
+static{
+	X.x = 3; //x not found
+}

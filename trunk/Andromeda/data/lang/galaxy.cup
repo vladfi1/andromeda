@@ -11,91 +11,49 @@ parser code  {:
 :};
 
 terminal Type BOOLEAN; // primitiveType
-terminal Type BYTE, SHORT, INT, LONG, CHAR; // integralType
-terminal Type FLOAT, DOUBLE; // floatingPointType
+terminal Type BYTE, INT; // integralType
 terminal LBRACK, RBRACK; // arrayType
 terminal DOT; // qualifiedName
-terminal SEMICOLON, MULT, COMMA, LBRACE, RBRACE, EQ, LPAREN, RPAREN, COLON;
-terminal PACKAGE; // packageDeclaration
-terminal IMPORT; // importDeclaration
-terminal PUBLIC, PROTECTED, PRIVATE, INTERNAL; // modifier
+terminal SEMICOLON, MULT, COMMA, LBRACE, RBRACE, EQ, LPAREN, RPAREN;
 terminal STATIC; // modifier
-terminal ABSTRACT, FINAL, NATIVE, TRANSIENT;
-terminal CLASS; // classDeclaration
-terminal EXTENDS; // super
-terminal IMPLEMENTS; // interfaces
+terminal NATIVE;
 terminal VOID; // methodHeader
-terminal THROWS; // throws
-terminal THIS, SUPER; // explicitConstructorInvocation
-terminal INTERFACE; // interfaceDeclaration
 terminal IF, ELSE; // ifThenStatement, ifThenElseStatement
-terminal SWITCH; // switchStatement
-terminal CASE, DEFAULT; // switchLabel
 terminal DO, WHILE; // whileStatement, doWhileStatement
-terminal FOR; // forStatement
 terminal BREAK; // breakStatement
 terminal CONTINUE; // continueStatement
 terminal RETURN; // returnStatement
-terminal THROW; // throwStatement
-terminal TRY; // tryStatement
-terminal CATCH; // catchClause
-terminal FINALLY; // finally
-terminal NEW; // classInstanceCreationExpression
-terminal PLUSPLUS; // postincrementExpression
-terminal MINUSMINUS; // postdecrementExpression
 terminal PLUS, MINUS, COMP, NOT, DIV, MOD;
-terminal LSHIFT, RSHIFT, URSHIFT; // shiftExpression
-terminal LT, GT, LTEQ, GTEQ, INSTANCEOF; // relationalExpression
+terminal LSHIFT, RSHIFT; // shiftExpression
+terminal LT, GT, LTEQ, GTEQ; // relationalExpression
 terminal EQEQ, NOTEQ; // equalityExpression
 terminal AND; // andExpression
 terminal XOR; // exclusiveOrExpression
 terminal OR;  // inclusiveOrExpression
-terminal ANDAND, NOTNOT; // conditionalAndExpression
+terminal ANDAND; // conditionalAndExpression
 terminal OROR; // conditionalOrExpression
-terminal QUESTION; // conditionalExpression
 terminal MULTEQ, DIVEQ, MODEQ, PLUSEQ, MINUSEQ; // assignmentOperator
-terminal LSHIFTEQ, RSHIFTEQ, URSHIFTEQ; // assignmentOperator
+terminal LSHIFTEQ, RSHIFTEQ; // assignmentOperator
 terminal ANDEQ, XOREQ, OREQ; // assignmentOperator
 
 terminal java.lang.Integer INTEGER_LITERAL;
 terminal java.lang.Number FLOATING_POINT_LITERAL;
 terminal java.lang.Boolean BOOLEAN_LITERAL;
-terminal java.lang.Character CHARACTER_LITERAL;
+//terminal java.lang.Character CHARACTER_LITERAL;
 terminal java.lang.String STRING_LITERAL;
 terminal java.lang.String IDENTIFIER; // name
 terminal NULL_LITERAL;
 terminal FIXED;
-terminal OVERRIDE;
-terminal ARROW;
 terminal TYPEDEF;
 terminal CONST;
-terminal ENRICH;
-terminal DELETE;
 terminal STRUCT;
-terminal INLINE;
-terminal AT;
-terminal DOTDOT;
-terminal USES;
-terminal IS;
-terminal FUNCTION;
-terminal ISKEY;
-terminal SETINSTANCELIMIT;
-terminal KEYOF;
-terminal DOTINLINE;
-terminal EXTENSION;
 terminal INCLUDE;
-
-//Emitted by scanner
-//terminal SourceFileInfo INCLUDE_START, IMPORT_START;
-//terminal java.lang.Integer INCLUDE_END;
-
 
 non terminal goal;
 non terminal SourceFileNode sourceFile;
 non terminal GlobalStructureNode globalStructure;
 non terminal GlobalVarDeclNode globalVarDeclaration;
 non terminal GlobalFuncDeclNode functionDeclaration;
-non terminal CompilationUnitIdentifierNode compilationUnitIdentifier;
 
 non terminal LiteralNode literal;
 
@@ -105,7 +63,7 @@ non terminal TypeNode integralType, floatingPointType;
 non terminal TypeNode referenceType;
 non terminal TypeNode classOrInterfaceType, classOrInterfaceTypeNonGeneric;
 non terminal TypeNode classType, interfaceType;
-non terminal ArrayTypeNode arrayType, arrayTypeNoGenerics;
+non terminal ArrayTypeNode arrayType;
 non terminal TypeNode pointerType;
 
 non terminal ExprNode name;
@@ -113,25 +71,13 @@ non terminal NameExprNode simpleName;
 non terminal FieldAccessExprNode qualifiedName;
 
 non terminal compilationUnit;
-non terminal PackageDeclNode packageDeclarationOpt, packageDeclaration;
-non terminal ImportListNode importDeclarationsOpt, importDeclarations;
-non terminal typeDeclarationsOpt, typeDeclarations;
-non terminal ImportNode importDeclaration;
+non terminal PackageDeclNode packageDeclarationOpt;
 non terminal IncludeNode includeDeclaration;
-non terminal singleTypeImportDeclaration;
-non terminal typeImportOnDemandDeclaration;
 non terminal GlobalStructureNode typeDeclaration;
 
 non terminal ModifierListNode modifiersOpt;
 non terminal ModifierListNode modifiers;
 non terminal ModifierSE modifier;
-
-non terminal ClassDeclNode classDeclaration;
-non terminal TypeNode superCl, superOpt;
-non terminal TypeListNode interfaces, interfacesOpt, interfaceTypeList;
-non terminal MemberDeclListNode classBody;
-non terminal MemberDeclListNode classBodyDeclarations, classBodyDeclarationsOpt;
-non terminal MemberDeclNode classBodyDeclaration, classMemberDeclaration;
 
 non terminal FieldDeclNode fieldDeclaration;
 non terminal VarDeclListNode variableDeclarators;
@@ -144,25 +90,11 @@ non terminal MethodHeaderNode methodHeader;
 non terminal MethodDeclaratorTransNode methodDeclarator;
 non terminal ParameterListNode formalParameterListOpt, formalParameterList;
 non terminal ParameterNode formalParameter;
-non terminal java.lang.Object throwsOpt, throws;
-non terminal classTypeList;
 non terminal StmtNode methodBody;
 
-non terminal StaticInitDeclNode staticInitializer;
-
-non terminal MethodDeclNode constructorDeclaration;
-non terminal MethodHeaderNode constructorDeclarator;
-non terminal StmtListNode constructorBody;
-non terminal StmtNode explicitConstructorInvocation;
-
-non terminal GlobalStructureNode interfaceDeclaration;
-non terminal TypeListNode extendsInterfacesOpt, extendsInterfaces;
-non terminal MemberDeclListNode interfaceBody;
-non terminal MemberDeclListNode interfaceMemberDeclarationsOpt, interfaceMemberDeclarations;
-non terminal MemberDeclNode interfaceMemberDeclaration, constantDeclaration;
+non terminal MemberDeclNode constantDeclaration;
 non terminal MemberDeclNode abstractMethodDeclaration;
 
-non terminal ArrayInitNode arrayInitializer;
 non terminal VarInitializerListNode variableInitializers;
 
 
@@ -174,30 +106,15 @@ non terminal LocalVarDeclNode localVariableDeclaration;
 non terminal StmtNode statement, statementNoShortIf;
 non terminal StmtNode statementWithoutTrailingSubstatement;
 non terminal StmtNode emptyStatement;
-non terminal StmtNode labeledStatement, labeledStatementNoShortIf;
 non terminal StmtNode expressionStatement;
 non terminal ExprNode statementExpression;
 non terminal StmtNode ifThenStatement;
 non terminal StmtNode ifThenElseStatement, ifThenElseStatementNoShortIf;
-non terminal StmtNode switchStatement, switchBlock;
-non terminal StmtNode switchBlockStatementGroups;
-non terminal StmtNode switchBlockStatementGroup;
-non terminal switchLabels, switchLabel;
 non terminal StmtNode whileStatement, whileStatementNoShortIf;
 non terminal StmtNode doWhileStatement;
-non terminal StmtNode forStatement, forStatementNoShortIf;
-non terminal StmtNode forInitOpt;
-non terminal StmtNode forInit;
-non terminal BlockStmtNode forUpdateOpt;
-non terminal StmtListNode forUpdate;
-non terminal StmtListNode statementExpressionList;
 non terminal java.lang.String identifierOpt;
 non terminal StmtNode breakStatement, continueStatement;
-non terminal StmtNode returnStatement, throwStatement, deleteStatement;
-non terminal StmtNode synchronizedStatement, tryStatement;
-non terminal StmtNode catchesOpt, catches, catchClause;
-non terminal finally;
-
+non terminal StmtNode returnStatement;
 
 non terminal ExprNode primary, primaryNoNewArray;
 non terminal ExprNode classInstanceCreationExpression;
@@ -205,14 +122,11 @@ non terminal ExprListNode argumentListOpt, argumentList;
 non terminal ExprNode arrayCreationExpression;
 non terminal ExprListNode dimExprs;
 non terminal ExprNode dimExpr;
-non terminal java.lang.Integer dimsOpt, dims;
 non terminal FieldAccessExprNode fieldAccess;
 non terminal ExprNode methodInvocation;
 non terminal ArrayAccessExprNode arrayAccess;
 non terminal ExprNode postfixExpression;
-non terminal ExprNode postincrementExpression, postdecrementExpression;
 non terminal ExprNode unaryExpression, unaryExpressionNotPlusMinus;
-non terminal ExprNode preincrementExpression, predecrementExpression;
 non terminal ExprNode castExpression;
 non terminal ExprNode multiplicativeExpression, additiveExpression;
 non terminal ExprNode shiftExpression, relationalExpression, instanceofExpression, equalityExpression;
@@ -228,46 +142,14 @@ non terminal constantExpression;
 
 non terminal GlobalStructureNode structDeclaration;
 non terminal MemberDeclListNode structBody;
-non terminal EnrichDeclNode enrichDeclaration;
-
-//non terminal MethodDeclNode accessorSet,accessorGet;
-non terminal AccessorList accessorBody;
-non terminal MethodDeclNode accessorDeclaration;
 non terminal ExprNode dereferenceExpression;
 
 non terminal GlobalStructureListNode fileContent;
 
-non terminal MethodHeaderNode destructorDeclarator;
-
-non terminal AnnotationNode annotation;
-non terminal AnnotationListNode annotations, annotationsOpt;
-
-//Generics
-//Gemeric decl
-non terminal TypeNode typeBound;
-non terminal TypeNode typeBoundOpt;
-non terminal TypeParamNode typeParam;
-non terminal TypeParamListNode typeParamList;
-non terminal TypeParamListNode typeParameters, typeParametersOpt;
-
-non terminal TypeNode wildcard;
-non terminal TypeNode actualTypeParam;
-non terminal TypeListNode actualTypeParamList;
-non terminal TypeListNode typeArguments;
 
 //typedef and extension
-non terminal GlobalStructureNode typeDefinition, typeExtension;
-non terminal Boolean isKeyOpt;
-		
-//function pointers
-non terminal TypeListNode funcPointerArgumentList;
-non terminal TypeNode funcPointer;
+non terminal GlobalStructureNode typeDefinition;
 
-//instance limit
-non terminal GlobalStructureNode instanceLimit;
-
-//keyof
-non terminal ExprNode keyofExpression;
 
 start with goal;
 
@@ -276,9 +158,7 @@ goal ::=	sourceFile:a {: RESULT = a; :}
 	;
 	
 sourceFile ::=
-	packageDeclarationOpt:p
-	importDeclarationsOpt:i
-	fileContent:c {: RESULT = new SourceFileNode(p,i,c); RESULT.setPos(cleft,cright); :}
+	packageDeclarationOpt:p fileContent:c {: RESULT = new SourceFileNode(p,null,c); RESULT.setPos(cleft,cright); :}
 	;
 
 fileContent ::= 
@@ -289,13 +169,8 @@ fileContent ::=
 globalStructure ::= typeDeclaration:f {: RESULT = f; :}
 	|	globalVarDeclaration:f {: RESULT = f; :}
 	|	functionDeclaration:f {: RESULT = f; :}
-	|	enrichDeclaration:f {: RESULT = f; :}
 	|	typeDefinition:f {: RESULT = f; :}
-	|	typeExtension:f {: RESULT = f; :}
-	|	staticInitializer:f {: RESULT = new GlobalStaticInitDeclNode(f); :}
 	|   includeDeclaration:f {: RESULT = f; :}
-//	|   INCLUDE_START:l sourceFile:a INCLUDE_END:r {: RESULT = new IncludeNode(a); a.setFileInfo(l); RESULT.setPos(lleft,rright); :}
-	|	instanceLimit:f {: RESULT = f; :}
 	;
 
 
@@ -311,7 +186,7 @@ functionDeclaration ::=	methodDeclaration:m {: RESULT = new GlobalFuncDeclNode(m
 					literal ::=	INTEGER_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getIntObject(i),LiteralTypeSE.INT); RESULT.setPos(ileft,iright); :}
 						|	FLOATING_POINT_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getFixedObject(i),LiteralTypeSE.FLOAT); RESULT.setPos(ileft,iright); :}
 						|	BOOLEAN_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getBoolObject(i),LiteralTypeSE.BOOL); RESULT.setPos(ileft,iright); :}
-						|	CHARACTER_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getCharObject(i),LiteralTypeSE.CHAR); RESULT.setPos(ileft,iright); :}
+//						|	CHARACTER_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getCharObject(i),LiteralTypeSE.CHAR); RESULT.setPos(ileft,iright); :}
 						|	STRING_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getStringObject(i),LiteralTypeSE.STRING); RESULT.setPos(ileft,iright); :}
 						|	NULL_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getNullObject(),LiteralTypeSE.NULL); RESULT.setPos(ileft,iright); :}
 						;
@@ -331,38 +206,25 @@ functionDeclaration ::=	methodDeclaration:m {: RESULT = new GlobalFuncDeclNode(m
 						;
 					integralType ::= 
 							BYTE:l {: RESULT = new BasicTypeNode("byte"); RESULT.setPos(lleft,lright);  :}
-						|	SHORT:l {: RESULT = new BasicTypeNode("short"); RESULT.setPos(lleft,lright);  :}
 						|	INT:l {: RESULT = new BasicTypeNode("int"); RESULT.setPos(lleft,lright);  :}
-						|	LONG:l {: RESULT = new BasicTypeNode("int"); RESULT.setPos(lleft,lright);  :}
-						|	CHAR:l {: RESULT = new BasicTypeNode("char"); RESULT.setPos(lleft,lright);  :}
 						;
 					floatingPointType ::= 
-							FLOAT:l {: RESULT = new BasicTypeNode("fixed"); RESULT.setPos(lleft,lright); :} 
-						|	DOUBLE:l {: RESULT = new BasicTypeNode("fixed"); RESULT.setPos(lleft,lright);  :} 
-						|	FIXED:l {: RESULT = new BasicTypeNode("fixed"); RESULT.setPos(lleft,lright);  :} 
+							FIXED:l {: RESULT = new BasicTypeNode("fixed"); RESULT.setPos(lleft,lright);  :} 
 						;
 					referenceType ::=
 							classOrInterfaceType:t {: RESULT = t; :}
 						|	arrayType:t {: RESULT = t; :}
-						|	funcPointer:t {: RESULT = t; :}
 						;
 						
 					classOrInterfaceType ::= name:t {: RESULT = ParserHelper.getExpressionType(t, null); :}
-						| name:t typeArguments:ta {: RESULT = ParserHelper.getExpressionType(t, ta); :}
 						;
 						
 					classType ::=	classOrInterfaceType:t {: RESULT = t; :};
 					interfaceType ::= classOrInterfaceType:t {: RESULT = t; :};		
 
-					arrayTypeNoGenerics ::= primitiveType:t dimExprs:r {: RESULT = new ArrayTypeNode(t,r); RESULT.setPos(tleft,rright); :}
+					arrayType ::= primitiveType:t dimExprs:r {: RESULT = new ArrayTypeNode(t,r); RESULT.setPos(tleft,rright); :}
 						|	name:n dimExprs:r {: RESULT = new ArrayTypeNode(ParserHelper.getExpressionType(n,null),r); RESULT.setPos(nleft,rright); :}
 						;
-						
-					arrayType ::= arrayTypeNoGenerics:a {: RESULT = a; :}
-						|	name:n typeArguments:ta dimExprs:r {: RESULT = new ArrayTypeNode(ParserHelper.getExpressionType(n,ta),r); RESULT.setPos(nleft,rright); :}
-						
-						;
-						
 
 					pointerType ::= type:t MULT:r {: RESULT = new PointerTypeNode(t); RESULT.setPos(tleft,rright); :}
 						;
@@ -381,56 +243,18 @@ functionDeclaration ::=	methodDeclaration:m {: RESULT = new GlobalFuncDeclNode(m
 
 //Packages
 
-importDeclarationsOpt ::= 
-		importDeclarations:i {: RESULT = i; :} 
-	|	{: RESULT = null; :}
-	;
-typeDeclarationsOpt   ::= typeDeclarations   | ;
 packageDeclarationOpt ::= 
-		packageDeclaration:i {: RESULT = i; :} 
-	| 	{: RESULT = null; parser.hook.packageDeclRead(RESULT); :}
-	;
-
-importDeclarations ::= 
-		importDeclaration:i {: RESULT = new ImportListNode(i); RESULT.setPos(ileft,iright); :}
-	|	importDeclarations:a importDeclaration:g {: a.add(g); RESULT = a;  RESULT.setPos(aleft,gright); :}
-	;
-typeDeclarations ::= 
-		typeDeclaration
-	|	typeDeclarations typeDeclaration
-	;
-packageDeclaration ::= 
-		PACKAGE:l compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new PackageDeclNode(c, null); RESULT.setPos(lleft,rright); parser.hook.packageDeclRead(RESULT); :}
-	|	PACKAGE:l compilationUnitIdentifier:c ARROW IDENTIFIER:i  SEMICOLON:r {: IdentifierNode ident = new IdentifierNode(i); ident.setPos(ileft,iright); RESULT = new PackageDeclNode(c,ident); RESULT.setPos(lleft,rright); parser.hook.packageDeclRead(RESULT); :}
-	|	PACKAGE:l ARROW IDENTIFIER:i SEMICOLON:r {: IdentifierNode ident = new IdentifierNode(i); ident.setPos(ileft,iright); RESULT = new PackageDeclNode(null,ident); RESULT.setPos(lleft,rright); parser.hook.packageDeclRead(RESULT); :}
-	;
-importDeclaration ::=  
-		IMPORT:l NOT compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new ImportNode(c,true); RESULT.setPos(lleft,rright); parser.hook.importRead(RESULT); :}
-	|	IMPORT:l compilationUnitIdentifier:c SEMICOLON:r {: RESULT = new ImportNode(c,false); RESULT.setPos(lleft,rright); parser.hook.importRead(RESULT); :}
+		{: RESULT = null; parser.hook.packageDeclRead(RESULT); :}
 	;
 	
 includeDeclaration ::=
 		INCLUDE:l STRING_LITERAL:s {: RESULT = new IncludeNode(s,null); RESULT.setPos(lleft,sright); parser.hook.includeRead(RESULT); :}
 	;
 	
-compilationUnitIdentifier ::=
-		IDENTIFIER:i {: IdentifierNode id = new IdentifierNode(i); id.setPos(ileft,iright); RESULT = new CompilationUnitIdentifierNode(null,id); :}
-	|  compilationUnitIdentifier:c DOT IDENTIFIER:i {: IdentifierNode id = new IdentifierNode(i); id.setPos(ileft,iright);  RESULT = new CompilationUnitIdentifierNode(c,id); RESULT.setPos(cleft,iright); :}
-	;
 	
-//		singleTypeImportDeclaration
-//	|	typeImportOnDemandDeclaration
-//	;
-//singleTypeImportDeclaration ::= 
-//		IMPORT name SEMICOLON
-//	;
-//typeImportOnDemandDeclaration ::=
-//		IMPORT name DOT MULT SEMICOLON
-//	;
+
 typeDeclaration ::=
-		classDeclaration:d {: RESULT = d; :}
-	|	interfaceDeclaration:d {: RESULT = d; :}
-	|	structDeclaration:d {: RESULT = d; :}
+		structDeclaration:d {: RESULT = d; :}
 	;
 
 
@@ -442,113 +266,21 @@ modifiers ::= 	modifier:m {: RESULT = new ModifierListNode(m); RESULT.setPos(mle
 	|	modifiers:m modifier:m2 {: m.add(m2); RESULT = m; RESULT.setPos(mleft,m2right); :}
 	;
 modifier ::=	
-	PUBLIC {: RESULT = (ModifierSE.PUBLIC); :}
-	| PROTECTED {: RESULT = (ModifierSE.PROTECTED);:}
-	| PRIVATE {: RESULT = (ModifierSE.PRIVATE);:}
-	| INTERNAL {: RESULT = (ModifierSE.INTERNAL);:}
-	| STATIC {: RESULT = (ModifierSE.STATIC);:}
-	| ABSTRACT {: RESULT = (ModifierSE.ABSTRACT);:}
-	| FINAL {: RESULT = (ModifierSE.FINAL);:}
+	  STATIC {: RESULT = (ModifierSE.STATIC);:}
 	| NATIVE {: RESULT = (ModifierSE.NATIVE);:}
-	| TRANSIENT {: RESULT = (ModifierSE.TRANSIENT); :}
 	| CONST {: RESULT = (ModifierSE.CONST); :}
-	| OVERRIDE {: RESULT = (ModifierSE.OVERRIDE); :}
 	;
 
-// Annotations
-annotation ::=  AT:a IDENTIFIER:i {: RESULT = new AnnotationNode(i); RESULT.setPos(aleft,iright); :}
-		;		
-	
-annotations ::= annotation:a {: RESULT = new AnnotationListNode(a); a.setPos(aleft,aright); :} 
-		| annotations:al annotation:a {: RESULT = al; al.add(a); al.setPos(alleft, aright); :} 
-		;
-		
-annotationsOpt ::= annotations:a {: RESULT = a; :}
-		| {: RESULT = null; :}
-		;
-		
-//Generic stuff
-
-//Generic decl
-typeBound ::= EXTENDS classOrInterfaceType:t {: RESULT = t; :}
-		;
-typeBoundOpt ::= typeBound:tb {: RESULT = tb; :}
-		|		{: RESULT = null; :}
-		;
-
-typeParam ::= IDENTIFIER:i typeBoundOpt:tb {: RESULT = new TypeParamNode(i,tb); RESULT.setPos(ileft,tbright); :}
-		;
-
-typeParamList ::= typeParam:t {: RESULT = new TypeParamListNode(t); RESULT.setPos(tleft,tright); :}
-		| 	typeParamList:tl COMMA typeParam:t {: RESULT = tl; tl.add(t); tl.setPos(tlleft,tright); :}
-		;
-
-typeParameters ::= LT:l typeParamList:tl GT:r {: RESULT = tl; RESULT.setPos(lleft,rright); :}
-		;
-		
-typeParametersOpt ::= typeParameters:t {: RESULT = t; :}
-		|	{: RESULT = null; :}	
-		;
-		
-		
-//Type arguments
-typeArguments ::= LT:l actualTypeParamList:al GT:r {: RESULT = al; RESULT.setPos(lleft,rright); :}
-		| LT:lo actualTypeParamList:al COMMA name:t LT:l actualTypeParamList:al2 RSHIFT:r {: al2.setPos(lleft,rright-1); TypeNode tn = ParserHelper.getExpressionType(t, al2); tn.setPos(tleft,rright-1); al.add(tn); RESULT = al; RESULT.setPos(loleft,rright); :}
-		| LT:lo name:t LT:l actualTypeParamList:al2 RSHIFT:r {: al2.setPos(lleft,rright-1); TypeNode tn = ParserHelper.getExpressionType(t, al2); tn.setPos(tleft,rright-1);  RESULT = new TypeListNode(tn); RESULT.setPos(loleft,rright); :}
-		;
-		
-actualTypeParamList ::= actualTypeParam:a {: RESULT = new TypeListNode(a); RESULT.setPos(aleft,aright); :}
-		|	actualTypeParamList:al COMMA actualTypeParam:a {: RESULT = al; al.add(a); al.setPos(alleft,aright); :}
-		;
-
-actualTypeParam ::= referenceType:r {: RESULT = r; :}
-		|	integralType:i {: RESULT = i; :}
-		|	wildcard {: RESULT = null; :}
-		;
-
-wildcard ::=
-        	QUESTION EXTENDS referenceType {: RESULT = null; :}
-        |	QUESTION {: RESULT = null; :}
-        ;		
-        
-//Function pointer
-funcPointerArgumentList ::= type:a {: RESULT = new TypeListNode(a); RESULT.setPos(aleft,aright); :}
-		|	funcPointerArgumentList:al COMMA type:a {: RESULT = al; al.add(a); al.setPos(alleft,aright); :}
-		;
-
-funcPointer ::= FUNCTION:l LT type:rt LPAREN funcPointerArgumentList:a RPAREN GT:r {: RESULT = new FuncPointerTypeNode(rt,a); RESULT.setPos(lleft,rright); :}
-		|		FUNCTION:l LT VOID LPAREN funcPointerArgumentList:a RPAREN GT:r {: RESULT = new FuncPointerTypeNode(new BasicTypeNode("void"),a); RESULT.setPos(lleft,rright); :}
-		;
 
 
 // Typedef
-typeDefinition	::= annotationsOpt:ao modifiersOpt:m TYPEDEF:l type:t IDENTIFIER:i SEMICOLON:r {:RESULT = new TypeAliasDeclNode(ao,m,i,t); RESULT.setPos(lleft,rright); :}
-		|			annotationsOpt:ao modifiersOpt:m TYPEDEF:l IDENTIFIER:i IS type:t SEMICOLON:r {:RESULT = new TypeAliasDeclNode(ao,m,i,t); RESULT.setPos(lleft,rright); :}
-		;
-
-// Type extensions
-
-typeExtension ::= 	annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp USES type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,true,null); RESULT.setPos(lleft,rright); :}
-		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp EXTENDS type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,false,null); RESULT.setPos(lleft,rright); :}
-		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp USES type:t classBody:r {: RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,true,r); RESULT.setPos(lleft,rright); :}
-		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp EXTENDS type:t classBody:r {: RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,false,r); RESULT.setPos(lleft,rright); :}
-		;
-		
-isKeyOpt ::= 
-		ISKEY {: RESULT = true; :}
-		|	{: RESULT = false; :}
-		;	
-		
-
-
-//Classes
-instanceLimit ::= SETINSTANCELIMIT:l classOrInterfaceType:t LBRACK expression:e RBRACK SEMICOLON:r {: RESULT = new InstanceLimitSetterNode(t,e); RESULT.setPos(lleft,rright); :}
+typeDefinition	::= TYPEDEF:l type:t IDENTIFIER:i SEMICOLON:r {:RESULT = new TypeAliasDeclNode(null,null,i,t); RESULT.setPos(lleft,rright); :}
 		;
 
 //structs
 structDeclaration ::=
-	annotationsOpt:ao STRUCT:l IDENTIFIER:i typeParametersOpt:tp LBRACE structBody:b RBRACE:r {: RESULT = new StructDeclNode(ao,new ModifierListNode(),i,tp,b); RESULT.setPos(lleft,rright); :}
-|	annotationsOpt:ao STRUCT:l IDENTIFIER:i typeParametersOpt:tp LBRACE structBody:b RBRACE SEMICOLON:r {: RESULT = new StructDeclNode(ao,new ModifierListNode(),i,tp,b); RESULT.setPos(lleft,rright); :}
+	STRUCT:l IDENTIFIER:i LBRACE structBody:b RBRACE:r {: RESULT = new StructDeclNode(null,new ModifierListNode(),i,null,b); RESULT.setPos(lleft,rright); :}
+|	STRUCT:l IDENTIFIER:i LBRACE structBody:b RBRACE SEMICOLON:r {: RESULT = new StructDeclNode(null,new ModifierListNode(),i,null,b); RESULT.setPos(lleft,rright); :}
 
 	;
 	
@@ -556,59 +288,11 @@ structBody ::= fieldDeclaration:d {: RESULT = new MemberDeclListNode(d); RESULT.
 	| structBody:l fieldDeclaration:d {: l.add(d); RESULT = l; RESULT.setPos(lleft,dright); :}
 	;
 
-// Enrich declaration
-enrichDeclaration ::= annotationsOpt:ao modifiersOpt:m ENRICH:e type:t classBody:b {: RESULT = new EnrichDeclNode(ao,m,t,b); RESULT.setPos(eleft,bright); :}
-	;
-	
-//Class Declaration:
-classDeclaration ::= 
-	annotationsOpt:ao  modifiersOpt:m CLASS:c IDENTIFIER:n typeParametersOpt:tp superOpt:s interfacesOpt:i classBody:b {: RESULT = new ClassDeclNode(ao,m,n,null,s,i,b,tp); RESULT.setPos(cleft,bright); :}
-	|annotationsOpt:ao  modifiersOpt:m CLASS:c IDENTIFIER:n typeParametersOpt:tp LBRACK expression:e RBRACK interfacesOpt:i classBody:b {: RESULT = new ClassDeclNode(ao,m,n,e,null,i,b,tp); RESULT.setPos(cleft,bright); :}
-	;
-superCl ::=	EXTENDS:e classType:t {: RESULT = t; t.setPos(eleft,tright); :}
-	;
-superOpt ::=	{: RESULT = null; :}
-	|	superCl:c {: RESULT = c; :}
-	;
-interfaces ::=	IMPLEMENTS:i interfaceTypeList:l {: RESULT = l; RESULT.setPos(ileft,lright); :}
-	;
-interfacesOpt::= {: RESULT = null; :}
-	|	interfaces:l {: RESULT = l; :}
-	;
-interfaceTypeList ::= 
-		interfaceType:d {: RESULT = new TypeListNode(d); RESULT.setPos(dleft,dright);:}
-	|	interfaceTypeList:l COMMA interfaceType:d {: l.add(d); RESULT = l; RESULT.setPos(lleft,dright); :}
-	;
-classBody ::=	LBRACE:le classBodyDeclarationsOpt:l RBRACE:r {: RESULT = l; RESULT.setPos(leleft,rright); :}
-	;
-classBodyDeclarationsOpt ::= {: RESULT = new MemberDeclListNode(); :}
-	|	classBodyDeclarations:d {: RESULT = d; :}
-	;
-classBodyDeclarations ::= 
-		classBodyDeclaration:d {: RESULT = new MemberDeclListNode(d); RESULT.setPos(dleft,dright);:}
-	|	classBodyDeclarations:l classBodyDeclaration:d {: l.add(d); RESULT = l; RESULT.setPos(lleft,dright); :}
-	;
-classBodyDeclaration ::=
-		classMemberDeclaration:d {: RESULT = d; :}
-	|	staticInitializer:d {: RESULT = d; :}
-	|	constructorDeclaration:d {: RESULT = d; :}
-	|	block {: System.err.println("Inner anonymous blocks not supported! Ignored!"); RESULT = null; :}
-	;
-classMemberDeclaration ::=
-		fieldDeclaration:d {: RESULT = d; :}
-	|	methodDeclaration:d {: RESULT = d; :}
-//	|	accessorDeclaration:d {: RESULT = d; :}
-	/* repeat the prod for 'classDeclaration' here: */
-	|	annotationsOpt:ao modifiersOpt CLASS IDENTIFIER superOpt interfacesOpt classBody  {: RESULT = null; System.err.println("Inner classes not yet supported!"); :}
-	|	interfaceDeclaration {: RESULT = null; System.err.println("Inner interfaces not supported!"); :}
-  | SEMICOLON {: RESULT = null; :}
-	;
+
 
 //Field Declarations
 				fieldDeclaration ::= 
-						annotationsOpt:ao modifiersOpt:l type:t variableDeclarators:d SEMICOLON:r {: RESULT = new FieldDeclNode(ao,l,t,d,null); RESULT.setPos(l,tleft,rright); :}
-					|	annotationsOpt:ao modifiersOpt:l type:t variableDeclarators:d SEMICOLON:r accessorBody:b {: RESULT = new FieldDeclNode(ao,l,t,d,b); RESULT.setPos(l,tleft,rright); :}
-					
+						modifiersOpt:l type:t variableDeclarators:d SEMICOLON:r {: RESULT = new FieldDeclNode(null,l,t,d,null); RESULT.setPos(l,tleft,rright); :}
 					;
 				variableDeclarators ::=
 						variableDeclarator:i {: RESULT = new VarDeclListNode(i); RESULT.setPos(ileft,iright);:}
@@ -617,56 +301,21 @@ classMemberDeclaration ::=
 				variableDeclarator ::=
 						variableDeclaratorId:i {: RESULT = new UninitedVarDeclNode(i); RESULT.setPos(ileft,iright);:}
 					|	variableDeclaratorId:i EQ expression:j {: RESULT = new VarAssignDeclNode(i,j); RESULT.setPos(ileft,jright); :}
-					|	variableDeclaratorId:i EQ arrayInitializer:j {: RESULT = new VarArrayInitDeclNode(i,j); RESULT.setPos(ileft,jright); :}
 					;
 				variableDeclaratorId ::=
 						IDENTIFIER:i {: RESULT = new IdentifierNode(i); RESULT.setPos(ileft,iright); :}
-//					|	variableDeclaratorId:i LBRACK RBRACK:r {: RESULT = new VariableDeclaratorId(null,i); RESULT.setPos(ileft,rright); :}
 					;
 
-		
-// Accessor method declarations
-//accessorDeclaration ::=
-//		annotationsOpt:ao modifiersOpt:m type:t variableDeclaratorId:d accessorBody:a {: RESULT = new AccessorDeclNode(ao,m,t,d,null,a.getGetMethod(),a.getSetMethod(),false); RESULT.setPos(tleft,aright); :}
-//	|	annotationsOpt:ao modifiersOpt:m type:t variableDeclaratorId:d LBRACK formalParameterList:p RBRACK accessorBody:a {: RESULT = new AccessorDeclNode(ao,m,t,d,p,a.getGetMethod(),a.getSetMethod(),false); RESULT.setPos(tleft,aright); :}
-//	|	annotationsOpt:ao modifiersOpt:m type:t THIS LBRACK formalParameterList:p RBRACK accessorBody:a {: RESULT = new AccessorDeclNode(ao,m,t,null,p,a.getGetMethod(),a.getSetMethod(),true); RESULT.setPos(tleft,aright); :}
-//	;
-accessorBody ::=	
-	
-		accessorBody:b accessorDeclaration:s {: RESULT = b; b.add(s); RESULT.setPos(bleft,sright); :}
-//	|	accessorBody:b accessorGet:g {: RESULT = b; b.add(g); RESULT.setPos(bleft,gright); :}
-//	|	accessorGet:g {: RESULT = new AccessorList(g); RESULT.setPos(gleft,gright); :}
-	|	accessorDeclaration:s {: RESULT = new AccessorList(s); RESULT.setPos(sleft,sright); :}
-	;
-	
-accessorDeclaration ::=
-	ARROW:l annotationsOpt:ao modifiersOpt:m IDENTIFIER:i methodBody:b  {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,null,i,null,null); mh.setPos(lleft,lright); 
-											RESULT = new MethodDeclNode(MethodTypeSE.ACCESSOR,mh,b); RESULT.setPos(lleft,bright); :}
-	| ARROW:l annotationsOpt:ao modifiersOpt:m IDENTIFIER:i LPAREN formalParameterListOpt:p RPAREN:r methodBody:b  {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,null,i,p,null); mh.setPos(lleft,lright); 
-											RESULT = new MethodDeclNode(MethodTypeSE.ACCESSOR,mh,b); RESULT.setPos(lleft,bright); :}
-	| ARROW:l annotationsOpt:ao modifiersOpt:m type:t IDENTIFIER:i methodBody:b  {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,t,i,null,null); mh.setPos(lleft,lright); 
-											RESULT = new MethodDeclNode(MethodTypeSE.ACCESSOR,mh,b); RESULT.setPos(lleft,bright); :}
-	| ARROW:l annotationsOpt:ao modifiersOpt:m type:t IDENTIFIER:i LPAREN formalParameterListOpt:p RPAREN:r methodBody:b  {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,t,i,p,null); mh.setPos(lleft,lright); 
-											RESULT = new MethodDeclNode(MethodTypeSE.ACCESSOR,mh,b); RESULT.setPos(lleft,bright); :}
-	;
-	
-//accessorSet ::=
-//	ARROW:l annotationsOpt:ao modifiersOpt:m SET:g methodBody:b {: 	MethodHeaderNode mh = new MethodHeaderNode(ao,m,new BasicTypeNode("void"),null,new ParameterListNode(),null); mh.setPos(lleft,lright); 
-//											RESULT = new MethodDeclNode(MethodTypeSE.ACC_SET,mh,b); RESULT.setPos(lleft,bright); :}
-//	;
-	
 // Method Declarations
 				methodDeclaration ::=
 						methodHeader:h methodBody:b {: RESULT = new MethodDeclNode(MethodTypeSE.METHOD,h,b); RESULT.setPos(h.getLeftPos(),bright); :}
 					;
 				methodHeader ::=
-						annotationsOpt:ao modifiersOpt:m type:t methodDeclarator:d throwsOpt:th {: RESULT = new MethodHeaderNode(ao,m,t,d.getName(),d.getParameters(),th); RESULT.setPos(m,tleft,thright); :}
-					|	annotationsOpt:ao modifiersOpt:m VOID:t methodDeclarator:d throwsOpt:th {: RESULT = new MethodHeaderNode(ao,m,new BasicTypeNode("void"),d.getName(),d.getParameters(),th); RESULT.setPos(m,tleft,thright); :}
+						modifiersOpt:m type:t methodDeclarator:d {: RESULT = new MethodHeaderNode(null,m,t,d.getName(),d.getParameters(),null); RESULT.setPos(m,tleft,dright); :}
+					|	modifiersOpt:m VOID:t methodDeclarator:d {: RESULT = new MethodHeaderNode(null,m,new BasicTypeNode("void"),d.getName(),d.getParameters(),null); RESULT.setPos(m,tleft,dright); :}
 					;
 				methodDeclarator ::=
 						IDENTIFIER:i LPAREN formalParameterListOpt:p RPAREN:r {: RESULT = new MethodDeclaratorTransNode(i,p); RESULT.setPos(ileft,rright);  :}
-					//|	methodDeclarator LBRACK RBRACK {: System.outRESULT = null; :} // deprecated
-					// be careful; the above production also allows 'void foo() []'
 					;
 				formalParameterListOpt ::= {: RESULT = new ParameterListNode(); :}
 					|	formalParameterList:l {: RESULT = l; :}
@@ -677,86 +326,11 @@ accessorDeclaration ::=
 					;
 				formalParameter ::=
 						type:t variableDeclaratorId:d {: RESULT = new ParameterNode(t,d); RESULT.setPos(tleft,dright); :}
-					|	FINAL:l type:t variableDeclaratorId:d {: System.err.println("keyword \"final\" not supported in parameter list. Ignored!"); RESULT = new ParameterNode(t,d); RESULT.setPos(lleft,dright); :}
 					;
-				throwsOpt ::=	{: RESULT = null; :}
-					|	throws {: System.err.println("Throws declaration not yet supported!"); RESULT = null; :}
-					;
-				throws ::=	THROWS classTypeList {: RESULT = null; :}
-					;
-				classTypeList ::=
-						classType {: RESULT = null; :}
-					|	classTypeList COMMA classType {: RESULT = null; :}
-					; 
 				methodBody ::=	block:s {: RESULT = s; :}
 					|	SEMICOLON {: RESULT = null; :}
 					;
 
-// Static Initializers
-staticInitializer ::=
-		annotationsOpt:ao STATIC:l block:b {: RESULT = new StaticInitDeclNode(ao,b); RESULT.setPos(lleft,bright); :}
-	;
-
-// Constructor Declarations
-constructorDeclaration ::=
-		annotationsOpt:ao modifiersOpt:m constructorDeclarator:d throwsOpt:t 
-			constructorBody:b {: d.setModifiers(m); d.setThrowDeclaration(t); d.setAnnotations(ao); RESULT = new MethodDeclNode(MethodTypeSE.CONSTRUCTOR,d,new BlockStmtNode(b)); RESULT.setPos(dleft,bright); :}  
-		| annotationsOpt:ao modifiersOpt:m destructorDeclarator:d throwsOpt:t 
-			block:b {: d.setModifiers(m); d.setThrowDeclaration(t); d.setAnnotations(ao); RESULT = new MethodDeclNode(MethodTypeSE.DESTRUCTOR,d,b); RESULT.setPos(dleft,bright); :}  
-	;
-constructorDeclarator ::=
-		simpleName:s LPAREN formalParameterListOpt:l RPAREN:r {: RESULT = new MethodHeaderNode(null,null,null,s.getName(),l,null); RESULT.setPos(sleft,rright); :}
-	;
-	
-destructorDeclarator ::=
-		COMP:l simpleName:s LPAREN RPAREN:r {: RESULT = new MethodHeaderNode(null,null,null,s.getName(),null,null); RESULT.setPos(lleft,rright); :}
-	;
-	
-constructorBody ::=
-		LBRACE:l explicitConstructorInvocation:e
-			blockStatements:s RBRACE:r {: RESULT = s; s.add(0,e); RESULT.setPos(lleft,rright); :}
-	|	LBRACE:l explicitConstructorInvocation:e RBRACE:r {: RESULT = new StmtListNode(e); RESULT.setPos(lleft,rright); :}
-	|	LBRACE:l blockStatements:s RBRACE:r {: RESULT = s; RESULT.setPos(lleft,rright); :}
-	|	LBRACE:l RBRACE:r {: RESULT = new StmtListNode(); RESULT.setPos(lleft,rright); :}
-	;
-explicitConstructorInvocation ::=
-		THIS:l LPAREN argumentListOpt:a RPAREN SEMICOLON:r {: RESULT = new ExplicitConsCallStmtNode(null,false,a); RESULT.setPos(lleft,rright); :}
-	|	SUPER:l LPAREN argumentListOpt:a RPAREN SEMICOLON:r {: RESULT = new ExplicitConsCallStmtNode(null,true,a); RESULT.setPos(lleft,rright); :}
-	|	primary:e DOT THIS LPAREN argumentListOpt:a RPAREN SEMICOLON:r {: System.err.println("Named constructor invocation not supported yet. Ignoring name"); RESULT = new ExplicitConsCallStmtNode(e,false,a); RESULT.setPos(eleft,rright); :}
-	|	primary:e DOT SUPER LPAREN argumentListOpt:a RPAREN SEMICOLON:r {: System.err.println("Named constructor invocation not supported yet. Ignoring name"); RESULT = new ExplicitConsCallStmtNode(e,true,a); RESULT.setPos(eleft,rright); :}
-	;
-
-// Interfaces
-
-// Interface Declarations
-interfaceDeclaration ::=
-		annotationsOpt:ao modifiersOpt:m INTERFACE IDENTIFIER:n typeParametersOpt:tp extendsInterfacesOpt:i 
-			interfaceBody:b {: RESULT = new InterfaceDeclNode(ao,m,n,i,tp,b); RESULT.setPos(mleft,bright); :}
-	;
-extendsInterfacesOpt ::=  {: RESULT = new TypeListNode(); :}
-	|	extendsInterfaces:t {: RESULT = t; :}
-	;
-extendsInterfaces ::=
-		EXTENDS:l interfaceType:t {: RESULT = new TypeListNode(t); RESULT.setPos(lleft,tright); :}
-	|	extendsInterfaces:l COMMA interfaceType:t {: RESULT = l; l.add(t); l.setPos(lleft,tright); :}
-	;
-interfaceBody ::=
-		LBRACE:le interfaceMemberDeclarationsOpt:l RBRACE:r {: RESULT = l; l.setPos(leleft,rright); :}
-	;
-interfaceMemberDeclarationsOpt ::= {: RESULT = new MemberDeclListNode(); :}
-	|	interfaceMemberDeclarations:l {: RESULT = l; :}
-	;
-interfaceMemberDeclarations ::=
-		interfaceMemberDeclaration:d {: RESULT = new MemberDeclListNode(d); RESULT.setPos(dleft,dright); :}
-	|	interfaceMemberDeclarations:l interfaceMemberDeclaration:d {: RESULT = l; l.add(d); l.setPos(lleft,dright); :}
-	;
-interfaceMemberDeclaration ::=
-		constantDeclaration:d {: RESULT = d; :}
-	|	abstractMethodDeclaration:d {: RESULT = d; :}
-	|	classDeclaration  {: RESULT = null; System.err.println("Inner classes not yet supported!"); :}
-	|	interfaceDeclaration  {: RESULT = null; System.err.println("Inner interfaces not yet supported!"); :}
-  | SEMICOLON {: RESULT = null; :}
-	;
 constantDeclaration ::=
 		fieldDeclaration:f {: RESULT = f; :}
 	;
@@ -765,20 +339,13 @@ abstractMethodDeclaration ::=
 	;
 
 // Arrays
-					arrayInitializer ::=
-							LBRACE:l variableInitializers:v COMMA RBRACE:r {: RESULT = new ArrayInitNode(v,true); RESULT.setPos(lleft,rright); :}
-						|	LBRACE:l variableInitializers:v RBRACE:r {: RESULT = new ArrayInitNode(v,false); RESULT.setPos(lleft,rright);:}
-						|	LBRACE:l COMMA RBRACE:r {: RESULT = new ArrayInitNode(null,true); RESULT.setPos(lleft,rright);:}
-						|	LBRACE:l RBRACE:r {: RESULT = new ArrayInitNode(null, false); RESULT.setPos(lleft,rright);:}
-						;
+
 					variableInitializers ::=
 							variableInitializer:i {: RESULT = new VarInitializerListNode(i); RESULT.setPos(ileft,iright); :} 
-						|	variableInitializers:list COMMA variableInitializer:i {: list.add(i); RESULT = list; RESULT.setPos(listleft,iright); :}
 						;
 						
 					variableInitializer ::=
 							expression:e {: RESULT = e;:} 
-						|	arrayInitializer:e {: RESULT = e;:} 
 						;
 
 // Blocks and Statements
@@ -794,8 +361,6 @@ abstractMethodDeclaration ::=
 					blockStatement ::=
 							localVariableDeclarationStatement:s {: RESULT = s; :}
 						|	statement:s {: RESULT = s; :}
-						//|	classDeclaration:s {: RESULT = new LocalTypeDeclStmtNode(s); RESULT.setPos(sleft,sright); :}
-						//|	interfaceDeclaration:s {: RESULT = new LocalTypeDeclStmtNode(s); :}
 						;
 					localVariableDeclarationStatement ::=
 							localVariableDeclaration:l SEMICOLON:r {: RESULT = new LocalVarDeclStmtNode(l); RESULT.setPos(lleft,rright); :}
@@ -805,55 +370,33 @@ abstractMethodDeclaration ::=
 						|	CONST:l type:t variableDeclarators:d {: RESULT = new LocalVarDeclNode((ModifierListNode)new ModifierListNode(ModifierSE.CONST).setPos(lleft,lright),t,d); RESULT.setPos(lleft,dright); :}
 						;
 					statement ::= statementWithoutTrailingSubstatement:s {: RESULT = s; :}
-						|	labeledStatement:s {: RESULT = s; :}
 						|	ifThenStatement:s {: RESULT = s; :}
 						|	ifThenElseStatement:s {: RESULT = s; :}
 						|	whileStatement:s {: RESULT = s; :}
-						|	forStatement:s {: RESULT = s; :}
 						;
 					statementNoShortIf ::=
 							statementWithoutTrailingSubstatement:s {: RESULT = s; :}
-						|	labeledStatementNoShortIf:s {: RESULT = s; :}
 						|	ifThenElseStatementNoShortIf:s {: RESULT = s; :}
 						|	whileStatementNoShortIf:s {: RESULT = s; :}
-						|	forStatementNoShortIf:s {: RESULT = s; :}
 						;
 					statementWithoutTrailingSubstatement ::=
 							block:s {: RESULT = s; :}
 						|	emptyStatement:s {: RESULT = s; :}
 						|	expressionStatement:s {: RESULT = s; :}
-						|	switchStatement:s {: RESULT = s; :}
 						|	doWhileStatement:s {: RESULT = s; :}
 						|	breakStatement:s {: RESULT = s; :}
 						|	continueStatement:s {: RESULT = s; :}
 						|	returnStatement:s {: RESULT = s; :}
-						|	deleteStatement:s {: RESULT = s; :}
-//						|	synchronizedStatement:s {: RESULT = s; :}
-//						|	throwStatement:s {: RESULT = s; :}
-//						|	tryStatement:s {: RESULT = s; :}
 						;
 					emptyStatement ::=
 							SEMICOLON {: RESULT = new EmptyStmtNode(); :}
-						;
-					labeledStatement ::=
-							IDENTIFIER COLON statement:s {: System.err.println("LabeledStatement not supported yet!"); RESULT = s; :}
-						;
-					labeledStatementNoShortIf ::=
-							IDENTIFIER COLON statementNoShortIf:s {: System.err.println("LabeledStatement not supported yet!"); RESULT = s; :}
-						;
-					deleteStatement ::= DELETE:d expression:e SEMICOLON:r {: RESULT = new DeleteStmtNode(e); RESULT.setPos(dleft,rright); :}
 						;
 					expressionStatement ::=
 							statementExpression:e SEMICOLON:r {: RESULT = new ExprStmtNode(e); RESULT.setPos(eleft,rright); :}
 						;
 					statementExpression ::=
 							assignment:e {: RESULT = e; :}
-						|	preincrementExpression:e {: RESULT = e; :}
-						|	predecrementExpression:e {: RESULT = e; :}
-						|	postincrementExpression:e {: RESULT = e; :}
-						|	postdecrementExpression:e {: RESULT = e; :}
 						|	methodInvocation:e {: RESULT = e; :}
-						|	classInstanceCreationExpression:e {: RESULT = e; :}
 						;
 					ifThenStatement ::=
 							IF:l LPAREN expression:e RPAREN statement:s1 {: RESULT = new IfStmtNode(e,ParserHelper.createBlock(s1),null); RESULT.setPos(lleft,s1right); :}
@@ -867,31 +410,6 @@ abstractMethodDeclaration ::=
 								ELSE statementNoShortIf:s2 {: RESULT = new IfStmtNode(e,ParserHelper.createBlock(s1),ParserHelper.createBlock(s2)); RESULT.setPos(lleft,s2right); :}
 						;
 						
-					// ====== SWITCH NOT YET SUPPORTED ====== 
-					switchStatement ::=
-							SWITCH LPAREN expression:e RPAREN switchBlock {: System.err.println("Switch not supported yet!");  RESULT = null; :}
-						;
-					switchBlock ::=
-							LBRACE switchBlockStatementGroups switchLabels RBRACE {: RESULT = null; :}
-						|	LBRACE switchBlockStatementGroups RBRACE {: RESULT = null; :}
-						|	LBRACE switchLabels RBRACE {: RESULT = null; :}
-						|	LBRACE RBRACE {: RESULT = null; :}
-						;
-					switchBlockStatementGroups ::=
-							switchBlockStatementGroup {: RESULT = null; :}
-						|	switchBlockStatementGroups switchBlockStatementGroup {: RESULT = null; :}
-						;
-					switchBlockStatementGroup ::=
-							switchLabels blockStatements {: RESULT = null; :}
-						;
-					switchLabels ::=
-							switchLabel {: RESULT = null; :}
-						|	switchLabels switchLabel {: RESULT = null; :}
-						;
-					switchLabel ::=
-							CASE constantExpression COLON {: RESULT = null; :}
-						|	DEFAULT COLON {: RESULT = null; :}
-						;
 
 					whileStatement ::=
 							WHILE:l LPAREN expression:e RPAREN:r statement:s {: RESULT = new WhileStmtNode(e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
@@ -902,34 +420,7 @@ abstractMethodDeclaration ::=
 					doWhileStatement ::=
 							DO:l statement:s WHILE LPAREN expression:e RPAREN SEMICOLON:r {: RESULT = new DoWhileStmtNode(e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
 						;
-					forStatement ::=
-							FOR:l LPAREN forInitOpt:i SEMICOLON expressionOpt:e SEMICOLON
-								forUpdateOpt:u RPAREN:r statement:s {: RESULT = new ForStmtNode(i,e,u,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e RPAREN:r statement:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForEachStmtNode(t,vid,e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :} 
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e DOTDOT expression:e2 RPAREN:r statement:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForCountStmtNode(t,vid,e,e2,ParserHelper.createBlock(s)); :} 
-						;
-					forStatementNoShortIf ::=
-							FOR:l LPAREN forInitOpt:i SEMICOLON expressionOpt:e SEMICOLON
-								forUpdateOpt:u RPAREN:r statementNoShortIf:s {: RESULT = new ForStmtNode(i,e,u,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e RPAREN:r statementNoShortIf:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForEachStmtNode(t,vid,e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :} 
-						|	FOR:l LPAREN type:t IDENTIFIER:i COLON expression:e DOTDOT expression:e2 RPAREN:r statementNoShortIf:s {: IdentifierNode vid = new IdentifierNode(i); vid.setPos(ileft,iright); RESULT = new ForCountStmtNode(t,vid,e,e2,ParserHelper.createBlock(s)); :} 
-					
-						;
-					forInitOpt ::= {: RESULT = new BlockStmtNode(new StmtListNode()); :}
-						|	forInit:l {: RESULT = l; :}
-						;
-					forInit ::=	statementExpressionList:l {: RESULT = new BlockStmtNode(l); RESULT.setPos(lleft,lright); :}
-						|	localVariableDeclaration:l {: RESULT = new LocalVarDeclStmtNode(l); RESULT.setPos(lleft,lright); :}
-						;
-					forUpdateOpt ::= {: RESULT = new BlockStmtNode(new StmtListNode()); :}
-						|	forUpdate:l {: RESULT = new BlockStmtNode(l); :}
-						;
-					forUpdate ::=	statementExpressionList:l {: RESULT = l; :}
-						;
-					statementExpressionList ::=
-							statementExpression:e {: StmtNode s = new ExprStmtNode(e); s.setPos(eleft,eright); RESULT = new StmtListNode(s); RESULT.setPos(eleft,eright); :}
-						|	statementExpressionList:l COMMA statementExpression:e {: StmtNode s = new ExprStmtNode(e); s.setPos(eleft,eright); l.add(s); RESULT = l; l.setPos(lleft,eright); :}
-						;
+
 
 					identifierOpt ::=  {: RESULT = null; :}
 						|	IDENTIFIER:i {: RESULT = i; :}
@@ -945,57 +436,17 @@ abstractMethodDeclaration ::=
 					returnStatement ::=
 							RETURN:l expressionOpt:e SEMICOLON:r  {: RESULT = new ReturnStmtNode(e); RESULT.setPos(lleft,rright); :}
 						;
-//					throwStatement ::=
-//							THROW:l expression:e SEMICOLON:r  {: RESULT = new ThrowStmtNode(e); RESULT.setPos(lleft,rright); :}
-//						;
-//					synchronizedStatement ::=
-//							SYNCHRONIZED LPAREN expression RPAREN block:b {: System.err.println("Synchronized blocks not supported. Ignored!"); RESULT = b; :}
-//						;
-//					tryStatement ::=
-//							TRY block catches {: System.err.println("Try catch not supported. Ignored!"); RESULT = null; :}
-//						|	TRY block catchesOpt finally {: System.err.println("Try catch not supported. Ignored!"); RESULT = null; :}
-//						;
-//					catchesOpt ::= {: RESULT = null; :}
-//						|	catches {: RESULT = null; :}
-//						;
-//					catches ::=	catchClause {: RESULT = null; :}
-//						|	catches catchClause {: RESULT = null; :}
-//						;
-//					catchClause ::=
-//							CATCH LPAREN formalParameter RPAREN block {: RESULT = null; :}
-//						;
-//					finally ::=	FINALLY block {: RESULT = null; :}
-//	;
+
 
 // Expressions
 					primary ::=	primaryNoNewArray:e {: RESULT = e; :}
 						|	arrayAccess:e {: RESULT = e; :}
-//						|	arrayCreationExpression:e {: RESULT = e; :}
 						;
 					primaryNoNewArray ::=
 							literal:l {: RESULT = new LiteralExprNode(l); RESULT.setPos(lleft,lright); :}
-						|	THIS:t {: RESULT = new ThisExprNode(null); RESULT.setPos(tleft,tright); :}
-						|	keyofExpression:k {: RESULT = k; :}
 						|	LPAREN:l expression:e RPAREN:r {: RESULT = new ParenthesisExprNode(e); RESULT.setPos(lleft,rright); :}
-						|	classInstanceCreationExpression:e {: RESULT = e; :}
 						|	fieldAccess:e {: RESULT = e; :}
 						|	methodInvocation:e {: RESULT = e; :}
-						|	primitiveType:t DOT CLASS:r {: RESULT = new MetaClassExprNode(t); RESULT.setPos(tleft,rright); :}
-						|	VOID:l DOT CLASS:r {: RESULT = new MetaClassExprNode((TypeNode)new BasicTypeNode("void").setPos(lleft,rright)); RESULT.setPos(lleft,rright); :}
-//						|	arrayType:t DOT CLASS:r {: RESULT = new MetaClassExprNode(t); RESULT.setPos(tleft,rright); :}
-						|	name:n DOT CLASS:r {: RESULT = new MetaClassExprNode(ParserHelper.getExpressionType(n,null)); RESULT.setPos(nleft,rright); :}
-						|	name:n DOT THIS:r {: RESULT = new ThisExprNode(n); RESULT.setPos(nleft,rright); :}
-						;
-						//Keyof expression:
-					keyofExpression ::= KEYOF:l LT type:t GT:r {: RESULT = new KeyOfExprNode(t); RESULT.setPos(lleft,rright); :}
-							;
-					classInstanceCreationExpression ::=
-							NEW:l classType:t LPAREN argumentListOpt:a RPAREN:r {: RESULT = new NewExprNode(t,a,null); RESULT.setPos(lleft,rright); :}
-						|	NEW:l classType:t LPAREN argumentListOpt:a RPAREN classBody:b {: RESULT = new NewExprNode(t,a,b); RESULT.setPos(lleft,bright); :}
-						|	primary DOT NEW IDENTIFIER
-								LPAREN argumentListOpt RPAREN {: System.err.println("Strange class instanciation detected!"); :}
-						|	primary DOT NEW IDENTIFIER
-								LPAREN argumentListOpt RPAREN classBody {: System.err.println("Strange class instanciation detected!"); :}
 						;
 					argumentListOpt ::= {: RESULT = new ExprListNode(); :}
 						|	argumentList:a {: RESULT = a; :}
@@ -1004,64 +455,29 @@ abstractMethodDeclaration ::=
 							expression:e {: RESULT = new ExprListNode(e); e.setPos(eleft,eright); :}
 						|	argumentList:a COMMA expression:e {: a.add(e); RESULT = a; a.setPos(aleft,eright); :}
 						;
-//					arrayCreationExpression ::=
-//							NEW:l primitiveType:t dimExprs:d1 dimsOpt:d2 {: RESULT = new ArrayCreationExprNode(t,d1,d2,null); RESULT.setPos(lleft,d2right); :}
-//						|	NEW:l classOrInterfaceType:t dimExprs:d1 dimsOpt:d2 {: RESULT = new ArrayCreationExprNode(t,d1,d2,null); RESULT.setPos(lleft,d2right); :}
-//						|	NEW:l primitiveType:t dims:d2 arrayInitializer:a {: RESULT = new ArrayCreationExprNode(t,null,d2,a); RESULT.setPos(lleft,aright); :}
-//						|	NEW:l classOrInterfaceType:t dims:d2 arrayInitializer:a {: RESULT = new ArrayCreationExprNode(t,null,d2,a); RESULT.setPos(lleft,aright); :}
-//						;
 					dimExprs ::=	dimExpr:e {: RESULT = (ExprListNode)new ExprListNode(e).setPos(eleft,eright);  :}
 						|	dimExprs:l dimExpr:e {: l.add(e); RESULT = l; l.setPos(lleft,eright); :}
 						;
 					dimExpr ::=	LBRACK:l expression:e RBRACK:r {: RESULT = e; e.setPos(lleft,rright); :}
 						;
-					dimsOpt ::= {: RESULT = 0; :}
-						|	dims:d {: RESULT = d; :}
-						;
-					dims ::=	LBRACK RBRACK {: RESULT = 1; :}
-						|	dims:d LBRACK RBRACK {: RESULT = d + 1; :}
-						;
 					fieldAccess ::=
 							primary:e DOT IDENTIFIER:i {: RESULT = new FieldAccessExprNode(e,i); RESULT.setPos(eleft,iright); :}
-//						|   primary:e ARROW IDENTIFIER:i {: RESULT = new FieldAccessExprNode(e,AccessTypeSE.POINTER,i); RESULT.setPos(eleft,iright); :}
-//						|	name:n	ARROW IDENTIFIER:i  {: RESULT = new FieldAccessExprNode(n,AccessTypeSE.POINTER,i); RESULT.setPos(nleft,iright); :}
-						|	SUPER:l DOT IDENTIFIER:i {: RESULT = new FieldAccessExprNode((ExprNode)new SuperExprNode(null).setPos(lleft,lright),i); RESULT.setPos(lleft,iright); :}
-						|	name:n DOT SUPER:s DOT IDENTIFIER:i {: RESULT = new FieldAccessExprNode((ExprNode)new SuperExprNode(n).setPos(nleft,sright),i); RESULT.setPos(nleft,iright); :}
 						;
 					methodInvocation ::=
 							name:n LPAREN argumentListOpt:a RPAREN:r {: ExprNode lexpr = (n instanceof NameExprNode?null:n.getLeftExpression()); RESULT = new MethodInvocationExprNode(lexpr,n.getName(),a,null); RESULT.setPos(nleft,rright); :}
 						|	primary:e DOT IDENTIFIER:i LPAREN argumentListOpt:a RPAREN:r {: RESULT = new MethodInvocationExprNode(e,i,a,null); RESULT.setPos(eleft,rright);  :}
-//						|	primary:e ARROW IDENTIFIER:i LPAREN argumentListOpt:a RPAREN:r {: RESULT = new MethodInvocationExprNode(AccessTypeSE.POINTER,e,i,a,null); RESULT.setPos(eleft,rright);  :}
-//						|	name:n ARROW IDENTIFIER:i LPAREN argumentListOpt:a RPAREN:r {: RESULT = new MethodInvocationExprNode(AccessTypeSE.POINTER,n,i,a,null); RESULT.setPos(nleft,rright);  :}
-						|	SUPER:l DOT IDENTIFIER:i LPAREN argumentListOpt:a RPAREN:r {: RESULT = new MethodInvocationExprNode((ExprNode)new SuperExprNode(null).setPos(lleft,lright),i,a,null); RESULT.setPos(lleft,rright); :}
-						|	name:n DOT SUPER DOT IDENTIFIER:i LPAREN argumentListOpt:a RPAREN:r {: RESULT = new MethodInvocationExprNode((ExprNode)new SuperExprNode(n).setPos(nleft,nright),i,a,null); RESULT.setPos(nleft,rright); :}
-						|	NATIVE:l DOT IDENTIFIER:i LPAREN argumentListOpt:a RPAREN:r {: RESULT = new MethodInvocationExprNode(null,i,a,SpecialInvocationSE.NATIVE); RESULT.setPos(lleft,rright);  :}
-					//Inline invocation
-						|	fieldAccess:n DOTINLINE LPAREN argumentListOpt:a RPAREN:r {: ExprNode lexpr = n.getLeftExpression(); RESULT = new MethodInvocationExprNode(lexpr,n.getName(),a,SpecialInvocationSE.INLINE); RESULT.setPos(nleft,rright); :}
-						|	name:n DOTINLINE LPAREN argumentListOpt:a RPAREN:r {: ExprNode lexpr = n.getLeftExpression(); RESULT = new MethodInvocationExprNode(lexpr,n.getName(),a,SpecialInvocationSE.INLINE); RESULT.setPos(nleft,rright); :}
 						;
 					
 					arrayAccess ::= 
-							arrayTypeNoGenerics:a {: RESULT = ParserHelper.arrayTypeToAccess(a); :}
-//							name:n LBRACK expression:e RBRACK:r {: RESULT = new ArrayAccessExprNode((ExprNode)new NameExpr(n).setPos(nleft,nright),e); RESULT.setPos(nleft,rright); :}
+							arrayType:a {: RESULT = ParserHelper.arrayTypeToAccess(a); :}
 						|	primaryNoNewArray:e1 LBRACK expression:e2 RBRACK:r {: RESULT = new ArrayAccessExprNode(e1,e2); RESULT.setPos(e1left,rright); :}
 						;
 					postfixExpression ::=
 							primary:e {: RESULT = e; :}
 						|	name:e {: RESULT = e; :}
-						|	postincrementExpression:e {: RESULT = e; :}
-						|	postdecrementExpression:e {: RESULT = e; :}
-						;
-					postincrementExpression ::=
-							postfixExpression:e PLUSPLUS:r {: RESULT = new UnOpExprNode(e,UnOpSE.POSTPLUSPLUS); RESULT.setPos(eleft,rright); :}
-						;
-					postdecrementExpression ::=
-							postfixExpression:e MINUSMINUS:r {: RESULT = new UnOpExprNode(e,UnOpSE.POSTMINUSMINUS); RESULT.setPos(eleft,rright); :}
 						;
 					unaryExpression ::=
-							preincrementExpression:e {: RESULT = e; :}
-						|	predecrementExpression:e {: RESULT = e; :}
-						|	PLUS:l unaryExpression:e {: RESULT = e; RESULT.setPos(lleft,eright); :}
+							PLUS:l unaryExpression:e {: RESULT = e; RESULT.setPos(lleft,eright); :}
 						|	MINUS:l unaryExpression:e {: RESULT = new UnOpExprNode(e,UnOpSE.MINUS); RESULT.setPos(lleft,eright); :}
 						|	AND:l unaryExpression:e {: RESULT = new UnOpExprNode(e,UnOpSE.ADDRESSOF); RESULT.setPos(lleft,eright); :}
 						|	dereferenceExpression:e {: RESULT = e; :}
@@ -1070,24 +486,10 @@ abstractMethodDeclaration ::=
 					dereferenceExpression ::=
 							MULT:l unaryExpression:e {: RESULT = new UnOpExprNode(e,UnOpSE.DEREFERENCE); RESULT.setPos(lleft,eright); :}
 						;		
-					preincrementExpression ::=
-							PLUSPLUS:l unaryExpression:e {: RESULT = new UnOpExprNode(e,UnOpSE.PREPLUSPLUS); RESULT.setPos(lleft,eright); :}
-						;
-					predecrementExpression ::=
-							MINUSMINUS:l unaryExpression:e {: RESULT = new UnOpExprNode(e,UnOpSE.PREMINUSMINUS); RESULT.setPos(lleft,eright); :}
-						;
 					unaryExpressionNotPlusMinus ::=
 							postfixExpression:e {: RESULT = e; :}
 						|	COMP:l unaryExpression:e {: RESULT = new UnOpExprNode(e,UnOpSE.COMP); RESULT.setPos(lleft,eright); :}
 						|	NOT:l unaryExpression:e {: RESULT = new UnOpExprNode(e,UnOpSE.NOT); RESULT.setPos(lleft,eright); :}
-						|	castExpression:e {: RESULT = e; :}
-						;
-					castExpression ::=
-							LPAREN:l primitiveType:t RPAREN unaryExpression:e {: RESULT = new CastExprNode(t,e,false); RESULT.setPos(lleft,eright); :}
-						|	LPAREN:l expression:e1 RPAREN unaryExpressionNotPlusMinus:e {: TypeNode t = ParserHelper.getExpressionType(e1,null); RESULT = new CastExprNode(t,e,false); RESULT.setPos(lleft,eright); :}
-						|	LPAREN:l NOTNOT primitiveType:t RPAREN unaryExpression:e {: RESULT = new CastExprNode(t,e,true); RESULT.setPos(lleft,eright); :}
-						|	LPAREN:l NOTNOT classOrInterfaceType:t RPAREN unaryExpressionNotPlusMinus:e {: RESULT = new CastExprNode(t,e,true); RESULT.setPos(lleft,eright);  :}
-//						|	LPAREN:l name:n dims RPAREN unaryExpressionNotPlusMinus:e {: TypeNode t = ParserHelper.getExpressionType(n,null); RESULT = new CastExprNode(t,e); RESULT.setPos(lleft,eright); :}
 						;
 					multiplicativeExpression ::=
 							unaryExpression:e {: RESULT = e; :}
@@ -1104,12 +506,11 @@ abstractMethodDeclaration ::=
 							additiveExpression:e {: RESULT = e; :}
 						|	shiftExpression:e1 LSHIFT additiveExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.LSHIFT); RESULT.setPos(e1left,e2right); :}
 						|	shiftExpression:e1 RSHIFT additiveExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.RSHIFT); RESULT.setPos(e1left,e2right); :}
-						|	shiftExpression:e1 RSHIFT:l GT:r additiveExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.URSHIFT); RESULT.setPos(e1left,e2right); if(lright < rleft) parser.syntax_error(stack.elementAt(stack$Top - 2)); :}
 						;
 					//We need to seperate instanceof here, or we'll get a collision with generic < >
+					//TODO Remove
 					instanceofExpression ::= 
 							relationalExpression:e {: RESULT = e; :}
-						|	relationalExpression:e1 INSTANCEOF referenceType:r {: RESULT = new InstanceofExprNode(e1,r); RESULT.setPos(e1left,rright); :}
 						;
 					relationalExpression ::=
 							shiftExpression:e {: RESULT = e; :}
@@ -1143,10 +544,9 @@ abstractMethodDeclaration ::=
 							conditionalAndExpression:e {: RESULT = e; :}
 						|	conditionalOrExpression:e1 OROR conditionalAndExpression:e2 {: RESULT = new BinOpExprNode(e1,e2,BinOpSE.OROR); RESULT.setPos(e1left,e2right); :}
 						;
+					//TODO Remove
 					conditionalExpression ::=
 							conditionalOrExpression:e {: RESULT = e; :}
-						|	conditionalOrExpression:e1 QUESTION expression:e2 
-								COLON conditionalExpression:e3 {: RESULT = new ConditionalExprNode(e1,e2,e3); RESULT.setPos(e1left,e3right); :}
 						;
 					assignmentExpression ::=
 							conditionalExpression:e {: RESULT = e; :}
@@ -1166,7 +566,6 @@ abstractMethodDeclaration ::=
 						|	MINUSEQ {: RESULT = (AssignOpSE.MINUSEQ); :}
 						|	LSHIFTEQ {: RESULT = (AssignOpSE.LSHIFTEQ); :}
 						|	RSHIFTEQ {: RESULT = (AssignOpSE.RSHIFTEQ); :}
-						|	URSHIFTEQ {: RESULT = (AssignOpSE.URSHIFTEQ); :}
 						|	ANDEQ {: RESULT = (AssignOpSE.ANDEQ); :}
 						|	XOREQ {: RESULT = (AssignOpSE.XOREQ); :}
 						|	OREQ {: RESULT = (AssignOpSE.OREQ); :}

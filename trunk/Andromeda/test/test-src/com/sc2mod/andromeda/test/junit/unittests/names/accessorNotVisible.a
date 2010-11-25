@@ -4,7 +4,3 @@ class X{
  	
  	private void setX(int i){}
 }
-
-static{
-	X.x = 3; //x not found
-}

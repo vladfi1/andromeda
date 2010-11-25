@@ -58,6 +58,7 @@ public class MapRunner {
 
 		} else {
 			processString = "\"" + f.getAbsolutePath() + "\"" + " "+ params + " -run \"" + mapFile.getAbsolutePath() + "\"";
+			System.out.println(processString);
 			Runtime.getRuntime().exec(processString);
 
 		}

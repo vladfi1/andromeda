@@ -33,8 +33,9 @@ import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
+import com.sc2mod.andromeda.util.visitors.VoidTreeScanVisitor;
 
-public abstract class CodeGenerator extends VoidVisitorAdapter {
+public abstract class CodeGenerator extends VoidTreeScanVisitor {
 	
 	public FileBuffer fileBuffer;
 	public AdvancedBuffer structBuffer;

@@ -9,7 +9,7 @@ public class NameProblems extends AndromedaSingleRunTest {
 
 	@Test
 	public void accessorNotVisible(){
-		callAndromeda("accessorNotVisible.a");
+		callAndromeda("accessorNotVisible.a","accessorNotVisible_2.a");
 		assertOnlyProblem(ProblemId.ACCESSOR_NOT_VISIBLE);
 	}
 	
@@ -27,7 +27,7 @@ public class NameProblems extends AndromedaSingleRunTest {
 	
 	@Test
 	public void nameNotVisible(){
-		callAndromeda("nameNotVisible.a");
+		callAndromeda("nameNotVisible.a","nameNotVisible_2.a");
 		assertOnlyProblem(ProblemId.FIELD_NOT_VISIBLE);
 	}
 	

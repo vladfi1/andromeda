@@ -31,6 +31,7 @@ import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
 import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
+import com.sc2mod.andromeda.parsing.Language;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
@@ -73,11 +74,11 @@ public class TypeProvider {
 		return nextTypeIndex++;
 	}
 	
-	public TypeProvider(Environment env){
+	public TypeProvider(Environment env, Language language){
 		this.env = env;
 		globalScope = env.getTheGlobalScope();
 		BASIC = new BasicTypeSet(this);
-		systemTypes = new AndromedaSystemTypes(env,this);
+		systemTypes = language.getImpl().getSystemTypes(env, this);
 	}
 	
 	/*

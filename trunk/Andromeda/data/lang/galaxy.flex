@@ -15,8 +15,8 @@ import com.sc2mod.andromeda.problems.ProblemId;
 %%
 
 %public
-%class AndromedaScanner
-%implements sym, Scanner
+%class GalaxyScanner
+%implements GalaxySymbols, Scanner
 %unicode
 %function nextToken
 
@@ -24,19 +24,12 @@ import com.sc2mod.andromeda.problems.ProblemId;
 
 
 %type Symbol
-//%cup
-//%cupdebug
-
-//%init{
-//curFile = ((SourceReader)in).getFileId();
-//curInclusionType = ((SourceReader)in).getInclusionType();
-//%init}
 
 %{
 
-  public AndromedaScanner(int curFile, Reader r){
+  public GalaxyScanner(int curFile, Reader r){
   	this(r);
-  	this.curFile = curFile;
+  	this.curFile = curFile<<24;
   }
   
   StringBuffer string = new StringBuffer();
@@ -131,71 +124,24 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
 <YYINITIAL> {
 
   /* keywords */
-  "abstract"                     { return symbol(ABSTRACT); }
   "bool"               	         { return symbol(BOOLEAN); }
   "break"                        { return symbol(BREAK); }
   "byte"                         { return symbol(BYTE); }
-  "case"                         { return symbol(CASE); }
-  "catch"                        { return symbol(CATCH); }
-  "char"                         { return symbol(CHAR); }
-  "class"                        { return symbol(CLASS); }
   "struct"                       { return symbol(STRUCT); }
   "const"                        { return symbol(CONST); }
-  "package"						 { return symbol(PACKAGE); }
   "continue"                     { return symbol(CONTINUE); }
-  "uses"						 { return symbol(USES); }
-  "is"							 { return symbol(IS); }
-  "iskey"						 { return symbol(ISKEY); }
-  "keyof"						 { return symbol(KEYOF); }
-  "setinstancelimit"			 { return symbol(SETINSTANCELIMIT); }
   "do"                           { return symbol(DO); }
-//  "double"                       { return symbol(DOUBLE); }
-  "delete"						 { return symbol(DELETE); }
   "else"                         { return symbol(ELSE); }
-  "enrich"						 { return symbol(ENRICH); }
-  "extends"                      { return symbol(EXTENDS); }
-  "extension"					 { return symbol(EXTENSION); }
-  "final"                        { return symbol(FINAL); }
-  "finally"                      { return symbol(FINALLY); }
-//  "float"                        { return symbol(FLOAT); }
-  "for"                          { return symbol(FOR); }
-  "default"                      { return symbol(DEFAULT); }
-  "implements"                   { return symbol(IMPLEMENTS); }
-  "import"                       { return symbol(IMPORT); }
   "include"						 { return symbol(INCLUDE); }
-  "instanceof"                   { return symbol(INSTANCEOF); }
   "int"                          { return symbol(INT); }
   "fixed"                        { return symbol(FIXED); }
-  "interface"                    { return symbol(INTERFACE); }
-  "long"                         { return symbol(LONG); }
   "native"                       { return symbol(NATIVE); }
-  "new"                          { return symbol(NEW); }
-//  "goto"                         { return symbol(GOTO); }
   "if"                           { return symbol(IF); }
-  "inline"						 { return symbol(INLINE); }
-  ".inline"						 { return symbol(DOTINLINE); }
-  "internal"					 { return symbol(INTERNAL); }
-  "public"                       { return symbol(PUBLIC); }
-  "short"                        { return symbol(SHORT); }
-  "super"                        { return symbol(SUPER); }
-  "switch"                       { return symbol(SWITCH); }
-//  "synchronized"                 { return symbol(SYNCHRONIZED); }
-  "private"                      { return symbol(PRIVATE); }
-  "protected"                    { return symbol(PROTECTED); }
-  "transient"                    { return symbol(TRANSIENT); }
   "return"                       { return symbol(RETURN); }
   "void"                         { return symbol(VOID); }
   "static"                       { return symbol(STATIC); }
   "while"                        { return symbol(WHILE); }
-  "this"                         { return symbol(THIS); }
-  "throw"                        { return symbol(THROW); }
-  "throws"                       { return symbol(THROWS); }
-  "try"                          { return symbol(TRY); }
-//  "volatile"                     { return symbol(VOLATILE); }
-//  "strictfp"                     { return symbol(STRICTFP); }
-  "override"					 { return symbol(OVERRIDE); }
   "typedef"						 { return symbol(TYPEDEF); }
-  "function"					 { return symbol(FUNCTION); }
   
   /* boolean literals */
   "true"                         { return symbol(BOOLEAN_LITERAL, new Boolean(true)); }
@@ -215,28 +161,19 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   ";"                            { return symbol(SEMICOLON); }
   ","                            { return symbol(COMMA); }
   "."                            { return symbol(DOT); }
-  "->"							 { return symbol(ARROW); }
   
   /* operators */
-  "@"							 { return symbol(AT); }
   "="                            { return symbol(EQ); }
   ">"                            { return symbol(GT); }
   "<"                            { return symbol(LT); }
-  "!"                            { return symbol(NOT); }
-  "!!"                            { return symbol(NOTNOT); }  
+  "!"                            { return symbol(NOT); } 
   "~"                            { return symbol(COMP); }
-  "?"                            { return symbol(QUESTION); }
-  ":"                            { return symbol(COLON); }
-  ".."							 { return symbol(DOTDOT); }
-  "=>"							 { return symbol(ARROW); }
   "=="                           { return symbol(EQEQ); }
   "<="                           { return symbol(LTEQ); }
   ">="                           { return symbol(GTEQ); }
   "!="                           { return symbol(NOTEQ); }
   "&&"                           { return symbol(ANDAND); }
   "||"                           { return symbol(OROR); }
-  "++"                           { return symbol(PLUSPLUS); }
-  "--"                           { return symbol(MINUSMINUS); }
   "+"                            { return symbol(PLUS); }
   "-"                            { return symbol(MINUS); }
   "*"                            { return symbol(MULT); }
@@ -247,7 +184,6 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   "%"                            { return symbol(MOD); }
   "<<"                           { return symbol(LSHIFT); }
   ">>"                           { return symbol(RSHIFT); }
-//  ">>>"                          { return symbol(URSHIFT); }
   "+="                           { return symbol(PLUSEQ); }
   "-="                           { return symbol(MINUSEQ); }
   "*="                           { return symbol(MULTEQ); }
@@ -258,13 +194,12 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   "%="                           { return symbol(MODEQ); }
   "<<="                          { return symbol(LSHIFTEQ); }
   ">>="                          { return symbol(RSHIFTEQ); }
-  ">>>="                         { return symbol(URSHIFTEQ); }
   
   /* string literal */
   \"                             { yybegin(STRING); string.setLength(0); }
 
   /* character literal */
-  \'                             { yybegin(CHARLITERAL); }
+//  \'                             { yybegin(CHARLITERAL); }
 
   /* numeric literals */
 
@@ -294,18 +229,6 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   /* identifiers */ 
   {Identifier}                   { return symbol(IDENTIFIER, yytext()); }  
   
-  /* include */
-  /*
-  "include"{IncludeFile}   { Symbol s = processInclude(InclusionType.INCLUDE,false);
-  							 if(s != null) return s; }
-  "include"{LibIncludeFile} { Symbol s = processInclude(InclusionType.LIBRARY,false);
-  							 if(s != null) return s; }
-  "import"{LibImportFile} { Symbol s = processInclude(InclusionType.LIBRARY,true);
-  							 if(s != null) return s; }
-  							 
-   */
-
-//	<<EOF>>        { if (yymoreStreams()){ yypopStream(); throw new Error("Stacked readers?"); }else return symbol(EOF); }
 	<<EOF>>        { return symbol(EOF); }
   
  
@@ -337,10 +260,11 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
 								 }
 }
 
+/*
 <CHARLITERAL> {
   {SingleCharacter}\'            { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, new Character(yytext().charAt(0))); }
   
-  /* escape sequences */
+
   "\\b"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, new Character('\b'));}
   "\\t"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, new Character('\t'));}
   "\\n"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, new Character('\n'));}
@@ -353,10 +277,12 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
 			                              int val = Integer.parseInt(yytext().substring(1,yylength()-1),8);
 			                            return symbol(CHARACTER_LITERAL, new Character((char)val)); }
   
-  /* error cases */
+
   \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
   {LineTerminator}               { throw new RuntimeException("Unterminated character literal at end of line"); }
 }
+
+*/
 
 /* error fallback */
 .|\n                             { throw Problem.ofType(ProblemId.SYNTAX_ILLEGAL_CHARACTER).at(curFile+yychar,curFile+yychar+yylength())

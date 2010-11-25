@@ -1,8 +1,4 @@
 
 class X{
- 	private int x;
-}
-
-static{
-	X.x = 3; //x not found
+ 	private static int x;
 }

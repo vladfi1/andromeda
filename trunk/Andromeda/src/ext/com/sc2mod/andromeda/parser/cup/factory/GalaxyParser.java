@@ -12,7 +12,9 @@ package com.sc2mod.andromeda.parser.cup.factory;
 
 import com.sc2mod.andromeda.parser.cup.AndromedaScanner;
 import com.sc2mod.andromeda.parser.cup.GalaxyGenParser;
+import com.sc2mod.andromeda.parser.cup.GalaxyScanner;
 import com.sc2mod.andromeda.parser.cup.Scanner;
+import com.sc2mod.andromeda.parser.cup.Symbol;
 import com.sc2mod.andromeda.parsing.framework.ParserInput;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
@@ -22,13 +24,14 @@ class GalaxyParser extends GalaxyGenParser implements ICupParser {
 	private Problem createParserProblem(String message, Object info){
 		if (info instanceof com.sc2mod.andromeda.parser.cup.Symbol) {
 			com.sc2mod.andromeda.parser.cup.Symbol sym = (com.sc2mod.andromeda.parser.cup.Symbol) info;
-			return Problem.ofType(ProblemId.SYNTAX_UNEXPECTED_TOKEN).at(sym.left,sym.right).details(sym.toString());
+			return Problem.ofType(ProblemId.SYNTAX_UNEXPECTED_TOKEN).at(sym.left,sym.right).details();
 		} else {
-			return Problem.ofType(ProblemId.SYNTAX_UNKNOWN).details(info);
+			return Problem.ofType(ProblemId.SYNTAX_UNKNOWN).details();
 		}
 		
 	}
 	
+
 	public void report_error(String message, Object info) {
 		createParserProblem(message, info).raise();
 
@@ -40,7 +43,7 @@ class GalaxyParser extends GalaxyGenParser implements ICupParser {
 
 	@Override
 	public Scanner createScanner(ParserInput input) {
-		return new AndromedaScanner(input.getInputNumber(),input.getReader());
+		return new GalaxyScanner(input.getInputNumber(),input.getReader());
 	}
 
 

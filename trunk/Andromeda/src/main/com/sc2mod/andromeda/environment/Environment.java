@@ -16,6 +16,7 @@ import com.sc2mod.andromeda.environment.scopes.GlobalScope;
 import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
+import com.sc2mod.andromeda.parsing.Language;
 
 /**
  * The semantics environment is the root for the semantics of a syntax tree.
@@ -27,10 +28,16 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
  *
  */
 public final class Environment {
+	
+
+
+	public Environment(Language lang){
+		typeProvider = new TypeProvider(this,lang);
+	}
 
 	private GlobalScope theGlobalScope = new GlobalScope();
 	private Package defaultPackage = new Package(this, "<default>", null);
-	public final TypeProvider typeProvider = new TypeProvider(this);
+	public final TypeProvider typeProvider;
 	public final AnnotationRegistry annotationRegistry = new AnnotationRegistry();
 	
 	public Iterable<IScopedElement> iterateOverContent(final boolean stepIntoOperations,final boolean stepIntoPackages){

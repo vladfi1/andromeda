@@ -9,8 +9,3 @@ class X{
 	} 
 
 }
-
-static{
-	X.x += 2;
-
-}

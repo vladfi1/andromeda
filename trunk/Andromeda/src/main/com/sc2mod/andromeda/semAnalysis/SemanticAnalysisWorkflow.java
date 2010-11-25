@@ -20,6 +20,7 @@ import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
+import com.sc2mod.andromeda.parsing.Language;
 import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeAliasDeclNode;
 import com.sc2mod.andromeda.util.Pair;
@@ -58,10 +59,11 @@ public class SemanticAnalysisWorkflow {
 	
 	}
 	
-	public static Environment analyze(CompilationEnvironment compEnv){
+	
+	public static Environment analyze(CompilationEnvironment compEnv, Language lang){
 		
 		//Create the semantics environment
-		Environment env = new Environment();
+		Environment env = new Environment(lang);
 		compEnv.setSemanticEnvironment(env);
 		SourceListNode syntax = compEnv.getSyntaxTree();
 		TransientAnalysisData analysisData = new TransientAnalysisData();

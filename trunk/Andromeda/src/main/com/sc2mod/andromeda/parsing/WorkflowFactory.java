@@ -39,7 +39,7 @@ public class WorkflowFactory {
 		ArrayList<Phase> phases = new ArrayList<Phase>();
 		phases.add(new InputCollectionPhase(lang));
 		phases.add(new ParsePhase(lang));
-		phases.add(new SemanticAnalysisPhase());
+		phases.add(new SemanticAnalysisPhase(lang));
 		if(genCode){
 			phases.add(new CanonicalizationPhase());
 			phases.add(new CallHierarchyPhase());

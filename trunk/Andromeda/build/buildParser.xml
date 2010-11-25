@@ -67,8 +67,8 @@
   </target>
 
   <target name="cup" depends="init">
-  	 <cup srcfile="${langPath}/andromeda.cup" destdir="${srcOut}" interface="true" parser="AndromedaGenParser"/>
- 	 <cup srcfile="${langPath}/galaxy.cup" destdir="${srcOut}" interface="true" parser="GalaxyGenParser"/>
+  	 <cup srcfile="${langPath}/andromeda.cup" symbols="AndromedaSymbols" destdir="${srcOut}" interface="true" parser="AndromedaGenParser"/>
+ 	 <cup srcfile="${langPath}/galaxy.cup" symbols="GalaxySymbols" destdir="${srcOut}" interface="true" parser="GalaxyGenParser"/>
   </target>
 
   <target name="jflex" depends="init">

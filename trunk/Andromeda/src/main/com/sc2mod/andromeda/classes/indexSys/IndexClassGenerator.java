@@ -127,15 +127,16 @@ public class IndexClassGenerator extends ClassGenerator {
 				vctg.generateTable(c);
 				generationCount++;
 				
-				//generate child classes
-				for(IDeclaredType c2 : c.getDescendants()){
-					generateClass((IClass) c2);
-				}
 			} else {
 				c.getNameProvider().setMemoryName(c.getTopClass().getNameProvider().getMemoryName());
 				
 				if(TypeUtil.hasTypeFieldInits(c))
 					generateFieldInit(c);
+			}
+			
+			//generate child classes
+			for(IDeclaredType c2 : c.getDescendants()){
+				generateClass((IClass) c2);
 			}
 		}
 		
