@@ -30,9 +30,6 @@ public interface IParser {
 	void setParserHook(IParserHook hook);
 	
 	
-	SourceLocation getLocation(SyntaxNode sn);
-	
-	
 	ParserFactory getFactory();
 	
 

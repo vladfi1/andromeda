@@ -1,6 +1,5 @@
 package com.sc2mod.andromeda.parser.cup;
 
-import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 
 /**
  * Creates the Symbols interface, which CUP uses as default

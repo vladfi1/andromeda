@@ -35,7 +35,7 @@ public class LazySourceLocation implements SourceLocation {
 		this.env = env;
 		offset = (left&0x00FFFFFF);
 		length = (right&0x00FFFFFF)-offset;
-		fileId = (left&0xFF000000);
+		fileId = (left&0xFF000000)>>24;
 	}
 	
 	private void loadPosition(){

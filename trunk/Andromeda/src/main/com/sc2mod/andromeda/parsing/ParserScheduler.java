@@ -23,8 +23,8 @@ import com.sc2mod.andromeda.util.ThreadUtil;
 
 public class ParserScheduler {
 
-	private List<ComplexParserInput> inputSources;
-	private LinkedList<ComplexParserInput> importQueue = new LinkedList<ComplexParserInput>();
+	private List<ParserThreadInput> inputSources;
+	private LinkedList<ParserThreadInput> importQueue = new LinkedList<ParserThreadInput>();
 	private List<SourceFileNode> collectedSources;
 	private int remainingInputFiles;
 	private int filesToParse;
@@ -42,7 +42,7 @@ public class ParserScheduler {
 	public ParserScheduler(int numThreads, CompilationEnvironment env, List<Pair<Source,InclusionType>> inputSources, LanguageImpl language) {
 		collectedSources = Collections.synchronizedList(new ArrayList<SourceFileNode>(inputSources.size()*3));
 		 
-		List<ComplexParserInput> srcs = this.inputSources = new ArrayList<ComplexParserInput>(inputSources.size());
+		List<ParserThreadInput> srcs = this.inputSources = new ArrayList<ParserThreadInput>(inputSources.size());
 		for(Pair<Source, InclusionType> s : inputSources){
 			srcs.add(ParserInputFactory.create(collectedSources, s._1,s._2,null,null));
 		}
@@ -173,7 +173,7 @@ public class ParserScheduler {
 		
 		
 		//parse input sources
-		for(ComplexParserInput s: inputSources){
+		for(ParserThreadInput s: inputSources){
 			ParserThread t = getThread();
 			t.parseFile(null,s, "abc");
 		}
@@ -187,7 +187,7 @@ public class ParserScheduler {
 
 		
 		outer: while(true){
-			ComplexParserInput nextInclude;
+			ParserThreadInput nextInclude;
 			synchronized (this){
 				while(importQueue.isEmpty()){
 					if(idleWorkerThreads.size() == numThreads){
@@ -243,31 +243,6 @@ public class ParserScheduler {
 		
 	}
 
-//	private Source getSourceFromInclude(IncludeNode nextInclude) {
-//		// TODO Auto-generated method stub
-//		throw new Error("Not implemented!");
-//	}
-//	
-//	  private Symbol processInclude(InclusionType inclusionType, boolean isImport){
-//		  	if(curInclusionType == InclusionType.NATIVE){
-//		  		inclusionType = InclusionType.NATIVE;
-//		  	}
-//		  	int includeToken;
-//		  	String s;
-//		  	if(isImport){
-//				includeToken = IMPORT_START; 	
-//				s = yytext();
-//		  	} else {
-//		  		s = null;
-//		  		includeToken = INCLUDE_START;
-//		  	}
-//		  	SourceReader ar = this.zzReader.getSourceEnvironment().getReaderFromInclude(yytext(), yychar|curFile, (yylength()+yychar)|curFile,inclusionType,isImport);
-//		  	if(ar == null) return null;
-//		  	yypushStream(ar);
-//		  	return symbol(includeToken,new SourceFileInfo(curFile,inclusionType,s));
-//		  }
-
-	
-
 
 }
+

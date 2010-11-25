@@ -1,7 +1,10 @@
 package com.sc2mod.andromeda.parser.cup;
 
-import com.sc2mod.andromeda.problems.InternalProgramError;
-
+/**
+ * fast implementation of a symbol stack
+ * @author gex
+ *
+ */
 public class SymbolStack {
 
 	

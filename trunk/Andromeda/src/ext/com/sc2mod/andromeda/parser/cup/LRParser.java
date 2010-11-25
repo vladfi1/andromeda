@@ -1,9 +1,6 @@
 package com.sc2mod.andromeda.parser.cup;
 
-import java.util.Stack;
-
 import com.sc2mod.andromeda.parsing.framework.IParserHook;
-import com.sc2mod.andromeda.util.StopWatch;
 
 /** This class implements a skeleton table driven LR parser.  In general,
  *  LR parsers are a form of bottom up shift-reduce parsers.  Shift-reduce

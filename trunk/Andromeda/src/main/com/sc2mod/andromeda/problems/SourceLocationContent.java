@@ -91,6 +91,12 @@ public class SourceLocationContent {
 		
 	}
 	
+	public SourceLocationContent(Source s, int startLine, int startColumn, int endLine, int endColumn){
+		//TODO Implement, if used
+		throw new Error("Implement");
+	}
+	
+	
 	public String getLineContent(){
 		if(lineContent != null) return lineContent;
 		

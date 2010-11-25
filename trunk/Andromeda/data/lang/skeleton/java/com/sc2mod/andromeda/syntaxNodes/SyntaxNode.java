@@ -12,8 +12,10 @@ package com.sc2mod.andromeda.syntaxNodes;
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.syntaxNodes.util.VisitorNode;
 import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.problems.LocationType;
 
 public abstract class SyntaxNode implements VisitorNode {
+	private byte locationType;
 	private int left;
 	private int right;
 	
@@ -24,6 +26,7 @@ public abstract class SyntaxNode implements VisitorNode {
 	public SyntaxNode setPos(int left, int right) {
 		this.left = left;
 		this.right = right;
+		this.locationType = LocationType.COMPACT;
 		return this;
 	}
 	

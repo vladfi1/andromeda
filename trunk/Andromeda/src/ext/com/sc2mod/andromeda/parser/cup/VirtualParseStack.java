@@ -34,7 +34,7 @@ public class VirtualParseStack {
 
       /* set up our internals */
       real_stack = shadowing_stack;
-      vstack     = new Stack();
+      vstack     = new Stack<Integer>();
       real_next  = 0;
 
       /* get one element onto the virtual portion of the stack */
@@ -67,7 +67,7 @@ public class VirtualParseStack {
    *  on the virtual stack).  When this portion of the stack becomes empty we 
    *  transfer elements from the underlying stack onto this stack. 
    */
-  protected Stack vstack;
+  protected Stack<Integer> vstack;
 
   /*-----------------------------------------------------------*/
   /*--- General Methods ---------------------------------------*/

@@ -6,7 +6,6 @@ import com.sc2mod.andromeda.parsing.framework.IParserHook;
 import com.sc2mod.andromeda.parsing.framework.ParserFactory;
 import com.sc2mod.andromeda.parsing.framework.ParserInput;
 import com.sc2mod.andromeda.problems.InternalProgramError;
-import com.sc2mod.andromeda.problems.SourceLocation;
 import com.sc2mod.andromeda.problems.UnrecoverableProblem;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
@@ -24,12 +23,7 @@ class CupParserAdapter implements IParser {
 	public ParserFactory getFactory() {
 		return factory;
 	}
-
-	@Override
-	public SourceLocation getLocation(SyntaxNode sn) {
-		//FIXME hier weiter
-	}
-
+	
 	@Override
 	public SyntaxNode parse(ParserInput source) {
 		try {

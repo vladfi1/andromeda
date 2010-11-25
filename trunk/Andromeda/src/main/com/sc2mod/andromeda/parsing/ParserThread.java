@@ -3,6 +3,7 @@ package com.sc2mod.andromeda.parsing;
 import java.io.FileNotFoundException;
 
 import com.sc2mod.andromeda.parsing.framework.IParser;
+import com.sc2mod.andromeda.parsing.framework.IParserHook;
 import com.sc2mod.andromeda.parsing.framework.ParserInput;
 import com.sc2mod.andromeda.problems.ErrorUtil;
 import com.sc2mod.andromeda.problems.InternalProgramError;
@@ -24,7 +25,7 @@ public class ParserThread extends CompilerThread {
 	private boolean idle = true;
 	private boolean interrupted;
 	private IParser parser;
-	private ComplexParserInput input;
+	private ParserThreadInput input;
 	private String typeName;
 	private int numParsed;
 	boolean packageDeclParsed;
@@ -56,7 +57,7 @@ public class ParserThread extends CompilerThread {
 		}
 	}
 	
-	public void parseFile(IParser parser,  ComplexParserInput input , String typeName){
+	public void parseFile(IParser parser,  ParserThreadInput input , String typeName){
 		if(!idle){
 			throw ErrorUtil.defaultInternalError();
 		}
@@ -72,7 +73,7 @@ public class ParserThread extends CompilerThread {
 	}
 		
 	
-	public void doParseFile(IParser parser,  ComplexParserInput input , String typeName){
+	public void doParseFile(IParser parser,  ParserThreadInput input , String typeName){
 		//if(typeName == null) typeName = input.getSource().getTypeName();
 		StopWatch timer = new StopWatch();
 		timer.start();
@@ -81,7 +82,9 @@ public class ParserThread extends CompilerThread {
 			Log.println(LogLevel.DETAIL,"    => Parsed " + typeName + " ["+ input.getSource().getName() +"] " + " (" + timer.getTime() + " ms) (" + ++numParsed + ")");
 	}
 	
-	private SourceFileNode parse(IParser parser, ComplexParserInput input)  {
+	private SourceFileNode parse(IParser parser, ParserThreadInput input)  {
+		
+		//Get a reader for the source
 		SourceReader a;
 		try {
 			a = compilationEnvironment.getSourceManager().getReader(input.getSource(), input.getInclusionType());
@@ -94,19 +97,32 @@ public class ParserThread extends CompilerThread {
 					.raiseUnrecoverable();
 			}
 		}
+		
+		//If no reader, then this source has already been parsed, so do nothing and return null
 		if (a == null)
 			return null;
-		SyntaxNode result = parser.parse(new ParserInput(a, a.getFileId()));
-		SourceFileNode fi = ((SourceFileNode) result);
+		
+		//Set parser hook so the thread gets informed about package decls, imports and includes
+		parser.setParserHook(THREAD_HOOK);
+		
+		//Do the parsing
+		SourceFileNode fi = (SourceFileNode) parser.parse(new ParserInput(a, a.getFileId()));
+		
+		//Set file info for the parsed source file node
 		SourceInfo fileInfo = compilationEnvironment.getSourceManager().getSourceInfoById(a.getFileId());
 		if(fileInfo == null)
 			throw new InternalProgramError("File has no file info");
 		fileInfo.setQualifiedName(qualifiedCUName);
 		fi.setSourceInfo(fileInfo);
+		
+		//Connect to input.
+		//For includes, this directly adds this file to the include
+		//For imports and main files, the file is added to the global file list
 		input.connect(fi);
 		return fi;
 	}
 
+	private static ParserThreadHook THREAD_HOOK = new ParserThreadHook();
 	
 	public static void importRead(ImportNode sn){
 		ParserThread t = (ParserThread)Thread.currentThread();
@@ -136,4 +152,23 @@ public class ParserThread extends CompilerThread {
 	}
 	
 
+}
+
+class ParserThreadHook implements IParserHook{
+
+	@Override
+	public void importRead(ImportNode i) {
+		ParserThread.importRead(i);
+	}
+
+	@Override
+	public void includeRead(IncludeNode in) {
+		ParserThread.includeRead(in);
+	}
+
+	@Override
+	public void packageDeclRead(PackageDeclNode p) {
+		ParserThread.packageRead(p);
+	}
+	
 }

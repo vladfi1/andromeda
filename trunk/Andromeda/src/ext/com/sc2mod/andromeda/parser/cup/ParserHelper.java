@@ -12,7 +12,6 @@ package com.sc2mod.andromeda.parser.cup;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
-import com.sc2mod.andromeda.syntaxNodes.BasicTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;

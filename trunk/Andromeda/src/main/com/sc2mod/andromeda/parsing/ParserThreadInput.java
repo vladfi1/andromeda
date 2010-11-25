@@ -7,14 +7,14 @@ import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
-public abstract class ComplexParserInput {
+public abstract class ParserThreadInput {
 	
 	private Source src;
 	private InclusionType incType;
 	private SyntaxNode importedBy;
 	private String anticipatedName;
 
-	protected ComplexParserInput(Source src, InclusionType incType, String anticipatedName, SyntaxNode importedBy){
+	protected ParserThreadInput(Source src, InclusionType incType, String anticipatedName, SyntaxNode importedBy){
 		this.src = src;
 		this.incType = incType;
 		this.anticipatedName = anticipatedName;
@@ -42,8 +42,8 @@ public abstract class ComplexParserInput {
 
 class ParserInputFactory{
 	
-	public static ComplexParserInput create(final IncludeNode i, Source src, InclusionType incType, String anticipatedName){
-		return new ComplexParserInput(src,incType,anticipatedName,i) {
+	public static ParserThreadInput create(final IncludeNode i, Source src, InclusionType incType, String anticipatedName){
+		return new ParserThreadInput(src,incType,anticipatedName,i) {
 			
 			@Override
 			public void connect(SourceFileNode f) {
@@ -53,8 +53,8 @@ class ParserInputFactory{
 		
 	}
 	
-	public static ComplexParserInput create(final List<SourceFileNode> list, Source src, InclusionType incType, String anticipatedName, SyntaxNode importedBy){
-		return new ComplexParserInput(src,incType, anticipatedName, importedBy) {
+	public static ParserThreadInput create(final List<SourceFileNode> list, Source src, InclusionType incType, String anticipatedName, SyntaxNode importedBy){
+		return new ParserThreadInput(src,incType, anticipatedName, importedBy) {
 			
 			@Override
 			public void connect(SourceFileNode f) {

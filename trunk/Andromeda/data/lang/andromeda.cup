@@ -1,7 +1,7 @@
 package com.sc2mod.andromeda.parser.cup;
 
 import com.sc2mod.andromeda.syntaxNodes.*;
-import com.sc2mod.andromeda.vm.data.*;
+import com.sc2mod.andromeda.parsing.framework.ConstantProvider;
 
 /**
  * Andromeda language grammar
@@ -308,12 +308,12 @@ functionDeclaration ::=	methodDeclaration:m {: RESULT = new GlobalFuncDeclNode(m
 	
 
 
-					literal ::=	INTEGER_LITERAL:i {: RESULT = new LiteralNode(new IntObject(i),LiteralTypeSE.INT); RESULT.setPos(ileft,iright); :}
-						|	FLOATING_POINT_LITERAL:i {: RESULT = new LiteralNode(new FixedObject(i),LiteralTypeSE.FLOAT); RESULT.setPos(ileft,iright); :}
-						|	BOOLEAN_LITERAL:i {: RESULT = new LiteralNode(BoolObject.getBool(i),LiteralTypeSE.BOOL); RESULT.setPos(ileft,iright); :}
-						|	CHARACTER_LITERAL:i {: RESULT = new LiteralNode(new CharObject(i),LiteralTypeSE.CHAR); RESULT.setPos(ileft,iright); :}
-						|	STRING_LITERAL:i {: RESULT = new LiteralNode(new StringObject(i),LiteralTypeSE.STRING); RESULT.setPos(ileft,iright); :}
-						|	NULL_LITERAL:i {: RESULT = new LiteralNode(NullObject.INSTANCE,LiteralTypeSE.NULL); RESULT.setPos(ileft,iright); :}
+					literal ::=	INTEGER_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getIntObject(i),LiteralTypeSE.INT); RESULT.setPos(ileft,iright); :}
+						|	FLOATING_POINT_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getFixedObject(i),LiteralTypeSE.FLOAT); RESULT.setPos(ileft,iright); :}
+						|	BOOLEAN_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getBoolObject(i),LiteralTypeSE.BOOL); RESULT.setPos(ileft,iright); :}
+						|	CHARACTER_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getCharObject(i),LiteralTypeSE.CHAR); RESULT.setPos(ileft,iright); :}
+						|	STRING_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getStringObject(i),LiteralTypeSE.STRING); RESULT.setPos(ileft,iright); :}
+						|	NULL_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getNullObject(),LiteralTypeSE.NULL); RESULT.setPos(ileft,iright); :}
 						;
 	
 	
