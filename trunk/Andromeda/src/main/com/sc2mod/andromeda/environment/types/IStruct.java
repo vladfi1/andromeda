@@ -33,4 +33,6 @@ public interface IStruct extends IRecordType {
 	@Override
 	public StructDeclNode getDefinition();
 	
+	public int getStructId();
+	
 }

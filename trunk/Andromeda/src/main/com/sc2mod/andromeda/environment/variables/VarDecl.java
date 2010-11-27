@@ -41,17 +41,6 @@ import com.sc2mod.andromeda.vm.data.DataObject;
  */
 public abstract class VarDecl extends Variable{
 
-//	public static final int TYPE_LOCAL = 1;
-//	public static final int TYPE_FIELD = 2;
-//	public static final int TYPE_GLOBAL = 3;
-//	public static final int TYPE_STATIC_FIELD = 4;
-//	public static final int TYPE_PARAMETER = 5;
-//	public static final int TYPE_ACCESSOR = 6;
-//	public static final int TYPE_STATIC_ACCESSOR = 7;
-//	public static final int TYPE_STATIC = 8;
-//	public static final int TYPE_FUNCTION_POINTER = 9;
-//	public static final int TYPE_IMPLICIT = 10;
-	
 	protected Visibility visibility = Visibility.DEFAULT;	
 	private IdentifierNode declaration;
 	private TypeNode typeNode;
@@ -231,7 +220,7 @@ public abstract class VarDecl extends Variable{
 		this.value = value;
 	}
 	
-	public int getIndex(){
+	public int getDeclarationIndex(){
 		return -1;
 	}
 

@@ -28,7 +28,11 @@ public class ParamDecl extends VarDecl{
 		return false;
 	}
 
-
+	@Override
+	public String getDescription() {
+		return "parameter " + getUid();
+	}
+	
 	@Override
 	public VarType getVarType() {
 		return VarType.PARAMETER;

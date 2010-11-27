@@ -24,24 +24,20 @@ public class Method extends Function {
 	private boolean isAbstract;
 	private boolean isStatic;
 	private IType containingType;
-	private OverrideInformation overrideInformation;
 	
 	public Method( MethodDeclNode functionDeclaration, IType containingType, IScope scope, Environment env) {
 		super(functionDeclaration,scope,env);
 		this.containingType = containingType;
-		if(!isStatic){
-			overrideInformation = new OverrideInformation(this);
-		}
 	}
 	
 	//XPilot: for method proxies
 	protected Method() {}
 	
-	@Override
-	public OverrideInformation getOverrideInformation() {
-		return overrideInformation;
-	}
 
+	@Override
+	protected OverrideInformation createOverrideInformation() {
+		return new MethodOverrideInformation(this);
+	}
 	
 	
 	@Override

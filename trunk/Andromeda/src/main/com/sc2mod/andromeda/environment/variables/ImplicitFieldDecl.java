@@ -30,7 +30,11 @@ public class ImplicitFieldDecl extends VarDecl{
 		return false;
 	}
 
-
+	@Override
+	public String getDescription() {
+		return "implicit field " + getUid();
+	}
+	
 	@Override
 	public VarType getVarType() {
 		return VarType.FIELD;

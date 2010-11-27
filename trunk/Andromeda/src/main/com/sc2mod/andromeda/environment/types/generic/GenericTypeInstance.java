@@ -354,6 +354,7 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 	public void setGenericHierarchyCopied(boolean hierarchyCopied) {
 		this.hierarchyCopied = hierarchyCopied;
 	}
+	
 
 	
 	

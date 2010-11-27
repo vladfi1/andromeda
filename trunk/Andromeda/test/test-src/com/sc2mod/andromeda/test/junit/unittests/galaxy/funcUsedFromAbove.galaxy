@@ -1,0 +1,10 @@
+
+
+void bla(){
+	foo();
+}
+
+void foo(){
+
+}
+

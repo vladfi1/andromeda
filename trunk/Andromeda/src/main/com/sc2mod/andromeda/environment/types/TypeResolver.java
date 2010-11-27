@@ -58,8 +58,10 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 		if(result.isGenericDecl()){
 			
 			//If no arguments were stated, we return the declaration of the generic type itself
-			if(args == null)
+			if(args == null){
+				type.setSemantics(result);
 				return result;
+			}
 			
 			//We have a generic type with type arguments, i.e. a generic type instance. Resolve arguments
 			int size  = args.size();
@@ -70,6 +72,7 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 				typeArgs[i]=t;				
 			}
 			INamedType genericInstance = tprov.getGenericInstance(((INamedType)result),new Signature(typeArgs));
+			type.setSemantics(result);
 			return genericInstance;
 		} else{
 			if(args != null)
@@ -77,6 +80,7 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 								.details(result.getFullName())
 								.raiseUnrecoverable();
 		}
+		type.setSemantics(result);
 		return result;
 	}
 	
@@ -87,6 +91,7 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 		if(result == null){
 			return raiseUnknownType(type, name);
 		}
+		type.setSemantics(result);
 		return result;
 	}
 	
@@ -97,17 +102,23 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 	
 	@Override
 	public IType visit(PointerTypeNode type, IScope scope) {
-		return tprov.getPointerType(type.getWrappedType().accept(this,scope));
+		IType result = tprov.getPointerType(type.getWrappedType().accept(this,scope));;
+		type.setSemantics(result);
+		return result;
 	}
 	
 	@Override
 	public IType visit(ArrayTypeNode type, IScope scope) {
-		return tprov.getArrayType(type.getWrappedType().accept(this,scope),type.getDimensions());
+		IType result = tprov.getArrayType(type.getWrappedType().accept(this,scope),type.getDimensions());
+		type.setSemantics(result);
+		return result;
 	}
 	
 	@Override
 	public IType visit(FuncPointerTypeNode type, IScope scope) {
-		return tprov.getFunctionPointerType(type, scope);
+		IType result = tprov.getFunctionPointerType(type, scope);
+		type.setSemantics(result);
+		return result;
 	}
 	
 	

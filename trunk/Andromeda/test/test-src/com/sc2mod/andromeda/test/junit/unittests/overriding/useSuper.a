@@ -1,0 +1,28 @@
+
+
+class A{
+	string x;
+	
+	A bla(){
+		return this;
+	}
+}
+
+class B extends A{
+	int x;
+	
+	string y = super.x;
+	
+	A z = super.bla();
+	
+	override B bla(){
+		return this;
+	}
+	
+	B(){
+		A a = super.bla();
+		string s = super.x;	
+	}
+	
+	
+}

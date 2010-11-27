@@ -13,6 +13,7 @@ InterfaceDeclNode : IInterface
 StructDeclNode : IStruct
 EnrichDeclNode : Enrichment
 TypeExtensionDeclNode : IExtension
+TypeNode : IType
 
 package com.sc2mod.andromeda.environment.variables
 IdentifierNode : VarDecl

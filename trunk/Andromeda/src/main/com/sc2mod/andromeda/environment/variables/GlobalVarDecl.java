@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.environment.variables;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.IGlobal;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
@@ -23,40 +24,30 @@ import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public class GlobalVarDecl extends NonLocalVarDecl implements IGlobal{
 
-	private int index;
-	
-	//TODO static code smell
-	static int curIndex;
-	
-	public GlobalVarDecl(FieldDeclNode globalVarDeclaration, VarDeclNode declNode, IScope scope) {
-		super(globalVarDeclaration,declNode,scope);
+		
+	public GlobalVarDecl(FieldDeclNode globalVarDeclaration, VarDeclNode declNode, IScope scope, Environment env) {
+		super(globalVarDeclaration,declNode,scope, env);
 	}
 
-	
-	@Override
-	public int getIndex() {
-		return index;
-	}
 	
 	public boolean isGlobalField(){
 		return true;
 	}
 
-	/**
-	 * This method assigns the code index (its position in the source code) to the global variable.
-	 * This may not be done in the constructor since globals get create before fields and
-	 * this would screw up the order of global and class fields
-	 */
-	public void assignIndex() {
-		this.index = curIndex++;
-
+	@Override
+	public String getDescription() {
+		return "global variable " + getUid();
 	}
-
 
 
 	@Override
 	public VarType getVarType() {
 		return VarType.GLOBAL;
+	}
+	
+	@Override
+	public boolean isStatic() {
+		return true;
 	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }

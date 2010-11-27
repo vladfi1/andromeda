@@ -34,6 +34,11 @@ public class GenericStructInstance extends GenericTypeInstance implements IStruc
 	public StructDeclNode getDefinition() {
 		return genericParent.getDefinition();
 	}
+	
+	@Override
+	public int getStructId() {
+		return genericParent.getStructId();
+	}
 
 	
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }

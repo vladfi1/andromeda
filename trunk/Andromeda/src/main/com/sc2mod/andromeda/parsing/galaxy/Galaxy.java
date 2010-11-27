@@ -18,6 +18,8 @@ import com.sc2mod.andromeda.parsing.framework.ParserFactory;
 import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
+import com.sc2mod.andromeda.semAnalysis.GalaxyAnalysisVisitor;
+import com.sc2mod.andromeda.semAnalysis.StatementAnalysisVisitor;
 
 public class Galaxy extends LanguageImpl{
 
@@ -36,5 +38,9 @@ public class Galaxy extends LanguageImpl{
 	public SystemTypes getSystemTypes(Environment env, TypeProvider tprov) {
 		return new NoSystemTypes(env, tprov);
 	}
-
+	
+	@Override	
+	public GalaxyAnalysisVisitor getAdditionalAnalysisVisitor(Environment env, Configuration options) {
+		return new GalaxyAnalysisVisitor(env, options);
+	}
 }

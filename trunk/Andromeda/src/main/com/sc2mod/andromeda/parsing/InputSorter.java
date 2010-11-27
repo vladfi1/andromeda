@@ -2,6 +2,7 @@ package com.sc2mod.andromeda.parsing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import com.sc2mod.andromeda.problems.InternalProgramError;
@@ -25,6 +26,17 @@ public class InputSorter {
 	public List<SourceFileNode> sort(List<SourceFileNode> srcs) {
 		cuNameMap = new HashMap<String, GraphNode<SourceFileNode>>();
 		unnamedCUs = new ArrayList<SourceFileNode>();
+		
+		//Remove natives, from list, they are not sorted
+		List<SourceFileNode> natives = new ArrayList<SourceFileNode>();
+		for(Iterator<SourceFileNode> it = srcs.iterator();it.hasNext();){
+			SourceFileNode src = it.next();
+			if(src.getSourceInfo().getType() == InclusionType.NATIVE){
+				it.remove();
+				natives.add(src);
+			}
+		}
+		
 		
 		buildCompilationUnitMap(srcs);
 		
@@ -51,11 +63,16 @@ public class InputSorter {
 		List<GraphNode<SourceFileNode>> sortedResult = new TopologicSort<SourceFileNode, Boolean>().execute(graph);	
 		
 		//Unwrap the list to get the result
-		ArrayList<SourceFileNode> result = new ArrayList<SourceFileNode>(sortedResult.size());
+		ArrayList<SourceFileNode> result = new ArrayList<SourceFileNode>(natives.size() + sortedResult.size());
+		//Readd natives
+		for(SourceFileNode s : natives){
+			result.add(s);
+		}
 		for(GraphNode<SourceFileNode> node : sortedResult){
 			result.add(node.content);
-			System.out.println(node.content.getSourceInfo().getQualifiedName());
 		}
+		
+		
 		
 		return result;
 	}

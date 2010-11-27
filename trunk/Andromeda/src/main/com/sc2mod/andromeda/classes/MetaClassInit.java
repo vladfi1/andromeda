@@ -48,7 +48,7 @@ public class MetaClassInit {
 			VarDeclNode vdn;
 			VarDeclListNode vd = new VarDeclListNode(vdn = new UninitedVarDeclNode(new IdentifierNode("vct")));
 			FieldDeclNode fd = new FieldDeclNode(null, null, at, vd, null);
-			FieldDecl fdecl = new FieldDecl(fd,vdn,metaClass, metaClass);
+			FieldDecl fdecl = new FieldDecl(fd,vdn,metaClass, metaClass, env);
 			metaClass.addContent("vct", fdecl);
 			fdecl.accept(new ResolveAndCheckTypesVisitor(env));
 			

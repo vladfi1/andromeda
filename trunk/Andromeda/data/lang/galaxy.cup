@@ -279,8 +279,7 @@ typeDefinition	::= TYPEDEF:l type:t IDENTIFIER:i SEMICOLON:r {:RESULT = new Type
 
 //structs
 structDeclaration ::=
-	STRUCT:l IDENTIFIER:i LBRACE structBody:b RBRACE:r {: RESULT = new StructDeclNode(null,new ModifierListNode(),i,null,b); RESULT.setPos(lleft,rright); :}
-|	STRUCT:l IDENTIFIER:i LBRACE structBody:b RBRACE SEMICOLON:r {: RESULT = new StructDeclNode(null,new ModifierListNode(),i,null,b); RESULT.setPos(lleft,rright); :}
+	STRUCT:l IDENTIFIER:i LBRACE structBody:b RBRACE SEMICOLON:r {: RESULT = new StructDeclNode(null,new ModifierListNode(),i,null,b); RESULT.setPos(lleft,rright); :}
 
 	;
 	
@@ -399,26 +398,26 @@ abstractMethodDeclaration ::=
 						|	methodInvocation:e {: RESULT = e; :}
 						;
 					ifThenStatement ::=
-							IF:l LPAREN expression:e RPAREN statement:s1 {: RESULT = new IfStmtNode(e,ParserHelper.createBlock(s1),null); RESULT.setPos(lleft,s1right); :}
+							IF:l LPAREN expression:e RPAREN statement:s1 {: RESULT = new IfStmtNode(e,ParserHelper.createGalaxyBlock(s1),null); RESULT.setPos(lleft,s1right); :}
 						;
 					ifThenElseStatement ::=
 							IF:l LPAREN expression:e RPAREN statementNoShortIf:s1 
-								ELSE statement:s2 {: RESULT = new IfStmtNode(e,ParserHelper.createBlock(s1),ParserHelper.createBlock(s2)); RESULT.setPos(lleft,s2right); :}
+								ELSE statement:s2 {: RESULT = new IfStmtNode(e,ParserHelper.createGalaxyBlock(s1),ParserHelper.createGalaxyElseBlock(s2)); RESULT.setPos(lleft,s2right); :}
 						;
 					ifThenElseStatementNoShortIf ::=
 							IF:l LPAREN expression:e RPAREN statementNoShortIf:s1 
-								ELSE statementNoShortIf:s2 {: RESULT = new IfStmtNode(e,ParserHelper.createBlock(s1),ParserHelper.createBlock(s2)); RESULT.setPos(lleft,s2right); :}
+								ELSE statementNoShortIf:s2 {: RESULT = new IfStmtNode(e,ParserHelper.createGalaxyBlock(s1),ParserHelper.createGalaxyElseBlock(s2)); RESULT.setPos(lleft,s2right); :}
 						;
 						
 
 					whileStatement ::=
-							WHILE:l LPAREN expression:e RPAREN:r statement:s {: RESULT = new WhileStmtNode(e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
+							WHILE:l LPAREN expression:e RPAREN:r statement:s {: RESULT = new WhileStmtNode(e,ParserHelper.createGalaxyBlock(s)); RESULT.setPos(lleft,rright); :}
 						;
 					whileStatementNoShortIf ::=
-							WHILE:l LPAREN expression:e RPAREN:r statementNoShortIf:s {: RESULT = new WhileStmtNode(e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
+							WHILE:l LPAREN expression:e RPAREN:r statementNoShortIf:s {: RESULT = new WhileStmtNode(e,ParserHelper.createGalaxyBlock(s)); RESULT.setPos(lleft,rright); :}
 						;
 					doWhileStatement ::=
-							DO:l statement:s WHILE LPAREN expression:e RPAREN SEMICOLON:r {: RESULT = new DoWhileStmtNode(e,ParserHelper.createBlock(s)); RESULT.setPos(lleft,rright); :}
+							DO:l statement:s WHILE LPAREN expression:e RPAREN SEMICOLON:r {: RESULT = new DoWhileStmtNode(e,ParserHelper.createGalaxyBlock(s)); RESULT.setPos(lleft,rright); :}
 						;
 
 

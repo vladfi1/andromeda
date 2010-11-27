@@ -26,13 +26,13 @@ import com.sc2mod.andromeda.util.StopWatch;
 
 public class ParsePhase extends Phase {
 
-	private LanguageImpl language;
+	private Language language;
 	private EnumMap<InclusionType, List<Source>> input;
 	LinkedList<Pair<Source,InclusionType>> startQueue;
 	
 	public ParsePhase(Language language) {
 		super(PhaseRunPolicy.IF_NO_ERRORS,"Parsing source files",true);
-		this.language = language.getImpl();
+		this.language = language;
 	}
 
 	@Override

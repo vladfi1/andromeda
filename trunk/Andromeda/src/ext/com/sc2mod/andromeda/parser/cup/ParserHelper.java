@@ -10,12 +10,15 @@
 package com.sc2mod.andromeda.parser.cup;
 
 import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.problems.Problem;
+import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
+import com.sc2mod.andromeda.syntaxNodes.IfStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 import com.sc2mod.andromeda.syntaxNodes.ModifierSE;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
@@ -103,7 +106,25 @@ public class ParserHelper {
 			return (BlockStmtNode) stmt;
 		}
 		return (BlockStmtNode) new BlockStmtNode((StmtListNode) new StmtListNode(stmt).setPos(stmt.getLeftPos(),stmt.getRightPos())).setPos(stmt.getLeftPos(), stmt.getRightPos());
-		
 	}
 
+	private static BlockStmtNode createGalaxyBlock(StmtNode stmt, boolean isElse){
+		if(stmt instanceof BlockStmtNode){
+			return (BlockStmtNode) stmt;
+		}
+		if(isElse && stmt instanceof IfStmtNode){
+			return createBlock(stmt);
+		}
+		Problem.ofType(ProblemId.GALAXY_BLOCK_WITHOUT_BRACES).at(stmt)
+			.raise();
+		return createBlock(stmt);
+	}
+	
+	public static BlockStmtNode createGalaxyBlock(StmtNode stmt){
+		return createGalaxyBlock(stmt,false);
+	}
+	
+	public static BlockStmtNode createGalaxyElseBlock(StmtNode stmt){
+		return createGalaxyBlock(stmt,true);
+	}
 }

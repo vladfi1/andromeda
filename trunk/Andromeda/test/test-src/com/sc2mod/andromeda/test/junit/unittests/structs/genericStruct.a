@@ -1,0 +1,11 @@
+
+struct S<T>{
+	T t;
+};
+
+static{
+	S<int> s;
+	
+	s.t = 3;
+	int j = s.t;
+}

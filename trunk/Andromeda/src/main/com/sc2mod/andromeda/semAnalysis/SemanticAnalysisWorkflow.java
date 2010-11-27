@@ -23,6 +23,7 @@ import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Language;
 import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeAliasDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitor;
 import com.sc2mod.andromeda.util.Pair;
 
 /**
@@ -104,8 +105,14 @@ public class SemanticAnalysisWorkflow {
 		
 		// 4.) Analyze statements and expressions
 		//Infer expression types, resolve function calls and field accesses
-		StatementAnalysisVisitor codeAnalysis = new StatementAnalysisVisitor(env,compEnv.getConfig());
+		StatementAnalysisVisitor codeAnalysis = 
+			new StatementAnalysisVisitor(env,compEnv.getConfig());
 		syntax.accept(codeAnalysis);	
+		
+		//Do additional checks, if desired by the language
+		VoidVisitor additionalVisitor = lang.getImpl().getAdditionalAnalysisVisitor(env, compEnv.getConfig());
+		if(additionalVisitor != null)
+			syntax.accept(additionalVisitor);
 		
 		//Resolve remaining constants
 		codeAnalysis.constResolve.resolveRemainingExprs();

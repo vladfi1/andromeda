@@ -17,7 +17,6 @@ import org.apache.tools.ant.Task;
 public class ClassEnricherAntTask extends Task{
 
 	private String path;
-	private String scannerPath;
 	private File semanticsFile;
 	
 	public void setSemanticsFile(String file){
@@ -27,9 +26,6 @@ public class ClassEnricherAntTask extends Task{
 		this.path = path;
 	}
 	
-	public void setScanner(String path){
-		this.scannerPath = path;
-	}
 	
 	
 	@Override
@@ -51,14 +47,6 @@ public class ClassEnricherAntTask extends Task{
 				for(File f: files){
 						cle.enrich(f);
 				}
-			} catch (IOException e) {
-				throw new BuildException(e);
-			}
-		}
-		if(scannerPath!=null){
-
-			try {
-				ClassEnricher.enrichScanner(new File(scannerPath));
 			} catch (IOException e) {
 				throw new BuildException(e);
 			}

@@ -68,6 +68,8 @@ public enum ProblemId {
 	
 	DUPLICATE_LOCAL_VARIABLE ("Duplicate local variable '%s'"),
 	GLOBAL_VAR_ACCESS_BEFORE_DECL("Accessing a global variable from above its declaration is forbidden"),
+	FIELD_ACCESS_BEFORE_DECL("Using a class field in the initializer of another class field is not allowed, if the using field is above the used one."),
+	VAR_ACCESS_IN_OWN_DECL("Accessing a variable in its own declaration is not possible"),
 	
 	UNKNOWN_TYPE("Type %s does not exist or is not visible"),
 	
@@ -106,6 +108,9 @@ public enum ProblemId {
 	INHERITANCE_CYCLE("Cycle in inheritance hierarchy involving type %s"),
 	
 	STRUCT_MEMBER_WITH_MODIFIER("Struct fields cannot have modifiers."),
+	STRUCT_MEMBER_WITH_INIT("Struct fields cannot be initialized in their declaration."),
+	STRUCT_MEMBER_REFERENCING_SELF("Structs may not contain themselves as field type."),
+	STRUCT_MEMBER_REFERENCING_STRUCT_BELOW("If a struct contains another struct as type of a field, the contained struct must be defined before the containing one."),
 	
 	DUPLICATE_TYPE_DEFINITION("Duplicate definition of type %s."),
 	NON_GENERIC_TYPE_HAS_TYPE_ARGUMENTS("The non-generic type %s cannot have type arguments"),
@@ -229,7 +234,7 @@ public enum ProblemId {
 	
 	DUPLICATE_FUNCTION("Duplicate definition of function %s(%s)"),
 	DUPLICATE_OVERRIDE_FUNCTION("Duplicate override definition of function %s(%s)"),
-	DANGLING_FORWARD_DECLARATION("No definition found for this forward-declaration"),
+	DANGLING_FORWARD_DECLARATION(" Only a forward declaration but no definition of function %s is visible here."),
 	
 	
 	//****** UNUSED STUFF ******
@@ -246,7 +251,14 @@ public enum ProblemId {
 	UNSIGNED_RIGHT_SHIFT_USED("Unsigned rightshift is not possible in galaxy :("), 
 	CONSTRUCTOR_OUTSIDE_OF_CLASS("Only classes can contain constructors. (Or method return type missing, if this is intended to be a normal method)"),
 	DESTRUCTOR_OUTSIDE_OF_CLASS("Only classes can contain destructors."), 
-	CYCLE_IN_STRICT_IMPORTS("Cycle found in strict import hierarchy:\n%s");
+	CYCLE_IN_STRICT_IMPORTS("Cycle found in strict import hierarchy:\n%s"),
+	
+	//Galaxy only
+	GALAXY_DISALLOWED_NAME_TYPE("This kind of name (%s) cannot be accessed in galaxy."), 
+	GALAXY_ACCESSING_ELEMENT_FROM_ABOVE_ITS_DECLARATION("Cannot access the %s from above its declaration."),
+	GALAXY_LOCAL_VAR_NOT_ON_TOP("Local variables must defined on top of a function in galaxy."), 
+	GALAXY_BLOCK_WITHOUT_BRACES("The body of an if and while loop must be wrapped in curly braces {}."),
+	;
 	
 	String message;
 	private ProblemSeverity severity;

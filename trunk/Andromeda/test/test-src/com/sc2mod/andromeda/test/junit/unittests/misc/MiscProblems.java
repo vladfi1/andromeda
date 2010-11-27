@@ -13,6 +13,30 @@ public class MiscProblems extends AndromedaSingleRunTest {
 		assertOnlyProblem(ProblemId.DANGLING_FORWARD_DECLARATION);
 	}
 	
+	@Test
+	public void fieldAccessFromAbove(){
+		callAndromeda("fieldAccessFromAbove.a");
+		assertProblem(ProblemId.GLOBAL_VAR_ACCESS_BEFORE_DECL);
+		assertProblem(ProblemId.GLOBAL_VAR_ACCESS_BEFORE_DECL);
+		assertProblem(ProblemId.GLOBAL_VAR_ACCESS_BEFORE_DECL);
+		assertOnlyProblem(ProblemId.GLOBAL_VAR_ACCESS_BEFORE_DECL);
+	}
+	
+	@Test
+	public void fieldAccessFromAbove2(){
+		callAndromeda("fieldAccessFromAbove2.a");
+		assertProblem(ProblemId.FIELD_ACCESS_BEFORE_DECL);
+		assertOnlyProblem(ProblemId.FIELD_ACCESS_BEFORE_DECL);
+	}
+	
+	@Test
+	public void varAccessInOwnDecl(){
+		callAndromeda("varAccessInOwnDecl.a");
+		assertProblem(ProblemId.VAR_ACCESS_IN_OWN_DECL);
+		assertProblem(ProblemId.VAR_ACCESS_IN_OWN_DECL);
+		assertProblem(ProblemId.VAR_ACCESS_IN_OWN_DECL);
+		assertOnlyProblem(ProblemId.VAR_ACCESS_IN_OWN_DECL);
+	}
 	
 	
 	

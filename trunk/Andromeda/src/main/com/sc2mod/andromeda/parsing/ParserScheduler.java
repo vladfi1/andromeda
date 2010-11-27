@@ -32,14 +32,14 @@ public class ParserScheduler {
 	private int numThreads;
 	private ParserThread[] workerThreads;
 	private CompilationEnvironment env;
-	private LanguageImpl language;
+	private Language language;
 	private ImportResolver importResolver;
 	private Throwable threadExeption = null;
 	private ParserFactory parserFactory;
 	
 	private HashMap<String,PackageDeclNode> readCompilationUnits = new HashMap<String, PackageDeclNode>();
 	
-	public ParserScheduler(int numThreads, CompilationEnvironment env, List<Pair<Source,InclusionType>> inputSources, LanguageImpl language) {
+	public ParserScheduler(int numThreads, CompilationEnvironment env, List<Pair<Source,InclusionType>> inputSources, Language language) {
 		collectedSources = Collections.synchronizedList(new ArrayList<SourceFileNode>(inputSources.size()*3));
 		 
 		List<ParserThreadInput> srcs = this.inputSources = new ArrayList<ParserThreadInput>(inputSources.size());
@@ -52,7 +52,7 @@ public class ParserScheduler {
 		workerThreads = new ParserThread[numThreads];
 		this.env = env;
 		this.language = language;
-		parserFactory = language.getParserFactory();
+		parserFactory = language.getImpl().getParserFactory();
 		importResolver = new ImportResolver(env.getSourceManager());
 	}
 	
@@ -148,7 +148,9 @@ public class ParserScheduler {
 	
 	private SourceListNode constructSourceList(List<SourceFileNode> srcs){
 		
-		srcs = new InputSorter().sort(srcs);
+		//Input is not sorted in galaxy parse runs
+		if(language != Language.GALAXY)
+			srcs = new InputSorter().sort(srcs);
 		
 		SourceListNode result = new SourceListNode();
 		

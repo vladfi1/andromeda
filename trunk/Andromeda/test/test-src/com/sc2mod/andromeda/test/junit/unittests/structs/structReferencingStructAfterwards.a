@@ -1,0 +1,16 @@
+
+struct A{
+	B b;
+	C<int> b2;
+	B[2] b3;
+	C<int>[3] b4;
+}
+
+struct B{
+	int i;
+}
+
+
+struct C<X>{
+	X i;
+}

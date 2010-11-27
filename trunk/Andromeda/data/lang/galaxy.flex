@@ -76,15 +76,12 @@ InputCharacter = [^\r\n]
 WhiteSpace = {LineTerminator} | [ \t\f]
 
 /* comments */
-Comment = {TraditionalComment} | {EndOfLineComment} | 
-          {DocumentationComment}
+Comment =  {EndOfLineComment} 
 
-TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 EndOfLineComment = "//" {InputCharacter}* {LineTerminator}?
-DocumentationComment = "/*" "*"+ [^/*] ~"*/"
 
 /* identifiers */
-Identifier = [:jletter:][:jletterdigit:]*
+Identifier = [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?
 
 /* integer literals */
 DecIntegerLiteral = 0 | [1-9][0-9]*

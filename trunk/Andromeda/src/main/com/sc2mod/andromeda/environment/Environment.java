@@ -39,7 +39,13 @@ public final class Environment {
 	private Package defaultPackage = new Package(this, "<default>", null);
 	public final TypeProvider typeProvider;
 	public final AnnotationRegistry annotationRegistry = new AnnotationRegistry();
+	public final IdProvider idProvider = new IdProvider();
 	
+	public IdProvider getIdProvider() {
+		return idProvider;
+	}
+
+
 	public Iterable<IScopedElement> iterateOverContent(final boolean stepIntoOperations,final boolean stepIntoPackages){
 		return new Iterable<IScopedElement>() {
 			

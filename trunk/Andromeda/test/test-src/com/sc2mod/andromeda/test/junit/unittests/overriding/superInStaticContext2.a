@@ -1,0 +1,20 @@
+
+
+class A{
+	static string x;
+	
+	static void bla(){
+	
+	}
+
+}
+
+class B extends A{
+	
+	static int x;
+		
+	
+	static int bla(){
+		super.bla(); //Not allowed
+	}
+}

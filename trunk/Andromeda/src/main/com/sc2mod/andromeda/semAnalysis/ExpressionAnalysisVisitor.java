@@ -8,6 +8,7 @@ import com.sc2mod.andromeda.environment.access.InvocationType;
 import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.access.VarAccess;
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
@@ -22,6 +23,7 @@ import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
 import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.types.casting.CastUtil;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.VarType;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.problems.Problem;
@@ -335,8 +337,66 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 				where.setConstant(true);
 				where.accept(parent.constResolve);
 			}
-
+			
+			//Set infered type
 			where.setInferedType(vd.getType());
+			
+			//In field declaration? If so, test order
+			if(parent.curField != null){
+				boolean possibleMisuse = false;
+				Variable curField = parent.curField;
+				if(!curField.isStatic()){
+					//For non static fields, only test order if
+					//the accessed field is also non static
+					if(vd.isStatic())
+						break;
+					
+					//Only error, if either simple name, or field access with this prefix
+					//(other instances can be accessed, of course)
+					if(where instanceof NameExprNode){
+						possibleMisuse = true;
+					} else {
+						ExprNode prefix = where.getLeftExpression();
+						possibleMisuse = (prefix instanceof ThisExprNode);
+					}
+					
+					//Only error if the field is not from a super class
+					if(possibleMisuse){
+						if(!curField.getContainingType().equals(vd.getContainingType()))
+							break;
+					}
+					
+					
+				} else {
+					//For static fields, ordering always counts
+					possibleMisuse = true;
+				}
+				
+				//Check if this is a misuse
+				if(!possibleMisuse)
+					break;
+				if(curField.getDeclarationIndex()<=vd.getDeclarationIndex()){
+					if(curField.getDeclarationIndex()<vd.getDeclarationIndex()){
+						Problem.ofType(curField.isStatic() ? ProblemId.GLOBAL_VAR_ACCESS_BEFORE_DECL : ProblemId.FIELD_ACCESS_BEFORE_DECL).at(where)
+							.raise();
+					} else {
+						Problem.ofType(ProblemId.VAR_ACCESS_IN_OWN_DECL).at(where)
+							.raise();
+					}
+				}
+				
+			} else {
+				//Otherwise, we are in a method. So we need to do local self access checks
+				if(vd.getVarType() == VarType.LOCAL){
+					//If we re in the init of a local var decl and this name references
+					//the var itself, we got the error
+					if(parent.curLocal != null && vd == parent.curLocal){
+						Problem.ofType(ProblemId.VAR_ACCESS_IN_OWN_DECL).at(where)
+							.raise();
+					}
+				}
+			}
+			
 			break;
 		case ACCESSOR:
 			AccessorAccess ac = (AccessorAccess) elem;
@@ -389,16 +449,6 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		
 		//Do checks, set semantics and infered type
 		checkResolvedVar(elem, fieldAccess,context);
-	
-	
-		
-		//In global declaration? If so, test order
-		//TODO: Reimplement order checking
-//		if(inGlobalVarDecl){
-//			if(va.getIndex()>=varDeclIndex)
-//				throw Problem.ofType(ProblemId.GLOBAL_VAR_ACCESS_BEFORE_DECL).at(fieldAccess)
-//						.raiseUnrecoverable();
-//		}
 	}
 	
 	@Override
@@ -441,7 +491,6 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 				throw Problem.ofType(ProblemId.NO_SUCH_METHOD).at(methodInvocation)
 					.details(methodInvocation.getFuncName(),sig.getFullName(),prefixScope)
 					.raiseUnrecoverable();
-				
 			
 		} else {
 			
@@ -454,6 +503,14 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 					.details(methodInvocation.getFuncName(),sig.getFullName())
 					.raiseUnrecoverable();
 			
+		}	
+		
+		
+		//Dangling forward decl check
+		if(OperationUtil.isForwardDeclaration(inv.getWhichFunction())){
+			Problem.ofType(ProblemId.DANGLING_FORWARD_DECLARATION).at(methodInvocation)
+				.details(OperationUtil.getNameAndSignature(inv.getWhichFunction()))
+				.raise();
 		}
 		
 		//Set semantics and type
@@ -488,7 +545,15 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		if(parent.curType==null) 
 			throw Problem.ofType(ProblemId.THIS_OUTSIDE_CLASS_OR_ENRICHMENT).at(thisExpression)
 					.raiseUnrecoverable();
-		if(parent.curOperation.isStatic())
+		
+		boolean misuse = false;
+		if(parent.curField == null) {
+			misuse = parent.curOperation.isStatic();
+		} else {
+			misuse = parent.curField.isStatic();
+			
+		}
+		if(misuse)
 			throw Problem.ofType(ProblemId.THIS_IN_STATIC_MEMBER).at(thisExpression)
 					.raiseUnrecoverable();
 		thisExpression.setInferedType(parent.curType);

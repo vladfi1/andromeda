@@ -11,6 +11,7 @@ package com.sc2mod.andromeda.environment.variables;
 
 import java.util.ArrayList;
 
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
@@ -24,16 +25,14 @@ import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 public class FieldDecl extends NonLocalVarDecl {
 
 	private FieldDeclNode fieldDeclaration;
-	private final int index;
 	private FieldDecl usesField;
 	private ArrayList<FieldDecl> usedByFields;
 	private boolean isStatic;
 	private IType containingType;
 	
-	public FieldDecl(FieldDeclNode f, VarDeclNode declNode, IType containingType, IScope scope) {
-		super(f,declNode,scope);
+	public FieldDecl(FieldDeclNode f, VarDeclNode declNode, IType containingType, IScope scope, Environment env) {
+		super(f,declNode,scope,env);
 		this.fieldDeclaration = f;
-		this.index = GlobalVarDecl.curIndex++;	
 		this.containingType = containingType;
 
 	}	
@@ -69,11 +68,7 @@ public class FieldDecl extends NonLocalVarDecl {
 	public boolean isGlobalField(){
 		return isStatic();
 	}
-	
-	@Override
-	public int getIndex() {
-		return index;
-	}
+
 	
 	public IType getContainingType(){
 		return containingType;
@@ -99,6 +94,10 @@ public class FieldDecl extends NonLocalVarDecl {
 		return VarUtil.getNameAndTypeAndPrefix(this);
 	}
 
+	@Override
+	public String getDescription() {
+		return "field " + getUid();
+	}
 
 
 	@Override

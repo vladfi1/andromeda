@@ -1,0 +1,16 @@
+
+
+class A{
+	static string x;
+	
+
+}
+
+class B extends A{
+	
+	static int x;
+	
+	static string y = super.x; //Not allowed
+	
+	
+}

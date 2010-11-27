@@ -19,6 +19,7 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
@@ -61,7 +62,7 @@ public class GenericVarProxy extends Variable {
 		return wrappedDecl.getDeclarator();
 	}
 
-	public SyntaxNode getDefinition() {
+	public IdentifierNode getDefinition() {
 		return wrappedDecl.getDefinition();
 	}
 
@@ -195,6 +196,20 @@ public class GenericVarProxy extends Variable {
 		wrappedDecl.setValue(value);
 	}
 	
+	@Override
+	public String getDescription() {
+		return wrappedDecl.getDescription();
+	}
+	
+	/**
+	 * For non-local variables, this returns an index which can
+	 * be used to compare which declaration is above which one:
+	 * A declaration is above another one if it has a smaller index.
+	 */
+	@Override
+	public int getDeclarationIndex() {
+		return wrappedDecl.getDeclarationIndex();
+	}
 	
 
 

@@ -223,7 +223,7 @@ public class CodeGenVisitor extends CodeGenerator {
 			;
 		}
 		structBuffer.unindent();
-		structBuffer.nl().append("}").nl().nl();
+		structBuffer.nl().append("};").nl().nl();
 		
 		structBuffer.flushTo(fileBuffer.types, true);
 	}

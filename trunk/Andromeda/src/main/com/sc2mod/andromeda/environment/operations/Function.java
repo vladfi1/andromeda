@@ -51,14 +51,6 @@ public class Function extends Operation {
 	
 
 	
-	private static HashSet<String> allowedAnnotations = new HashSet<String>();
-	static{
-		allowedAnnotations.add(Annotations.STRING_CALL);
-		allowedAnnotations.add(Annotations.INLINE);
-	}
-	
-
-	
 	protected StmtNode body;
 	protected MemberDeclNode declaration;
 	protected MethodHeaderNode header;
@@ -88,8 +80,8 @@ public class Function extends Operation {
 	private Signature signature;
 
 	private Visibility visibility = Visibility.DEFAULT;
-	private HashMap<String, AnnotationNode> annotationTable;
-
+	private OverrideInformation overrideInformation;
+	
 	public Function(GlobalFuncDeclNode functionDeclaration, IScope scope, Environment env) {
 		this(functionDeclaration.getFuncDecl(),scope, env);
 	}
@@ -104,9 +96,20 @@ public class Function extends Operation {
 		decl.setSemantics(this);
 		ModifierUtil.processModifiers(this, decl.getHeader().getModifiers());
 		env.annotationRegistry.processAnnotations(this, decl.getHeader().getAnnotations());
+		overrideInformation = createOverrideInformation();
 	
 	}
 	
+	protected OverrideInformation createOverrideInformation() {
+		return new OverrideInformation(this);
+	}
+	
+	@Override
+	public OverrideInformation getOverrideInformation() {
+		return overrideInformation;
+	}
+
+
 	//XPilot: for function proxies
 	protected Function() {}
 	

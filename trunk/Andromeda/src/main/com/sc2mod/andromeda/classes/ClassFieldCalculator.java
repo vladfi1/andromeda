@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import com.sc2mod.andromeda.codegen.INameProvider;
 import com.sc2mod.andromeda.codegen.IndexInformation;
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.IRecordType;
@@ -45,6 +46,7 @@ public abstract class ClassFieldCalculator {
 	protected TypeProvider typeProvider;
 	protected INameProvider nameGenerator;
 	private IndexInformation indexInfo;
+	private Environment env;
 
 
 	/**
@@ -54,8 +56,9 @@ public abstract class ClassFieldCalculator {
 	 */
 	protected abstract ArrayList<Variable> generateImplicitFields(IClass c);
 	
-	public ClassFieldCalculator(TypeProvider tp, INameProvider snv, IndexInformation indexInfo) {
-		this.typeProvider = tp;
+	public ClassFieldCalculator(Environment env, INameProvider snv, IndexInformation indexInfo) {
+		this.typeProvider = env.typeProvider;
+		this.env = env;
 		this.nameGenerator = snv;
 		this.indexInfo = indexInfo;
 	}
@@ -71,7 +74,7 @@ public abstract class ClassFieldCalculator {
 		VarDeclNode vdn = new UninitedVarDeclNode(new IdentifierNode(name));
 		VarDeclListNode vd = new VarDeclListNode();
 		FieldDeclNode fd = new FieldDeclNode(null, null, null, vd , null);
-		FieldDecl f = new FieldDecl(fd, vdn, c, c);
+		FieldDecl f = new FieldDecl(fd, vdn, c, c,env);
 		f.setResolvedType(type);
 		f.setGeneratedName(nameGenerator.getFieldName(f, c));
 		return f;

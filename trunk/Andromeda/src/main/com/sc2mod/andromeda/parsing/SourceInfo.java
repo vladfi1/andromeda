@@ -38,6 +38,10 @@ public class SourceInfo {
 		return type;
 	}
 	
+	@Override
+	public String toString() {
+		return type.name() + source.getName();
+	}
 	
 	
 	

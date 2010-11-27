@@ -1,0 +1,18 @@
+
+class X extends Y{
+
+	static X xx;
+
+	int z = x; //Forbidden
+	int z2 = this.x; //Forbidden
+	int z3 = ab; //Allowed, super class
+	int z4 = super.ab; //Allowed, super class
+	int z5 = x2; //Allowed, static
+	int z6 = xx.x; //Allowed, other instance
+	int x = 2;
+	static int x2;
+}
+
+class Y{
+	int ab = 2;
+}

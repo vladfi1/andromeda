@@ -50,7 +50,12 @@ public class LocalVarDecl extends NonParamDecl {
 	}
 
 	
-
+	@Override
+	public String getDescription() {
+		return "local variable " + getUid();
+	}
+	
+	
 	@Override
 	public VarType getVarType() {
 		return VarType.LOCAL;

@@ -1,0 +1,7 @@
+
+void bla(){
+	S s;
+}
+
+typedef int S;
+

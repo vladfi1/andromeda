@@ -1,0 +1,16 @@
+
+int f (int i){ return i; }
+
+int ii = f(ii); //Forbidden
+
+class X{
+	int ii = this.ii + 2; //Forbidden
+	static int jj = X.jj; //Forbidden
+	
+	
+}
+
+static{
+	int y = 2;
+	int x = y + x; //Forbidden
+}

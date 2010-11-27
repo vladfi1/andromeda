@@ -97,6 +97,25 @@ public class OverrideProblems extends AndromedaSingleRunTest {
 		assertOnlyProblem(ProblemId.OVERRIDE_DECL_DOES_NOT_OVERRIDE);
 	}
 	
+	@Test
+	public void useSuper(){
+		callAndromeda("useSuper.a");
+		assertNoMoreProblems();
+		checkOutput();
+	}
+	
+	@Test
+	public void superInStaticContext(){
+		callAndromeda("superInStaticContext.a");
+		assertOnlyProblem(ProblemId.STATIC_MEMBER_MISUSE);
+	}
+	
+	@Test
+	public void superInStaticContext2(){
+		callAndromeda("superInStaticContext2.a");
+		assertOnlyProblem(ProblemId.STATIC_MEMBER_MISUSE);
+	}
+	
 	
 	
 }

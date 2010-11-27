@@ -21,6 +21,8 @@ import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.program.FileCollector;
+import com.sc2mod.andromeda.semAnalysis.StatementAnalysisVisitor;
+import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitor;
 import com.sc2mod.andromeda.util.Files;
 import com.sc2mod.andromeda.util.StopWatch;
 
@@ -44,6 +46,11 @@ public class Andromeda extends LanguageImpl{
 	@Override
 	public SystemTypes getSystemTypes(Environment env, TypeProvider tprov) {
 		return new AndromedaSystemTypes(env, tprov);
+	}
+	
+	@Override
+	public VoidVisitor getAdditionalAnalysisVisitor(Environment env, Configuration options) {
+		return null;
 	}
 
 

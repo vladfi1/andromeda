@@ -22,8 +22,10 @@ public class FunctionSet extends OperationSet {
 	protected Operation doHandleDuplicate(Operation oldOp, Operation newOp) {
 		//Handle forward declarations.
 		if(OperationUtil.isForwardDeclaration(oldOp)){
+			oldOp.getOverrideInformation().addOverride(newOp);
 			return newOp;
 		} else if(OperationUtil.isForwardDeclaration(newOp)){
+			newOp.getOverrideInformation().addOverride(oldOp);
 			return oldOp;
 		}
 		//FIXME: Check that no forward declaration is undefined in the end.

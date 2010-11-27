@@ -164,7 +164,7 @@ public class StructureRegistryTreeScanner extends
 		VarDeclListNode list = field.getDeclaredVariables();
 
 		for(VarDeclNode declNode : list){
-			GlobalVarDecl decl = new GlobalVarDecl(field, declNode, scopes._1);
+			GlobalVarDecl decl = new GlobalVarDecl(field, declNode, scopes._1,env);
 			resolver.checkAndResolve(decl);
 			scopes._1.addContent(decl.getUid(), decl);
 		}
@@ -200,7 +200,7 @@ public class StructureRegistryTreeScanner extends
 
 		for(VarDeclNode declNode : list){
 			FieldDecl decl = new FieldDecl(field, declNode, scopes._2,
-					scopes._1);
+					scopes._1,env);
 			resolver.checkAndResolve(decl);
 			// Add field into scope
 			entry(scopes, decl);

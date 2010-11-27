@@ -37,6 +37,7 @@ import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
+import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
@@ -44,6 +45,7 @@ import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ArrayInitNode;
+import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.BreakStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
@@ -100,7 +102,17 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	protected Environment env;
 	private BasicTypeSet BASIC;
 	private ExpressionAnalysisVisitor exprAnalyzer;
-
+	
+	//current variables
+	LoopSemantics curLoop;
+	protected Operation curOperation;
+	boolean isOnTop;
+	protected Variable curField;
+	Variable curLocal;
+	
+	protected ExpressionAnalysisVisitor createExpressionAnalyisVisitor(){
+		return new ExpressionAnalysisVisitor(this);
+	}
 	
 	public StatementAnalysisVisitor(Environment env, Configuration options) {
 		this.nameResolver = new NameResolver(new ArrayLocalVarStack());
@@ -108,16 +120,11 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		this.typeProvider = env.typeProvider;
 		this.constResolve = new ConstantResolveVisitor();
 		this.options = options;
-		this.exprAnalyzer = new ExpressionAnalysisVisitor(this);
+		this.exprAnalyzer = createExpressionAnalyisVisitor();
 		this.BASIC = typeProvider.BASIC;
 		
 	}
-	
-	//current variables
-	LoopSemantics curLoop;
-	protected Operation curOperation;
-	boolean isOnTop;
-	
+		
 	private void analyzeExpression(ExprNode expr){
 		expr.accept(exprAnalyzer, ExpressionContext.STATEMENT);
 	}
@@ -178,8 +185,21 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	
 	@Override
 	public void visit(FieldDeclNode fieldDeclNode) {
+		
 		//Only visit declared variables, not the type!
-		fieldDeclNode.getDeclaredVariables().accept(this);
+		VarDeclListNode vars = fieldDeclNode.getDeclaredVariables();
+		for(VarDeclNode v : vars){
+			
+			//Set cur field
+			Variable fieldBefore = curField;
+			curField = v.getName().getSemantics();
+			
+			//Accept
+			v.accept(this);
+			
+			//Reset cur field
+			curField = fieldBefore;
+		}
 	}
 	
 	
@@ -222,8 +242,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 					}
 				}
 			}
-			//TODO remove this test coe
-			t.canImplicitCastTo(decl.getType());
+			
 			if(error)
 				throw Problem.ofType(ProblemId.TYPE_ERROR_INCOMPATIBLE_ASSIGNMENT).at(variableAssignDecl)
 						.details(t.getFullName(),decl.getType().getFullName())
@@ -419,6 +438,17 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	}
 	
 	//************** MISC STRUCTURES **************
+	
+	
+	public void visit(ArrayTypeNode arrayTypeNode) {
+		for(ExprNode expr : arrayTypeNode.getDimensions()){
+			analyzeExpression(expr);
+		}
+		
+		arrayTypeNode.getWrappedType().accept(this);
+	}
+	
+	
 	@Override
 	public void visit(ExprListNode expressionList) {
 		throw new InternalProgramError(expressionList,"Trying to visit expression list!");
@@ -634,7 +664,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		
 		switch(itereeType.getCategory()){
 		case ARRAY:
-			
+			//TODO Array foreach
 			
 			throw new Error("array foreach not yet supported");
 		case BASIC:
@@ -852,12 +882,18 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		for(VarDeclNode decl : decls){
 			
 			//Register the local var
-			nameResolver.registerLocalVar(new LocalVarDecl(l.getVarDeclaration().getModifiers(),t, decl, isOnTop, curScope));
+			LocalVarDecl local = new LocalVarDecl(l.getVarDeclaration().getModifiers(),t, decl, isOnTop, curScope);
 			
+			nameResolver.registerLocalVar(local);
+					
 			//Check the init expression
+			Variable curLocalBefore = curLocal;
+			curLocal = local;
 			decl.accept(this);
+			curLocal = curLocalBefore;
 			
 		
+			
 		}
 	}
 	

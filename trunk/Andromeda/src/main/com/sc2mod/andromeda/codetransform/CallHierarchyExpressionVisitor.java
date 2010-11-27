@@ -29,6 +29,8 @@ import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.NewExprNode;
+import com.sc2mod.andromeda.syntaxNodes.SuperExprNode;
+import com.sc2mod.andromeda.syntaxNodes.ThisExprNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.FuncNameObject;
 
@@ -118,6 +120,10 @@ public class CallHierarchyExpressionVisitor extends TransformationExprVisitor {
 	@Override
 	public void visit(NameExprNode nameExprNode) {
 		checkAccessNode(nameExprNode);
+	}
+	
+	@Override
+	public void visit(SuperExprNode superExpression) {
 	}
 
 	@Override

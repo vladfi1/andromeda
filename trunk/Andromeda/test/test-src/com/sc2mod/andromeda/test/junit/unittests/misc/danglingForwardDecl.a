@@ -1,2 +1,6 @@
 
 void x(); //dangling forward decl
+
+static{
+	x(); //Usage
+}

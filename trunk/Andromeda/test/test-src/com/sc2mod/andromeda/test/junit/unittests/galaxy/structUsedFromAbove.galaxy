@@ -1,0 +1,11 @@
+S x;
+
+void bla(){
+	S s;
+	S[2] s2;
+}
+
+struct S{
+	int i;
+};
+

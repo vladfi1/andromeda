@@ -41,7 +41,7 @@ public class CodeGenPreparationPhase extends Phase{
 		//Do name and class field generation
 		NameGenerationVisitor snv = new NameGenerationVisitor(semEnv.typeProvider, nameProvider, options);
 		env.getTransientData().setNameGenerator(snv);
-		ClassFieldCalculator cfc = new IndexClassFieldCalculator(semEnv.typeProvider,snv.getNameProvider(), env.getTransientData().getIndexInformation());
+		ClassFieldCalculator cfc = new IndexClassFieldCalculator(semEnv,snv.getNameProvider(), env.getTransientData().getIndexInformation());
 		cfc.calcFields();
 		semEnv.typeProvider.calcFuncPointerIndices();
 		cfc.generateClassNames();

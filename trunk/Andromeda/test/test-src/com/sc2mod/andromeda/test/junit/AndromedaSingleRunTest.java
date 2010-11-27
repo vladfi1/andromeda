@@ -52,7 +52,7 @@ public abstract class AndromedaSingleRunTest extends AndromedaTestRun {
 		return result;
 	}
 	
-	protected void callAndromeda(String... sourceFile){
+	protected void callAndromeda(Language lang, String... sourceFile){
 
 		ArrayList<Source> input = new ArrayList<Source>();
 		for(String s : sourceFile){
@@ -61,12 +61,20 @@ public abstract class AndromedaSingleRunTest extends AndromedaTestRun {
 		Configuration o = getDefaultOptions();
 		try {
 			o.setParam(Parameter.FILES_OUT_DIR, new File("out/test"));
-			env = Program.invokeWorkflow(input,o, Language.ANDROMEDA);
+			env = Program.invokeWorkflow(input,o, lang);
 			
 		} catch (Throwable t){
 			fail("An exception has been thrown: " + t.getMessage());
 		}
 		problems = env.getResult().getProblems();
+	}
+	
+	protected void callAndromeda(String... sourceFile){
+		callAndromeda(Language.ANDROMEDA,sourceFile);
+	}
+	
+	protected void callGalaxy(String... sourceFiles){
+		callAndromeda(Language.GALAXY,sourceFiles);
 	}
 	
 	/**

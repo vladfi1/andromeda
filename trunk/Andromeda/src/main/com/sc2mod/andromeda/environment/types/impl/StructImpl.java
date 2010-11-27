@@ -27,10 +27,12 @@ import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
 public class StructImpl extends RecordTypeImpl implements IStruct{
 
 	private StructDeclNode declaration;
+	private int structId;
 
 	public StructImpl(StructDeclNode declaration, IScope scope, Environment env) {
 		super(declaration, scope, env);
 		this.declaration = declaration;
+		this.structId = env.getIdProvider().getNextStructId();
 	}
 	
 	@Override
@@ -81,5 +83,15 @@ public class StructImpl extends RecordTypeImpl implements IStruct{
 	@Override
 	public boolean isTopType() {
 		return true;
+	}
+	
+	@Override
+	public boolean hasCopiedDownContent() {
+		return true;
+	}
+
+	@Override
+	public int getStructId() {
+		return structId;
 	}
 }

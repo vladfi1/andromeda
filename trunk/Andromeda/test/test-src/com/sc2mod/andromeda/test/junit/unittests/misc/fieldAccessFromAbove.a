@@ -1,0 +1,18 @@
+
+int jj = ii; //Forbidden!
+int ii;
+
+int ijk = X.ab; //Forbidden
+class X{
+	static int ab = ijk2; //Forbidden
+	
+	static int x = y; //Forbidden
+
+	int z = y; //Allowed, z is not static
+	int zz = ijk2; //Same, allowed
+	static int y = 1;
+	
+
+}
+
+int ijk2;

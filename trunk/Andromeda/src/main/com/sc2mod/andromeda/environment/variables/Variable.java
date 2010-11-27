@@ -11,7 +11,9 @@ import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
@@ -23,6 +25,9 @@ public abstract class Variable implements SemanticsElement, IScopedElement, IIde
 	public ScopedElementType getElementType(){
 		return ScopedElementType.VAR;
 	}
+	
+	@Override
+	public abstract IdentifierNode getDefinition();
 
 	public abstract boolean isInitedInDecl();
 	
@@ -50,5 +55,9 @@ public abstract class Variable implements SemanticsElement, IScopedElement, IIde
 	
 	public abstract DataObject getValue();
 	public abstract void setValue(DataObject value);
+
+	public abstract String getDescription();
+	
+	public abstract int getDeclarationIndex();
 	
 }

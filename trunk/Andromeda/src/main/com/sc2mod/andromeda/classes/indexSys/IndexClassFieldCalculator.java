@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import com.sc2mod.andromeda.classes.ClassFieldCalculator;
 import com.sc2mod.andromeda.codegen.INameProvider;
 import com.sc2mod.andromeda.codegen.IndexInformation;
+import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
@@ -34,7 +35,7 @@ import com.sc2mod.andromeda.environment.variables.Variable;
  */
 public class IndexClassFieldCalculator extends ClassFieldCalculator {
 
-	public IndexClassFieldCalculator(TypeProvider tp, INameProvider snv, IndexInformation indexInfo) {
+	public IndexClassFieldCalculator(Environment tp, INameProvider snv, IndexInformation indexInfo) {
 		super(tp,snv, indexInfo);
 	}
 

@@ -9,6 +9,7 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
+import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.access.AccessorAccess;
 import com.sc2mod.andromeda.environment.access.Invocation;
 import com.sc2mod.andromeda.environment.access.InvocationType;
@@ -48,12 +49,17 @@ import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
+import com.sc2mod.andromeda.syntaxNodes.ThisExprNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeNode;
 import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
 import com.sc2mod.andromeda.syntaxNodes.UnOpSE;
 import com.sc2mod.andromeda.syntaxNodes.VarAssignDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.WhileStmtNode;
+import com.sc2mod.andromeda.syntaxNodes.util.NoParamVisitor;
+import com.sc2mod.andromeda.syntaxNodes.util.NoResultVisitor;
+import com.sc2mod.andromeda.syntaxNodes.util.Visitor;
+import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitor;
 import com.sc2mod.andromeda.vm.data.BoolObject;
 import com.sc2mod.andromeda.vm.data.FixedObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
@@ -251,5 +257,11 @@ public class SyntaxGenerator {
 		WhileStmtNode loop = new WhileStmtNode(condition, body);
 		loop.setSemantics(loopSemantics);
 		return loop;
+	}
+
+	public ExprNode createThisExpr(IType inferedType) {
+		ThisExprNode thisExprNode = new ThisExprNode(null);
+		thisExprNode.setInferedType(inferedType);
+		return thisExprNode;
 	}
 }

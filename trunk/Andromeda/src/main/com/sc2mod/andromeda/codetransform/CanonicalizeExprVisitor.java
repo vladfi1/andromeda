@@ -36,6 +36,7 @@ import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
+import com.sc2mod.andromeda.syntaxNodes.SuperExprNode;
 import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
@@ -145,6 +146,12 @@ public class CanonicalizeExprVisitor extends TransformationExprVisitor {
 		if(replaceByConst(castExpression)) return;
 		
 		super.visit(castExpression);
+	}
+	
+	@Override
+	public void visit(SuperExprNode superExprNode) {
+		//Super can be replaced by this for the code generation
+		parent.replaceExpression = syntaxGenerator.createThisExpr(superExprNode.getInferedType());
 	}
 	
 	@Override

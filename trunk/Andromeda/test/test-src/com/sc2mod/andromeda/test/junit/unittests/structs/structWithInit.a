@@ -1,0 +1,4 @@
+
+struct S{
+	int i = 3;
+};

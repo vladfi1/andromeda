@@ -9,9 +9,11 @@ import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
+import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
+import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
@@ -37,6 +39,8 @@ import com.sc2mod.andromeda.problems.ProblemId;
 public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 
 	private TypeProvider tprov;
+	private StructIndexCalculationVisitor structIndexCalculator = new StructIndexCalculationVisitor();
+	
 	public SemanticsElementCheckVisitor(Environment env) {
 		this.tprov = env.typeProvider;
 	}
@@ -242,16 +246,43 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	
 	
 	/**
-	 * Struct members are checked so that they contain no modifiers.
+	 * Struct members are checked so that they contain no modifiers
+	 * and no initialization and are not from the type itself
 	 */
 	@Override
 	public void visit(StructImpl struct) {
 		for(IScopedElement s : struct.getContent().viewValues()){
-			//Since the parser anything but fields in structs, we can safely cast to fieldDecl here
+			if(s.getElementType() != ScopedElementType.VAR)
+				continue;
+			
 			FieldDecl field = (FieldDecl)s;
+			
+			//No modifiers!
 			if(!field.getFieldDeclaration().getFieldModifiers().isEmpty()){
 				throw Problem.ofType(ProblemId.STRUCT_MEMBER_WITH_MODIFIER).at(field.getFieldDeclaration().getFieldModifiers())
 								.raiseUnrecoverable();
+			}
+			
+			//No inits!
+			if(field.isInitedInDecl()){
+				Problem.ofType(ProblemId.STRUCT_MEMBER_WITH_INIT).at(field.getFieldDeclaration())
+					.raise();
+			}
+			
+			//Checks for struct members that are also a struct type
+			IType type = field.getType();
+			int structIndex = type.accept(structIndexCalculator,null);
+			if(structIndex > -1){
+				int myIndex = struct.getStructId();
+				//Struct defined below?
+				if(structIndex>myIndex){
+					Problem.ofType(ProblemId.STRUCT_MEMBER_REFERENCING_STRUCT_BELOW).at(type.getDefinition())
+						.raise();
+				//The struct itself?
+				} else if(structIndex==myIndex){
+					Problem.ofType(ProblemId.STRUCT_MEMBER_REFERENCING_SELF).at(type.getDefinition())
+						.raise();
+				}
 			}
 		}
 	}

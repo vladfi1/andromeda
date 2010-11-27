@@ -2,73 +2,64 @@ package com.sc2mod.andromeda.environment.operations;
 
 import java.util.ArrayList;
 
+import com.sc2mod.andromeda.problems.InternalProgramError;
+
 public class OverrideInformation {
 
-	private String virtualCaller;
-	private int virtualCallOffset;
-	private int virtualCallIndex;
-	private int virtualTableIndex;
-	private Method overrides;
-	private boolean isCalledVirtually;
-	private ArrayList<Operation> overriders;
-	private Method meth;
-	private int overrideCount;
+	private Operation overrides;
+	protected Operation op;
 	
-	public OverrideInformation(Method meth) {
-		this.meth = meth;
+	public OverrideInformation(Operation op) {
+		this.op = op;
 	}
 	
 	public String getVirtualCaller() {
-		return virtualCaller;
+		throw new InternalProgramError("!");
 	}
 
 	public void setVirtualCallerName(String virtualCallerName) {
-		virtualCaller = virtualCallerName;
+		throw new InternalProgramError("!");
 	}
 	
 	public int getNextVirtualCallChildIndex() {
-		virtualCallOffset++;
-		return virtualCallIndex + virtualCallOffset;
+		throw new InternalProgramError("!");
 	}
 	
 	public int getCurVirtualCallChildIndex() {
-		return virtualCallIndex + virtualCallOffset;
+		throw new InternalProgramError("!");
 	}
 	
 	public int getVirtualTableIndex() {
-		return virtualTableIndex;
+		throw new InternalProgramError("!");
 	}
 
 	public void setVirtualTableIndex(int virtualTableIndex) {
-		this.virtualTableIndex = virtualTableIndex;
+		throw new InternalProgramError("!");
 	}
 
 	public int getVirtualCallIndex() {
-		return virtualCallIndex;
+		throw new InternalProgramError("!");
 	}
 
 	
 	public void setVirtualCallIndex(int virtualCallIndex) {
-		this.virtualCallIndex = virtualCallIndex;
+		throw new InternalProgramError("!");
 	}
 	
-	protected void setOverriddenMethod(Method method) {
+	protected void setOverriddenMethod(Operation method) {
 		overrides = method;
 	}
 
 	public void addOverride(Operation overrider) {
-		overrider.getOverrideInformation().setOverriddenMethod(meth);
-		overrideCount++;
-		if(overriders==null) overriders = new ArrayList<Operation>(2);
-		overriders.add(overrider);
+		overrider.getOverrideInformation().setOverriddenMethod(op);
 	}
 	
 	public boolean isOverridden() {
-		return overriders != null;
+		throw new InternalProgramError("!");
 	}
 	
 	public ArrayList<Operation> getOverridingMethods() {
-		return overriders;		
+		throw new InternalProgramError("!");	
 	}
 	
 	public Operation getOverridenMethod() {
@@ -79,24 +70,11 @@ public class OverrideInformation {
 	 * Only called by VirtualCallResolver.
 	 */
 	public void registerVirtualCall() {
-
-		//Already called virtually, skip!
-		//if(isCalledVirtually) return;
-
-		//This and all overriders are called virtually
-		isCalledVirtually = true;
-		
-		// XPilot: these will be set in VirtualCallResolver
-		/*
-		if(overriders != null)
-			for(AbstractFunction m: overriders) {
-				m.registerVirtualCall();
-			}
-		*/
+		throw new InternalProgramError("!");
 	}
 	
 	
 	public boolean isCalledVirtually() {
-		return isCalledVirtually;
+		throw new InternalProgramError("!");
 	}
 }
