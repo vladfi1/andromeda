@@ -4,7 +4,6 @@ public class ToDo {
 //FIXME command line parameter fuer lookup path
 //FIXME galaxy parser bauen, mit semantic analysis
 //FIXME "is" in "aliases" aendern
-//FIXME iskey entfernen
 //FIXME abstract fields
 //FIXME tests that abstract fields need accessors
 //FIXME tests that abstract fields are allowed in enrichments of basic types

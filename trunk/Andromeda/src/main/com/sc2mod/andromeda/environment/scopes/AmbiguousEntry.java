@@ -3,6 +3,7 @@ package com.sc2mod.andromeda.environment.scopes;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
+//FIXME Implement ambiguousEntry correctly
 public class AmbiguousEntry implements IScopedElement{
 
 	@Override

@@ -6,7 +6,6 @@ public class ThreadUtil {
 		try {
 			monitor.wait();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -15,7 +14,6 @@ public class ThreadUtil {
 		try {
 			ThreadUtil.class.wait(lengthInMillisec);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
