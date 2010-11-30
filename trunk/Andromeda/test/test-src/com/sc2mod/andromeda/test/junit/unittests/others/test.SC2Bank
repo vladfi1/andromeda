@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Bank version="1">
+    <Section name="test_foo">
+        <Key name="id">
+            <Value string="1"/>
+        </Key>
+        <Key name="failMsg">
+            <Value string="blub"/>
+        </Key>
+        <Key name="progress">
+            <Value string="failed"/>
+        </Key>
+    </Section>
+    <Section name="misc">
+        <Key name="progress">
+            <Value string="1"/>
+        </Key>
+    </Section>
+</Bank>

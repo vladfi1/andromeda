@@ -11,7 +11,7 @@ parser code  {:
 :};
 
 terminal Type BOOLEAN; // primitiveType
-terminal Type BYTE, INT; // integralType
+terminal Type BYTE, INT, CHAR; // integralType
 terminal LBRACK, RBRACK; // arrayType
 terminal DOT; // qualifiedName
 terminal SEMICOLON, MULT, COMMA, LBRACE, RBRACE, EQ, LPAREN, RPAREN;
@@ -39,7 +39,7 @@ terminal ANDEQ, XOREQ, OREQ; // assignmentOperator
 terminal java.lang.Integer INTEGER_LITERAL;
 terminal java.lang.Number FLOATING_POINT_LITERAL;
 terminal java.lang.Boolean BOOLEAN_LITERAL;
-//terminal java.lang.Character CHARACTER_LITERAL;
+terminal java.lang.Character CHARACTER_LITERAL;
 terminal java.lang.String STRING_LITERAL;
 terminal java.lang.String IDENTIFIER; // name
 terminal NULL_LITERAL;
@@ -186,7 +186,7 @@ functionDeclaration ::=	methodDeclaration:m {: RESULT = new GlobalFuncDeclNode(m
 					literal ::=	INTEGER_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getIntObject(i),LiteralTypeSE.INT); RESULT.setPos(ileft,iright); :}
 						|	FLOATING_POINT_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getFixedObject(i),LiteralTypeSE.FLOAT); RESULT.setPos(ileft,iright); :}
 						|	BOOLEAN_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getBoolObject(i),LiteralTypeSE.BOOL); RESULT.setPos(ileft,iright); :}
-//						|	CHARACTER_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getCharObject(i),LiteralTypeSE.CHAR); RESULT.setPos(ileft,iright); :}
+						|	CHARACTER_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getCharObject(i),LiteralTypeSE.CHAR); RESULT.setPos(ileft,iright); :}
 						|	STRING_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getStringObject(i),LiteralTypeSE.STRING); RESULT.setPos(ileft,iright); :}
 						|	NULL_LITERAL:i {: RESULT = new LiteralNode(ConstantProvider.getNullObject(),LiteralTypeSE.NULL); RESULT.setPos(ileft,iright); :}
 						;
@@ -207,6 +207,7 @@ functionDeclaration ::=	methodDeclaration:m {: RESULT = new GlobalFuncDeclNode(m
 					integralType ::= 
 							BYTE:l {: RESULT = new BasicTypeNode("byte"); RESULT.setPos(lleft,lright);  :}
 						|	INT:l {: RESULT = new BasicTypeNode("int"); RESULT.setPos(lleft,lright);  :}
+						|	CHAR:l {: RESULT = new BasicTypeNode("char"); RESULT.setPos(lleft,lright);  :}
 						;
 					floatingPointType ::= 
 							FIXED:l {: RESULT = new BasicTypeNode("fixed"); RESULT.setPos(lleft,lright);  :} 
@@ -222,8 +223,9 @@ functionDeclaration ::=	methodDeclaration:m {: RESULT = new GlobalFuncDeclNode(m
 					classType ::=	classOrInterfaceType:t {: RESULT = t; :};
 					interfaceType ::= classOrInterfaceType:t {: RESULT = t; :};		
 
-					arrayType ::= primitiveType:t dimExprs:r {: RESULT = new ArrayTypeNode(t,r); RESULT.setPos(tleft,rright); :}
-						|	name:n dimExprs:r {: RESULT = new ArrayTypeNode(ParserHelper.getExpressionType(n,null),r); RESULT.setPos(nleft,rright); :}
+					arrayType ::= primitiveType:t dimExpr:r {: RESULT = new ArrayTypeNode(t,r); RESULT.setPos(tleft,rright); :}
+						|   arrayType:t dimExpr:r {: RESULT = new ArrayTypeNode(t,r); RESULT.setPos(tleft,rright); :}
+						|	name:n dimExpr:r {: RESULT = new ArrayTypeNode(ParserHelper.getExpressionType(n,null),r); RESULT.setPos(nleft,rright); :}
 						;
 
 					pointerType ::= type:t MULT:r {: RESULT = new PointerTypeNode(t); RESULT.setPos(tleft,rright); :}

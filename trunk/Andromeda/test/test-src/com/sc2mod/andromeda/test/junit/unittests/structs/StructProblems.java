@@ -51,5 +51,13 @@ public class StructProblems extends AndromedaSingleRunTest {
 	}
 	
 	
+	@Test
+	public void structReturn(){
+		callAndromeda("structReturn.a");
+		assertProblem(ProblemId.ARRAY_OR_STRUCT_AS_PARAMETER);
+		assertOnlyProblem(ProblemId.ARRAY_OR_STRUCT_RETURNED);
+	}
+	
+	
 	
 }

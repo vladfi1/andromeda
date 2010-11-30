@@ -25,7 +25,6 @@ import com.sc2mod.andromeda.syntaxNodes.ModifierSE;
 public final class ModifierUtil {
 	
 	//FIXME modifiers into own set
-
 	private ModifierUtil(){}
 	
 	public static void processModifiers(IModifiable m, ModifierListNode mods){

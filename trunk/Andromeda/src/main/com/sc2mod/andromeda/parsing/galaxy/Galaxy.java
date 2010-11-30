@@ -40,7 +40,7 @@ public class Galaxy extends LanguageImpl{
 	}
 	
 	@Override	
-	public GalaxyAnalysisVisitor getAdditionalAnalysisVisitor(Environment env, Configuration options) {
-		return new GalaxyAnalysisVisitor(env, options);
+	public GalaxyAnalysisVisitor getAdditionalAnalyser(Configuration options) {
+		return new GalaxyAnalysisVisitor(options);
 	}
 }

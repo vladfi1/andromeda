@@ -8,6 +8,9 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.Invocation;
 import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.operations.Operation;
+import com.sc2mod.andromeda.environment.scopes.IScopedElement;
+import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
+import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
@@ -35,7 +38,7 @@ import com.sc2mod.andromeda.syntaxNodes.TypeNode;
 import com.sc2mod.andromeda.util.visitors.TraceScopeScanVisitor;
 import com.sc2mod.andromeda.util.visitors.VoidTreeScanVisitor;
 
-public class GalaxyAnalysisVisitor extends TraceScopeScanVisitor {
+public class GalaxyAnalysisVisitor extends TraceScopeScanVisitor implements Analyser {
 
 	private HashMap<SyntaxNode, Integer> enumeration = new HashMap<SyntaxNode, Integer>();
 
@@ -54,8 +57,31 @@ public class GalaxyAnalysisVisitor extends TraceScopeScanVisitor {
 
 	private Configuration options;
 
-	public GalaxyAnalysisVisitor(Environment env, Configuration options) {
+	public GalaxyAnalysisVisitor(Configuration options) {
 		this.options = options;
+	}
+	
+
+	@Override
+	public void analyse(Environment env, SyntaxNode ast) {
+		//Trace the tree
+		ast.accept(this);
+		
+		//Check for function overloading
+		for(IScopedElement elem : env.iterateOverContent(false, false, false)){
+			if(elem.getElementType() == ScopedElementType.OP_SET){
+				OperationSet opSet = (OperationSet) elem;
+				if(opSet.size() > 1){
+					Problem p = Problem.ofType(ProblemId.GALAXY_FUNCTION_OVERLOADING_NOT_POSSIBLE);
+					for(Operation o : opSet){
+						p.at(o.getDefinition());
+					}
+					p.raise();
+				}
+				
+			}
+		}
+		
 	}
 
 	@Override
@@ -215,5 +241,6 @@ public class GalaxyAnalysisVisitor extends TraceScopeScanVisitor {
 					.at(where).details(var.getDescription()).raise();
 		}
 	}
+
 
 }

@@ -1,0 +1,16 @@
+
+class X{
+	
+	int getX(){
+	return 0;
+	}
+	
+	static void setX(int i){
+	} 
+
+}
+
+static{
+	X.x += 2;
+
+}

@@ -126,6 +126,7 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   "byte"                         { return symbol(BYTE); }
   "struct"                       { return symbol(STRUCT); }
   "const"                        { return symbol(CONST); }
+  "char"                         { return symbol(CHAR); }
   "continue"                     { return symbol(CONTINUE); }
   "do"                           { return symbol(DO); }
   "else"                         { return symbol(ELSE); }
@@ -196,7 +197,7 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   \"                             { yybegin(STRING); string.setLength(0); }
 
   /* character literal */
-//  \'                             { yybegin(CHARLITERAL); }
+  \'                             { yybegin(CHARLITERAL); }
 
   /* numeric literals */
 
@@ -257,7 +258,7 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
 								 }
 }
 
-/*
+
 <CHARLITERAL> {
   {SingleCharacter}\'            { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, new Character(yytext().charAt(0))); }
   
@@ -279,7 +280,7 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   {LineTerminator}               { throw new RuntimeException("Unterminated character literal at end of line"); }
 }
 
-*/
+
 
 /* error fallback */
 .|\n                             { throw Problem.ofType(ProblemId.SYNTAX_ILLEGAL_CHARACTER).at(curFile+yychar,curFile+yychar+yylength())

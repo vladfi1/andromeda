@@ -1,0 +1,10 @@
+
+void setX(int foo){
+	
+}
+
+static{
+	x = 3; //works
+	x += 2;
+
+}

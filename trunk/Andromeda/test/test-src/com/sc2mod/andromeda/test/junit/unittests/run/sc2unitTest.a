@@ -1,0 +1,64 @@
+package => SingleThreadTestSuite;
+
+class SingleThreadTestSuite{
+
+	private bank progressBank = null;
+	private string curTestCase = null;
+	private int testCaseCount = 0;
+	
+	SingleThreadTestSuite(string name){
+		progressBank = BankLoad("test" + name,1);
+		BankSave(progressBank);
+		setMiscValue("progress","0");
+		System.print("Bank created: test" + name);
+	}
+	
+	void finish(){
+		finishLastTestCase();
+		setMiscValue("progress","finished");
+		System.print("Test suite finished!");
+	}
+	
+	void start(string testCaseName){
+		finishLastTestCase();
+		curTestCase = "test_" + testCaseName;
+		testCaseCount++;
+		setTestValue("progress","started");
+		setTestValue("id","" + testCaseCount);
+		setMiscValue("progress","" + testCaseCount);
+	}
+	
+	void fail(string message){
+		setTestValue("progress","failed");
+		setTestValue("failMsg", message);
+		curTestCase = null;
+	}
+	
+	private void setAndSave(string key1, string key2, string value){
+		BankValueSetFromString(progressBank,key1,key2,value);
+		BankSave(progressBank);
+	}
+	
+	private void setTestValue(string key, string value){
+		setAndSave(curTestCase,key,value);
+	}
+	
+	private void setMiscValue(string key, string value){
+		setAndSave("misc",key,value);
+	}
+	
+	private void finishLastTestCase(){
+		if(curTestCase != null){
+			setTestValue("progress","succeeded");
+		}
+	}
+	
+	void assertEquals(int result, int anticipatedResult){
+		if(result != anticipatedResult){
+			fail("Integer did not match:\nAnticipated: " + anticipatedResult + "\nReceived: " + result);
+		}
+	}
+
+
+
+}

@@ -73,10 +73,10 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	//************** EXPRESSIONS (infere types, do local var stuff, resolve invocations and field accesses) **************
 	
 	
-	@Override
-	public void visit(ArrayTypeNode arrayType, ExpressionContext context) {
-		arrayType.getDimensions().accept(this,ExpressionContext.DEFAULT);
-	}
+//	@Override
+//	public void visit(ArrayTypeNode arrayType, ExpressionContext context) {
+//		arrayType.getDimension().accept(this,ExpressionContext.DEFAULT);
+//	}
 	
 	@Override
 	public void visit(AssignmentExprNode assignment, ExpressionContext context) {	

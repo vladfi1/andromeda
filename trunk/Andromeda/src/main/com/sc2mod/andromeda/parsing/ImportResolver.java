@@ -25,10 +25,13 @@ public class ImportResolver {
 		return dotNameFromInputName(i.getImportName()).toString();
 	}
 	
+	public Pair<Source, InclusionType> resolveImport(String qualifiedName, SyntaxNode where){
+		return sourceManager.resolveInclude(qualifiedName, where);
+	}
 	
 	public Pair<Source, InclusionType> resolveImport(ImportNode i){
 		String name = nameFromInputName(i.getImportName()).toString();
-		return sourceManager.resolveInclude(name, i);
+		return resolveImport(name, i);
 	}
 	
 	private static StringBuilder nameFromInputName(CompilationUnitIdentifierNode importName) {
@@ -57,8 +60,8 @@ public class ImportResolver {
 		if(id == null){
 			return null;
 		}
-		String pkg = (pdn.getPackageName() == null ? "" : dotNameFromInputName(pdn.getPackageName())
-				.append(".").append(id.getId()).toString());
+		String pkg = (pdn.getPackageName() == null ? new StringBuilder() : dotNameFromInputName(pdn.getPackageName()).append("."))
+			.append(id.getId()).toString();
 		return pkg;
 		
 	}

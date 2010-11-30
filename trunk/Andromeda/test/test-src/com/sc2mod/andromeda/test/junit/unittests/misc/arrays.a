@@ -1,0 +1,12 @@
+
+int[0] a; //Forbidden, zero index
+
+int["bla"] b; //Forbidden, string index
+
+int foo;
+
+int[foo] x; //Forbidden, non-constant index
+
+int[2] foo(){ int[2] blub; return blub; } //Forbidden, array return type
+
+void bla(int[2] i){} //Forbidden array param

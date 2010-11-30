@@ -34,7 +34,7 @@ public class MapRunner {
 		this.executablePath = sc2ExecutablePath;
 	}
 
-	public void test(File mapFile) throws IOException{
+	public Process test(File mapFile) throws IOException{
 
 		if(executablePath==""){
 			throw new IOException("No SC2Folder specified in the conf file");
@@ -54,12 +54,12 @@ public class MapRunner {
 			processString = "open \"" + f.getAbsolutePath() + "\" --args " + " "+ params + " -run \"" + mapFile.getAbsolutePath() + "\"";
 			String[] cmd = {"/bin/bash", "-c", processString};
 			System.out.println(processString);
-			Runtime.getRuntime().exec(cmd);
+			return Runtime.getRuntime().exec(cmd);
 
 		} else {
 			processString = "\"" + f.getAbsolutePath() + "\"" + " "+ params + " -run \"" + mapFile.getAbsolutePath() + "\"";
 			System.out.println(processString);
-			Runtime.getRuntime().exec(processString);
+			return Runtime.getRuntime().exec(processString);
 
 		}
 

@@ -29,16 +29,31 @@ public final class Strings {
 		return sb.substring(0,sb.length()-seperator.length());
 	}
 	
-	private static String[] spaces = {
-			"",
-			"  ",
-			"    ",
-			"      ",
-			"        ",
-			"          "
-	};
+	private static String[] spaces;
+	
+	static{
+		spaces = new String[40];
+		spaces[0] = "";
+		for(int i=1;i<spaces.length;i++){
+			spaces[i] = " " + spaces[i-1];
+		}
+	}
 	
 	public static String space(int num){
 		return spaces[num];
+	}
+	
+	public static String pad(String input, int size, boolean rightAlign){
+		if(input.length() > size) 
+			return input.substring(0,size);
+		if(input.length() == size)
+			return input;
+		int numSpaces = size - input.length();
+		if(rightAlign){
+			return space(numSpaces) + input;
+		} else {
+			return input + space(numSpaces);
+		}
+		
 	}
 }

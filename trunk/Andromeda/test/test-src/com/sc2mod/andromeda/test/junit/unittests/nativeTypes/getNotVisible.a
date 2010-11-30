@@ -1,0 +1,11 @@
+
+class X{
+	
+	private static int getX(){
+	return 0;
+	}
+	
+	static void setX(int i){
+	} 
+
+}

@@ -106,13 +106,13 @@ public class SemanticAnalysisWorkflow {
 		// 4.) Analyze statements and expressions
 		//Infer expression types, resolve function calls and field accesses
 		StatementAnalysisVisitor codeAnalysis = 
-			new StatementAnalysisVisitor(env,compEnv.getConfig());
+			new StatementAnalysisVisitor(env,compEnv.getConfig(),analysisData);
 		syntax.accept(codeAnalysis);	
 		
 		//Do additional checks, if desired by the language
-		VoidVisitor additionalVisitor = lang.getImpl().getAdditionalAnalysisVisitor(env, compEnv.getConfig());
-		if(additionalVisitor != null)
-			syntax.accept(additionalVisitor);
+		Analyser additionalAnalyser = lang.getImpl().getAdditionalAnalyser(compEnv.getConfig());
+		if(additionalAnalyser != null)
+			additionalAnalyser.analyse(env, syntax);
 		
 		//Resolve remaining constants
 		codeAnalysis.constResolve.resolveRemainingExprs();

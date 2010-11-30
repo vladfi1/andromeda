@@ -58,7 +58,7 @@ public class ParserHelper {
 	 */
 	public static ArrayAccessExprNode arrayTypeToAccess(ArrayTypeNode a) {
 		
-		ExprListNode dimensions = a.getDimensions();
+		ExprNode dim = a.getDimension();
 		TypeNode wrappedType = a.getWrappedType();
 		ExprNode e = null;
 		if(wrappedType instanceof SimpleTypeNode){
@@ -66,17 +66,20 @@ public class ParserHelper {
 			
 		} else if(wrappedType instanceof QualifiedTypeNode){
 			e = wrappedType.getQualifiedName();
+		} else if(wrappedType instanceof ArrayTypeNode){
+			e = arrayTypeToAccess((ArrayTypeNode) wrappedType);
+			
 		} else {
 			throw new InternalProgramError("unsupported type for conversion from array type to array access! Please file bug report!");
 		}
 	
 		e.setPos(wrappedType.getLeftPos(), wrappedType.getRightPos());
-		for(ExprNode dim : dimensions){
-			int right = dim.getRightPos();
-			int left = e.getLeftPos();
-			e = new ArrayAccessExprNode(e, dim);
-			e.setPos(left, right);
-		}
+		
+		int right = dim.getRightPos();
+		int left = e.getLeftPos();
+		e = new ArrayAccessExprNode(e, dim);
+		e.setPos(left, right);
+
 		return (ArrayAccessExprNode) e;
 	}
 	

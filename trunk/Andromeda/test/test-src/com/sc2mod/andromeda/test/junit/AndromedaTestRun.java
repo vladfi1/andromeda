@@ -20,11 +20,15 @@ import com.sc2mod.andromeda.problems.Message;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.program.Program;
 
-public class AndromedaTestRun {
+public class AndromedaTestRun extends UnitTestRun {
 
+	
+
+	
+	
 	protected Configuration getDefaultOptions(){
 		try {
-			ConfigFile config = new ConfigFile(new File( new File("."),"test/andromeda.conf"), true);
+			ConfigFile config = new ConfigFile(new File( new File("."),"test/andromeda2.conf"), true);
 			
 			Configuration o = new Configuration(config, new CommandLineOptions(new String[0]));
 			return o;
@@ -33,6 +37,17 @@ public class AndromedaTestRun {
 			throw new Error("Init failed");
 		}
 		
+	}
+	
+	protected ConfigFile getDefaultConfigFile(){
+		try {
+			ConfigFile config = new ConfigFile(new File( new File("."),"test/andromeda2.conf"), true);
+			
+			return config;
+		} catch (Throwable e) {
+			fail("Init failed:" + e.getMessage());
+			throw new Error("Init failed");
+		}
 	}
 	
 	protected void reset(){

@@ -1,0 +1,9 @@
+
+
+static{
+	SingleThreadTestSuite s = new SingleThreadTestSuite("base");
+	System.print("bla");
+	s.start("foo");
+	s.fail("blub");
+	s.finish();
+}

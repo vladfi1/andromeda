@@ -46,12 +46,12 @@ public final class Environment {
 	}
 
 
-	public Iterable<IScopedElement> iterateOverContent(final boolean stepIntoOperations,final boolean stepIntoPackages){
+	public Iterable<IScopedElement> iterateOverContent(final boolean stepIntoOperations,final boolean stepIntoPackages, final boolean stepIntoTypes){
 		return new Iterable<IScopedElement>() {
 			
 			@Override
 			public Iterator<IScopedElement> iterator() {
-				return defaultPackage.getContent().getDeepIterator(stepIntoOperations, stepIntoPackages);
+				return defaultPackage.getContent().getDeepIterator(stepIntoOperations, stepIntoPackages,stepIntoTypes);
 			}
 		};
 	}

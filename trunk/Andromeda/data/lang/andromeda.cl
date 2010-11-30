@@ -106,7 +106,7 @@ TypeNode ::= {BasicTypeNode}
 			TypeListNode: typeArguments
 	|	{ArrayTypeNode} 
 			TypeNode: wrappedType
-			ExprListNode: dimensions
+			ExprNode: dimension
 	|	{PointerTypeNode}
 			TypeNode	: wrappedType
 	|	{FuncPointerTypeNode}

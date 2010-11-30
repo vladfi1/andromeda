@@ -1,0 +1,11 @@
+
+struct S{
+	int i;
+};
+
+S foo(){ //Forbidden: Struct return type
+	S s;
+	return s;
+}
+
+void blub(S s){} //Forbidden: Struct param

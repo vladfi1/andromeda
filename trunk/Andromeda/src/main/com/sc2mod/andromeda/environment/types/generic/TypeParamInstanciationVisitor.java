@@ -83,7 +83,7 @@ public class TypeParamInstanciationVisitor extends ParameterSemanticsVisitorAdap
 			return arrayType;
 		}
 		
-		return tprov.getArrayType(innerTypeAfter, arrayType.getDimension());
+		return tprov.createArrayType(innerTypeAfter, arrayType.getExpressionProvider());
 		
 	}
 	

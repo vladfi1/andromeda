@@ -36,7 +36,7 @@ public class TypeUtil {
 			
 			@Override
 			public Iterator<Operation> iterator() {
-				return new FilterIterator<IScopedElement, Operation>(content.getDeepIterator(true,false)) {
+				return new FilterIterator<IScopedElement, Operation>(content.getDeepIterator(true,false,false)) {
 
 					@Override
 					protected boolean filter(

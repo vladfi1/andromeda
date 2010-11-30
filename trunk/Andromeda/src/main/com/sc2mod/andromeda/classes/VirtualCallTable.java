@@ -28,22 +28,6 @@ import com.sc2mod.andromeda.parsing.TransientCompilationData;
  *
  */
 public class VirtualCallTable {
-
-	/**
-	 * Generates a VCT for each class in an environment and links it
-	 * to the respective class
-	 * @param env the environment for whose classes to generate VCTs for
-	 */
-	public static void generateVCTs(TransientCompilationData transientData, Environment env) {
-		for(IClass clazz : env.typeProvider.getClasses()) {
-			//Create a class table for all top classes, these will
-			//then recursively create VCTs for child classes.
-			if(clazz.isTopType()) {
-//				System.out.println("Generating VCT for " + clazz.getFullName());
-				new VirtualCallTable(clazz, env, transientData);
-			}
-		}
-	}
 	
 	/**
 	 * The actual virtual call table.
@@ -63,6 +47,24 @@ public class VirtualCallTable {
 	 * VCTs of direct descendant classes.
 	 */
 	public ArrayList<VirtualCallTable> subTables = new ArrayList<VirtualCallTable>(4);
+
+	/**
+	 * Generates a VCT for each class in an environment and links it
+	 * to the respective class
+	 * @param env the environment for whose classes to generate VCTs for
+	 */
+	public static void generateVCTs(TransientCompilationData transientData, Environment env) {
+		for(IClass clazz : env.typeProvider.getClasses()) {
+			//Create a class table for all top classes, these will
+			//then recursively create VCTs for child classes.
+			if(clazz.isTopType()) {
+//				System.out.println("Generating VCT for " + clazz.getFullName());
+				new VirtualCallTable(clazz, env, transientData);
+			}
+		}
+	}
+	
+
 	
 	/**
 	 * Constructor. Creates the call table and the call tables for child classes

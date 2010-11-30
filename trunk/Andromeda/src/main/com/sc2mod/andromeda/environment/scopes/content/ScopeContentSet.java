@@ -18,6 +18,7 @@ import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.UsageType;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
@@ -55,15 +56,15 @@ public abstract class ScopeContentSet {
 	}
 	
 	
-	public Iterator<IScopedElement> getDeepIterator(boolean includeOperations, boolean includeSubpackaes){
-		return new DeepIterator(includeOperations,includeSubpackaes);
+	public Iterator<IScopedElement> getDeepIterator(boolean includeOperations, boolean includeSubpackaes, boolean includeTypeContent){
+		return new DeepIterator(includeOperations,includeSubpackaes,includeTypeContent);
 	}
 	
-	public Iterable<IScopedElement> iterateDeep(final boolean includeOperations, final boolean includeSubpackaes){
+	public Iterable<IScopedElement> iterateDeep(final boolean includeOperations, final boolean includeSubpackaes, final boolean includeTypeContent){
 		return new Iterable<IScopedElement>() {
 			@Override
 			public Iterator<IScopedElement> iterator() {
-				return new DeepIterator(includeOperations,includeSubpackaes);
+				return new DeepIterator(includeOperations,includeSubpackaes,includeTypeContent);
 			}
 		};
 	}
@@ -200,11 +201,13 @@ public abstract class ScopeContentSet {
 		boolean inNestedIteration;
 		private boolean doOps;
 		private boolean doPackages;
+		private boolean doTypes;
 		
-		public DeepIterator(boolean includeOperations, boolean includeSubpackaes){
+		public DeepIterator(boolean includeOperations, boolean includeSubpackaes, boolean includeTypeContent){
 			this.it = contentSet.values().iterator();
 			this.doOps = includeOperations;
 			this.doPackages = includeSubpackaes;
+			this.doTypes = includeTypeContent;
 		}
 		
 		@Override
@@ -243,7 +246,14 @@ public abstract class ScopeContentSet {
 			case PACKAGE:
 				if(doPackages){
 					inNestedIteration = true;
-					nestedIterator = ((Package)elem).getContent().getDeepIterator(doOps, doPackages);
+					nestedIterator = ((Package)elem).getContent().getDeepIterator(doOps, doPackages,doTypes);
+					return next();
+				}
+				break;
+			case TYPE:
+				if(doTypes){
+					inNestedIteration = true;
+					nestedIterator = ((IType)elem).getContent().getDeepIterator(doOps, doPackages,doTypes);
 					return next();
 				}
 				break;

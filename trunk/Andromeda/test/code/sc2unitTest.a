@@ -6,7 +6,7 @@ class SingleThreadTestSuite{
 	private int testCaseCount = 0;
 	
 	Test(string name){
-		progressBank = BankLoad("test_" + name,0);
+		progressBank = BankLoad("test" + name,0);
 		BankSave(progressBank);
 		setMiscValue("progress","0");
 	}
@@ -14,6 +14,7 @@ class SingleThreadTestSuite{
 	void finish(){
 		finishLastTestCase();
 		setMiscValue("progress","finished");
+		System.print("Test suite finished!");
 	}
 	
 	void start(string testCaseName){

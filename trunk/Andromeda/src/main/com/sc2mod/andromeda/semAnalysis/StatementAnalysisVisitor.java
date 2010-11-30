@@ -109,17 +109,19 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	boolean isOnTop;
 	protected Variable curField;
 	Variable curLocal;
+	private TransientAnalysisData transientData;
 	
 	protected ExpressionAnalysisVisitor createExpressionAnalyisVisitor(){
 		return new ExpressionAnalysisVisitor(this);
 	}
 	
-	public StatementAnalysisVisitor(Environment env, Configuration options) {
+	public StatementAnalysisVisitor(Environment env, Configuration options, TransientAnalysisData transientData) {
 		this.nameResolver = new NameResolver(new ArrayLocalVarStack());
 		this.env = env;
 		this.typeProvider = env.typeProvider;
 		this.constResolve = new ConstantResolveVisitor();
 		this.options = options;
+		this.transientData = transientData;
 		this.exprAnalyzer = createExpressionAnalyisVisitor();
 		this.BASIC = typeProvider.BASIC;
 		
@@ -185,6 +187,9 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	
 	@Override
 	public void visit(FieldDeclNode fieldDeclNode) {
+		
+		//Visit type (if it is an array type, it could contain expressions)
+		fieldDeclNode.getType().accept(this);
 		
 		//Only visit declared variables, not the type!
 		VarDeclListNode vars = fieldDeclNode.getDeclaredVariables();
@@ -439,13 +444,16 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 	
 	//************** MISC STRUCTURES **************
 	
-	
+	//FIXME testcases for array types in various positions to see if instance limit is checked correctly
 	public void visit(ArrayTypeNode arrayTypeNode) {
-		for(ExprNode expr : arrayTypeNode.getDimensions()){
-			analyzeExpression(expr);
-		}
+		ExprNode expr = arrayTypeNode.getDimension();
+		analyzeExpression(expr);
 		
+		//Recursively check subtype
 		arrayTypeNode.getWrappedType().accept(this);
+		
+		//Add to the list of array type nodes for later instance checking
+		transientData.getArrayTypes().add(arrayTypeNode);
 	}
 	
 	

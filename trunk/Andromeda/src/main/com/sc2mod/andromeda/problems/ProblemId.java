@@ -37,8 +37,9 @@ public enum ProblemId {
 	//**** INCLUSION ERRORS ****
 	MALFORMED_INCLUDE ("Malformed include directive: %s"),
 	MALFORMED_IMPORT ("Malformed import directive: %s"),
-	INPUT_FILE_NOT_FOUND ("The input file '%s' was not found"),
+	INPUT_FILE_NOT_FOUND ("The input file '%s' was not found. Full path:\n%s"),
 	INCLUDED_FILE_NOT_FOUND ("The included file '%s' was not found"),
+	IMPORTED_COMPILATION_UNIT_NOT_FOUND ("The imported compilation unit '%s' was not found"),
 	MISSING_NATIVE_LIB ("Missing native library file '%s'"),
 
 	//**** NAME RESOLVING ****
@@ -142,7 +143,7 @@ public enum ProblemId {
 	UNKNOWN_ARRAY_DIMENSION_TYPE("Could not determine the type of an array dimension."),
 	INVALID_ARRAY_DIMENSION_TYPE("The dimension of an array must be of type int, but it is of type %s."),
 	NON_CONSTANT_ARRAY_DIMENSION("Could not determine the dimensions of an array. The expression must be constant. If it contains constant variables, these must be defined before the usage."),
-	NEGATIVE_ARRAY_DIMENSION("The dimension of an array cannot be negative, but it is %s."),
+	NEGATIVE_ARRAY_DIMENSION("The dimension of an array cannot be negative or zero, but it is %s."),
 	
 	//**** CONSTANTS ****
 	CONST_VAR_NOT_INITED ("Constant variables must be initialized in their declaration"),
@@ -257,7 +258,8 @@ public enum ProblemId {
 	GALAXY_DISALLOWED_NAME_TYPE("This kind of name (%s) cannot be accessed in galaxy."), 
 	GALAXY_ACCESSING_ELEMENT_FROM_ABOVE_ITS_DECLARATION("Cannot access the %s from above its declaration."),
 	GALAXY_LOCAL_VAR_NOT_ON_TOP("Local variables must defined on top of a function in galaxy."), 
-	GALAXY_BLOCK_WITHOUT_BRACES("The body of an if and while loop must be wrapped in curly braces {}."),
+	GALAXY_BLOCK_WITHOUT_BRACES("The body of an if and while loop must be wrapped in curly braces {}."), 
+	GALAXY_FUNCTION_OVERLOADING_NOT_POSSIBLE("Function overloading is not possible in galaxy. You may not have two functions with the same name"),
 	;
 	
 	String message;

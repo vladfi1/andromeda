@@ -164,7 +164,7 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 		boolean staticClass = clazz.isStatic();
 		boolean nonAbstract = !clazz.isAbstract();
 		ScopeContentSet content = clazz.getContent();
-		for(IScopedElement elem : clazz.getContent().iterateDeep(true, false)){
+		for(IScopedElement elem : clazz.getContent().iterateDeep(true, false,false)){
 			switch(elem.getElementType()){
 			case OPERATION:
 				Operation op = (Operation) elem;

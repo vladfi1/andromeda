@@ -20,6 +20,12 @@ public class GalaxyTests extends AndromedaSingleRunTest {
 	}
 	
 	@Test
+	public void overloading(){
+		callGalaxy("overloading.galaxy");
+		assertOnlyProblem(ProblemId.GALAXY_FUNCTION_OVERLOADING_NOT_POSSIBLE);
+	}
+	
+	@Test
 	public void globalUsedFromAbove3(){
 		callGalaxy("globalUsedFromAbove3.galaxy");
 		assertOnlyProblem(ProblemId.VAR_ACCESS_IN_OWN_DECL);

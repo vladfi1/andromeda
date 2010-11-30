@@ -6,6 +6,7 @@ import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.generic.GenericHierachyGenerationVisitor;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
@@ -109,7 +110,10 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 	
 	@Override
 	public IType visit(ArrayTypeNode type, IScope scope) {
-		IType result = tprov.getArrayType(type.getWrappedType().accept(this,scope),type.getDimensions());
+		if(type.getSemantics() != null){
+			throw new InternalProgramError("Resolving an array type twice!");
+		}
+		IType result = tprov.createArrayType(type.getWrappedType().accept(this,scope),type);
 		type.setSemantics(result);
 		return result;
 	}

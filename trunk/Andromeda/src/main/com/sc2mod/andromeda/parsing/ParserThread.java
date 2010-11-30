@@ -83,7 +83,6 @@ public class ParserThread extends CompilerThread {
 	}
 	
 	private SourceFileNode parse(IParser parser, ParserThreadInput input)  {
-		
 		//Get a reader for the source
 		SourceReader a;
 		try {
@@ -93,7 +92,7 @@ public class ParserThread extends CompilerThread {
 				throw Problem.ofType(ProblemId.INCLUDED_FILE_NOT_FOUND).at(input.getImportedBy()).details(input.getSource().getName())
 					.raiseUnrecoverable();
 			} else {
-				throw Problem.ofType(ProblemId.INPUT_FILE_NOT_FOUND).details(input.getSource().getName())
+				throw Problem.ofType(ProblemId.INPUT_FILE_NOT_FOUND).details(input.getSource().getName(),input.getSource().getFullPath())
 					.raiseUnrecoverable();
 			}
 		}
@@ -138,7 +137,7 @@ public class ParserThread extends CompilerThread {
 		ParserThread t = (ParserThread)Thread.currentThread();
 		t.packageDeclParsed = true;
 		t.qualifiedCUName = t.scheduler.registerPackageDecl(pd);
-
+		
 	}
 
 	public synchronized void setInterrupted() {

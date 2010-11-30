@@ -38,6 +38,23 @@ public class MiscProblems extends AndromedaSingleRunTest {
 		assertOnlyProblem(ProblemId.VAR_ACCESS_IN_OWN_DECL);
 	}
 	
+	@Test
+	public void arrays(){
+		callAndromeda("arrays.a");
+		assertProblem(ProblemId.NEGATIVE_ARRAY_DIMENSION);
+		assertProblem(ProblemId.NON_CONSTANT_ARRAY_DIMENSION);
+		assertProblem(ProblemId.INVALID_ARRAY_DIMENSION_TYPE);
+		assertProblem(ProblemId.ARRAY_OR_STRUCT_AS_PARAMETER);
+		assertOnlyProblem(ProblemId.ARRAY_OR_STRUCT_RETURNED);
+	}
+	
+	@Test
+	public void arrays2(){
+		callAndromeda("arrays2.a");
+		assertNoMoreProblems();
+		checkOutput();
+	}
+	
 	
 	
 }

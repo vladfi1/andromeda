@@ -48,7 +48,7 @@ public class Program {
 
 	public static String name = "Andromeda";
 	public static final String VERSION = getVersion();
-	public static Platform platform;
+	public static Platform platform = new Platform();
 	public static CommandLineOptions clOptions;
 	public static ConfigFile config;
 	
@@ -140,9 +140,6 @@ public class Program {
 			appDirectory = new File(ClassLoader.getSystemResource(".").toURI());
 			isPackaged = true;
 		}
-		
-		//Do platform dependent stuff
-		platform = new Platform();
 		
 		//Params params, assemble options
 

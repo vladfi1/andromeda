@@ -44,7 +44,7 @@ public class MetaClassInit {
 		
 		//Add the virtual call table field		
 		if(compilationData.getMaxVCTSize()>0){
-			ArrayTypeNode at = new ArrayTypeNode(new BasicTypeNode("int"), new ExprListNode(sg.genIntLiteralExpr(compilationData.getMaxVCTSize())));
+			ArrayTypeNode at = new ArrayTypeNode(new BasicTypeNode("int"), sg.genIntLiteralExpr(compilationData.getMaxVCTSize()));
 			VarDeclNode vdn;
 			VarDeclListNode vd = new VarDeclListNode(vdn = new UninitedVarDeclNode(new IdentifierNode("vct")));
 			FieldDeclNode fd = new FieldDeclNode(null, null, at, vd, null);

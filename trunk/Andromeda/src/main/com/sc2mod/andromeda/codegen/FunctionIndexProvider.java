@@ -22,9 +22,14 @@ public class FunctionIndexProvider {
 	
 	public FunctionIndexProvider(Environment env){
 		//Normal methods.
-		for(IScopedElement elem : env.iterateOverContent(false,true)){
+		for(IScopedElement elem : env.iterateOverContent(false,true,true)){
+			try{
+			//FIXME why is here a nullpointer excepiton (RunTests.baseRun)
 			if(elem.getElementType() == ScopedElementType.OP_SET){
 				indexOpSet((OperationSet)elem);
+			}
+			} catch (NullPointerException e){
+				e.printStackTrace();
 			}
 		}
 		

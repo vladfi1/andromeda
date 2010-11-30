@@ -11,6 +11,7 @@ import com.sc2mod.andromeda.test.junit.unittests.galaxy.GalaxyTests;
 import com.sc2mod.andromeda.test.junit.unittests.generics.GenericTests;
 import com.sc2mod.andromeda.test.junit.unittests.misc.MiscProblems;
 import com.sc2mod.andromeda.test.junit.unittests.names.NameProblems;
+import com.sc2mod.andromeda.test.junit.unittests.others.OtherTests;
 import com.sc2mod.andromeda.test.junit.unittests.overriding.OverrideProblems;
 import com.sc2mod.andromeda.test.junit.unittests.structs.StructProblems;
 import com.sc2mod.andromeda.test.junit.unittests.syntax.SyntaxProblems;
@@ -34,7 +35,8 @@ import junit.framework.TestSuite;
         NameProblems.class,
         ExtensionTests.class,
         GalaxyTests.class,
-        StructProblems.class
+        StructProblems.class,
+        OtherTests.class
 })
 
 public class AllTests {

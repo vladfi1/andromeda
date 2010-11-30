@@ -24,6 +24,7 @@ import com.sc2mod.andromeda.util.ThreadUtil;
 public class ParserScheduler {
 
 	private List<ParserThreadInput> inputSources;
+
 	private LinkedList<ParserThreadInput> importQueue = new LinkedList<ParserThreadInput>();
 	private List<SourceFileNode> collectedSources;
 	private int remainingInputFiles;
@@ -76,13 +77,10 @@ public class ParserScheduler {
 
 	
 	public synchronized void registerImport(ImportNode sn){
-		Pair<Source, InclusionType> src = importResolver.resolveImport(sn);
-		
-		String importStr = importResolver.getImportString(sn);
-		
+		String importStr = ImportResolver.getImportString(sn);
 		
 		//add to import queue
-		importQueue.add(ParserInputFactory.create(collectedSources, src._1, src._2, importStr, sn));
+		importQueue.add(ParserInputFactory.create(collectedSources, importStr, sn, importResolver));
 		
 		//wake up threads so somebody handles this
 		this.notifyAll();
@@ -121,6 +119,7 @@ public class ParserScheduler {
 				Problem.ofType(ProblemId.UNIT_NAME_MISSING).at(packageDecl)
 				.raise();
 			} else {
+				System.out.println(pkg);
 				if(readCompilationUnits.containsKey(pkg)){
 					throw Problem.ofType(ProblemId.DUPLICATE_COMPILATION_UNIT).at(readCompilationUnits.get(pkg),packageDecl)
 						.raiseUnrecoverable();

@@ -44,14 +44,14 @@ public class GenericContentSet extends InheritableContentSet {
 	
 	@Override
 	public Iterator<IScopedElement> getDeepIterator(boolean includeOperations,
-			boolean includeSubpackaes) {
+			boolean includeSubpackaes, boolean doTypes) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
 
 	@Override
 	public Iterable<IScopedElement> iterateDeep(boolean includeOperations,
-			boolean includeSubpackaes) {
+			boolean includeSubpackaes, boolean doTypes) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}

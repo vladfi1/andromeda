@@ -354,12 +354,13 @@ functionDeclaration ::=	methodDeclaration:m {: RESULT = new GlobalFuncDeclNode(m
 					classType ::=	classOrInterfaceType:t {: RESULT = t; :};
 					interfaceType ::= classOrInterfaceType:t {: RESULT = t; :};		
 
-					arrayTypeNoGenerics ::= primitiveType:t dimExprs:r {: RESULT = new ArrayTypeNode(t,r); RESULT.setPos(tleft,rright); :}
-						|	name:n dimExprs:r {: RESULT = new ArrayTypeNode(ParserHelper.getExpressionType(n,null),r); RESULT.setPos(nleft,rright); :}
+					arrayTypeNoGenerics ::= primitiveType:t dimExpr:r {: RESULT = new ArrayTypeNode(t,r); RESULT.setPos(tleft,rright); :}
+						|   arrayTypeNoGenerics:t dimExpr:r {: RESULT = new ArrayTypeNode(t,r); RESULT.setPos(tleft,rright); :}
+						|	name:n dimExpr:r {: RESULT = new ArrayTypeNode(ParserHelper.getExpressionType(n,null),r); RESULT.setPos(nleft,rright); :}
 						;
 						
 					arrayType ::= arrayTypeNoGenerics:a {: RESULT = a; :}
-						|	name:n typeArguments:ta dimExprs:r {: RESULT = new ArrayTypeNode(ParserHelper.getExpressionType(n,ta),r); RESULT.setPos(nleft,rright); :}
+						|	name:n typeArguments:ta dimExpr:r {: RESULT = new ArrayTypeNode(ParserHelper.getExpressionType(n,ta),r); RESULT.setPos(nleft,rright); :}
 						
 						;
 						

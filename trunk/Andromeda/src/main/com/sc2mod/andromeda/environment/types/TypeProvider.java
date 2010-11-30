@@ -33,6 +33,7 @@ import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.parsing.Language;
 import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
@@ -58,7 +59,7 @@ public class TypeProvider {
 	private SystemTypes systemTypes;
 
 	private HashMap<IType,IType> pointerTypes = new HashMap<IType,IType>();
-	private HashMap<IType,HashMap<Integer,IType>> arrayTypes = new HashMap<IType,HashMap<Integer,IType>>();
+	private HashMap<IType,HashMap<Integer,ArrayType>> arrayTypes = new HashMap<IType,HashMap<Integer,ArrayType>>();
 	private HashMap<INamedType,HashMap<Signature,INamedType>> genericInstances = new HashMap<INamedType, HashMap<Signature,INamedType>>();
 	
 	private GlobalScope globalScope;
@@ -234,51 +235,33 @@ public class TypeProvider {
 		
 	}
 	
-	public IType getArrayType(IType wrappedType, int dim){
-		HashMap<Integer, IType> t = arrayTypes.get(wrappedType);
-		if(t == null){
-			arrayTypes.put(wrappedType, t = new HashMap<Integer, IType>());
-		}
-		
-		IType type = t.get(dim);
-		if(type == null){
-			t.put(dim,type = new ArrayType(wrappedType, dim,this));
-		}
-		return type;
-	}
-
-	private IType getSingleArrayType(IType wrappedType,ExprNode dimension){
-		//TODO: Check array dimensions, once they are resolved
-//		Type ty = dimension.getInferedType();
-//		if(ty == null)
-//			throw Problem.ofType(ProblemId.UNKNOWN_ARRAY_DIMENSION_TYPE).at(dimension)
-//						.raiseUnrecoverable();
-//		
-//		if(ty.getReachableBaseType()!=BasicType.INT)
-//			throw Problem.ofType(ProblemId.INVALID_ARRAY_DIMENSION_TYPE).at(dimension)
-//						.details(ty.getUid())
-//						.raiseUnrecoverable();
-//		
-//		DataObject value = dimension.getValue();
-//		if(value == null)
-//			throw Problem.ofType(ProblemId.NON_CONSTANT_ARRAY_DIMENSION).at(dimension)
-//						.raiseUnrecoverable();
-//		int dim = value.getIntValue();
-//		if(dim < 0)
-//			throw Problem.ofType(ProblemId.NEGATIVE_ARRAY_DIMENSION).at(dimension)
-//						.details(dim)
-//						.raiseUnrecoverable();
-		int dim = 0;
-		
-		return getArrayType(wrappedType, 0);
+	public ArrayType createArrayType(IType wrappedType, ArrayTypeNode expressionProvider) {
+		return new ArrayType(wrappedType, expressionProvider, this);
 	}
 	
-	IType getArrayType(IType wrappedType, ExprListNode dimensions) {
-		for(ExprNode e : dimensions){
-			wrappedType = getSingleArrayType(wrappedType, e);
-		}
-		return wrappedType;
-	}
+//	public ArrayType getArrayType(IType wrappedType, int dim){
+//		HashMap<Integer, ArrayType> t = arrayTypes.get(wrappedType);
+//		if(t == null){
+//			arrayTypes.put(wrappedType, t = new HashMap<Integer, ArrayType>());
+//		}
+//		
+//		ArrayType type = t.get(dim);
+//		if(type == null){
+//			t.put(dim,type = new ArrayType(wrappedType, dim,this));
+//		}
+//		return type;
+//	}
+//
+//	/**
+//	 * Creates a new array type.
+//	 * Currently ignores the dimension
+//	 * @param wrappedType
+//	 * @param dimension
+//	 * @return
+//	 */
+//	IType getArrayType(IType wrappedType, ExprNode dimension) {
+//		return getArrayType(wrappedType, -1);
+//	}
 
 	public IType getPointerType(IType pointsTo){
 		IType result = pointerTypes.get(pointsTo);

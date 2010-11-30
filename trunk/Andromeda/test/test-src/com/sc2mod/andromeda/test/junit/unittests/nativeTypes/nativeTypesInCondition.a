@@ -1,0 +1,23 @@
+
+
+class C{
+
+}
+
+static{
+	C c;
+	unit u;
+	string s;
+	point p;
+	
+	if(c){}
+	if(!c){}
+	if(u){}
+	if(!u){}
+	if(s){}
+	if(!s){}
+	if(p){}
+	if(!p){}
+	
+
+}

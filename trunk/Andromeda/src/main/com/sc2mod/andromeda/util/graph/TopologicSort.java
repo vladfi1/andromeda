@@ -39,7 +39,7 @@ public class TopologicSort<T,E> {
 		}
 		
 		//Topologic node removing
-		int num = graph.getNodes().size();
+		int num = noPredecessors.size();
 		while(!noPredecessors.isEmpty()){
 			GraphNode<T> node = noPredecessors.removeLast();
 			
