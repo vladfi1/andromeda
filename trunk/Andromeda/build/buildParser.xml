@@ -41,7 +41,6 @@
 	  		<file name="classgen-gex.jar"/>
 	  		<file name="stringtemplate-3.2.1.jar"/>
 	  		<file name="antlr-2.7.7.jar"/>
-	  			  		
 	  	</filelist>
 	  </path>
 
@@ -87,7 +86,7 @@
    </copy>
   </target>
 
-  <target name="build all" depends="build parser,build syntax nodes">
+  <target name="build all" depends="build parser,build syntax nodes,visitor">
 	<javac destdir="${classOut}">
 		<classpath refid="buildLibPath" />
 		<src path="${src-main}" />
@@ -107,31 +106,22 @@
     <delete dir="${classOut}"/>
   </target>
 	
-<!-- we do not need to make a jar here!!
-  <target name="dist" depends="compile">
-    <jar jarfile="${dist}/Compiler.jar" basedir="${classes}">
-     <manifest>
-       <attribute name="Main-Class" value="Parser"/>
-       <attribute name="Class-Path" value="java-cup-10k-b2-runtime-TUM.jar"/>
-     </manifest>
-    </jar>
-  </target>
-
-
-  <target name="run" depends="dist">
-    <java classname="Parser" fork="true">
-      <arg value="input.test"/>
-      <classpath refid="binaries"/>
-    </java>
-  </target>
-  -->
 	 <target name="visitor">
 	 	<taskdef name="visitorGen" classname="com.sc2mod.visitorgen.AntTask" classpath="${lib}/VisitorGen-v1.0.jar"/>
-		<visitorGen visitorNodeName="SemanticsVisitorNode" confFile="${langPath}/semanticsVisitor.gex" classSrcDir="${src-main}" visitorSrcDir="${src-gen}" visitorPackage="com.sc2mod.andromeda.environment.visitors">
+		<visitorGen enrich="false" visitorNodeName="SemanticsVisitorNode" confFile="${langPath}/semanticsVisitor.gex" classSrcDir="${src-main}" visitorSrcDir="${src-gen}" visitorPackage="com.sc2mod.andromeda.environment.visitors">
 			<Visitor type="void" name="VoidSemanticsVisitor" adaptername="VoidSemanticsVisitorAdapter"/>
 			<Visitor type="voidresult" name="NoResultSemanticsVisitor" adaptername="NoResultSemanticsVisitorAdapter"/>
 			<Visitor type="param" name="ParameterSemanticsVisitor" adaptername="ParameterSemanticsVisitorAdapter"/>
 		</visitorGen>
 	  </target>
+	
+	 <target name="Visitor Full Update">
+	 	<taskdef name="visitorGen" classname="com.sc2mod.visitorgen.AntTask" classpath="${lib}/VisitorGen-v1.0.jar"/>
+		<visitorGen enrich="true" visitorNodeName="SemanticsVisitorNode" confFile="${langPath}/semanticsVisitor.gex" classSrcDir="${src-main}" visitorSrcDir="${src-gen}" visitorPackage="com.sc2mod.andromeda.environment.visitors">
+			<Visitor type="void" name="VoidSemanticsVisitor" adaptername="VoidSemanticsVisitorAdapter"/>
+			<Visitor type="voidresult" name="NoResultSemanticsVisitor" adaptername="NoResultSemanticsVisitorAdapter"/>
+			<Visitor type="param" name="ParameterSemanticsVisitor" adaptername="ParameterSemanticsVisitorAdapter"/>
+		</visitorGen>
+	</target>
 
 </project>
