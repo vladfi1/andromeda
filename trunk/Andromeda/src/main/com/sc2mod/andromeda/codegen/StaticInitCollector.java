@@ -2,16 +2,11 @@ package com.sc2mod.andromeda.codegen;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
-import com.sc2mod.andromeda.environment.scopes.ScopeUtil;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
 import com.sc2mod.andromeda.util.visitors.VoidTreeScanVisitor;
 
 /**

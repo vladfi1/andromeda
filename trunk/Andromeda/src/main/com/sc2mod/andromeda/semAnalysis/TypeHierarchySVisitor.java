@@ -7,7 +7,6 @@ import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.IExtension;
 import com.sc2mod.andromeda.environment.types.IInterface;
-import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
@@ -80,7 +79,7 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 		if(!alreadyChecked.contains(extension)){
 			if(superType != null){
 				//TODO Testcases for extensions with modifiers (static, final, ...)
-				if(superType.isFinal())
+				if(superType.getModifiers().isFinal())
 					throw Problem.ofType(ProblemId.FINAL_TYPE_EXTENDED).at(extension.getDefinition())
 								.details(superType.getName())
 								.raiseUnrecoverable();
@@ -123,14 +122,14 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 				hasParents = true;
 			}
 			if(superClass != null){
-				if(superClass.isFinal())
+				if(superClass.getModifiers().isFinal())
 					throw Problem.ofType(ProblemId.FINAL_TYPE_EXTENDED).at(clazz.getDefinition().getSuperClass())
 								.details(superClass.getName())
 								.raiseUnrecoverable();
-				if(clazz.isStatic())
+				if(clazz.isStaticElement())
 					throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_EXTENDS).at(clazz.getDefinition().getSuperClass())
 								.raiseUnrecoverable();
-				if(superClass.isStatic())
+				if(superClass.isStaticElement())
 					throw Problem.ofType(ProblemId.STATIC_CLASS_EXTENDED).at(clazz.getDefinition().getSuperClass())
 								.raiseUnrecoverable();
 				superClass.getDescendants().add(clazz);

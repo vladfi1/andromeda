@@ -10,14 +10,12 @@
 package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.PointerType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.PointerType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
-import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.types.casting.CastUtil;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.problems.Problem;

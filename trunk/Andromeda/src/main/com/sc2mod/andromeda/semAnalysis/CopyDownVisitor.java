@@ -1,6 +1,5 @@
 package com.sc2mod.andromeda.semAnalysis;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.sc2mod.andromeda.environment.Environment;
@@ -10,11 +9,8 @@ import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.IExtension;
 import com.sc2mod.andromeda.environment.types.IInterface;
-import com.sc2mod.andromeda.environment.types.INamedType;
-import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.types.generic.GenericHierachyGenerationVisitor;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;

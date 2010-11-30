@@ -13,22 +13,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.sc2mod.andromeda.environment.IDefined;
-import com.sc2mod.andromeda.environment.IIdentifiable;
-import com.sc2mod.andromeda.environment.IModifiable;
-import com.sc2mod.andromeda.environment.SemanticsElement;
-import com.sc2mod.andromeda.environment.ModifierUtil;
+import com.sc2mod.andromeda.environment.ModifierSet;
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.IScopedElement;
-import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
@@ -41,13 +32,11 @@ import com.sc2mod.andromeda.vm.data.DataObject;
  */
 public abstract class VarDecl extends Variable{
 
-	protected Visibility visibility = Visibility.DEFAULT;	
 	private IdentifierNode declaration;
 	private TypeNode typeNode;
 	protected IType type;
 	private String generatedName;
 	private String name;
-	private ModifierListNode mods;
 	private DataObject value;
 	protected LocalVarDecl overrides;
 	private IScope scope;
@@ -56,14 +45,14 @@ public abstract class VarDecl extends Variable{
 	private int numInlines;
 	private boolean createCode = true;
 	private List<StmtNode> initCode;
+	protected final ModifierSet modifiers;
 	
 	private VarDecl(ModifierListNode mods, IdentifierNode def, IScope scope){
 		this.declaration = def;
 		this.name = def.getId();
-		this.mods = mods;
 		this.scope = scope;
 		def.setSemantics(this);
-		ModifierUtil.processModifiers(this, mods);
+		this.modifiers = ModifierSet.create(this, mods);
 	}
 	
 	public VarDecl(ModifierListNode mods,IType type,IdentifierNode def, IScope scope) {
@@ -153,65 +142,16 @@ public abstract class VarDecl extends Variable{
 		return overrides!=null;
 	}
 	
+	@Override
+	public ModifierSet getModifiers() {
+		return modifiers;
+	}
 
 	@Override
-	public Visibility getVisibility() {return visibility; }
+	public Visibility getVisibility() {return modifiers.getVisibility(); }
 	@Override
-	public boolean isAbstract() {return false;}
-	@Override
-	public boolean isConst() {return false;}
-	@Override
-	public boolean isFinal() {return false;}
-	@Override
-	public boolean isNative() {return false;}
-	@Override
-	public boolean isOverride() {return false;}
-	@Override
-	public boolean isStatic() {return false;}
-	
-	@Override
-	public void setAbstract() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(mods)
-				.details("This definition","abstract")
-				.raiseUnrecoverable();
-	}
-	@Override
-	public void setConst() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(mods)
-		.details("This definition","const")
-		.raiseUnrecoverable();
-}
-	@Override
-	public void setFinal() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(mods)
-		.details("This definition","final")
-		.raiseUnrecoverable();
-}
-	@Override
-	public void setNative() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(mods)
-		.details("Variables","native")
-		.raiseUnrecoverable();
-}
-	@Override
-	public void setOverride(){
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(mods)
-		.details("Variables","override")
-		.raiseUnrecoverable();
-	}
-	@Override
-	public void setStatic() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(mods)
-		.details("This definition","static")
-		.raiseUnrecoverable();
-	}
-	@Override
-	public void setVisibility(Visibility visibility){
-		throw Problem.ofType(ProblemId.INVALID_VISIBILITY_MODIFIER).at(mods)
-		.details("This definition")
-		.raiseUnrecoverable();
-	}
-	
+	public boolean isStaticElement() {return true;}
+		
 	public DataObject getValue() {
 		return this.value;
 	}

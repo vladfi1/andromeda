@@ -2,8 +2,6 @@ package com.sc2mod.andromeda.codegen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;

@@ -17,7 +17,7 @@ public class TypeUtil {
 		for(IScopedElement c : t.getContent().viewValues()){
 			if(c.getElementType() == ScopedElementType.VAR){
 				Variable vd = (Variable) c;
-				if(vd.isStatic())
+				if(vd.isStaticElement())
 					return true;
 			}
 		}
@@ -44,7 +44,7 @@ public class TypeUtil {
 						if(it2.getElementType() != ScopedElementType.OPERATION)
 							return false;
 						
-						if(it2.isStatic()) 
+						if(it2.isStaticElement()) 
 							return false;
 						
 						if(!includeInherit && content.isElementInherited(it2))
@@ -85,7 +85,7 @@ public class TypeUtil {
 						if(it2.getElementType() != ScopedElementType.VAR) return false;
 						
 						Variable vd = (Variable) it2;
-						if(vd.isStatic())
+						if(vd.isStaticElement())
 							return false;
 						
 						if(!includeInherit && content.isElementInherited(vd))

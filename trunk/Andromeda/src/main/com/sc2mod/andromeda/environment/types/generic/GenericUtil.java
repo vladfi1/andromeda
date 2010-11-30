@@ -6,14 +6,12 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.GenericMethodProxy;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
-import com.sc2mod.andromeda.environment.scopes.content.MethodSet;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.GenericVarProxy;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.variables.Variable;
 
 

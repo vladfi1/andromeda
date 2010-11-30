@@ -1,6 +1,5 @@
 package com.sc2mod.andromeda.environment.scopes;
 
-import java.util.EnumSet;
 
 public enum ScopedElementType {
 	ERROR,

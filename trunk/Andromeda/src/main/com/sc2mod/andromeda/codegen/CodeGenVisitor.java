@@ -32,7 +32,6 @@ import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.InclusionType;
@@ -254,7 +253,7 @@ public class CodeGenVisitor extends CodeGenerator {
 			LocalVarDecl local = locals[i];
 
 			// Inlined constants are not generated
-			if (local.isConst() && local.getNumReadAccesses() == 0)
+			if (local.getModifiers().isConst() && local.getNumReadAccesses() == 0)
 				continue;
 
 			functionBuffer.nl();
@@ -357,7 +356,7 @@ public class CodeGenVisitor extends CodeGenerator {
 
 		// Forward declarations are not written since all functions are forward
 		// declared anyway.
-		if (!m.hasBody() && !m.isNative())
+		if (!m.hasBody() && !m.getModifiers().isNative())
 			return;
 
 		// Uncalled library funcitons are not written
@@ -395,7 +394,7 @@ public class CodeGenVisitor extends CodeGenerator {
 
 		
 		// Natives are appended to the forward declarations
-		if (m.isNative()) {
+		if (m.getModifiers().isNative()) {
 			functionBuffer.flushTo(fileBuffer.forwardDeclarations, true);
 		} else {
 			functionBuffer.flushTo(fileBuffer.functions, true);
@@ -453,7 +452,7 @@ public class CodeGenVisitor extends CodeGenerator {
 		// Modifiers
 		if (isPrivate)
 			globalVarBuffer.append("static ");
-		if (g.isConst())
+		if (g.getModifiers().isConst())
 			globalVarBuffer.append("const ");
 
 		// Type and name
@@ -527,7 +526,7 @@ public class CodeGenVisitor extends CodeGenerator {
 			//XPilot: don't remove a variable if it is written to
 			if (inLib && field.getNumReadAccesses() == 0 && field.getNumWriteAccesses() == 0)
 				continue;
-			if (field.isStatic()) {
+			if (field.isStaticElement()) {
 				// Static fields are treated like globals (but they are never
 				// private)
 				generateGlobalDecl(field, false);
@@ -724,7 +723,7 @@ public class CodeGenVisitor extends CodeGenerator {
 			LocalVarDecl v = (LocalVarDecl) decl.getName().getSemantics();
 
 			// Inlined constants are not generated
-			if (v.isConst() && v.getNumReadAccesses() == 0)
+			if (v.getModifiers().isConst() && v.getNumReadAccesses() == 0)
 				continue;
 
 			// Is this just a declaration without init?

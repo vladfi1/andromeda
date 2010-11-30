@@ -10,7 +10,6 @@
 package com.sc2mod.andromeda.buildUtils;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 
 import org.apache.tools.ant.BuildException;

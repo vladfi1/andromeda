@@ -83,7 +83,6 @@ GlobalStructureNode ::= {ClassDeclNode} 	AnnotationListNode: annotations
 											ModifierListNode: modifiers
 											string: name
 											TypeParamListNode: typeParams
-											"boolean": key
 											TypeNode: enrichedType
 											"boolean": disjoint
 											MemberDeclListNode : body
@@ -271,8 +270,6 @@ StmtNode ::= {BlockStmtNode}
 			| {EmptyStmtNode}
 			
 
-//Array dimensions
-ArrayDimensionsNode ::= "int":numDimension
 
 // Expressions (ouch)
 ExprNode ::= {AssignmentExprNode}
@@ -314,11 +311,6 @@ ExprNode ::= {AssignmentExprNode}
 				String: funcName
 				ExprListNode: arguments
 				SpecialInvocationSE: special
-			| {ArrayCreationExprNode}
-				TypeNode: type
-				ExprListNode: definedDimensions
-				"int": additionalDimensions
-				ArrayInitNode: arrayInitializer
 			| {NewExprNode}
 				TypeNode: type				
 				ExprListNode: arguments
@@ -329,8 +321,6 @@ ExprNode ::= {AssignmentExprNode}
 				TypeNode: type		
 			| {ParenthesisExprNode}
 				ExprNode: expression
-			| {KeyOfExprNode}
-				TypeNode: type
 								
 //Types of method invocations
 SpecialInvocationSE ::= one of INLINE,EXECUTE,EVALUATE,NATIVE

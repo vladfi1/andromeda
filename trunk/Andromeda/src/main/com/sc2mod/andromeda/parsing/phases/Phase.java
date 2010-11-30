@@ -1,7 +1,6 @@
 package com.sc2mod.andromeda.parsing.phases;
 
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
-import com.sc2mod.andromeda.parsing.CompilationResult;
 import com.sc2mod.andromeda.parsing.Workflow;
 
 public abstract class Phase {

@@ -9,25 +9,19 @@
  */
 package com.sc2mod.andromeda.environment.variables;
 
-import java.util.ArrayList;
-
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 
 public class FieldDecl extends NonLocalVarDecl {
 
 	private FieldDeclNode fieldDeclaration;
 	private FieldDecl usesField;
-	private ArrayList<FieldDecl> usedByFields;
-	private boolean isStatic;
 	private IType containingType;
 	
 	public FieldDecl(FieldDeclNode f, VarDeclNode declNode, IType containingType, IScope scope, Environment env) {
@@ -66,7 +60,7 @@ public class FieldDecl extends NonLocalVarDecl {
 	
 	
 	public boolean isGlobalField(){
-		return isStatic();
+		return isStaticElement();
 	}
 
 	
@@ -76,17 +70,12 @@ public class FieldDecl extends NonLocalVarDecl {
 	
 	@Override
 	public boolean isMember() {
-		return !isStatic;
+		return !isStaticElement();
 	}
 	
 	@Override
-	public boolean isStatic() {
-		return isStatic;
-	}
-	
-	@Override
-	public void setStatic() {
-		isStatic = true;
+	public boolean isStaticElement() {
+		return modifiers.isStatic();
 	}
 	
 	@Override
@@ -102,7 +91,7 @@ public class FieldDecl extends NonLocalVarDecl {
 
 	@Override
 	public VarType getVarType() {
-		return isStatic ? VarType.STATIC : VarType.FIELD ;
+		return isStaticElement() ? VarType.STATIC : VarType.FIELD ;
 	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }

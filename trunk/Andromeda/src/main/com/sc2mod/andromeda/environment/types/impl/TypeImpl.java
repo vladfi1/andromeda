@@ -9,12 +9,10 @@
  */
 package com.sc2mod.andromeda.environment.types.impl;
 
-import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.BlockScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
-import com.sc2mod.andromeda.environment.scopes.content.NonInheritanceContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
@@ -44,7 +42,7 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	 * Types are always a static construct
 	 */
 	@Override
-	public boolean isStatic() {
+	public boolean isStaticElement() {
 		return true;
 	}
 	
@@ -265,15 +263,6 @@ public abstract class TypeImpl extends BlockScope implements IType{
 	@Override
 	public boolean isIntegerType(){
 		return false;
-	}
-	
-	/**
-	 * Returns true iff this is a type extension declared with the iskey attribute.
-	 * @return
-	 */
-	@Override
-	public boolean isKeyType(){
-		return false;		
 	}
 
 	@Override

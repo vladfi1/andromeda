@@ -14,7 +14,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.PrintStream;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -25,10 +24,8 @@ import javax.swing.JTabbedPane;
 import com.sc2mod.andromeda.gui.jobs.Job;
 import com.sc2mod.andromeda.gui.jobs.JobHandler;
 import com.sc2mod.andromeda.gui.jobs.JobListener;
-import com.sc2mod.andromeda.gui.misc.UIOutputStream;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.program.Program;
-import com.sc2mod.andromeda.util.logging.Logger;
 
 public class MonitorPanel extends JPanel implements ActionListener,JobListener{
 	

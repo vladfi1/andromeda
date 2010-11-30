@@ -10,11 +10,9 @@
 package com.sc2mod.andromeda.parser.cup.factory;
 
 
-import com.sc2mod.andromeda.parser.cup.AndromedaScanner;
 import com.sc2mod.andromeda.parser.cup.GalaxyGenParser;
 import com.sc2mod.andromeda.parser.cup.GalaxyScanner;
 import com.sc2mod.andromeda.parser.cup.Scanner;
-import com.sc2mod.andromeda.parser.cup.Symbol;
 import com.sc2mod.andromeda.parsing.framework.ParserInput;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;

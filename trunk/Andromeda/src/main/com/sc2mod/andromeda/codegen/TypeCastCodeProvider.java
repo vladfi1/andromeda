@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
 
 public class TypeCastCodeProvider {

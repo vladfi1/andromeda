@@ -19,7 +19,6 @@ import com.sc2mod.andromeda.parsing.TransientCompilationData;
 import com.sc2mod.andromeda.semAnalysis.ResolveAndCheckTypesVisitor;
 import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.BasicTypeNode;
-import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.UninitedVarDeclNode;

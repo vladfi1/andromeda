@@ -1,6 +1,7 @@
 package com.sc2mod.andromeda.parsing.options;
 
-import static com.sc2mod.andromeda.parsing.options.ParamType.*;
+import static com.sc2mod.andromeda.parsing.options.ParamType.APP_FILE;
+import static com.sc2mod.andromeda.parsing.options.ParamType.FLAG;
 
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.util.Files;

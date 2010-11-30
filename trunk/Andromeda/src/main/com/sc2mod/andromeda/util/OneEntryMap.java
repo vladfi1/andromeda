@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 /**
  * Map that is optimized for having only up to one entry in most situations.

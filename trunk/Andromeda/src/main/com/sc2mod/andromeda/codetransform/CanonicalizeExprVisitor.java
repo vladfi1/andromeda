@@ -9,7 +9,6 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
-import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.AccessType;
 import com.sc2mod.andromeda.environment.access.AccessorAccess;
 import com.sc2mod.andromeda.environment.access.Invocation;
@@ -19,11 +18,8 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.variables.Variable;
-import com.sc2mod.andromeda.parsing.CompilerThread;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
-import com.sc2mod.andromeda.problems.ErrorUtil;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
 import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
@@ -31,8 +27,6 @@ import com.sc2mod.andromeda.syntaxNodes.CastExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
-import com.sc2mod.andromeda.syntaxNodes.KeyOfExprNode;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
@@ -153,12 +147,6 @@ public class CanonicalizeExprVisitor extends TransformationExprVisitor {
 		//Super can be replaced by this for the code generation
 		parent.replaceExpression = syntaxGenerator.createThisExpr(superExprNode.getInferedType());
 	}
-	
-	@Override
-	public void visit(KeyOfExprNode keyOfExpression) {
-		parent.replaceExpression = keyOfExpression.getValue().getExpression(typeProvider);
-	}
-	
 	
 	@Override
 	public void visit(UnOpExprNode unaryExpression) {

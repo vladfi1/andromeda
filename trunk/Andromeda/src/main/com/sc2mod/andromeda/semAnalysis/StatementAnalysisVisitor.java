@@ -31,9 +31,7 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
-import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
@@ -213,7 +211,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		VarDecl decl = variableDecl.getName().getSemantics();
 		
 		//Constants must be defined at declaration
-		if(decl.isConst()){
+		if(decl.getModifiers().isConst()){
 			throw Problem.ofType(ProblemId.CONST_VAR_NOT_INITED).at(variableDecl)
 				.raiseUnrecoverable();
 		}
@@ -255,7 +253,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		}
 			
 		//Constants must be initialized with constant values
-		if(decl.isConst()){
+		if(decl.getModifiers().isConst()){
 			if(!variableAssignDecl.getInitializer().isConstant())
 				throw Problem.ofType(ProblemId.CONST_VAR_UNCONST_INIT).at(variableAssignDecl)
 					.raiseUnrecoverable();

@@ -3,7 +3,6 @@ package com.sc2mod.andromeda.codegen;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
-import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 

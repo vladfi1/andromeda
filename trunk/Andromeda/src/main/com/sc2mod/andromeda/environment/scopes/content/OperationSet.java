@@ -12,12 +12,10 @@ import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.parsing.CompilerThread;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.util.Debug;
 
 /**
  * An operation set is a special entry in a ScopeContentSet denoting
@@ -227,7 +225,7 @@ public abstract class OperationSet implements IScopedElement, Iterable<Operation
 	
 	@Override public IScope getScope() { return scope; }
 	@Override public Visibility getVisibility() { throw new InternalProgramError("Cannot get the visibility of an op set!"); }
-	@Override public boolean isStatic() {	throw new InternalProgramError("Cannot decide if a operation set is static"); }
+	@Override public boolean isStaticElement() {	throw new InternalProgramError("Cannot decide if a operation set is static"); }
 	@Override public SyntaxNode getDefinition() {	throw new InternalProgramError("Cannot get the definition of an operation set"); }
 	@Override public IType getContainingType() { return getAny().getContainingType(); }
 	@Override public String getElementTypeName() { return "operation set"; }

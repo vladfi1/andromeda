@@ -16,8 +16,6 @@ import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 
 public class Destructor extends Method {
@@ -36,23 +34,7 @@ public class Destructor extends Method {
 	public Destructor(MethodDeclNode functionDeclaration, IClass clazz, IScope scope, Environment env) {
 		super(functionDeclaration,clazz, scope, env);
 	}
-	
-	@Override
-	public void setAbstract() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getHeader().getModifiers())
-					.details("Destructors","abstract")
-					.raiseUnrecoverable();
-	}
-	
-	@Override
-	public void setStatic() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getHeader().getModifiers())
-					.details("Destructors","static")
-					.raiseUnrecoverable();
-	}
-	
-
-	
+		
 	public OperationType getOperationType(){
 		return OperationType.DESTRUCTOR;
 	}

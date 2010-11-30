@@ -9,8 +9,6 @@
  */
 package com.sc2mod.andromeda.codegen;
 
-import java.util.ArrayList;
-
 import com.sc2mod.andromeda.classes.ClassNameProvider;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.operations.Function;

@@ -15,31 +15,22 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 
 public class Method extends Function {
 
-	private boolean isAbstract;
-	private boolean isStatic;
 	private IType containingType;
 	
 	public Method( MethodDeclNode functionDeclaration, IType containingType, IScope scope, Environment env) {
 		super(functionDeclaration,scope,env);
 		this.containingType = containingType;
 	}
-	
-	//XPilot: for method proxies
-	protected Method() {}
-	
 
 	@Override
 	protected OverrideInformation createOverrideInformation() {
 		return new MethodOverrideInformation(this);
 	}
-	
-	
+		
 	@Override
 	public String getDescription() {
 		IType t = getContainingType();
@@ -47,12 +38,9 @@ public class Method extends Function {
 		return "method " + t.getFullName() + "." + getUid();
 	}
 	
-
-
-	
 	@Override
 	public OperationType getOperationType() {
-		return isStatic?OperationType.STATIC_METHOD:OperationType.METHOD;
+		return modifiers.isStatic()?OperationType.STATIC_METHOD:OperationType.METHOD;
 	}
 	
 	@Override
@@ -65,18 +53,7 @@ public class Method extends Function {
 		return "method";
 	}
 
-	
-	@Override
-	public void setNative() {
-		throw Problem.ofType(ProblemId.METHOD_DECLARED_NATIVE).at(declaration.getHeader().getModifiers())
-					.raiseUnrecoverable();
-	}
-
-	@Override public void setAbstract() {	isAbstract = true; }
-	@Override public boolean isAbstract() { return isAbstract; }
-	
-	@Override public void setStatic() { isStatic = true; }
-	@Override public boolean isStatic() { return isStatic; }
+	@Override public boolean isStaticElement() { return modifiers.isStatic(); }
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }

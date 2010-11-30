@@ -1,6 +1,5 @@
 package com.sc2mod.andromeda.environment.annotations;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public enum BasicAnnotations implements IAnnotationType {

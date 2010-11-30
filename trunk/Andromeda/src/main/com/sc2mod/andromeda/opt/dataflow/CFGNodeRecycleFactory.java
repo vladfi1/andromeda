@@ -1,7 +1,5 @@
 package com.sc2mod.andromeda.opt.dataflow;
 
-import java.util.ArrayList;
-
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 /**

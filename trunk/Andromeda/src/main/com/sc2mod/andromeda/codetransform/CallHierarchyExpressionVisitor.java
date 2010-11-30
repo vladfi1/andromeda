@@ -30,7 +30,6 @@ import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.NewExprNode;
 import com.sc2mod.andromeda.syntaxNodes.SuperExprNode;
-import com.sc2mod.andromeda.syntaxNodes.ThisExprNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.FuncNameObject;
 

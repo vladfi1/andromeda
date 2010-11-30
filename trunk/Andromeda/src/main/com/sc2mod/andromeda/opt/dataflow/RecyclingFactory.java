@@ -2,8 +2,6 @@ package com.sc2mod.andromeda.opt.dataflow;
 
 import java.util.ArrayList;
 
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-
 /**
  * An abstract factory for types which allows to recycle
  * old instances.

@@ -3,7 +3,6 @@ package com.sc2mod.andromeda.environment.scopes.content;
 import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.types.IType;

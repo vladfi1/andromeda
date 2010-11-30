@@ -9,7 +9,6 @@
  */
 package com.sc2mod.andromeda.xml.gen;
 
-import javax.xml.stream.XMLStreamException;
 
 public class XMLError extends RuntimeException {
 

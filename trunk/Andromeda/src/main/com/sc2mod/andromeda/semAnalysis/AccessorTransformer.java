@@ -1,9 +1,5 @@
 package com.sc2mod.andromeda.semAnalysis;
 
-import java.util.List;
-
-import com.sc2mod.andromeda.environment.access.AccessorAccess;
-import com.sc2mod.andromeda.problems.ErrorUtil;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.AccessorList;
@@ -27,9 +23,7 @@ import com.sc2mod.andromeda.syntaxNodes.ParameterListNode;
 import com.sc2mod.andromeda.syntaxNodes.ParameterNode;
 import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SimpleTypeNode;
-import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 

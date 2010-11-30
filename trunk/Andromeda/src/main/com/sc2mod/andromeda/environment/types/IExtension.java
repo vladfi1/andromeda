@@ -9,22 +9,8 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
-import com.sc2mod.andromeda.vm.data.DataObject;
-import com.sc2mod.andromeda.vm.data.IntObject;
-import com.sc2mod.andromeda.vm.data.StringObject;
-
-import com.sc2mod.andromeda.environment.IDefined;
-import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.types.generic.GenericExtensionInstance;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
 
 public interface IExtension extends IDeclaredType{
 	
@@ -36,8 +22,6 @@ public interface IExtension extends IDeclaredType{
 
 
 	public boolean isDistinct();
-
-	public boolean isKey();
 	
 	@Override
 	public TypeExtensionDeclNode getDefinition();

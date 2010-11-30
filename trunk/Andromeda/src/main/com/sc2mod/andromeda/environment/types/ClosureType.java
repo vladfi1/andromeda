@@ -9,19 +9,13 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 import com.sc2mod.andromeda.environment.Signature;
-
 import com.sc2mod.andromeda.environment.access.OperationAccess;
-import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.variables.Variable;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 
 public class ClosureType extends UnscopedType{
 

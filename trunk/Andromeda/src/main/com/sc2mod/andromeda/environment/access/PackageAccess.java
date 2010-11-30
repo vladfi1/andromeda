@@ -1,7 +1,6 @@
 package com.sc2mod.andromeda.environment.access;
 
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;

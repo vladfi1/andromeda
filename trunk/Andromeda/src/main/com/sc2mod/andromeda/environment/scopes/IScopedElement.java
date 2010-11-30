@@ -10,7 +10,16 @@ public interface IScopedElement extends IIdentifiable, IDefined {
 	public abstract IScope getScope();
 	public abstract IType getContainingType();
 	
-	public abstract boolean isStatic();
+	/**
+	 * Returns true, iff this is a static element.
+	 * A static element is an element that belongs to no specific instance of any type
+	 * but is rather a global construct.
+	 * 
+	 * Global functions and variables are always static elements. Class members are
+	 * static elements if they are defined to be static.
+	 * @return
+	 */
+	public abstract boolean isStaticElement();
 	
 	/**
 	 * Which kind of type this scoped element is (operation, variable, type, error)

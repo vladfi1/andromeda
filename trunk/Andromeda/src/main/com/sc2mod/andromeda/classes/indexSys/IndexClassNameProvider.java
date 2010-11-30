@@ -11,7 +11,6 @@ package com.sc2mod.andromeda.classes.indexSys;
 
 import com.sc2mod.andromeda.classes.ClassNameProvider;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 
 public class IndexClassNameProvider extends ClassNameProvider{
 

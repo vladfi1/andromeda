@@ -1,6 +1,5 @@
 package com.sc2mod.andromeda.environment.scopes;
 
-import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.NonInheritanceContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;

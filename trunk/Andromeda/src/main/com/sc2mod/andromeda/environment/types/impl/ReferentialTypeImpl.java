@@ -7,7 +7,6 @@ import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.IReferentialType;
 import com.sc2mod.andromeda.environment.types.RuntimeType;
-import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 
 public abstract class ReferentialTypeImpl extends RecordTypeImpl implements IReferentialType {

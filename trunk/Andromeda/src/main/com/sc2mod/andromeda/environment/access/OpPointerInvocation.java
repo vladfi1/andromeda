@@ -1,10 +1,9 @@
 package com.sc2mod.andromeda.environment.access;
 
 import com.sc2mod.andromeda.environment.variables.VarDecl;
-
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 
 public class OpPointerInvocation extends Invocation {
 

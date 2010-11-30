@@ -1,7 +1,6 @@
 package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.environment.access.AccessorAccess;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Function;
@@ -20,7 +19,6 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
-import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
@@ -261,7 +259,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 						.raiseUnrecoverable();
 			}
 		}		
-		if(clazz.isStatic())
+		if(clazz.isStaticElement())
 			throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_IMPLEMENTS).at(clazz.getDefinition().getInterfaces())
 						.raiseUnrecoverable();
 	}
@@ -310,17 +308,7 @@ public class ResolveAndCheckTypesVisitor extends VoidSemanticsVisitorAdapter {
 						.details(extendedType.getFullName())
 						.raiseUnrecoverable();
 		}		
-		if(extendedType.isKeyType()){
-			throw Problem.ofType(ProblemId.EXTENSION_OF_KEY_TYPE).at(extension.getDefinition())
-					.raiseUnrecoverable();
-		}
-		if(extension.isKey()){
-			if(extendedBaseType != BASIC.INT && extendedBaseType != BASIC.STRING){
-				throw Problem.ofType(ProblemId.INVALID_BASE_TYPE_FOR_KEY_TYPE).at(extension.getDefinition())
-						.raiseUnrecoverable();
-			}
-		}
-		
+				
 		//Entry the results into the extension
 		extension.setResolvedExtendedType(extendedType,extendedBaseType,hierarchyLevel);
 		

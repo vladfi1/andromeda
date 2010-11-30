@@ -1,6 +1,5 @@
 package com.sc2mod.andromeda.environment.variables;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 

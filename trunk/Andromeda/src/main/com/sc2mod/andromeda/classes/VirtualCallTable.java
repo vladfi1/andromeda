@@ -17,7 +17,6 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OverrideInformation;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
-import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.parsing.TransientCompilationData;
 
@@ -129,7 +128,7 @@ public class VirtualCallTable {
 			
 			//This method is already in the call table!
 			tableIndex = overridesInfo.getVirtualTableIndex();
-			if(op.isAbstract()) {
+			if(op.getModifiers().isAbstract()) {
 				callIndex = overridesInfo.getCurVirtualCallChildIndex();
 			} else {
 				callIndex = superTable.incCallIndex(tableIndex);
@@ -140,7 +139,7 @@ public class VirtualCallTable {
 		} else {
 			//This method is new in the call table!
 			tableIndex = table.size();
-			if(op.isAbstract()) {					
+			if(op.getModifiers().isAbstract()) {					
 				callIndex = -1;
 			} else {
 				callIndex = 0;

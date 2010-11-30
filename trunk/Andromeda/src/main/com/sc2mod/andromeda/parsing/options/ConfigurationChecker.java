@@ -1,6 +1,13 @@
 package com.sc2mod.andromeda.parsing.options;
 
-import static com.sc2mod.andromeda.parsing.options.Parameter.*;
+import static com.sc2mod.andromeda.parsing.options.Parameter.CODEGEN_DESCRIPTION_COMMENTS;
+import static com.sc2mod.andromeda.parsing.options.Parameter.CODEGEN_NEW_LINES;
+import static com.sc2mod.andromeda.parsing.options.Parameter.CODEGEN_OWN_LINE_FOR_OPEN_BRACES;
+import static com.sc2mod.andromeda.parsing.options.Parameter.CODEGEN_USE_INDENT;
+import static com.sc2mod.andromeda.parsing.options.Parameter.FILES_MAP_IN;
+import static com.sc2mod.andromeda.parsing.options.Parameter.FILES_MAP_OUT;
+import static com.sc2mod.andromeda.parsing.options.Parameter.FILES_MAP_SCRIPT_IN;
+import static com.sc2mod.andromeda.parsing.options.Parameter.FILES_MAP_TRIGGERS_IN;
 
 public class ConfigurationChecker {
 

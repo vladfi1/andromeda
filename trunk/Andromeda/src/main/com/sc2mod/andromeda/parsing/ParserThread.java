@@ -13,7 +13,6 @@ import com.sc2mod.andromeda.syntaxNodes.ImportNode;
 import com.sc2mod.andromeda.syntaxNodes.IncludeNode;
 import com.sc2mod.andromeda.syntaxNodes.PackageDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.util.StopWatch;
 import com.sc2mod.andromeda.util.ThreadUtil;
 import com.sc2mod.andromeda.util.logging.Log;

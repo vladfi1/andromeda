@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import mopaqlib.MoPaQ;
 
@@ -24,7 +22,6 @@ import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.problems.ErrorUtil;
 import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.problems.SourceLocationContent;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.util.Pair;

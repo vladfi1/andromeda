@@ -1,6 +1,5 @@
 package com.sc2mod.andromeda.parsing.galaxy;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,15 +10,11 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.parser.cup.factory.CupFactory;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Language;
-import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.parsing.LanguageImpl;
-import com.sc2mod.andromeda.parsing.framework.IParser;
 import com.sc2mod.andromeda.parsing.framework.ParserFactory;
 import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
-import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.semAnalysis.GalaxyAnalysisVisitor;
-import com.sc2mod.andromeda.semAnalysis.StatementAnalysisVisitor;
 
 public class Galaxy extends LanguageImpl{
 

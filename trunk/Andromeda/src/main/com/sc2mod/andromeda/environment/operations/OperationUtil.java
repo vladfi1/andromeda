@@ -18,7 +18,7 @@ public final class OperationUtil {
 	}
 	
 	public static boolean isForwardDeclaration(Operation op){
-		return !op.hasBody() && !op.isNative();
+		return !op.hasBody() && op.isStaticElement() && !op.getModifiers().isNative();
 	}
 	
 	public static boolean usesThis(Operation op){

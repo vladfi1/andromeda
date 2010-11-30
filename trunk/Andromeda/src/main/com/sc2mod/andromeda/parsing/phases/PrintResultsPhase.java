@@ -4,7 +4,6 @@ import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.OutputMemoryStats;
 import com.sc2mod.andromeda.parsing.Workflow;
 import com.sc2mod.andromeda.parsing.options.Parameter;
-import com.sc2mod.andromeda.program.Program;
 import com.sc2mod.andromeda.util.logging.Log;
 import com.sc2mod.andromeda.util.logging.LogFormat;
 import com.sc2mod.andromeda.util.logging.LogLevel;

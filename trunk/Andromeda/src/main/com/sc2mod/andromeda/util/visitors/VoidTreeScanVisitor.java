@@ -1,7 +1,6 @@
 package com.sc2mod.andromeda.util.visitors;
 
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.util.VisitorAdapter;
 import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
 
 /**

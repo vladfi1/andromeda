@@ -4,10 +4,8 @@ import java.util.ArrayList;
 
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.CompilerThread;
-import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.util.Pair;
 
 public class Problem{
 

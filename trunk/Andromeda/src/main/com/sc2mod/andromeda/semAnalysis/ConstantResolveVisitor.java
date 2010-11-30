@@ -15,17 +15,13 @@ import java.util.ListIterator;
 import com.sc2mod.andromeda.environment.access.AccessUtil;
 import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
 import com.sc2mod.andromeda.environment.variables.Variable;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
 import com.sc2mod.andromeda.syntaxNodes.BinOpSE;
 import com.sc2mod.andromeda.syntaxNodes.CastExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
-import com.sc2mod.andromeda.syntaxNodes.KeyOfExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
@@ -100,18 +96,6 @@ public class ConstantResolveVisitor extends VoidVisitorErrorAdapater{
 	public void visit(LiteralExprNode literalExpression) {
 		literalExpression.setValue(literalExpression.getLiteral().getValue());
 		resolveCount++;
-	}
-	
-	@Override
-	public void visit(KeyOfExprNode keyOfExpression) {
-		IType t = keyOfExpression.getInferedType();
-		if(!t.isKeyType()){
-			throw Problem.ofType(ProblemId.KEYOF_USED_ON_NONKEY).at(keyOfExpression).details(t.getFullName())
-				.raiseUnrecoverable();
-		}
-		keyOfExpression.setValue(t.getNextKey());
-		
-		
 	}
 	
 	@Override

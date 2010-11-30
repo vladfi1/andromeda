@@ -9,15 +9,11 @@
  */
 package com.sc2mod.andromeda.environment.types.impl;
 
-import java.util.HashMap;
-
-import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
-import com.sc2mod.andromeda.problems.InternalProgramError;
 
 
 /**

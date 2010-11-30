@@ -11,11 +11,7 @@ package com.sc2mod.andromeda.util.logging;
 
 import java.io.PrintStream;
 
-import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.SourceLocation;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.util.Debug;
 
 public class ConsoleLog extends Logger{
 	

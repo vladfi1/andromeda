@@ -13,7 +13,6 @@ import com.sc2mod.andromeda.program.Program;
 import com.sc2mod.andromeda.util.logging.Log;
 import com.sc2mod.andromeda.util.logging.LogFormat;
 import com.sc2mod.andromeda.util.logging.LogLevel;
-import com.sc2mod.andromeda.util.logging.Logger;
 
 public class WorkerThread extends Thread{
 

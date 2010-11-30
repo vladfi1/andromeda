@@ -145,8 +145,6 @@ LibImportFile = [ \t\f]+[a-zA-Z0-9_\.]+[ \t\f]*\;
   "continue"                     { return symbol(CONTINUE); }
   "uses"						 { return symbol(USES); }
   "is"							 { return symbol(IS); }
-  "iskey"						 { return symbol(ISKEY); }
-  "keyof"						 { return symbol(KEYOF); }
   "setinstancelimit"			 { return symbol(SETINSTANCELIMIT); }
   "do"                           { return symbol(DO); }
 //  "double"                       { return symbol(DOUBLE); }

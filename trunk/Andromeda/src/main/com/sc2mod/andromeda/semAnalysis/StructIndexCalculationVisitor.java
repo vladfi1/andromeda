@@ -5,7 +5,6 @@ import com.sc2mod.andromeda.environment.types.ArrayType;
 import com.sc2mod.andromeda.environment.types.generic.GenericStructInstance;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitorAdapter;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 
 public class StructIndexCalculationVisitor extends ParameterSemanticsVisitorAdapter<Void, Integer>{
 

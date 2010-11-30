@@ -13,9 +13,9 @@ package com.sc2mod.andromeda.environment.types;
  * An array type.
  * @author J. 'gex' Finis
  */
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;

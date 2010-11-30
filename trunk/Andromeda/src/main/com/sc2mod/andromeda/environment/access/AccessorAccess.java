@@ -13,7 +13,6 @@ package com.sc2mod.andromeda.environment.access;
 
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
@@ -75,7 +74,7 @@ public class AccessorAccess extends NameAccess{
 
 	@Override
 	public boolean isStatic() {
-		return mainMethod.isStatic();
+		return mainMethod.isStaticElement();
 	}
 	
 	public IType getType(){

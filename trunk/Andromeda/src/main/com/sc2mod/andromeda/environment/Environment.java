@@ -13,8 +13,8 @@ import java.util.Iterator;
 
 import com.sc2mod.andromeda.environment.annotations.AnnotationRegistry;
 import com.sc2mod.andromeda.environment.scopes.GlobalScope;
-import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
+import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.parsing.Language;
 

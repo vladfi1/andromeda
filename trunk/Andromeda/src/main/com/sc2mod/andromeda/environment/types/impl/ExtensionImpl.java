@@ -16,18 +16,16 @@ import com.sc2mod.andromeda.environment.types.IExtension;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
-import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.generic.GenericExtensionInstance;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 import com.sc2mod.andromeda.vm.data.IntObject;
 import com.sc2mod.andromeda.vm.data.StringObject;
-
-import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
 
 public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, SemanticsVisitorNode {
 	
@@ -39,8 +37,6 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 	private BasicType extendedBaseType;
 	private boolean isDistinct;
 	
-	private boolean isFinal;
-	private boolean isKey;
 	private int hierarchyLevel;
 	private boolean copiedDown;
 	
@@ -57,8 +53,6 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 		super(def,scope,env);
 		isDistinct = def.isDisjoint();
 		this.definition = def;
-		this.isKey = def.isKey();
-
 	}
 	
 
@@ -73,10 +67,6 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 	public boolean isDistinct() {
 
 		return isDistinct;
-	}
-
-	public boolean isKey() {
-		return isKey;
 	}
 	
 	@Override
@@ -113,15 +103,6 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 		}
 	}
 	 
-
-	
-
-
-	@Override
-	public boolean isKeyType() {
-		return isKey;
-	}
-
 	@Override
 	public TypeCategory getCategory() {
 		return TypeCategory.EXTENSION;
@@ -240,15 +221,5 @@ public class ExtensionImpl extends DeclaredTypeImpl implements IExtension, Seman
 	@Override
 	public boolean isTopType() {
 		return isDistinct || extendedType.getCategory() != TypeCategory.EXTENSION;
-	}
-	
-	@Override
-	public boolean isFinal() {
-		return isFinal;
-	}
-	
-	@Override
-	public void setFinal() {
-		isFinal = true;
 	}
 }

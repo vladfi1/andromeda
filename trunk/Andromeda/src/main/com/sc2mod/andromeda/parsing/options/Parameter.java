@@ -1,10 +1,16 @@
 package com.sc2mod.andromeda.parsing.options;
 
-import static com.sc2mod.andromeda.parsing.options.ParamType.*;
+import static com.sc2mod.andromeda.parsing.options.ParamType.APP_FILE;
+import static com.sc2mod.andromeda.parsing.options.ParamType.APP_FILES;
+import static com.sc2mod.andromeda.parsing.options.ParamType.COMMA_LIST;
+import static com.sc2mod.andromeda.parsing.options.ParamType.FLAG;
+import static com.sc2mod.andromeda.parsing.options.ParamType.INT;
+import static com.sc2mod.andromeda.parsing.options.ParamType.PROBLEM_RESPONSE;
+import static com.sc2mod.andromeda.parsing.options.ParamType.STRING;
+import static com.sc2mod.andromeda.parsing.options.ParamType.USER_FILE;
 
 import java.io.File;
 
-import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.problems.ProblemResponse;
 import com.sc2mod.andromeda.util.Files;
 

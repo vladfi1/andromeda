@@ -11,12 +11,11 @@ package com.sc2mod.andromeda.environment.access;
 
 import java.util.ArrayList;
 
-
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 
 public class ConstructorInvocation extends Invocation {
 

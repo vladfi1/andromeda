@@ -9,9 +9,6 @@
  */
 package com.sc2mod.andromeda.codegen;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import com.sc2mod.andromeda.classes.ClassGenerator;
@@ -25,14 +22,12 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationType;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.operations.StaticInit;
-import com.sc2mod.andromeda.environment.scopes.ScopeUtil;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.OutputMemoryStats;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
 import com.sc2mod.andromeda.util.visitors.VoidTreeScanVisitor;
 
 public abstract class CodeGenerator extends VoidTreeScanVisitor {
@@ -112,7 +107,7 @@ public abstract class CodeGenerator extends VoidTreeScanVisitor {
 		}
 		
 		//Modifiers
-		if(m.isNative()) functionBuffer.append("native ");
+		if(m.getModifiers().isNative()) functionBuffer.append("native ");
 		
 		//Return type
 		if(isConstructor)

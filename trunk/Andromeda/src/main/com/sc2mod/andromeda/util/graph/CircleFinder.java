@@ -2,9 +2,7 @@ package com.sc2mod.andromeda.util.graph;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Stack;
 
 import com.sc2mod.andromeda.util.ArrayStack;
 

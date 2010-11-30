@@ -1,27 +1,15 @@
 package com.sc2mod.andromeda.environment.scopes;
 
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.problems.InternalProgramError;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-
-/**
- * Packages are scopes by nature.
- * 
- * The only thing they add is that they have a parent
- * package (or null, if this is the default unnamed package).
- * 
- * They are also scoped elementes, because a package is a member
- * of its parent package.
- * @author gex
- *
- */
 import com.sc2mod.andromeda.environment.scopes.content.NonInheritanceContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.problems.InternalProgramError;
+import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class Package extends ScopeImpl implements IScopedElement {
 
@@ -101,7 +89,7 @@ public class Package extends ScopeImpl implements IScopedElement {
 	}
 
 	@Override
-	public boolean isStatic() {
+	public boolean isStaticElement() {
 		return true;
 	}
 

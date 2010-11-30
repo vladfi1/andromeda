@@ -12,7 +12,6 @@ package com.sc2mod.andromeda.semAnalysis;
 
 import com.sc2mod.andromeda.environment.access.AccessType;
 import com.sc2mod.andromeda.environment.access.NameAccess;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;

@@ -10,7 +10,6 @@
 package com.sc2mod.andromeda.codegen;
 
 import java.io.Closeable;
-import java.io.Writer;
 
 public abstract class CodeWriter implements Closeable{
 

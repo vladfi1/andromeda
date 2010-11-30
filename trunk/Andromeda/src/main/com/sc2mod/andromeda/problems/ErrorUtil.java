@@ -2,8 +2,6 @@ package com.sc2mod.andromeda.problems;
 
 import java.io.IOException;
 
-import com.sc2mod.andromeda.parsing.CompilerThread;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.util.Debug;
 
 public final class ErrorUtil {

@@ -3,7 +3,6 @@ package com.sc2mod.andromeda.opt;
 import com.sc2mod.andromeda.opt.dataflow.CFGNode;
 import com.sc2mod.andromeda.opt.dataflow.DataflowAnalysis;
 import com.sc2mod.andromeda.opt.dataflow.IDataflowSet;
-import com.sc2mod.andromeda.opt.dataflow.DataflowAnalysis.Direction;
 
 public class LivelinessAnalysis extends DataflowAnalysis{
 

@@ -3,9 +3,6 @@ package com.sc2mod.andromeda.test.sc2tester;
 import java.io.File;
 import java.io.IOException;
 
-import org.w3c.dom.Document;
-
-import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.program.MapRunner;
 import com.sc2mod.andromeda.program.Program;

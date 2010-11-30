@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.sc2mod.andromeda.problems.InternalProgramError;
-import com.sc2mod.andromeda.util.ArrayStack;
 
 public class TopologicSort<T,E> {
 

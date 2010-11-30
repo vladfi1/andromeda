@@ -1,8 +1,6 @@
 package com.sc2mod.andromeda.util.graph;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Graph<T,E> {
 	private final GraphEdgeSet<T,E> EMPTY_NODE_SET = new GraphEdgeSet<T,E>();

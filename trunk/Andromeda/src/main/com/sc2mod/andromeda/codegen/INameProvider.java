@@ -9,9 +9,7 @@
  */
 package com.sc2mod.andromeda.codegen;
 
-import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;

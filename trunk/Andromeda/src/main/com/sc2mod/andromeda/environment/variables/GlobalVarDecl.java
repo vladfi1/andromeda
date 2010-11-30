@@ -11,16 +11,12 @@ package com.sc2mod.andromeda.environment.variables;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.IGlobal;
-import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
-
-import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 
 public class GlobalVarDecl extends NonLocalVarDecl implements IGlobal{
 
@@ -46,7 +42,7 @@ public class GlobalVarDecl extends NonLocalVarDecl implements IGlobal{
 	}
 	
 	@Override
-	public boolean isStatic() {
+	public boolean isStaticElement() {
 		return true;
 	}
 

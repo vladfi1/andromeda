@@ -1,9 +1,8 @@
 package com.sc2mod.andromeda.environment.types.generic;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 
+import com.sc2mod.andromeda.environment.ModifierSet;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.annotations.AnnotationSet;
 import com.sc2mod.andromeda.environment.scopes.IScope;
@@ -12,7 +11,6 @@ import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.scopes.content.GenericContentSet;
-import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
 import com.sc2mod.andromeda.environment.types.INamedType;
@@ -23,9 +21,7 @@ import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
 import com.sc2mod.andromeda.problems.InternalProgramError;
-import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
 public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredType , SemanticsVisitorNode {
@@ -250,12 +246,8 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 		return genericParent.isIntegerType();
 	}
 
-	public boolean isKeyType() {
-		return genericParent.isKeyType();
-	}
-
-	public boolean isStatic() {
-		return genericParent.isStatic();
+	public boolean isStaticElement() {
+		return genericParent.isStaticElement();
 	}
 
 	public boolean isTypeOrExtension(BasicType i) {
@@ -274,52 +266,9 @@ public abstract class GenericTypeInstance extends TypeImpl implements IDeclaredT
 		genericParent.setTypeParameters(types);
 	}
 
-	public boolean isAbstract() {
-		return genericParent.isAbstract();
-	}
-
-	public boolean isConst() {
-		return genericParent.isConst();
-	}
-
-	public boolean isFinal() {
-		return genericParent.isFinal();
-	}
-
-	public boolean isNative() {
-		return genericParent.isNative();
-	}
-
-	public boolean isOverride() {
-		return genericParent.isOverride();
-	}
-
-	public void setAbstract() {
-		genericParent.setAbstract();
-	}
-
-	public void setConst() {
-		genericParent.setConst();
-	}
-
-	public void setFinal() {
-		genericParent.setFinal();
-	}
-
-	public void setNative() {
-		genericParent.setNative();
-	}
-
-	public void setOverride() {
-		genericParent.setOverride();
-	}
-
-	public void setStatic() {
-		genericParent.setStatic();
-	}
-
-	public void setVisibility(Visibility visibility) {
-		genericParent.setVisibility(visibility);
+	@Override
+	public ModifierSet getModifiers() {
+		return genericParent.getModifiers();
 	}
 	
 	@Override

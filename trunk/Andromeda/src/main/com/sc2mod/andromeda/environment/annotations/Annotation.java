@@ -6,7 +6,6 @@ import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class Annotation implements SemanticsElement, IDefined{
 	

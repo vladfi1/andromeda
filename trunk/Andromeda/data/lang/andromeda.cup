@@ -78,9 +78,7 @@ terminal DOTDOT;
 terminal USES;
 terminal IS;
 terminal FUNCTION;
-terminal ISKEY;
 terminal SETINSTANCELIMIT;
-terminal KEYOF;
 terminal DOTINLINE;
 terminal EXTENSION;
 terminal INCLUDE;
@@ -257,7 +255,6 @@ non terminal TypeListNode typeArguments;
 
 //typedef and extension
 non terminal GlobalStructureNode typeDefinition, typeExtension;
-non terminal Boolean isKeyOpt;
 		
 //function pointers
 non terminal TypeListNode funcPointerArgumentList;
@@ -265,9 +262,6 @@ non terminal TypeNode funcPointer;
 
 //instance limit
 non terminal GlobalStructureNode instanceLimit;
-
-//keyof
-non terminal ExprNode keyofExpression;
 
 start with goal;
 
@@ -529,18 +523,12 @@ typeDefinition	::= annotationsOpt:ao modifiersOpt:m TYPEDEF:l type:t IDENTIFIER:
 
 // Type extensions
 
-typeExtension ::= 	annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp USES type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,true,null); RESULT.setPos(lleft,rright); :}
-		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp EXTENDS type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,false,null); RESULT.setPos(lleft,rright); :}
-		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp USES type:t classBody:r {: RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,true,r); RESULT.setPos(lleft,rright); :}
-		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l isKeyOpt:iko IDENTIFIER:i typeParametersOpt:tp EXTENDS type:t classBody:r {: RESULT = new TypeExtensionDeclNode(ao,m,i,tp,iko,t,false,r); RESULT.setPos(lleft,rright); :}
+typeExtension ::= 	annotationsOpt:ao modifiersOpt:m EXTENSION:l IDENTIFIER:i typeParametersOpt:tp USES type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,tp,t,true,null); RESULT.setPos(lleft,rright); :}
+		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l IDENTIFIER:i typeParametersOpt:tp EXTENDS type:t SEMICOLON:r {:RESULT = new TypeExtensionDeclNode(ao,m,i,tp,t,false,null); RESULT.setPos(lleft,rright); :}
+		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l IDENTIFIER:i typeParametersOpt:tp USES type:t classBody:r {: RESULT = new TypeExtensionDeclNode(ao,m,i,tp,t,true,r); RESULT.setPos(lleft,rright); :}
+		|			annotationsOpt:ao modifiersOpt:m EXTENSION:l IDENTIFIER:i typeParametersOpt:tp EXTENDS type:t classBody:r {: RESULT = new TypeExtensionDeclNode(ao,m,i,tp,t,false,r); RESULT.setPos(lleft,rright); :}
 		;
 		
-isKeyOpt ::= 
-		ISKEY {: RESULT = true; :}
-		|	{: RESULT = false; :}
-		;	
-		
-
 
 //Classes
 instanceLimit ::= SETINSTANCELIMIT:l classOrInterfaceType:t LBRACK expression:e RBRACK SEMICOLON:r {: RESULT = new InstanceLimitSetterNode(t,e); RESULT.setPos(lleft,rright); :}
@@ -976,7 +964,6 @@ abstractMethodDeclaration ::=
 					primaryNoNewArray ::=
 							literal:l {: RESULT = new LiteralExprNode(l); RESULT.setPos(lleft,lright); :}
 						|	THIS:t {: RESULT = new ThisExprNode(null); RESULT.setPos(tleft,tright); :}
-						|	keyofExpression:k {: RESULT = k; :}
 						|	LPAREN:l expression:e RPAREN:r {: RESULT = new ParenthesisExprNode(e); RESULT.setPos(lleft,rright); :}
 						|	classInstanceCreationExpression:e {: RESULT = e; :}
 						|	fieldAccess:e {: RESULT = e; :}
@@ -987,9 +974,6 @@ abstractMethodDeclaration ::=
 						|	name:n DOT CLASS:r {: RESULT = new MetaClassExprNode(ParserHelper.getExpressionType(n,null)); RESULT.setPos(nleft,rright); :}
 						|	name:n DOT THIS:r {: RESULT = new ThisExprNode(n); RESULT.setPos(nleft,rright); :}
 						;
-						//Keyof expression:
-					keyofExpression ::= KEYOF:l LT type:t GT:r {: RESULT = new KeyOfExprNode(t); RESULT.setPos(lleft,rright); :}
-							;
 					classInstanceCreationExpression ::=
 							NEW:l classType:t LPAREN argumentListOpt:a RPAREN:r {: RESULT = new NewExprNode(t,a,null); RESULT.setPos(lleft,rright); :}
 						|	NEW:l classType:t LPAREN argumentListOpt:a RPAREN classBody:b {: RESULT = new NewExprNode(t,a,b); RESULT.setPos(lleft,bright); :}

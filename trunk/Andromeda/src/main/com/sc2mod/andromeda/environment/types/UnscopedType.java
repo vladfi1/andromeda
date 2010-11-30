@@ -1,6 +1,5 @@
 package com.sc2mod.andromeda.environment.types;
 
-import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.impl.TypeImpl;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;

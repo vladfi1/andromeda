@@ -9,9 +9,7 @@
  */
 package com.sc2mod.andromeda.problems;
 
-import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.framework.Source;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public interface SourceLocation {
 	

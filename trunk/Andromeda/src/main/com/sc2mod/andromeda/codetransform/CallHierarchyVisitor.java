@@ -9,15 +9,12 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.access.Invocation;
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.parsing.InclusionType;
@@ -28,8 +25,8 @@ import com.sc2mod.andromeda.syntaxNodes.ExplicitConsCallStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ForEachStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
-import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.VarAssignDeclNode;
 
 public class CallHierarchyVisitor extends TransformationVisitor {

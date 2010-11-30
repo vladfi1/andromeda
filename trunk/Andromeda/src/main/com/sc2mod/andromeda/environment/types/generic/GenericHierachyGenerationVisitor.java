@@ -1,9 +1,5 @@
 package com.sc2mod.andromeda.environment.types.generic;
 
-import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
-import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;

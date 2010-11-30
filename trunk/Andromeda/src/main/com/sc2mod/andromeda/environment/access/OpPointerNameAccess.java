@@ -11,17 +11,12 @@ package com.sc2mod.andromeda.environment.access;
 
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
-import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.variables.ImplicitFieldDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
-import com.sc2mod.andromeda.vm.data.DataObject;
-import com.sc2mod.andromeda.vm.data.FuncNameObject;
 
 public class OpPointerNameAccess extends NameAccess{
 

@@ -9,7 +9,6 @@
  */
 package com.sc2mod.andromeda.environment;
 
-import java.lang.reflect.Type;
 import java.util.Iterator;
 
 import com.sc2mod.andromeda.environment.types.IType;

@@ -15,15 +15,12 @@ import java.util.List;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
-import com.sc2mod.andromeda.environment.types.IExtension;
-import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Language;
 import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeAliasDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitor;
 import com.sc2mod.andromeda.util.Pair;
 
 /**

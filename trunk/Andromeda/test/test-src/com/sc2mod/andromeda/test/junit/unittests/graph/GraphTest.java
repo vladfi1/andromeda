@@ -1,8 +1,8 @@
 package com.sc2mod.andromeda.test.junit.unittests.graph;
 
-import java.util.List;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -12,8 +12,6 @@ import com.sc2mod.andromeda.util.graph.Graph;
 import com.sc2mod.andromeda.util.graph.GraphNode;
 import com.sc2mod.andromeda.util.graph.GraphNodeSet;
 import com.sc2mod.andromeda.util.graph.Tarjan;
-
-import static org.junit.Assert.fail;
 
 public class GraphTest{
 

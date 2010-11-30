@@ -9,33 +9,19 @@
  */
 package com.sc2mod.andromeda.environment.operations;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.variables.ParamDecl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 
 public class Constructor extends Method {
 
 	private ConstructorInvocation invokedConstructor;
-	
-	//public static final List<ParamDecl> IMPLICIT_CONSTRUCTOR_PARAMS = new LinkedList<ParamDecl>();
-	
-//	static{
-//		IMPLICIT_CONSTRUCTOR_PARAMS.add(new ParamDecl(null, BasicType.INT, new IdentifierNode("A__cid")));
-//	}
-	
+		
 	public ConstructorInvocation getInvokedConstructor() {
 		return invokedConstructor;
 	}
@@ -47,21 +33,7 @@ public class Constructor extends Method {
 	public Constructor(MethodDeclNode functionDeclaration, IClass clazz, IScope scope, Environment env) {
 		super(functionDeclaration,clazz, scope, env);
 	}
-	
-	@Override
-	public void setAbstract() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getHeader().getModifiers())
-					.details("Constructors","abstract")
-					.raiseUnrecoverable();
-	}
-	
-	@Override
-	public void setStatic() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getHeader().getModifiers())
-					.details("Constructors","static")
-					.raiseUnrecoverable();
-	}
-	
+		
 	public OperationType getOperationType(){
 		return OperationType.CONSTRUCTOR;
 	}

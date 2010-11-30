@@ -11,29 +11,15 @@ package com.sc2mod.andromeda.environment.types;
 
 
 
-import java.util.HashSet;
-
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-
-/**
- * Enrichments are no real type, but they nevertheless extend
- * Record type because they share much stuff with it.
- * (Having methods, members, modifiers,...)
- * @author gex
- *
- */
 import com.sc2mod.andromeda.environment.IDefined;
 import com.sc2mod.andromeda.environment.scopes.BlockScope;
-import com.sc2mod.andromeda.environment.scopes.FileScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
 
 public class Enrichment extends BlockScope implements IDefined {
 

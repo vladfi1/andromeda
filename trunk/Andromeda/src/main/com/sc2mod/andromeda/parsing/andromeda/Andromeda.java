@@ -11,21 +11,14 @@ import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.parser.cup.factory.CupFactory;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
 import com.sc2mod.andromeda.parsing.Language;
-import com.sc2mod.andromeda.parsing.SourceManager;
-import com.sc2mod.andromeda.parsing.FileSource;
-import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.LanguageImpl;
-import com.sc2mod.andromeda.parsing.framework.IParser;
 import com.sc2mod.andromeda.parsing.framework.ParserFactory;
 import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.program.FileCollector;
 import com.sc2mod.andromeda.semAnalysis.Analyser;
-import com.sc2mod.andromeda.semAnalysis.StatementAnalysisVisitor;
-import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitor;
 import com.sc2mod.andromeda.util.Files;
-import com.sc2mod.andromeda.util.StopWatch;
 
 public class Andromeda extends LanguageImpl{
 

@@ -5,8 +5,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-import com.sc2mod.andromeda.parsing.StringBufferWriter;
-
 public class Debug {
 
 	

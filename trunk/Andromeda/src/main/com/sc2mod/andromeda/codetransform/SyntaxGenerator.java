@@ -9,21 +9,16 @@
  */
 package com.sc2mod.andromeda.codetransform;
 
-import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.access.AccessorAccess;
 import com.sc2mod.andromeda.environment.access.Invocation;
 import com.sc2mod.andromeda.environment.access.InvocationType;
 import com.sc2mod.andromeda.environment.access.NameAccess;
-import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
-import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.Variable;
-import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.semAnalysis.LoopSemantics;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.AssignOpSE;
@@ -56,10 +51,6 @@ import com.sc2mod.andromeda.syntaxNodes.UnOpSE;
 import com.sc2mod.andromeda.syntaxNodes.VarAssignDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.WhileStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.util.NoParamVisitor;
-import com.sc2mod.andromeda.syntaxNodes.util.NoResultVisitor;
-import com.sc2mod.andromeda.syntaxNodes.util.Visitor;
-import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitor;
 import com.sc2mod.andromeda.vm.data.BoolObject;
 import com.sc2mod.andromeda.vm.data.FixedObject;
 import com.sc2mod.andromeda.vm.data.IntObject;

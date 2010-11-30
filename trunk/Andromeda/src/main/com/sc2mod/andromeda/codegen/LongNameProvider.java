@@ -9,7 +9,6 @@
  */
 package com.sc2mod.andromeda.codegen;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 import com.sc2mod.andromeda.environment.Environment;
@@ -150,7 +149,7 @@ public class LongNameProvider implements INameProvider {
 	@Override
 	public String getFieldName(FieldDecl decl, IType clazz) {
 		StringBuilder b = new StringBuilder(24);
-		if(decl.isStatic()){
+		if(decl.isStaticElement()){
 			b.append("s_");
 			b.append(clazz.getUid());		
 			b.append("__");

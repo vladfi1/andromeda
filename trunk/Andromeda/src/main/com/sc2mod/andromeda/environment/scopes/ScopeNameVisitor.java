@@ -1,7 +1,6 @@
 package com.sc2mod.andromeda.environment.scopes;
 
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitorAdapter;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitorAdapter;
 
 public class ScopeNameVisitor extends ParameterSemanticsVisitorAdapter<Void, String> {
 

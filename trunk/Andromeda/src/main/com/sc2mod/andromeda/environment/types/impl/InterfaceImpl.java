@@ -19,12 +19,9 @@ import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
-import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
 
 public class InterfaceImpl extends ReferentialTypeImpl implements IInterface {
@@ -39,7 +36,6 @@ public class InterfaceImpl extends ReferentialTypeImpl implements IInterface {
 	
 	public InterfaceImpl(InterfaceDeclNode declaration, IScope scope, Environment env) {
 		super(declaration,scope,env);
-		super.setAbstract();
 		this.declaration = declaration;
 	}
 	
@@ -66,27 +62,17 @@ public class InterfaceImpl extends ReferentialTypeImpl implements IInterface {
 		return tableIndex;
 	}
 
-
-
 	@Override
 	public String getDescription() {
 		return "interface";
 	}
-
 
 	
 	@Override
 	public TypeCategory getCategory() {
 		return TypeCategory.INTERFACE;
 	}
-	
-	@Override
-	public void setAbstract() {
-		throw Problem.ofType(ProblemId.INVALID_MODIFIER).at(this.declaration.getModifiers())
-					.details("Interfaces","abstract")
-					.raiseUnrecoverable();
-	}
-	
+
 	@Override
 	public boolean canHaveFields() {
 		return false;

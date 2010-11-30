@@ -11,9 +11,7 @@ package com.sc2mod.andromeda.codetransform;
 
 import java.util.ArrayList;
 
-import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.semAnalysis.ForeachSemantics;
 import com.sc2mod.andromeda.semAnalysis.LoopSemantics;
@@ -21,12 +19,10 @@ import com.sc2mod.andromeda.syntaxNodes.AssignOpSE;
 import com.sc2mod.andromeda.syntaxNodes.BlockStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.DoWhileStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
-import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ForEachStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.ForStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtNode;
 import com.sc2mod.andromeda.syntaxNodes.WhileStmtNode;
 

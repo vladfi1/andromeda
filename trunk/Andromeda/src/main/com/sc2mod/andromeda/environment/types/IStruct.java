@@ -9,24 +9,7 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-import java.util.HashSet;
-
-import com.sc2mod.andromeda.parsing.SourceManager;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
-
-import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.IScopedElement;
-import com.sc2mod.andromeda.environment.types.generic.GenericStructInstance;
-import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 
 public interface IStruct extends IRecordType {
 	

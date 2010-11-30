@@ -9,13 +9,10 @@
  */
 package com.sc2mod.andromeda.vm.data;
 
-import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.IType;
+import com.sc2mod.andromeda.environment.types.RuntimeType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
-import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
-import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
 
 public class IntObject extends DataObject {

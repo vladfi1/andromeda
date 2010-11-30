@@ -24,7 +24,6 @@ import javax.swing.tree.TreePath;
 
 import com.sc2mod.andromeda.gui.forms.ScriptChoosePanel;
 import com.sc2mod.andromeda.gui.forms.ScriptInfoParser;
-import com.sc2mod.andromeda.gui.forms.ScriptInfoParser.InfoParseResult;
 import com.sc2mod.andromeda.gui.forms.filetree.FileTree.FileTreeNode;
 import com.sc2mod.andromeda.gui.jobs.JobExecMap;
 import com.sc2mod.andromeda.program.Program;

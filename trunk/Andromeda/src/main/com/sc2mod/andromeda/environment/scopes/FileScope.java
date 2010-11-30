@@ -9,13 +9,12 @@
  */
 package com.sc2mod.andromeda.environment.scopes;
 
-import com.sc2mod.andromeda.parsing.InclusionType;
-
 import com.sc2mod.andromeda.environment.scopes.content.NonInheritanceContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.parsing.InclusionType;
 
 public class FileScope extends ScopeImpl {
 

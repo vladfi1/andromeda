@@ -9,16 +9,6 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-import java.util.ArrayList;
-
-import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
 
 public interface IInterface extends IReferentialType {

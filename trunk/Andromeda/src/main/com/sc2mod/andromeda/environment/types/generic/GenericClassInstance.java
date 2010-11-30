@@ -11,9 +11,6 @@ package com.sc2mod.andromeda.environment.types.generic;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.classes.ClassNameProvider;
 import com.sc2mod.andromeda.classes.VirtualCallTable;
@@ -25,19 +22,13 @@ import com.sc2mod.andromeda.environment.scopes.content.MethodSet;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
-import com.sc2mod.andromeda.environment.types.INamedType;
-import com.sc2mod.andromeda.environment.types.IRecordType;
-import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
-import com.sc2mod.andromeda.util.Debug;
 
 public class GenericClassInstance extends GenericTypeInstance implements IClass {
 

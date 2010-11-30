@@ -124,10 +124,10 @@ public class StructureXMLVisitor extends VoidVisitorAdapter{
 		writer.writeAttribute("name", c.getName());
 		writePosition(classDeclaration);
 		writer.writeAttribute("visibility", c.getVisibility().getName());
-		if(c.isStatic()){
+		if(c.getModifiers().isStatic()){
 			writer.writeAttribute("static", "true");
 		}
-		if(c.isFinal()){
+		if(c.getModifiers().isFinal()){
 			writer.writeAttribute("final", "true");
 		}
 		if(c.getSuperClass()!=null){
@@ -195,18 +195,18 @@ public class StructureXMLVisitor extends VoidVisitorAdapter{
 		
 		
 		if(inRecord){
-			if(f.isFinal()){
+			if(f.getModifiers().isFinal()){
 				writer.writeAttribute("final", "true");
 			}
-			if(f.isAbstract()){
+			if(f.getModifiers().isAbstract()){
 				writer.writeAttribute("abstract", "true");
 			}
-			if(f.isStatic()){
+			if(f.getModifiers().isStatic()){
 				writer.writeAttribute("static", "true");
 			}
 				
 		} else {
-			if(f.isNative()){
+			if(f.getModifiers().isNative()){
 				writer.writeAttribute("native", "true");
 			}
 				
@@ -215,7 +215,7 @@ public class StructureXMLVisitor extends VoidVisitorAdapter{
 		if(f.isInline()){
 			writer.writeAttribute("inline", "true");
 		}
-		if(f.isOverride()){
+		if(f.getModifiers().isOverride()){
 			writer.writeAttribute("override", "true");
 		}
 		writer.writeAttribute("signature", f.getSignature().toString());
@@ -258,11 +258,11 @@ public class StructureXMLVisitor extends VoidVisitorAdapter{
 			writer.writeAttribute("type", fd.getType().getUid());
 			writer.writeAttribute("visibility", fd.getVisibility().getName());
 			
-			if(fd.isConst()){
+			if(fd.getModifiers().isConst()){
 				writer.writeAttribute("const","true");
 				writer.writeAttribute("value", fd.getValue().toString());
 			}
-			if(fd.isStatic()){
+			if(fd.getModifiers().isStatic()){
 				writer.writeAttribute("static", "true");
 			}
 		}

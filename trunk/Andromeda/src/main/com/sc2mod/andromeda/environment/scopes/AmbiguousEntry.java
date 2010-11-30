@@ -24,7 +24,7 @@ public class AmbiguousEntry implements IScopedElement{
 	}
 
 	@Override
-	public boolean isStatic() {
+	public boolean isStaticElement() {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}

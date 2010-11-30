@@ -1,9 +1,11 @@
 package com.sc2mod.andromeda.test.junit.suites;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import com.sc2mod.andromeda.test.junit.unittests.ExampleTest;
 import com.sc2mod.andromeda.test.junit.unittests.accessors.AccessorProblems;
 import com.sc2mod.andromeda.test.junit.unittests.classes.ClassProblems;
 import com.sc2mod.andromeda.test.junit.unittests.extensions.ExtensionTests;
@@ -17,9 +19,6 @@ import com.sc2mod.andromeda.test.junit.unittests.structs.StructProblems;
 import com.sc2mod.andromeda.test.junit.unittests.syntax.SyntaxProblems;
 import com.sc2mod.andromeda.test.junit.unittests.types.TypeErrors;
 import com.sc2mod.andromeda.test.junit.unittests.visibility.VisibilityProblems;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 
 @RunWith(Suite.class)

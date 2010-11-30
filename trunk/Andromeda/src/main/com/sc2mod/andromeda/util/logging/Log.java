@@ -1,12 +1,7 @@
 package com.sc2mod.andromeda.util.logging;
 
-import java.util.List;
-
-import com.sc2mod.andromeda.problems.Message;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.program.Program;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import static com.sc2mod.andromeda.util.logging.LogFormat.*;
 
 public class Log {
 

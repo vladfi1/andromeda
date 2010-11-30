@@ -10,45 +10,14 @@
 package com.sc2mod.andromeda.environment.types;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 import com.sc2mod.andromeda.classes.ClassNameProvider;
 import com.sc2mod.andromeda.classes.VirtualCallTable;
-import com.sc2mod.andromeda.classes.indexSys.IndexClassNameProvider;
-import com.sc2mod.andromeda.environment.Annotations;
-import com.sc2mod.andromeda.environment.IIdentifiable;
-import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.parsing.SourceManager;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.TypeListNode;
-import com.sc2mod.andromeda.syntaxNodes.TypeParamListNode;
-
-import com.sc2mod.andromeda.environment.operations.Destructor;
-import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Constructor;
-import com.sc2mod.andromeda.environment.operations.Deallocator;
-import com.sc2mod.andromeda.environment.scopes.FileScope;
-import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.scopes.content.MethodSet;
+import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
-import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
-import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
-import com.sc2mod.andromeda.environment.variables.FieldDecl;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.variables.Variable;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
-
-import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
+import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
 
 public interface IClass extends IReferentialType {
 	

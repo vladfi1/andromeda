@@ -2,12 +2,10 @@ package com.sc2mod.andromeda.environment.types.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import com.sc2mod.andromeda.classes.ClassNameProvider;
 import com.sc2mod.andromeda.classes.VirtualCallTable;
 import com.sc2mod.andromeda.classes.indexSys.IndexClassNameProvider;
-import com.sc2mod.andromeda.environment.Annotations;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Constructor;
@@ -20,10 +18,7 @@ import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
-import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.generic.GenericClassInstance;
-import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -31,7 +26,6 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.TypeParamListNode;
 
 public class ClassImpl extends ReferentialTypeImpl implements IClass{
 
@@ -88,11 +82,6 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	 */
 	private VirtualCallTable virtualCallTable;
 
-	// Modifiers for classes
-	private boolean isStatic;
-	private boolean isFinal;
-	private boolean isAbstract;
-
 	private String metaClassName;
 
 	
@@ -134,16 +123,12 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 			this.destructor = destructor;
 		}
 	}
-	
-	@Override
-	public void setStatic() {
-		isStatic = true;
-	}
-	
-	@Override
-	public boolean isStatic() {
-		return isStatic;
-	}
+		
+	//FIXME CLass static checks, since all classes are now considered static
+//	@Override
+//	public boolean isStatic() {
+//		return isStatic;
+//	}
 	
 	@Override
 	public VirtualCallTable getVirtualCallTable() {
@@ -330,27 +315,7 @@ public class ClassImpl extends ReferentialTypeImpl implements IClass{
 	public boolean hasConstructors() {
 		return !constructors.isEmpty();
 	}
-
-	@Override
-	public boolean isFinal() {
-		return isFinal;
-	}
 	
-	@Override
-	public void setFinal() {
-		this.isFinal = true;
-	}
-	
-	@Override
-	public boolean isAbstract() {
-		return isAbstract;
-	}
-
-	@Override
-	public void setAbstract() {
-		this.isAbstract = true;
-	}
-
 	@Override
 	public INamedType createGenericInstance(Signature s) {
 		return new GenericClassInstance(this, s, tprov);

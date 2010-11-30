@@ -9,25 +9,10 @@
  */
 package com.sc2mod.andromeda.environment;
 
-import com.sc2mod.andromeda.environment.scopes.Visibility;
 
 public interface IModifiable {
+	
+	ModifierSet getModifiers();
 
-	void setVisibility(Visibility visibility);
-	void setConst();
-	void setAbstract();
-	void setFinal();
-	void setStatic();
-	void setNative();
-	void setOverride();
-	
-	public Visibility getVisibility();
-	public boolean isConst();
-	public boolean isAbstract();
-	public boolean isFinal();
-	public boolean isStatic();
-	public boolean isNative();
-	public boolean isOverride();
-	
 	
 }

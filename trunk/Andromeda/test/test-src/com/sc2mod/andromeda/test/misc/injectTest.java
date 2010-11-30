@@ -14,11 +14,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 
-import com.sc2mod.andromeda.program.MapRunner;
-import com.sc2mod.andromeda.program.Platform;
-
 import mopaqlib.MoPaQ;
 import mopaqlib.MoPaQException;
+
+import com.sc2mod.andromeda.program.MapRunner;
+import com.sc2mod.andromeda.program.Platform;
 
 public class injectTest {
 

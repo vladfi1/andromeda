@@ -1,7 +1,6 @@
 package com.sc2mod.andromeda.parsing.phases;
 
 import com.sc2mod.andromeda.codetransform.CallHierarchyVisitor;
-import com.sc2mod.andromeda.codetransform.UnusedFinder;
 import com.sc2mod.andromeda.codetransform.VirtualCallResolver;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;

@@ -13,9 +13,7 @@ import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
-import com.sc2mod.andromeda.environment.types.IStruct;
 import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
@@ -53,7 +51,7 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	@Override
 	public void visit(FieldDecl fieldDecl) {
 		IType t = fieldDecl.getContainingType();
-		if(t != null && !fieldDecl.isStatic()){
+		if(t != null && !fieldDecl.isStaticElement()){
 			switch(t.getCategory()){
 			case CLASS:
 			case STRUCT:
@@ -75,8 +73,8 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	
 	@Override
 	public void visit(Function function) {
-		if(function.isNative()){
-			if(function.isFinal()) 
+		if(function.getModifiers().isNative()){
+			if(function.getModifiers().isFinal()) 
 				throw Problem.ofType(ProblemId.NATIVE_FUNCTION_FINAL).at(function.getHeader().getModifiers())
 							.raiseUnrecoverable();
 			if(function.hasBody())
@@ -90,26 +88,26 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 		IType containingType = method.getContainingType();
 		if(!method.hasBody()) {
 			if(containingType instanceof IInterface) {
-				if(method.isAbstract()) {
+				if(method.getModifiers().isAbstract()) {
 					throw Problem.ofType(ProblemId.ABSTRACT_INTERFACE_METHOD).at(method.getHeader())
 								.raiseUnrecoverable();
 				}
 			} else
-			if(!method.isAbstract()) {
+			if(!method.getModifiers().isAbstract()) {
 				throw Problem.ofType(ProblemId.NON_ABSTRACT_METHOD_WITHOUT_BODY).at(method.getHeader())
 								.raiseUnrecoverable();
 			}
 		} else {
-			if(method.isAbstract()) {
+			if(method.getModifiers().isAbstract()) {
 				throw Problem.ofType(ProblemId.ABSTRACT_METHOD_WITH_BODY).at(method.getHeader())
 								.raiseUnrecoverable();
 			}
 		}
-		if(method.isStatic()) {
-			if(method.isFinal()) 
+		if(method.isStaticElement()) {
+			if(method.getModifiers().isFinal()) 
 				throw Problem.ofType(ProblemId.STATIC_METHOD_FINAL).at(method.getHeader().getModifiers())
 						.raiseUnrecoverable();
-			if(method.isAbstract())
+			if(method.getModifiers().isAbstract())
 				throw Problem.ofType(ProblemId.STATIC_METHOD_ABSTRACT).at(method.getHeader().getModifiers())
 						.raiseUnrecoverable();
 			if(!method.hasBody())
@@ -154,15 +152,15 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	public void visit(ClassImpl class1) {
 		checkImplicitConstructor(class1);
 		
-		if(class1.isStatic())
+		if(class1.isStaticElement())
 			checkStaticClass(class1);
 		
 		classScopeChecks(class1);
 	}
 	
 	private void classScopeChecks(ClassImpl clazz){
-		boolean staticClass = clazz.isStatic();
-		boolean nonAbstract = !clazz.isAbstract();
+		boolean staticClass = clazz.isStaticElement();
+		boolean nonAbstract = !clazz.getModifiers().isAbstract();
 		ScopeContentSet content = clazz.getContent();
 		for(IScopedElement elem : clazz.getContent().iterateDeep(true, false,false)){
 			switch(elem.getElementType()){
@@ -170,13 +168,13 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 				Operation op = (Operation) elem;
 				
 				//check that override methods do override
-				if(op.isOverride() && op.getOverrideInformation().getOverridenMethod() == null){
+				if(op.getModifiers().isOverride() && op.getOverrideInformation().getOverridenMethod() == null){
 					throw Problem.ofType(ProblemId.OVERRIDE_DECL_DOES_NOT_OVERRIDE).at(op.getDefinition())
 						.raiseUnrecoverable();
 				}
 				
 				//check that a non abstract class has no abstract members
-				if(nonAbstract && op.isAbstract()){
+				if(nonAbstract && op.getModifiers().isAbstract()){
 					if(content.isElementInherited(op)){
 
 						throw Problem.ofType(ProblemId.NON_ABSTRACT_CLASS_MISSES_IMPLEMENTATIONS)
@@ -195,7 +193,7 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 				
 				//check that static classes contain only static members
 				if(staticClass){
-					if(!elem.isStatic()){
+					if(!elem.isStaticElement()){
 						throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_NON_STATIC_MEMBER)
 							.at(elem.getDefinition())
 							.raiseUnrecoverable();

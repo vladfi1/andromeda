@@ -17,7 +17,6 @@ import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
 import com.sc2mod.andromeda.syntaxNodes.CastExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
-import com.sc2mod.andromeda.syntaxNodes.KeyOfExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
@@ -78,8 +77,6 @@ public class TransformationExprVisitor extends VoidVisitorErrorAdapater {
 	public void visit(LiteralExprNode literalExpression) {}
 	@Override
 	public void visit(ThisExprNode thisExpression) {}
-	@Override
-	public void visit(KeyOfExprNode keyOfExpression) {}
 
 	@Override
 	public void visit(FieldAccessExprNode fieldAccess) {

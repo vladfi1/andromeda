@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
@@ -16,8 +15,6 @@ import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.generic.GenericTypeInstance;
 import com.sc2mod.andromeda.environment.types.generic.GenericUtil;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class GenericContentSet extends InheritableContentSet {

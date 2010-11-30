@@ -9,7 +9,6 @@
  */
 package com.sc2mod.andromeda.codegen.buffers;
 
-import com.sc2mod.andromeda.codegen.CodeGenerator;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
 

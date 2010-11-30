@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import com.sc2mod.andromeda.gui.forms.MainFrame;
-import com.sc2mod.andromeda.gui.jobs.JobHandler;
 import com.sc2mod.andromeda.program.Program;
 
 public class GUIController {

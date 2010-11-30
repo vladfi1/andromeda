@@ -12,10 +12,6 @@ package com.sc2mod.andromeda.parsing.options;
 import java.io.File;
 import java.util.EnumMap;
 
-import com.sc2mod.andromeda.parsing.FileSource;
-import com.sc2mod.andromeda.program.Program;
-import com.sc2mod.andromeda.util.Files;
-
 public class Configuration {
 	
 	private EnumMap<Parameter, Object> params = new EnumMap<Parameter, Object>(Parameter.class);

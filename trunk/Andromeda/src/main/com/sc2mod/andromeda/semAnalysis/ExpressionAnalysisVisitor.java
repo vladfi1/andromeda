@@ -4,33 +4,25 @@ import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.AccessorAccess;
 import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.access.Invocation;
-import com.sc2mod.andromeda.environment.access.InvocationType;
 import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.access.VarAccess;
-import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;
-import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.IScopedElement;
+import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.scopes.content.NameResolver;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
-import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.types.casting.CastUtil;
-import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.variables.VarType;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
-import com.sc2mod.andromeda.syntaxNodes.ArrayCreationExprNode;
-import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.AssignmentExprNode;
 import com.sc2mod.andromeda.syntaxNodes.BinOpExprNode;
 import com.sc2mod.andromeda.syntaxNodes.CastExprNode;
@@ -39,7 +31,6 @@ import com.sc2mod.andromeda.syntaxNodes.ExprListNode;
 import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.InstanceofExprNode;
-import com.sc2mod.andromeda.syntaxNodes.KeyOfExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralExprNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralNode;
 import com.sc2mod.andromeda.syntaxNodes.LiteralTypeSE;
@@ -50,7 +41,6 @@ import com.sc2mod.andromeda.syntaxNodes.NewExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ParenthesisExprNode;
 import com.sc2mod.andromeda.syntaxNodes.SpecialInvocationSE;
 import com.sc2mod.andromeda.syntaxNodes.SuperExprNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.ThisExprNode;
 import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
 import com.sc2mod.andromeda.util.visitors.VoidResultErrorVisitor;
@@ -71,12 +61,6 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		this.exprResolver = new ExpressionAnalyzer(new ConstantResolveVisitor(), parent.typeProvider);
 	}
 	//************** EXPRESSIONS (infere types, do local var stuff, resolve invocations and field accesses) **************
-	
-	
-//	@Override
-//	public void visit(ArrayTypeNode arrayType, ExpressionContext context) {
-//		arrayType.getDimension().accept(this,ExpressionContext.DEFAULT);
-//	}
 	
 	@Override
 	public void visit(AssignmentExprNode assignment, ExpressionContext context) {	
@@ -237,11 +221,6 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	}
 	
 	@Override
-	public void visit(ArrayCreationExprNode arrayCreationExpression, ExpressionContext context) {
-		throw new InternalProgramError(arrayCreationExpression,"Array creation is not yet possible!");
-	}
-	
-	@Override
 	public void visit(NewExprNode c, ExpressionContext context) {
 		c.getArguments().accept(this,ExpressionContext.DEFAULT);
 		IType t;
@@ -333,7 +312,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 			
 			//Is it const?
 			Variable vd = ((VarAccess)elem).getAccessedElement();
-			if(vd.isConst()){
+			if(vd.getModifiers().isConst()){
 				where.setConstant(true);
 				where.accept(parent.constResolve);
 			}
@@ -345,10 +324,10 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 			if(parent.curField != null){
 				boolean possibleMisuse = false;
 				Variable curField = parent.curField;
-				if(!curField.isStatic()){
+				if(!curField.isStaticElement()){
 					//For non static fields, only test order if
 					//the accessed field is also non static
-					if(vd.isStatic())
+					if(vd.isStaticElement())
 						break;
 					
 					//Only error, if either simple name, or field access with this prefix
@@ -377,7 +356,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 					break;
 				if(curField.getDeclarationIndex()<=vd.getDeclarationIndex()){
 					if(curField.getDeclarationIndex()<vd.getDeclarationIndex()){
-						Problem.ofType(curField.isStatic() ? ProblemId.GLOBAL_VAR_ACCESS_BEFORE_DECL : ProblemId.FIELD_ACCESS_BEFORE_DECL).at(where)
+						Problem.ofType(curField.isStaticElement() ? ProblemId.GLOBAL_VAR_ACCESS_BEFORE_DECL : ProblemId.FIELD_ACCESS_BEFORE_DECL).at(where)
 							.raise();
 					} else {
 						Problem.ofType(ProblemId.VAR_ACCESS_IN_OWN_DECL).at(where)
@@ -518,16 +497,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		methodInvocation.setSemantics(inv);
 		methodInvocation.setInferedType(type);
 	}
-	
-
-	@Override
-	public void visit(KeyOfExprNode keyOfExpression, ExpressionContext context) {
-		IType t = parent.typeProvider.resolveType(keyOfExpression.getType(),parent.curScope);
-		keyOfExpression.setInferedType(t);
-		keyOfExpression.setConstant(true);
-		keyOfExpression.accept(parent.constResolve);
-	}
-	
+		
 	@Override
 	public void visit(InstanceofExprNode instanceofExpression, ExpressionContext context) {
 		throw new InternalProgramError(instanceofExpression,"Instanceof not implemented yet!");
@@ -548,9 +518,9 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		
 		boolean misuse = false;
 		if(parent.curField == null) {
-			misuse = parent.curOperation.isStatic();
+			misuse = parent.curOperation.isStaticElement();
 		} else {
-			misuse = parent.curField.isStatic();
+			misuse = parent.curField.isStaticElement();
 			
 		}
 		if(misuse)

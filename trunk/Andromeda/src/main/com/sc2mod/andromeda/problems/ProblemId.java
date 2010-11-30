@@ -4,8 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
-import com.sc2mod.andromeda.parsing.SourceManager;
-import com.sc2mod.andromeda.parsing.options.Configuration;
 
 public enum ProblemId {
 	
@@ -85,8 +83,6 @@ public enum ProblemId {
 	ANNOTATION_NOT_ALLOWED("The annotation '%s' is not allowed on this construct"),
 	DUPLICATE_ANNOTATION("Duplicate annotation '%s'"),
 	
-	KEYOF_USED_ON_NONKEY ("The keyof operator can only be used on key type extensions (extensions with the iskey modifier). The type %s is no key type."),
-	
 	//**** CLASSES & OTHER RECORDS ****
 	CLASS_EXTENDS_NON_CLASS("Classes may only extend other classes."),
 	CLASS_IMPLEMENTS_NON_INTERFACE("The types in an implements clause must be an interface."),
@@ -123,8 +119,6 @@ public enum ProblemId {
 	//**** TYPE EXTENSIONS & ENRICHMENTS ****
 	DISJOINT_EXTENSION_BASED_ON_EXTENSION("Disjoint type extensions cannot be based on other extensions, they must be based on native types."),
 	EXTENSION_TYPE_INVALID("The type %s cannot be extended. Only basic types and other extensions can."),
-	EXTENSION_OF_KEY_TYPE("Key types cannot be extended."),
-	INVALID_BASE_TYPE_FOR_KEY_TYPE("Only int and string are allowed to be used as base types for key types."),
 	
 	NATIVE_ENRICHMENT_HAS_FIELD("Only class enrichments can contain non-static fields"),
 	NATIVE_ENRICHMENT_METHOD_DECLARED_OVERRIDE("Methods of enrichments of native types cannot be declared 'override'"),

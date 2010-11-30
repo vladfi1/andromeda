@@ -3,26 +3,15 @@ package com.sc2mod.andromeda.parsing.phases;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-
-import mopaqlib.MoPaQ;
 
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
-import com.sc2mod.andromeda.parsing.CompilationResult;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.Language;
-import com.sc2mod.andromeda.parsing.LanguageImpl;
 import com.sc2mod.andromeda.parsing.ParserScheduler;
-import com.sc2mod.andromeda.parsing.TriggerExtractor;
 import com.sc2mod.andromeda.parsing.Workflow;
-import com.sc2mod.andromeda.parsing.framework.IParser;
 import com.sc2mod.andromeda.parsing.framework.Source;
-import com.sc2mod.andromeda.program.FileCollector;
-import com.sc2mod.andromeda.program.Program;
-import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 import com.sc2mod.andromeda.util.Pair;
-import com.sc2mod.andromeda.util.StopWatch;
 
 public class ParsePhase extends Phase {
 

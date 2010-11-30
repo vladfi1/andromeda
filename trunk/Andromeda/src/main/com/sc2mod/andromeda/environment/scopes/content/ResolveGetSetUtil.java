@@ -42,7 +42,7 @@ public final class ResolveGetSetUtil {
 			}
 			
 			//One of them is static
-			if(get.isStatic() ^ set.isStatic()){
+			if(get.isStaticElement() ^ set.isStaticElement()){
 				throw Problem.ofType(ProblemId.ACCESSOR_STATIC_NON_STATIC_GET_SET)
 					.at(where)
 					.raiseUnrecoverable();

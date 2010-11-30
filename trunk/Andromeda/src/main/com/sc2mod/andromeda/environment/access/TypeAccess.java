@@ -1,7 +1,6 @@
 package com.sc2mod.andromeda.environment.access;
 
 import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
@@ -31,7 +30,7 @@ public class TypeAccess extends NameAccess {
 
 	@Override
 	public boolean isStatic() {
-		return type.isStatic();
+		return type.isStaticElement();
 	}
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }

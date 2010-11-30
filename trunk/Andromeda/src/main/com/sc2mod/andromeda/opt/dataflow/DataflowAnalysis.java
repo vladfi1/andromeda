@@ -1,8 +1,5 @@
 package com.sc2mod.andromeda.opt.dataflow;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Abstract super class for any type of dataflow analysis using kill and gen sets.

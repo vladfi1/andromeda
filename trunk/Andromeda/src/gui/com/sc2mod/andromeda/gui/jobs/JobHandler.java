@@ -13,7 +13,6 @@ import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
-
 import com.sc2mod.andromeda.program.Program;
 
 

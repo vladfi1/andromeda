@@ -9,7 +9,6 @@ import com.sc2mod.andromeda.parsing.framework.IParserInterface;
 import com.sc2mod.andromeda.parsing.framework.Source;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
-import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceListNode;
 
 public class CompilationEnvironment {

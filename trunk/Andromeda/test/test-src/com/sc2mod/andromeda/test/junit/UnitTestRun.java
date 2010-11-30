@@ -1,6 +1,7 @@
 package com.sc2mod.andromeda.test.junit;
 
 import java.io.File;
+
 import org.junit.Assert;
 
 public class UnitTestRun {

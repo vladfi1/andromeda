@@ -9,23 +9,6 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-
-import com.sc2mod.andromeda.environment.IGlobal;
-import com.sc2mod.andromeda.environment.IModifiable;
-import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.ModifierUtil;
-import com.sc2mod.andromeda.environment.annotations.IAnnotatable;
-import com.sc2mod.andromeda.environment.scopes.IScope;
-import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
-import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
-import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 
 /**
  * A class or interface.

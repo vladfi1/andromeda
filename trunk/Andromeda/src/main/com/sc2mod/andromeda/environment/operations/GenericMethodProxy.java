@@ -1,10 +1,9 @@
 package com.sc2mod.andromeda.environment.operations;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
+import com.sc2mod.andromeda.environment.ModifierSet;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.annotations.AnnotationSet;
@@ -18,7 +17,6 @@ import com.sc2mod.andromeda.environment.variables.ParamDecl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
@@ -88,29 +86,8 @@ public class GenericMethodProxy extends Operation {
 	}
 
 	@Override
-	public boolean isAbstract() {
-		return method.isAbstract();
-	}
-
-	@Override
-	public boolean isStatic() {
-		return method.isStatic();
-	}
-
-	@Override
-	public void setAbstract() {
-		method.setAbstract();
-	}
-
-	@Override
-	public void setNative() {
-		method.setNative();
-	}
-
-	@Override
-	public void setStatic() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
+	public boolean isStaticElement() {
+		return method.isStaticElement();
 	}
 
 	@Override
@@ -202,35 +179,7 @@ public class GenericMethodProxy extends Operation {
 	}
 
 	@Override
-	public boolean isConst() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
 	public boolean isCreateCode() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public boolean isFinal() {
-		return method.isFinal();
-	}
-
-
-	@Override
-	public boolean isNative() {
-		return method.isNative();
-	}
-
-	@Override
-	public boolean isOverride() {
-		return method.isOverride();
-	}
-
-	@Override
-	public void setConst() {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
@@ -238,12 +187,6 @@ public class GenericMethodProxy extends Operation {
 	@Override
 	public void setCreateCode(boolean createCode) {
 		method.setCreateCode(createCode);
-	}
-
-	@Override
-	public void setFinal() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
 	}
 
 	@Override
@@ -271,23 +214,11 @@ public class GenericMethodProxy extends Operation {
 	}
 
 	@Override
-	public void setOverride() {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
 	public void setReturnType(IType returnType) {
 		// TODO Auto-generated method stub
 		throw new Error("Not implemented!");
 	}
 
-	@Override
-	public void setVisibility(Visibility visibility) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-	
 	@Override
 	public String getElementTypeName() {
 		return method.getElementTypeName();
@@ -314,4 +245,9 @@ public class GenericMethodProxy extends Operation {
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	@Override
+	public ModifierSet getModifiers() {
+		return method.getModifiers();
+	}
 }

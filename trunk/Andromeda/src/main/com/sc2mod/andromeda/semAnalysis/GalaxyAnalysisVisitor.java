@@ -3,8 +3,6 @@ package com.sc2mod.andromeda.semAnalysis;
 import java.util.HashMap;
 
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.environment.SemanticsElement;
-import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.Invocation;
 import com.sc2mod.andromeda.environment.access.NameAccess;
 import com.sc2mod.andromeda.environment.operations.Operation;
@@ -13,7 +11,6 @@ import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
-import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.VarType;
 import com.sc2mod.andromeda.environment.variables.Variable;
@@ -26,7 +23,6 @@ import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.FieldAccessExprNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.LocalVarDeclStmtNode;
-import com.sc2mod.andromeda.syntaxNodes.MemberDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodInvocationExprNode;
 import com.sc2mod.andromeda.syntaxNodes.NameExprNode;
@@ -36,7 +32,6 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeAliasDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeNode;
 import com.sc2mod.andromeda.util.visitors.TraceScopeScanVisitor;
-import com.sc2mod.andromeda.util.visitors.VoidTreeScanVisitor;
 
 public class GalaxyAnalysisVisitor extends TraceScopeScanVisitor implements Analyser {
 

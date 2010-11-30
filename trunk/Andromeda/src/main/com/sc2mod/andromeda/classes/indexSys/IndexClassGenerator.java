@@ -22,21 +22,15 @@ import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
-import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.Function;
-import com.sc2mod.andromeda.environment.scopes.UsageType;
-import com.sc2mod.andromeda.environment.scopes.Visibility;
+import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.AndromedaSystemTypes;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
-import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.environment.types.basic.SpecialType;
-import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
@@ -112,7 +106,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	private void generateClass(IClass c){
 		
 		
-		if(!c.isStatic()){
+		if(!c.isStaticElement()){
 			if(c.isTopType()){
 
 				
@@ -183,7 +177,7 @@ public class IndexClassGenerator extends ClassGenerator {
 				buffer.nl();
 				Operation m = vct.get(i);
 				generateFieldAccess(buffer,memoryName,classLocal).append(vctName).append("[").append(i).append("]");
-				if(m.isAbstract()){
+				if(m.getModifiers().isAbstract()){
 					buffer.append("=").append(-1).append(";");
 				} else {
 					buffer.append("=").append(m.getOverrideInformation().getVirtualCallIndex()).append(";");

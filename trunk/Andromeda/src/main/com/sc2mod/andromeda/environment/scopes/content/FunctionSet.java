@@ -1,6 +1,5 @@
 package com.sc2mod.andromeda.environment.scopes.content;
 
-import com.sc2mod.andromeda.environment.operations.Function;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.IScope;
@@ -31,13 +30,13 @@ public class FunctionSet extends OperationSet {
 		//FIXME: Check that no forward declaration is undefined in the end.
 		
 		//Is one of them overrider?
-		if(oldOp.isOverride()&&newOp.isOverride()){
+		if(oldOp.getModifiers().isOverride()&&newOp.getModifiers().isOverride()){
 			throw Problem.ofType(ProblemId.DUPLICATE_OVERRIDE_FUNCTION).at(oldOp.getDefinition(),newOp.getDefinition())
 			.details(newOp.getName(),newOp.getSignature().getFullName())
 			.raiseUnrecoverable();
-		} else if(oldOp.isOverride()){
+		} else if(oldOp.getModifiers().isOverride()){
 			return oldOp;
-		} else if(newOp.isOverride()){
+		} else if(newOp.getModifiers().isOverride()){
 			return newOp;
 		}
 	

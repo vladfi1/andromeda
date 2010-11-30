@@ -32,15 +32,7 @@ import com.sc2mod.andromeda.parsing.options.ConfigFile;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.InvalidParameterException;
 import com.sc2mod.andromeda.parsing.options.Parameter;
-import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.syntaxNodes.util.NoResultVisitorAdapter;
-import com.sc2mod.andromeda.syntaxNodes.util.Visitor;
-import com.sc2mod.andromeda.syntaxNodes.util.VisitorAdapter;
-import com.sc2mod.andromeda.syntaxNodes.util.VoidVisitorAdapter;
-import com.sc2mod.andromeda.test.misc.PerfTest;
 import com.sc2mod.andromeda.util.Files;
-import com.sc2mod.andromeda.util.StopWatch;
 import com.sc2mod.andromeda.util.logging.ConsoleLog;
 import com.sc2mod.andromeda.util.logging.Logger;
 

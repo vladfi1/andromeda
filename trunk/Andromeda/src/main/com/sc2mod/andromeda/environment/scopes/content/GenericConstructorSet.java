@@ -5,14 +5,11 @@ import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.generic.GenericTypeInstance;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public class GenericConstructorSet extends MethodSet {
@@ -92,7 +89,7 @@ public class GenericConstructorSet extends MethodSet {
 	}
 
 	@Override
-	public boolean isStatic() {
+	public boolean isStaticElement() {
 		
 		throw new Error("Not permitted!");
 	}

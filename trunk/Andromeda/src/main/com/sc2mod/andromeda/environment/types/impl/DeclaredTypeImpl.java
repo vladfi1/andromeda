@@ -1,21 +1,14 @@
 package com.sc2mod.andromeda.environment.types.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.environment.ModifierUtil;
+import com.sc2mod.andromeda.environment.ModifierSet;
 import com.sc2mod.andromeda.environment.annotations.AnnotationSet;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.Visibility;
 import com.sc2mod.andromeda.environment.types.IDeclaredType;
-import com.sc2mod.andromeda.environment.types.IRecordType;
-import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.generic.TypeParameter;
-import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.problems.ProblemId;
-import com.sc2mod.andromeda.syntaxNodes.AnnotationNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 
 /**
@@ -26,9 +19,10 @@ import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
  */
 public abstract class DeclaredTypeImpl extends NamedTypeImpl implements IDeclaredType{
 
-	private Visibility visibility = Visibility.DEFAULT;
 	private GlobalStructureNode declaration;
 	private AnnotationSet annotations;
+	private final ModifierSet modifiers;
+	
 	//Hierarchy for topologic sorting and stuff
 	protected LinkedList<IDeclaredType> descendants = new LinkedList<IDeclaredType>();
 	
@@ -38,8 +32,7 @@ public abstract class DeclaredTypeImpl extends NamedTypeImpl implements IDeclare
 		super(parentScope, declaration.getName(),env.typeProvider);
 		this.declaration = declaration;
 		declaration.setSemantics(this);
-		
-		ModifierUtil.processModifiers(this,declaration.getModifiers());
+		modifiers = ModifierSet.create(this, declaration.getModifiers());
 		env.annotationRegistry.processAnnotations(this, declaration.getAnnotations());
 	}
 	
@@ -60,61 +53,21 @@ public abstract class DeclaredTypeImpl extends NamedTypeImpl implements IDeclare
 	public GlobalStructureNode getDefinition() {
 		return declaration;
 	}
+		
+	@Override public boolean isStaticElement() { return true; }
 	
 	@Override
 	public Visibility getVisibility() {
-		return visibility;
+		return modifiers.getVisibility();
 	}
-
+	
 	@Override
-	public void setVisibility(Visibility newVisibility) {
-		visibility = newVisibility;
+	public ModifierSet getModifiers() {
+		return modifiers;
 	}
 	
-	@Override public boolean isNative() { return false; }
-	@Override public void setNative() {
-		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
-					.details("Type definitions","native")
-					.raise();
-	}
 	
-	@Override public boolean isOverride() { return false; }
-	@Override public void setOverride() {
-		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
-		.details("Type definitions","override")
-		.raise(); 
-	}
 		
-	@Override public boolean isStatic() { return false; }
-	@Override public void setStatic() {
-		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
-					.details("This kind of type","static")
-					.raise();
-	}
-	
-	@Override public boolean isConst() { return false; }
-	@Override public void setConst() {
-		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
-			.details("Type definitions","const")
-			.raise();
-	}
-	
-	@Override public boolean isAbstract() { return false; }
-	@Override public void setAbstract() {
-		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
-					.details("This kind of type","abstract")
-					.raise();
-	}
-	
-	@Override public boolean isFinal() { return false; }
-	@Override public void setFinal() {
-		Problem.ofType(ProblemId.INVALID_MODIFIER).at(declaration.getModifiers())
-					.details("This kind of type","final")
-					.raise();
-	}
-	
-	
-	
 	public TypeParameter[] getTypeParams(){
 		throw new Error("Trying to call getTypeParams for record type!");
 	}

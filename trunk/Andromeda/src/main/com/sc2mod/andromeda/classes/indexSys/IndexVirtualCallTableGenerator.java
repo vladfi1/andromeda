@@ -19,13 +19,9 @@ import com.sc2mod.andromeda.codegen.INameProvider;
 import com.sc2mod.andromeda.codegen.buffers.AdvancedBuffer;
 import com.sc2mod.andromeda.codegen.buffers.SimpleBuffer;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.operations.Method;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
 import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
-import com.sc2mod.andromeda.environment.types.basic.SpecialType;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.parsing.options.Parameter;
@@ -93,7 +89,7 @@ public class IndexVirtualCallTableGenerator extends VirtualCallTableGenerator{
 		Operation m = vct.table.get(i);
 		//Only add to the table if not abstract and not yet in the table
 		if(m.getOverrideInformation().getVirtualCaller()==null){
-			if(!m.isAbstract()) methodLine.add(m);
+			if(!m.getModifiers().isAbstract()) methodLine.add(m);
 			m.getOverrideInformation().setVirtualCallerName(virtualCallerName);
 		}	
 			

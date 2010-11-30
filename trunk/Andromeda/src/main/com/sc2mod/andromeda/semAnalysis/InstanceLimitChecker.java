@@ -1,5 +1,8 @@
 package com.sc2mod.andromeda.semAnalysis;
 
+import com.sc2mod.andromeda.environment.Environment;
+import com.sc2mod.andromeda.environment.types.IClass;
+import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ArrayTypeNode;
@@ -8,12 +11,6 @@ import com.sc2mod.andromeda.syntaxNodes.ExprNode;
 import com.sc2mod.andromeda.syntaxNodes.InstanceLimitSetterNode;
 import com.sc2mod.andromeda.util.Pair;
 import com.sc2mod.andromeda.vm.data.DataObject;
-import com.sc2mod.andromeda.vm.data.IntObject;
-import com.sc2mod.andromeda.environment.Environment;
-import com.sc2mod.andromeda.environment.types.ArrayType;
-import com.sc2mod.andromeda.environment.types.IClass;
-import com.sc2mod.andromeda.environment.types.IType;
-import com.sc2mod.andromeda.environment.types.basic.BasicType;
 
 public class InstanceLimitChecker {
 
@@ -79,7 +76,7 @@ public class InstanceLimitChecker {
 	 * @return
 	 */
 	private int doCommonChecks(IClass c, ExprNode instanceLimit){
-		if(c.isStatic())
+		if(c.isStaticElement())
 			throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_INSTANCELIMIT).at(instanceLimit)
 				.raiseUnrecoverable();
 		if(instanceLimit.getInferedType()!= INT)

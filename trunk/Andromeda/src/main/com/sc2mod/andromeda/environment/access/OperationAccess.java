@@ -12,14 +12,10 @@ package com.sc2mod.andromeda.environment.access;
 import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
-import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
-import com.sc2mod.andromeda.vm.data.DataObject;
-import com.sc2mod.andromeda.vm.data.FunctionObject;
 
 public class OperationAccess extends NameAccess{
 
@@ -73,7 +69,7 @@ public class OperationAccess extends NameAccess{
 	
 	@Override
 	public boolean isStatic() {
-		return func.isStatic();
+		return func.isStaticElement();
 	}
 	
 //	@Override

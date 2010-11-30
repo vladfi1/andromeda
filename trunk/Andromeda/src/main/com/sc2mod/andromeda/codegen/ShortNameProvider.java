@@ -167,7 +167,7 @@ public class ShortNameProvider implements INameProvider{
 
 	@Override
 	public String getFunctionName(Function function) {
-		if(function.isNative()){
+		if(function.getModifiers().isNative()){
 			return function.getName();
 		}
 		return generateCheckDisallowed();
@@ -196,7 +196,7 @@ public class ShortNameProvider implements INameProvider{
 
 	@Override
 	public String getFieldName(FieldDecl decl, IType clazz) {
-		if(decl.isStatic()){
+		if(decl.isStaticElement()){
 			return generateCheckDisallowed();
 		} else {
 			return getLocalName(indexInfo.getFieldIndex(decl));

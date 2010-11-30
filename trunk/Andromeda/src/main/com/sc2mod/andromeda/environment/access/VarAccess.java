@@ -1,12 +1,10 @@
 package com.sc2mod.andromeda.environment.access;
 
-import com.sc2mod.andromeda.environment.SemanticsElement;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.variables.Variable;
-import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
-import com.sc2mod.andromeda.environment.visitors.SemanticsVisitorNode;
+import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 
 public class VarAccess extends NameAccess {
 	
@@ -33,7 +31,7 @@ public class VarAccess extends NameAccess {
 
 	@Override
 	public boolean isStatic() {
-		return var.isStatic();
+		return var.isStaticElement();
 	}
 	
 

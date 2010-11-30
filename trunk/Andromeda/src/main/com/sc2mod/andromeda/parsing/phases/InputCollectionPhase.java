@@ -9,7 +9,6 @@ import mopaqlib.MoPaQ;
 import mopaqlib.MoPaQException;
 
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
-import com.sc2mod.andromeda.parsing.CompilationResult;
 import com.sc2mod.andromeda.parsing.FileSource;
 import com.sc2mod.andromeda.parsing.InclusionType;
 import com.sc2mod.andromeda.parsing.Language;
@@ -23,7 +22,6 @@ import com.sc2mod.andromeda.parsing.options.Parameter;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.program.FileCollector;
-import com.sc2mod.andromeda.program.Program;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.util.StopWatch;
 import com.sc2mod.andromeda.util.logging.Log;

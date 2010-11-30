@@ -9,7 +9,6 @@
  */
 package com.sc2mod.andromeda.problems;
 
-import com.sc2mod.andromeda.parsing.framework.Source;
 
 public interface Message {
 

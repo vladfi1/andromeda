@@ -2,9 +2,6 @@ package com.sc2mod.andromeda.environment.scopes.content;
 
 import java.util.EnumSet;
 
-import org.apache.tools.ant.IntrospectionHelper.Creator;
-import org.apache.tools.ant.filters.PrefixLines;
-
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.AccessorAccess;
 import com.sc2mod.andromeda.environment.access.Invocation;
@@ -16,22 +13,19 @@ import com.sc2mod.andromeda.environment.access.TypeAccess;
 import com.sc2mod.andromeda.environment.access.VarAccess;
 import com.sc2mod.andromeda.environment.operations.Destructor;
 import com.sc2mod.andromeda.environment.operations.Operation;
-import com.sc2mod.andromeda.environment.operations.OperationUtil;
-import com.sc2mod.andromeda.environment.scopes.UsageType;
-import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
+import com.sc2mod.andromeda.environment.scopes.Package;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
+import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.variables.VarDecl;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.problems.ErrorUtil;
-import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.problems.UnrecoverableProblem;
-import com.sc2mod.andromeda.semAnalysis.AccessorTransformer;
 import com.sc2mod.andromeda.semAnalysis.LocalVarStack;
 import com.sc2mod.andromeda.syntaxNodes.DeleteStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
@@ -214,9 +208,9 @@ public final class ResolveUtil {
 	//======= PRIVATE HELPERS ========
 	
 	private static void checkStaticAccess(boolean staticAccess, IScopedElement elem, SyntaxNode where){
-		if (staticAccess ^ elem.isStatic()){
+		if (staticAccess ^ elem.isStaticElement()){
 			Problem p;
-			if(elem.isStatic())
+			if(elem.isStaticElement())
 				p = Problem.ofType(ProblemId.STATIC_MEMBER_MISUSE);
 			else 
 				p = Problem.ofType(ProblemId.NONSTATIC_MEMBER_MISUSE);
@@ -286,10 +280,10 @@ public final class ResolveUtil {
 			//This is a normal operation
 			op = (Operation)elem;
 			
-			if(op.isNative()){
+			if(op.getModifiers().isNative()){
 				return new Invocation(op, InvocationType.NATIVE);
 			}
-			if(op.isStatic()){
+			if(op.isStaticElement()){
 				return new Invocation(op, InvocationType.STATIC);
 			}
 			if(!disallowVirtual && op.getOverrideInformation().isOverridden())

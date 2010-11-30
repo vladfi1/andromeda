@@ -18,9 +18,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import com.sc2mod.andromeda.gui.forms.AutoscrollPane;
-import com.sc2mod.andromeda.parsing.SourceManager;
 import com.sc2mod.andromeda.problems.Problem;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.util.logging.LogFormat;
 import com.sc2mod.andromeda.util.logging.LogLevel;
 import com.sc2mod.andromeda.util.logging.Logger;

@@ -39,7 +39,7 @@ public class MethodSet extends OperationSet {
 						.raiseUnrecoverable();
 
 		// Exactly one of them is static? Fail!
-		if (oldOp.isStatic() ^ newOp.isStatic())
+		if (oldOp.isStaticElement() ^ newOp.isStaticElement())
 			throw Problem.ofType(ProblemId.OVERRIDE_STATIC_NON_STATIC).at(newOp.getDefinition(),oldOp.getDefinition())
 						.raiseUnrecoverable();
 		
@@ -71,13 +71,13 @@ public class MethodSet extends OperationSet {
 	private Operation checkInheritance(Operation superOp, Operation subOp) {
 		
 		//static methods? No inheritance checks, use the sub method
-		if(subOp.isStatic()){
+		if(subOp.isStaticElement()){
 			return subOp;
 		}
 		
 
 		// Bottom method is not declared override?
-		if(!subOp.isOverride())
+		if(!subOp.getModifiers().isOverride())
 			throw Problem.ofType(ProblemId.OVERRIDE_WITHOUT_OVERRIDE_MODIFIER).at(subOp.getDefinition())
 					.details(OperationUtil.getTypeAndNameAndSignature(subOp),
 							 OperationUtil.getTypeAndNameAndSignature(superOp))
@@ -91,7 +91,7 @@ public class MethodSet extends OperationSet {
 					.raiseUnrecoverable();
 		
 		// Top method final? Fail!
-		if (superOp.isFinal())
+		if (superOp.getModifiers().isFinal())
 			throw Problem.ofType(ProblemId.OVERRIDE_FINAL_METHOD).at(subOp.getDefinition())
 					.raiseUnrecoverable();
 		

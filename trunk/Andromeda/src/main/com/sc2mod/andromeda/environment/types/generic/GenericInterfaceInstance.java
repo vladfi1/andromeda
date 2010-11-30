@@ -1,13 +1,9 @@
 package com.sc2mod.andromeda.environment.types.generic;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 
 import com.sc2mod.andromeda.environment.Signature;
-import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
-import com.sc2mod.andromeda.environment.types.INamedType;
-import com.sc2mod.andromeda.environment.types.IRecordType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;

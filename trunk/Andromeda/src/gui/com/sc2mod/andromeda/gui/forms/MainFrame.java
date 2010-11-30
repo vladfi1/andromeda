@@ -17,7 +17,6 @@ import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.sc2mod.andromeda.program.Program;

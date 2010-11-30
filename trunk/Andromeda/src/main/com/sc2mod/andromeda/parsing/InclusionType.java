@@ -1,7 +1,5 @@
 package com.sc2mod.andromeda.parsing;
 
-import java.util.Arrays;
-import java.util.Comparator;
 
 public enum InclusionType {
 

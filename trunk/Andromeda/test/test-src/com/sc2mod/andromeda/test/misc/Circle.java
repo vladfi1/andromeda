@@ -9,10 +9,6 @@
  */
 package com.sc2mod.andromeda.test.misc;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
-import com.sc2mod.andromeda.util.Pair;
 
 
 public class Circle {

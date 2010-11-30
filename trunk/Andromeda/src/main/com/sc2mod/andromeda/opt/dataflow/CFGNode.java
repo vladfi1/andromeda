@@ -1,7 +1,6 @@
 package com.sc2mod.andromeda.opt.dataflow;
 
 import java.util.Iterator;
-import java.util.List;
 
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 

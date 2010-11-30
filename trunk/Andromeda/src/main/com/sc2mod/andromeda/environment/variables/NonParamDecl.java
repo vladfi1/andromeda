@@ -13,7 +13,6 @@ import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeNode;
 import com.sc2mod.andromeda.syntaxNodes.UninitedVarDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
@@ -22,7 +21,6 @@ import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 public abstract class NonParamDecl extends VarDecl {
 	
 	protected VarDeclNode declarator;
-	private boolean constant;
 	private boolean isInitedField;
 	
 	public NonParamDecl(ModifierListNode mods,IType type, VarDeclNode decl, IScope scope){
@@ -55,16 +53,6 @@ public abstract class NonParamDecl extends VarDecl {
 			IdentifierNode varDeclId, IScope scope) {
 		super(fieldModifiers,type,varDeclId, scope);
 		this.declarator = null;
-	}
-	
-	@Override
-	public void setConst() {
-		constant = true;
-	}
-	
-	@Override
-	public boolean isConst() {
-		return constant;
 	}
 	
 	@Override

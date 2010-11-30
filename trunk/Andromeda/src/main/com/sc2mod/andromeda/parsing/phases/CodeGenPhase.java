@@ -6,7 +6,6 @@ import com.sc2mod.andromeda.codegen.CodeGenVisitor;
 import com.sc2mod.andromeda.codegen.NameGenerationVisitor;
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.parsing.CompilationEnvironment;
-import com.sc2mod.andromeda.parsing.OutputMemoryStats;
 import com.sc2mod.andromeda.parsing.Workflow;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 

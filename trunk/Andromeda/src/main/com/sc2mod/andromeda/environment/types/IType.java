@@ -9,18 +9,9 @@
  */
 package com.sc2mod.andromeda.environment.types;
 
-import com.sc2mod.andromeda.environment.IDefined;
-import com.sc2mod.andromeda.environment.IIdentifiable;
-import com.sc2mod.andromeda.environment.SemanticsElement;
-import com.sc2mod.andromeda.environment.scopes.BlockScope;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
-import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
-import com.sc2mod.andromeda.environment.scopes.Visibility;
-import com.sc2mod.andromeda.environment.scopes.content.InheritableContentSet;
-import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
 import com.sc2mod.andromeda.environment.types.basic.BasicType;
-import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.vm.data.DataObject;
 
 public interface IType extends IScope, IScopedElement{
@@ -176,12 +167,6 @@ public interface IType extends IScope, IScopedElement{
 	 */
 	 boolean isIntegerType();
 	
-	/**
-	 * Returns true iff this is a type extension declared with the iskey attribute.
-	 * @return
-	 */
-	 boolean isKeyType();
-
 	 DataObject getNextKey();
 	
 	//*** SCOPING METHODS ***

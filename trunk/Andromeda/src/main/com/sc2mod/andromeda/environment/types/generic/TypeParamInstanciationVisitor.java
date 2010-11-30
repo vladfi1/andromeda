@@ -7,10 +7,6 @@ import com.sc2mod.andromeda.environment.types.ClosureType;
 import com.sc2mod.andromeda.environment.types.INamedType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
-import com.sc2mod.andromeda.environment.types.impl.ClassImpl;
-import com.sc2mod.andromeda.environment.types.impl.ExtensionImpl;
-import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
-import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitorAdapter;
 import com.sc2mod.andromeda.problems.ErrorUtil;
 

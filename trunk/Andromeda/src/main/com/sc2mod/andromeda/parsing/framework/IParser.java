@@ -1,9 +1,5 @@
 package com.sc2mod.andromeda.parsing.framework;
 
-import com.sc2mod.andromeda.parser.cup.Scanner;
-import com.sc2mod.andromeda.parsing.SourceManager;
-import com.sc2mod.andromeda.problems.SourceLocation;
-import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
 public interface IParser {
