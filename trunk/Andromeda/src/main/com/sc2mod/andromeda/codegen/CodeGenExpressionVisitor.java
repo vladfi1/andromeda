@@ -27,6 +27,8 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.environment.types.TypeUtil;
 import com.sc2mod.andromeda.environment.types.basic.BasicTypeSet;
+import com.sc2mod.andromeda.environment.variables.SyntheticFieldDecl;
+import com.sc2mod.andromeda.environment.variables.VarType;
 import com.sc2mod.andromeda.parsing.options.Configuration;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.ArrayAccessExprNode;
@@ -249,6 +251,12 @@ public class CodeGenExpressionVisitor extends CodeGenerator {
 		VarAccess vAccess = (VarAccess) access;
 		
 		boolean notStatic = !access.isStatic();
+		
+		//Special fields have their own code gen
+		if(vAccess.getAccessedElement().getVarType() == VarType.SYNTHETIC_SPECIAL){
+			((SyntheticFieldDecl)vAccess.getAccessedElement()).genCode(curExprBuffer, fieldAccess);
+			return;
+		}
 		
 		//Infer left child expression (unless this is static)
 		//if(notStatic)

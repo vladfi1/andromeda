@@ -6,7 +6,8 @@ public enum VarType {
 	STATIC,
 	GLOBAL,
 	PARAMETER,
-	IMPLICIT;
+	SYNTHETIC,
+	SYNTHETIC_SPECIAL;
 	
 	
 }

@@ -13,9 +13,14 @@ import java.util.LinkedHashSet;
 
 import com.sc2mod.andromeda.environment.Signature;
 import com.sc2mod.andromeda.environment.access.OperationAccess;
+import com.sc2mod.andromeda.environment.synthetic.FuncNameField;
+import com.sc2mod.andromeda.environment.variables.SyntheticFieldDecl;
 import com.sc2mod.andromeda.environment.visitors.NoResultSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.ParameterSemanticsVisitor;
 import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
+import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
+import com.sc2mod.andromeda.syntaxNodes.ModifierListNode;
+import com.sc2mod.andromeda.syntaxNodes.ModifierSE;
 
 public class ClosureType extends UnscopedType{
 
@@ -28,6 +33,8 @@ public class ClosureType extends UnscopedType{
 		super(t);
 		this.sig = sig2;
 		this.returnType = returnType;
+		SyntheticFieldDecl fd = new FuncNameField(t, this);
+		addContent("name", fd);
 	}
 
 	public Signature getSignature(){

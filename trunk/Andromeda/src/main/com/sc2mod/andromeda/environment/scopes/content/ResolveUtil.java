@@ -323,7 +323,7 @@ public final class ResolveUtil {
 	private static NameAccess createAccess(IScopedElement elem) {
 		switch(elem.getElementType()){
 		case OPERATION:
-			return new OperationAccess(elem);
+			return new OperationAccess((Operation) elem);
 		case VAR:
 			return new VarAccess((Variable) elem);
 		case TYPE:

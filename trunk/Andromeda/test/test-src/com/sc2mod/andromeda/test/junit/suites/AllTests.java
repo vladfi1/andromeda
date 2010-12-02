@@ -8,6 +8,7 @@ import org.junit.runners.Suite;
 
 import com.sc2mod.andromeda.test.junit.unittests.accessors.AccessorTests;
 import com.sc2mod.andromeda.test.junit.unittests.classes.ClassProblems;
+import com.sc2mod.andromeda.test.junit.unittests.closures.ClosureTests;
 import com.sc2mod.andromeda.test.junit.unittests.extensions.ExtensionTests;
 import com.sc2mod.andromeda.test.junit.unittests.galaxy.GalaxyTests;
 import com.sc2mod.andromeda.test.junit.unittests.generics.GenericTests;
@@ -37,7 +38,8 @@ import com.sc2mod.andromeda.test.junit.unittests.visibility.VisibilityProblems;
         GalaxyTests.class,
         StructProblems.class,
         OtherTests.class,
-        NativeTests.class
+        NativeTests.class,
+        ClosureTests.class
 })
 
 public class AllTests {

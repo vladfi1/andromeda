@@ -1,0 +1,14 @@
+
+
+void bar(){}
+
+class Y{
+	
+	static void foo(){}
+}
+
+static{
+	string s1 = bar.name;
+	string s2 = Y.foo.name;
+
+}

@@ -180,18 +180,6 @@ public class TypeProvider {
 		extensions.add(e);
 	}
 
-	/**
-	 * Registers when a function is used as a func pointer
-	 * @param funcPointerDecl
-	 * @return
-	 */
-	public ClosureType registerFunctionPointerUsage(OperationAccess funcPointerDecl) {
-		Operation af = funcPointerDecl.getAccessedElement();
-		ClosureType fpt = getFunctionPointerType(af.getSignature(),af.getReturnType());
-		fpt.registerUsage(funcPointerDecl);
-		return fpt;
-	}
-
 	//==========================================
 	//			TYPE RESOLVING			
 	//==========================================
@@ -201,8 +189,14 @@ public class TypeProvider {
 		return type.accept(resolver,scope);
 	}
 	
+	public IType getClosureType(OperationAccess opAccess) {
+		Operation op = opAccess.getAccessedElement();
+		ClosureType ct = getClosureType(op.getSignature(), op.getReturnType());
+		ct.registerUsage(opAccess);
+		return ct;
+	}
 
-	private ClosureType getFunctionPointerType(Signature params, IType returnType){
+	private ClosureType getClosureType(Signature params, IType returnType){
 		LinkedHashMap<IType, ClosureType> funcs = funcPointers.get(params);
 		if(funcs == null){
 			funcs = new LinkedHashMap<IType, ClosureType>();
@@ -229,7 +223,7 @@ public class TypeProvider {
 		IType t = resolveType(type.getReturnType(), scope, staticContext);
 		Signature sig = new Signature(types);
 
-		return getFunctionPointerType(sig, t);
+		return getClosureType(sig, t);
 		
 	}
 	
@@ -345,6 +339,8 @@ public class TypeProvider {
 			}
 		}
 	}
+
+
 
 
 

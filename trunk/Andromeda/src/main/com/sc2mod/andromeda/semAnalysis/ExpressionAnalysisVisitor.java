@@ -5,7 +5,9 @@ import com.sc2mod.andromeda.environment.access.AccessorAccess;
 import com.sc2mod.andromeda.environment.access.ConstructorInvocation;
 import com.sc2mod.andromeda.environment.access.Invocation;
 import com.sc2mod.andromeda.environment.access.NameAccess;
+import com.sc2mod.andromeda.environment.access.OperationAccess;
 import com.sc2mod.andromeda.environment.access.VarAccess;
+import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.IScope;
 import com.sc2mod.andromeda.environment.scopes.UsageType;
@@ -44,6 +46,7 @@ import com.sc2mod.andromeda.syntaxNodes.SuperExprNode;
 import com.sc2mod.andromeda.syntaxNodes.ThisExprNode;
 import com.sc2mod.andromeda.syntaxNodes.UnOpExprNode;
 import com.sc2mod.andromeda.util.visitors.VoidResultErrorVisitor;
+import com.sc2mod.andromeda.vm.data.FunctionObject;
 
 public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<ExpressionContext>{
 
@@ -309,7 +312,18 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 			}
 			break;
 		case OP_POINTER:
-			//TODO: Op pointer const handling
+			OperationAccess opAccess = (OperationAccess)elem;
+			
+			//Accesses to operations are always constant (since operations are constant closure literals)
+			//damn that was the worst explanation comment I ever wrote...
+			where.setConstant(true);
+			where.setValue(new FunctionObject(opAccess));
+			where.accept(parent.constResolve);
+			
+			where.setInferedType(parent.typeProvider.getClosureType(opAccess));
+			
+			break;
+			
 		case VAR:
 		
 			

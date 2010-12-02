@@ -35,9 +35,8 @@ public class OperationAccess extends NameAccess{
 //		type = typeProvider.registerFunctionPointerUsage(this);
 	}
 	
-	public OperationAccess(IScopedElement elem) {
-		// TODO Auto-generated constructor stub
-		throw new Error("IMPLEMENT");
+	public OperationAccess(Operation func) {
+		this.func = func;
 	}
 
 //	@Override

@@ -65,7 +65,7 @@ package com.sc2mod.andromeda.environment.variables
 FieldDecl
 GenericVarProxy
 GlobalVarDecl
-ImplicitFieldDecl
+SyntheticFieldDecl
 ImplicitParamDecl
 LocalVarDecl
 NonLocalVarDecl
@@ -79,7 +79,6 @@ VarAccess
 NameAccess
 AccessorAccess
 OperationAccess
-OpPointerNameAccess
 Invocation
 ConstructorInvocation
 OpPointerInvocation

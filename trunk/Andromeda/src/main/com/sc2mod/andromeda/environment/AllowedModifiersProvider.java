@@ -14,7 +14,7 @@ import com.sc2mod.andromeda.environment.types.impl.InterfaceImpl;
 import com.sc2mod.andromeda.environment.types.impl.StructImpl;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
-import com.sc2mod.andromeda.environment.variables.ImplicitFieldDecl;
+import com.sc2mod.andromeda.environment.variables.SyntheticFieldDecl;
 import com.sc2mod.andromeda.environment.variables.ImplicitParamDecl;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
 import com.sc2mod.andromeda.environment.variables.ParamDecl;
@@ -100,7 +100,7 @@ public class AllowedModifiersProvider {
 			return GLOBAL_VAR_MODIFIERS;
 		}
 		@Override
-		public Set<ModifierSE> visit(ImplicitFieldDecl implicitFieldDecl,
+		public Set<ModifierSE> visit(SyntheticFieldDecl implicitFieldDecl,
 				Void state) {
 			return FIELD_MODIFIERS;
 		}
