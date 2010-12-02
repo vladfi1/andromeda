@@ -129,6 +129,18 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		expr.accept(exprAnalyzer, ExpressionContext.STATEMENT);
 	}
 	
+	/**
+	 * Checks if the field or method from the parent visitor (the current context) is a static element.
+	 * @return whether the context is static
+	 */
+	boolean isContextStatic(){
+		if(curField == null) {
+			return curOperation.isStaticElement();
+		} else {
+			return curField.isStaticElement();
+		}
+	}
+	
 	//************** GLOBAL STRUCTURES *************
 	@Override
 	protected void onClassVisit(ClassDeclNode c) {
@@ -422,8 +434,8 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		//If this is a non void function, check if the exec path does not end without a return
 		if(curOperation.getReturnType()!=BASIC.VOID&&functionType!=OperationType.CONSTRUCTOR){
 			if(!execPathStack.isTopFrameEmpty())
-				throw Problem.ofType(ProblemId.MISSING_RETURN).at(functionDeclaration)
-						.raiseUnrecoverable();
+				Problem.ofType(ProblemId.MISSING_RETURN).at(functionDeclaration)
+						.raise();
 		}
 		//Check if the control flow reaches the end of the function
 		curOperation.setFlowReachesEnd(!execPathStack.isTopFrameEmpty());
@@ -638,7 +650,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		analyzeExpression(iteree);
 		
 		//Register local var for iterator
-		IType iterVarType = typeProvider.resolveType(forEachStmt.getIteratorType(),curScope);
+		IType iterVarType = typeProvider.resolveType(forEachStmt.getIteratorType(),curScope,isContextStatic());
 		LocalVarDecl iterVarDecl = new LocalVarDecl(null, iterVarType, forEachStmt.getIterator(), false, curScope, true);
 		nameResolver.registerLocalVar(iterVarDecl);
 		semantics.setIterVarDecl(iterVarDecl);
@@ -882,7 +894,7 @@ public class StatementAnalysisVisitor extends TraceScopeScanVisitor {
 		l.getVarDeclaration().getType().accept(this);
 		
 		VarDeclListNode decls = l.getVarDeclaration().getDeclarators();
-		IType t = typeProvider.resolveType(l.getVarDeclaration().getType(),curScope);
+		IType t = typeProvider.resolveType(l.getVarDeclaration().getType(),curScope,isContextStatic());
 		
 		//Register and init all variables in the correct order
 		for(VarDeclNode decl : decls){

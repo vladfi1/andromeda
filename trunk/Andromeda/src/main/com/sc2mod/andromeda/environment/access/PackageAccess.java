@@ -12,7 +12,7 @@ public class PackageAccess extends NameAccess {
 	public PackageAccess(Package pkg){
 		this.pkg = pkg;
 	}
-
+ 
 	@Override
 	public AccessType getAccessType() {
 		return AccessType.PACKAGE;

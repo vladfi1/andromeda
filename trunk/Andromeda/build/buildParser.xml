@@ -47,8 +47,6 @@
   <taskdef name="jflex" classname="JFlex.anttask.JFlexTask" classpathref="buildLibPath"/>
   <taskdef name="classgen" classname="classgen.AntTask" classpathref="classbuildLibs"/>
   <taskdef name="cup" classname="java_cup.anttask.CUPTask" classpath="${lib}/java-cup-gex.jar" />
-  <taskdef name="cupOld" classname="java_cup.anttask.CUPTask" classpathref="buildLibPath"/>
-  <taskdef name="gexEnrich" classname="com.sc2mod.andromeda.buildUtils.ClassEnricherAntTask" classpathref="buildLibPath"/>
 
   <target name="init">
     <mkdir dir="${classOut}"/>
@@ -62,6 +60,7 @@
   </target>
 	
   <target name="enrich" depends="classgen">
+    <taskdef name="gexEnrich" classname="com.sc2mod.andromeda.buildUtils.ClassEnricherAntTask" classpath="${lib}/GexEnricher.jar"/>
     <gexEnrich path="${srcOut}/com/sc2mod/andromeda/syntaxNodes" semanticsFile="${langPath}/semantics.gex"/> 
   </target>
 
@@ -124,4 +123,17 @@
 		</visitorGen>
 	</target>
 
+
+	  <property name="enrichersrc" location="build/build-src"/>
+	  <property name="enricherclasses" location="build/build-bin"/>
+	  <target name="rebuild enricher" depends="init">
+	    <mkdir dir="${enricherclasses}"/>
+	    <javac srcdir="${enrichersrc}" destdir="${enricherclasses}">
+	      <classpath refid="buildLibPath"/>
+	    </javac>
+	    <jar jarfile="${lib}/GexEnricher.jar" basedir="${enricherclasses}">
+	    </jar>
+	  </target>
+
+	
 </project>

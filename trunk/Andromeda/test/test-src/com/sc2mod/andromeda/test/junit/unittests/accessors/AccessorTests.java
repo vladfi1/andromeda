@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.test.junit.AndromedaSingleRunTest;
 
-public class AccessorProblems extends AndromedaSingleRunTest {
+public class AccessorTests extends AndromedaSingleRunTest {
 	
 	@Test
 	public void setMissing(){
@@ -55,6 +55,26 @@ public class AccessorProblems extends AndromedaSingleRunTest {
 		callAndromeda("setWrongSignature.a");
 		assertOnlyProblem(ProblemId.ACCESSOR_GET_OR_SET_WRONG_SIGNATURE);
 	}
+	
+	@Test
+	public void abstractFieldBase(){
+		callAndromeda("abstractFieldBase.a");
+		assertNoMoreProblems();
+		checkOutput();
+	}
+	
+	@Test
+	public void abstractFieldWithoutAccessor(){
+		callAndromeda("abstractFieldWithoutAccessor.a");
+		assertOnlyProblem(ProblemId.INVALID_MODIFIER);
+	}
+	
+	@Test
+	public void abstractFieldWithInit(){
+		callAndromeda("abstractFieldWithInit.a");
+		assertOnlyProblem(ProblemId.ABSTRACT_FIELD_WITH_INIT);
+	}
+	
 	
 	
 }

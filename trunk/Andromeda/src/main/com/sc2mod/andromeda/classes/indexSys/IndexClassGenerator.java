@@ -106,7 +106,7 @@ public class IndexClassGenerator extends ClassGenerator {
 	private void generateClass(IClass c){
 		
 		
-		if(!c.isStaticElement()){
+		if(!c.getModifiers().isStatic()){
 			if(c.isTopType()){
 
 				

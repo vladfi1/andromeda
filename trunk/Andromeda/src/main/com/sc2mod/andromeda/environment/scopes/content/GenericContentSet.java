@@ -38,20 +38,6 @@ public class GenericContentSet extends InheritableContentSet {
 		System.out.println("Copying down for " + type);
 		GenericUtil.copyContentFromGenericParent(type.getTypeProvider(),this, type.getGenericParent().getContent(), type.getTypeArguments());
 	}
-	
-	@Override
-	public Iterator<IScopedElement> getDeepIterator(boolean includeOperations,
-			boolean includeSubpackaes, boolean doTypes) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
-
-	@Override
-	public Iterable<IScopedElement> iterateDeep(boolean includeOperations,
-			boolean includeSubpackaes, boolean doTypes) {
-		// TODO Auto-generated method stub
-		throw new Error("Not implemented!");
-	}
 
 	@Override
 	IScopedElement resolve(String name, IScope from, UsageType accessType,

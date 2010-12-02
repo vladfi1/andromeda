@@ -1,0 +1,28 @@
+typedef int[30] A;
+typedef B aliases string;
+typedef C aliases S;
+
+struct S{
+	int i;
+};
+
+
+enrich B{
+	void c(){}
+}
+
+enrich string{
+	void d(){}
+}
+
+
+static{
+	A a;
+	B b;
+	a[3] = 5;
+	b = "bla";
+	b.d();
+	string s;
+	s.c();
+
+}

@@ -50,8 +50,8 @@ public class NameResolver {
 	 * @param where a syntax node to be mentioned in problems raised by this method
 	 * @return the resolved ScopedElement or null
 	 */
-	public NameAccess resolveName(String name, IScope from, UsageType accessType, SyntaxNode where, IType rightSideType){
-		return ResolveUtil.resolveUnprefixedName(localVars, name, from, accessType, where, rightSideType);
+	public NameAccess resolveName(String name, IScope from, UsageType accessType, SyntaxNode where, IType rightSideType, boolean staticContext){
+		return ResolveUtil.resolveUnprefixedName(localVars, name, from, accessType, where, rightSideType, staticContext);
 	}
 	
 	/**
@@ -72,8 +72,8 @@ public class NameResolver {
 	 * @param where a syntax node to be mentioned in problems raised by this method
 	 * @return the resolved ScopedElement or null
 	 */
-	public Invocation resolveInvocation(String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer, boolean disallowVirtualInvocation){
-		return ResolveUtil.resolveUnprefixedInvocation(localVars, name, sig, from, where, allowFuncPointer, disallowVirtualInvocation);
+	public Invocation resolveInvocation(String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer, boolean disallowVirtualInvocation, boolean staticContext){
+		return ResolveUtil.resolveUnprefixedInvocation(localVars, name, sig, from, where, allowFuncPointer, disallowVirtualInvocation, staticContext);
 	}
 	
 

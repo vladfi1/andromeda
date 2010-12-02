@@ -1,0 +1,13 @@
+class X <T,T2> {
+
+	static T tx; //error
+	
+	static T foo(){//Error
+		return null;
+	}
+	
+	static void foo2(){	
+		T t; //error
+	}
+
+}

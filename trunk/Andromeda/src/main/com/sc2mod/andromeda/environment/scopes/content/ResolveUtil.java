@@ -37,12 +37,11 @@ import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
  */
 public final class ResolveUtil {
 	
-	private static final EnumSet<ScopedElementType> RESOLVE_SCOPES = EnumSet.of(ScopedElementType.TYPE, ScopedElementType.PACKAGE,ScopedElementType.ERROR);
+	private static final EnumSet<ScopedElementType> RESOLVE_SCOPES = EnumSet.of(ScopedElementType.TYPE, ScopedElementType.ERROR);
 	private static final EnumSet<ScopedElementType> RESOLVE_ONLY_TYPES = EnumSet.of(ScopedElementType.TYPE,ScopedElementType.ERROR);
 	private static final EnumSet<ScopedElementType> RESOLVE_NAMES = EnumSet.allOf(ScopedElementType.class);
 	private static final EnumSet<ScopedElementType> RESOLVE_OPS_AND_VARS = EnumSet.of(ScopedElementType.ERROR,ScopedElementType.OP_SET,ScopedElementType.VAR);
 	static final EnumSet<ScopedElementType> RESOLVE_OPS = EnumSet.of(ScopedElementType.ERROR,ScopedElementType.OP_SET);
-	private static final EnumSet<ScopedElementType> RESOLVE_ONLY_PACKAGES = EnumSet.of(ScopedElementType.PACKAGE,ScopedElementType.ERROR);
 	private static final EnumSet<ScopedElementType> RESOLVE_ONLY_VARS = EnumSet.of(ScopedElementType.VAR, ScopedElementType.ERROR);
 	
 	
@@ -142,12 +141,15 @@ public final class ResolveUtil {
 		return (IType) prefix.getContent().resolve(name,from,UsageType.OTHER,null,where,RESOLVE_ONLY_TYPES);
 	}
 	
-	public static Package resolvePrefixedPackage(IScope prefix, String name, SyntaxNode where) {
-		return (Package) prefix.getContent().resolve(name,null,UsageType.OTHER,null,where,RESOLVE_ONLY_PACKAGES);
-	}
-	
 	public static IScope resolvePrefixedScope(IScope prefix, String name, IScope from, SyntaxNode where){
-		return (IScope) prefix.getContent().resolve(name,from,UsageType.OTHER,null,where,RESOLVE_SCOPES);
+		IScope result = (IScope) prefix.getContent().resolve(name,from,UsageType.OTHER,null,where,RESOLVE_SCOPES);
+		//check packages
+		if(result == null){
+			if(prefix instanceof Package){
+				return ((Package) prefix).resolveSubpackage(name, where);
+			}
+		}
+		return result;
 	}
 	
 
@@ -155,16 +157,29 @@ public final class ResolveUtil {
 	//======= UNPREFIXED RESOLVING ========
 
 	
-	static NameAccess resolveUnprefixedName(LocalVarStack localContext, String name, IScope from, UsageType accessType, SyntaxNode where, IType setType){
+	static NameAccess resolveUnprefixedName(LocalVarStack localContext, String name, IScope from, UsageType accessType, SyntaxNode where, IType setType, boolean staticContext){
 		//First check locals
 		IScopedElement result = localContext.resolveVar(name);
 		if(result != null)
 			return createAccess(result);
 		
-		return recursiveNameResolve(name,from,accessType,setType,where,RESOLVE_NAMES);
+		NameAccess res = recursiveNameResolve(name,from,accessType,setType,where,RESOLVE_NAMES);
+		
+		if(res != null)
+			checkStaticContext(res.isStatic(),staticContext,where);
+		
+		return res;
 	}
 	
-	static Invocation resolveUnprefixedInvocation(LocalVarStack localContext, String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer, boolean disallowVirtualInvocation){
+	private static void checkStaticContext(boolean elemIsStatic,
+			boolean staticContext, SyntaxNode where) {
+		if(!elemIsStatic && staticContext){
+			Problem.ofType(ProblemId.NON_STATIC_ACCESS_FROM_STATIC_CONTEXT).at(where)
+				.raise();
+		}
+	}
+
+	static Invocation resolveUnprefixedInvocation(LocalVarStack localContext, String name, Signature sig, IScope from, SyntaxNode where, boolean allowFuncPointer, boolean disallowVirtualInvocation, boolean staticContext){
 		IScopedElement elem = null;
 		//TODO: Nice error messages for invocations, just like for names
 		
@@ -176,11 +191,19 @@ public final class ResolveUtil {
 		if(elem == null)
 			elem = recursiveResolve(name,from,UsageType.OTHER,sig,where,allowFuncPointer?RESOLVE_OPS_AND_VARS:RESOLVE_OPS);
 		
+		if(elem != null)
+			checkStaticContext(elem.isStaticElement(),staticContext,where);
+		
 		return createInvocation(elem, disallowVirtualInvocation);
 	}
 	
-	public static IType resolveUnprefixedType(String name, IScope from, SyntaxNode where){
-		return (IType) recursiveResolve(name,from,UsageType.OTHER,null,where,RESOLVE_ONLY_TYPES);
+	public static IType resolveUnprefixedType(String name, IScope from, SyntaxNode where, boolean staticContext){
+		IType result = (IType) recursiveResolve(name,from,UsageType.OTHER,null,where,RESOLVE_ONLY_TYPES);
+		
+		if(result != null)
+			checkStaticContext(result.isStaticElement(), staticContext, where);
+		
+		return result;
 	}
 	
 	//======= OTHER RESOLVING ========
@@ -305,8 +328,6 @@ public final class ResolveUtil {
 			return new VarAccess((Variable) elem);
 		case TYPE:
 			return new TypeAccess((IType) elem);
-		case PACKAGE:
-			return new PackageAccess((Package) elem);
 		default:
 			//TODO error handling
 		}

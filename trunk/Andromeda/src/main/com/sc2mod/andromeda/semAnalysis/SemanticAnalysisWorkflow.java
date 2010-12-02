@@ -38,7 +38,7 @@ public class SemanticAnalysisWorkflow {
 	 * @param scope
 	 */
 	private static void resolveTypeAlias(TypeProvider tprov, TypeAliasDeclNode alias, IScope scope) {
-		IType t = tprov.resolveType(alias.getEnrichedType(),scope);
+		IType t = tprov.resolveType(alias.getEnrichedType(),scope,true);
 		scope.addContent(alias.getName(),t);
 	}
 
@@ -82,7 +82,7 @@ public class SemanticAnalysisWorkflow {
 		new TypeHierarchySVisitor(env).execute();
 		
 		// 3.) Register fields, methods and other constructs (also resolve their types and signatures)
-		syntax.accept( new StructureRegistryTreeScanner(env, analysisData), null );
+		new StructureRegistryTreeScanner(env, analysisData).execute(syntax);
 		
 		
 		//Copy down members from super to subclasses

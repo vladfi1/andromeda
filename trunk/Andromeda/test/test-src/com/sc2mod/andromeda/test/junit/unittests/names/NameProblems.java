@@ -44,5 +44,23 @@ public class NameProblems extends AndromedaSingleRunTest {
 	}
 	
 	
+	//TODO Check the output of this test case. Why is the underlining false (one char to far)
+	@Test
+	public void nonStaticNamesAccessedFromStaticContext(){
+		callAndromeda("nonStaticNamesAccessedFromStaticContext.a");
+
+		assertProblem(ProblemId.NON_STATIC_ACCESS_FROM_STATIC_CONTEXT);
+		assertProblem(ProblemId.NON_STATIC_ACCESS_FROM_STATIC_CONTEXT);
+		assertProblem(ProblemId.NON_STATIC_ACCESS_FROM_STATIC_CONTEXT);
+		assertProblem(ProblemId.NON_STATIC_ACCESS_FROM_STATIC_CONTEXT);
+		assertProblem(ProblemId.NON_STATIC_ACCESS_FROM_STATIC_CONTEXT);
+		assertProblem(ProblemId.NON_STATIC_ACCESS_FROM_STATIC_CONTEXT);
+		
+		assertProblem(ProblemId.THIS_IN_STATIC_MEMBER);
+		assertProblem(ProblemId.THIS_IN_STATIC_MEMBER);
+		assertOnlyProblem(ProblemId.THIS_IN_STATIC_MEMBER);
+	}
+	
+	
 	
 }

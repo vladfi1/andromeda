@@ -1,5 +1,6 @@
 package com.sc2mod.andromeda.environment.scopes.content;
 
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import com.sc2mod.andromeda.environment.operations.Operation;
@@ -127,6 +128,8 @@ public class InheritableContentSet extends ScopeContentSet {
 		//Shadowing permitted
 		return subElem;
 	}
+
+	
 
 	
 

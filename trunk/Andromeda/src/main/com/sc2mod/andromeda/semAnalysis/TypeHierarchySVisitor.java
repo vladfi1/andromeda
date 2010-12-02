@@ -126,10 +126,10 @@ public class TypeHierarchySVisitor extends VoidSemanticsVisitorAdapter{
 					throw Problem.ofType(ProblemId.FINAL_TYPE_EXTENDED).at(clazz.getDefinition().getSuperClass())
 								.details(superClass.getName())
 								.raiseUnrecoverable();
-				if(clazz.isStaticElement())
+				if(clazz.getModifiers().isStatic())
 					throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_EXTENDS).at(clazz.getDefinition().getSuperClass())
 								.raiseUnrecoverable();
-				if(superClass.isStaticElement())
+				if(superClass.getModifiers().isStatic())
 					throw Problem.ofType(ProblemId.STATIC_CLASS_EXTENDED).at(clazz.getDefinition().getSuperClass())
 								.raiseUnrecoverable();
 				superClass.getDescendants().add(clazz);

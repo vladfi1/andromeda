@@ -1,5 +1,10 @@
 package com.sc2mod.andromeda.environment.scopes;
 
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.scopes.content.NonInheritanceContentSet;
 import com.sc2mod.andromeda.environment.scopes.content.ResolveUtil;
@@ -11,11 +16,14 @@ import com.sc2mod.andromeda.environment.visitors.VoidSemanticsVisitor;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 
+//FIXME package testcases
 public class Package extends ScopeImpl implements IScopedElement {
 
 	private Package parent;
 	private String name;
 	private Environment env;
+	private Map<String, Package> subPackages = new HashMap<String, Package>();
+	
 	
 	public Package(Environment env, String name, Package parent){
 		this.name = name;
@@ -36,16 +44,17 @@ public class Package extends ScopeImpl implements IScopedElement {
 	}
 	
 	public Package resolveSubpackage(String name, SyntaxNode where){
-		return ResolveUtil.resolvePrefixedPackage(this, name, where);
+		return subPackages.get(name);
 	}
 	
+	
 	public Package addOrGetSubpackage(String name, SyntaxNode where){
-		Package result = ResolveUtil.resolvePrefixedPackage(this, name, where);
+		Package result = subPackages.get(name);
 		if(result != null) return result;
 
 		//Subpackage not present yet. Create it.
 		result = new Package(env, name, parent);
-		getContent().add(name, result);
+		subPackages.put(name, result);
 		return result;
 	}
 
@@ -138,4 +147,8 @@ public class Package extends ScopeImpl implements IScopedElement {
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }
 	public <P> void accept(NoResultSemanticsVisitor<P> visitor,P state) { visitor.visit(this,state); }
 	public <P,R> R accept(ParameterSemanticsVisitor<P,R> visitor,P state) { return visitor.visit(this,state); }
+
+	public Iterator<? extends IScopedElement> subpackageIterator() {
+		return subPackages.values().iterator();
+	}
 }

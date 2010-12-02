@@ -105,6 +105,14 @@ public class TypeParameter extends TypeImpl {
 		return decl;
 	}
 	
+	/**
+	 * Type parameters are always tied to an instance
+	 */
+	@Override
+	public boolean isStaticElement() {
+		return false;
+	}
+	
 
 
 	public void accept(VoidSemanticsVisitor visitor) { visitor.visit(this); }

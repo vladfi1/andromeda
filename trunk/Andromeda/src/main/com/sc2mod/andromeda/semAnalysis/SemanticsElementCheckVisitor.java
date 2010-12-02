@@ -11,6 +11,7 @@ import com.sc2mod.andromeda.environment.operations.OperationUtil;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
+import com.sc2mod.andromeda.environment.scopes.content.TraversalPolicies;
 import com.sc2mod.andromeda.environment.types.IClass;
 import com.sc2mod.andromeda.environment.types.IInterface;
 import com.sc2mod.andromeda.environment.types.IType;
@@ -152,17 +153,17 @@ public class SemanticsElementCheckVisitor extends VoidSemanticsVisitorAdapter {
 	public void visit(ClassImpl class1) {
 		checkImplicitConstructor(class1);
 		
-		if(class1.isStaticElement())
+		if(class1.getModifiers().isStatic())
 			checkStaticClass(class1);
 		
 		classScopeChecks(class1);
 	}
 	
 	private void classScopeChecks(ClassImpl clazz){
-		boolean staticClass = clazz.isStaticElement();
+		boolean staticClass = clazz.getModifiers().isStatic();
 		boolean nonAbstract = !clazz.getModifiers().isAbstract();
 		ScopeContentSet content = clazz.getContent();
-		for(IScopedElement elem : clazz.getContent().iterateDeep(true, false,false)){
+		for(IScopedElement elem : clazz.getContent().iterateDeep(TraversalPolicies.GET_ALL_BUT_RESOLVE_OP_SETS)){
 			switch(elem.getElementType()){
 			case OPERATION:
 				Operation op = (Operation) elem;

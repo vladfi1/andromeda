@@ -33,26 +33,7 @@ public class ModifierSet {
 		int bitmask;
 		boolean visibilityWasThere = false;
 		for(ModifierSE mod : mods){
-			//Check if allowed
-			if(!allowedModifiers.contains(mod)){
-				Problem.ofType(ProblemId.INVALID_VISIBILITY_MODIFIER).at(mods)
-					.details("This definition")
-					.raise();
-			}
-			
-			//Create bitmask
-			bitmask = 1 << mod.ordinal();
-			
-			//Duplicate modifier check
-			if((bitset & bitmask) != 0){
-				Problem.ofType(ProblemId.DUPLICATE_MODIFIER).at(mods)
-					.details(mod.name().toLowerCase())
-					.raise();
-			}
-			
-			//Add to bit set
-			bitset |= bitmask;
-						
+		
 			//Visibility modifier check
 			switch(mod){
 			case PRIVATE:
@@ -88,8 +69,28 @@ public class ModifierSet {
 					visibility = Visibility.PUBLIC;
 				}
 				visibilityWasThere = true;
-				break;				
+				break;			
+			default:
+				//Check if allowed
+				if(!allowedModifiers.contains(mod)){
+					Problem.ofType(ProblemId.INVALID_MODIFIER).at(mods)
+						.details("This definition",mod.name().toLowerCase())
+						.raise();
+				}
 			}
+			
+			//Create bitmask
+			bitmask = 1 << mod.ordinal();
+			
+			//Duplicate modifier check
+			if((bitset & bitmask) != 0){
+				Problem.ofType(ProblemId.DUPLICATE_MODIFIER).at(mods)
+					.details(mod.name().toLowerCase())
+					.raise();
+			}
+			
+			//Add to bit set
+			bitset |= bitmask;
 		}
 	
 	}

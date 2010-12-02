@@ -31,4 +31,5 @@
 -Introduced uncheck casts
 -Removed key extensions
 -Removed @StringCall (use .name for functions instead)
+-The "is" keyword for type aliases was replaced by an "aliases" keyword, so "is" can now be used for accessors
 -Removed overriding of native functions (this feature might appear in another form in a future release)

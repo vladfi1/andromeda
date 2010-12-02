@@ -1,5 +1,9 @@
 package com.sc2mod.andromeda.semAnalysis;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.AccessorList;
@@ -10,6 +14,7 @@ import com.sc2mod.andromeda.syntaxNodes.ExprStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStructureListNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.IdentifierNode;
 import com.sc2mod.andromeda.syntaxNodes.MemberDeclListNode;
@@ -24,38 +29,85 @@ import com.sc2mod.andromeda.syntaxNodes.ParameterNode;
 import com.sc2mod.andromeda.syntaxNodes.ReturnStmtNode;
 import com.sc2mod.andromeda.syntaxNodes.SimpleTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.StmtListNode;
+import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
+import com.sc2mod.andromeda.syntaxNodes.UninitedVarDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
 
+//TODO Comment this class
 public class AccessorTransformer {
 	
 	private SimpleTypeNode VOID = new SimpleTypeNode("void", null);
 	private ParameterListNode EMPTY_PARAMS = new ParameterListNode();
 	
+	private List<MethodDeclNode> accessorMethodsToAdd = new ArrayList<MethodDeclNode>();
+	private List<GlobalFuncDeclNode> accessorFuncsToAdd = new ArrayList<GlobalFuncDeclNode>();
+	private List<FieldDeclNode> fieldsToRemove = new ArrayList<FieldDeclNode>();
+	private boolean wantRemove;
+	
+	public void doPostProcessing(){
+		
+		for(FieldDeclNode f : fieldsToRemove){
+			//Remove abstract fields
+			SyntaxNode s = f.getParent();
+			if(s instanceof GlobalVarDeclNode){
+				SyntaxNode list = s.getParent();
+				if(list instanceof GlobalStructureListNode){
+					if(! ((GlobalStructureListNode)list).remove((GlobalStructureNode) s) ){
+						throw new InternalProgramError("!");
+					}
+				} else throw new InternalProgramError("!");
+			} else if(s instanceof MemberDeclListNode){
+				if(! ((MemberDeclListNode)s).remove(f) ){
+					throw new InternalProgramError("!");
+				}
+			} else throw new InternalProgramError("!");
+			
+		}
+		
+		for(MethodDeclNode m : accessorMethodsToAdd){
+			//Add accessor methods
+			SyntaxNode s = m.getParent();
+			if(s instanceof MemberDeclListNode){
+				((MemberDeclListNode)s).add(m);
+			} else throw new InternalProgramError("!");
+		}
+		
+		for(GlobalFuncDeclNode m : accessorFuncsToAdd){
+			//Add accessor methods
+			SyntaxNode s = m.getParent();
+			if(s instanceof GlobalStructureListNode){
+				((GlobalStructureListNode)s).add(m);
+			} else throw new InternalProgramError("!");
+		}
+		
+		fieldsToRemove.clear();
+		accessorMethodsToAdd.clear();
+		accessorFuncsToAdd.clear();
+	}
+
 	public MethodDeclNode[] transformClassField(FieldDeclNode field){
 		VarDeclNode var = checkSizeAndGetVarDecl(field);
 		
-		//calculate parent
-		MemberDeclListNode parent = (MemberDeclListNode) field.getParent();
+		checkRemoveFieldIfAbstract(field);
 		
 		AccessorList accessors = getAndRemoveAccessors(field);
 		MethodDeclNode[] result = new MethodDeclNode[accessors.size()];
 		for(int i=0,size=accessors.size(); i<size ; i++){
 			MethodDeclNode md = transformAccessor(field,var,accessors.get(i));
-			//FIXME parent.add considered harmful...
-			parent.add(md);
 			result[i] = md;
+			md.setParent(field.getParent());
+			accessorMethodsToAdd.add(md);
 		}
 		return result;
 
 	}
-	
+
 	public GlobalFuncDeclNode[] transformGlobalField(GlobalVarDeclNode globalDecl) {
 		FieldDeclNode field = globalDecl.getFieldDecl();
 		VarDeclNode var = checkSizeAndGetVarDecl(field);
 		
-		//calculate parent
-		GlobalStructureListNode parent = (GlobalStructureListNode) globalDecl.getParent();
+		checkRemoveFieldIfAbstract(field);
 		
 		AccessorList accessors = getAndRemoveAccessors(field);
 		GlobalFuncDeclNode[] result = new GlobalFuncDeclNode[accessors.size()];
@@ -63,11 +115,27 @@ public class AccessorTransformer {
 			MethodDeclNode md = transformAccessor(field,var,accessors.get(i));
 			GlobalFuncDeclNode gvd = new GlobalFuncDeclNode(md);
 			gvd.setPos(md.getLeftPos(), md.getRightPos());
-			parent.add(gvd);
 			result[i] = gvd;
+			gvd.setParent(globalDecl.getParent());
+			accessorFuncsToAdd.add(gvd);
 		}
 		return result;
 
+	}
+	
+	private void checkRemoveFieldIfAbstract(FieldDeclNode field) {
+		wantRemove = false;
+		if(field.getFieldModifiers().contains(ModifierSE.ABSTRACT)){
+			fieldsToRemove.add(field);
+			wantRemove = true;
+			
+			//Check that abstract fields do not have an initialization
+			VarDeclNode varDecl = field.getDeclaredVariables().get(0); 
+			if(!(varDecl instanceof UninitedVarDeclNode)){
+				Problem.ofType(ProblemId.ABSTRACT_FIELD_WITH_INIT).at(varDecl.getInitializer())
+					.raise();
+			}
+		}
 	}
 	
 	private VarDeclNode checkSizeAndGetVarDecl(FieldDeclNode field){
@@ -187,6 +255,10 @@ public class AccessorTransformer {
 	
 	public static String createAccessMethodName(String prefix, String name){
 		return prefix + upperFirst(name);
+	}
+
+	public boolean wantRemoveAbstractField() {
+		return wantRemove;
 	}
 
 }

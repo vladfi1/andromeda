@@ -6,6 +6,7 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.ScopeContentSet;
+import com.sc2mod.andromeda.environment.scopes.content.TraversalPolicies;
 import com.sc2mod.andromeda.environment.types.generic.TypeParamIdentificationVisitor;
 import com.sc2mod.andromeda.environment.variables.Variable;
 import com.sc2mod.andromeda.problems.InternalProgramError;
@@ -36,13 +37,11 @@ public class TypeUtil {
 			
 			@Override
 			public Iterator<Operation> iterator() {
-				return new FilterIterator<IScopedElement, Operation>(content.getDeepIterator(true,false,false)) {
+				return new FilterIterator<IScopedElement, Operation>(content.getDeepIterator(TraversalPolicies.OPERATIONS_ONLY)) {
 
 					@Override
 					protected boolean filter(
 							IScopedElement it2) {
-						if(it2.getElementType() != ScopedElementType.OPERATION)
-							return false;
 						
 						if(it2.isStaticElement()) 
 							return false;

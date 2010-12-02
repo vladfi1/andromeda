@@ -1,0 +1,20 @@
+
+class X{
+ 	int i;
+ 	
+ 	abstract int k;
+ 	 => get;
+ 	 
+ 	int foo(){ 
+ 		return 3;
+ 	}
+ 	
+ 	static void bar(){
+ 		i = 3; //error
+ 		int j = k; //error
+ 		foo(); //error
+ 	}
+ 
+ 	static int x = i + k + foo(); //triple error!
+ 	static int y = this.i + this.k + this.foo(); //triple error!
+}

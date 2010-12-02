@@ -1,6 +1,7 @@
 package com.sc2mod.andromeda.codegen;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Function;
@@ -8,6 +9,7 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
+import com.sc2mod.andromeda.environment.scopes.content.TraversalPolicies;
 import com.sc2mod.andromeda.environment.types.IClass;
 
 /**
@@ -22,15 +24,9 @@ public class FunctionIndexProvider {
 	
 	public FunctionIndexProvider(Environment env){
 		//Normal methods.
-		for(IScopedElement elem : env.iterateOverContent(false,true,true)){
-			try{
-			//FIXME why is here a nullpointer excepiton (RunTests.baseRun)
-			if(elem.getElementType() == ScopedElementType.OP_SET){
-				indexOpSet((OperationSet)elem);
-			}
-			} catch (NullPointerException e){
-				e.printStackTrace();
-			}
+		for(Iterator<IScopedElement> it = env.iterateOverContent(TraversalPolicies.OP_SETS_ONLY).iterator(); it.hasNext();){
+			IScopedElement elem = it.next();
+			indexOpSet((OperationSet)elem);
 		}
 		
 		//Constructors.

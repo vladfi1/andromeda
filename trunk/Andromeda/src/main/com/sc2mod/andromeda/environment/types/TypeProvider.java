@@ -196,7 +196,8 @@ public class TypeProvider {
 	//			TYPE RESOLVING			
 	//==========================================
 
-	public IType resolveType(com.sc2mod.andromeda.syntaxNodes.TypeNode type, IScope scope){
+	public IType resolveType(com.sc2mod.andromeda.syntaxNodes.TypeNode type, IScope scope, boolean staticContext){
+		resolver.setStaticContect(staticContext);
 		return type.accept(resolver,scope);
 	}
 	
@@ -216,15 +217,16 @@ public class TypeProvider {
 		return fp;
 	}
 	
-	IType getFunctionPointerType(com.sc2mod.andromeda.syntaxNodes.TypeNode type, IScope scope) {
+	IType getFunctionPointerType(com.sc2mod.andromeda.syntaxNodes.TypeNode type, IScope scope, boolean staticContext) {
+		//TODO check where this is used
 		if(true)throw new Error("What is this?");
 		TypeListNode tl = type.getTypeArguments();
 		int size = tl.size();
 		IType[] types = new IType[size];
 		for(int i=0; i<size ; i++){
-			types[i] = resolveType(tl.get(i), scope);
+			types[i] = resolveType(tl.get(i), scope, staticContext);
 		}
-		IType t = resolveType(type.getReturnType(), scope);
+		IType t = resolveType(type.getReturnType(), scope, staticContext);
 		Signature sig = new Signature(types);
 
 		return getFunctionPointerType(sig, t);

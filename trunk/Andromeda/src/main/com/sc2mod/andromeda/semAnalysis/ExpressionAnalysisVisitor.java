@@ -60,6 +60,9 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		this.nameResolver = parent.nameResolver;
 		this.exprResolver = new ExpressionAnalyzer(new ConstantResolveVisitor(), parent.typeProvider);
 	}
+	
+
+	
 	//************** EXPRESSIONS (infere types, do local var stuff, resolve invocations and field accesses) **************
 	
 	@Override
@@ -170,7 +173,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	@Override
 	public void visit(CastExprNode castExpression, ExpressionContext context) {
 		//Get the type to cast to
-		IType type = parent.typeProvider.resolveType(castExpression.getType(),parent.curScope);
+		IType type = parent.typeProvider.resolveType(castExpression.getType(),parent.curScope,parent.isContextStatic());
 		
 		//Infere right expression type
 		castExpression.getRightExpression().accept(this,ExpressionContext.DEFAULT);
@@ -224,7 +227,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 	public void visit(NewExprNode c, ExpressionContext context) {
 		c.getArguments().accept(this,ExpressionContext.DEFAULT);
 		IType t;
-		c.setInferedType(t = parent.typeProvider.resolveType(c.getType(),parent.curScope));
+		c.setInferedType(t = parent.typeProvider.resolveType(c.getType(),parent.curScope,parent.isContextStatic()));
 		
 		
 		if(t.getCategory() == TypeCategory.CLASS){
@@ -397,7 +400,8 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		}
 		
 		//Resolve the name
-		NameAccess elem = nameResolver.resolveName(nameExprNode.getName(), parent.curScope, accessType, nameExprNode, rightSideType);
+	
+		NameAccess elem = nameResolver.resolveName(nameExprNode.getName(), parent.curScope, accessType, nameExprNode, rightSideType,parent.isContextStatic());
 
 		//Do checks, set semantics and infered type
 		checkResolvedVar(elem, nameExprNode,context);
@@ -474,7 +478,7 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 		} else {
 			
 			//Resolve the non-prefixed operation
-			inv = nameResolver.resolveInvocation(methodInvocation.getFuncName(), sig, parent.curScope, methodInvocation, true, disallowVirtualInvocation);
+			inv = nameResolver.resolveInvocation(methodInvocation.getFuncName(), sig, parent.curScope, methodInvocation, true, disallowVirtualInvocation, parent.isContextStatic());
 			
 			//Nothing found?
 			if(inv == null)
@@ -516,16 +520,9 @@ public class ExpressionAnalysisVisitor extends VoidResultErrorVisitor<Expression
 			throw Problem.ofType(ProblemId.THIS_OUTSIDE_CLASS_OR_ENRICHMENT).at(thisExpression)
 					.raiseUnrecoverable();
 		
-		boolean misuse = false;
-		if(parent.curField == null) {
-			misuse = parent.curOperation.isStaticElement();
-		} else {
-			misuse = parent.curField.isStaticElement();
-			
-		}
-		if(misuse)
-			throw Problem.ofType(ProblemId.THIS_IN_STATIC_MEMBER).at(thisExpression)
-					.raiseUnrecoverable();
+		if(parent.isContextStatic())
+			Problem.ofType(ProblemId.THIS_IN_STATIC_MEMBER).at(thisExpression)
+					.raise();
 		thisExpression.setInferedType(parent.curType);
 	}
 	

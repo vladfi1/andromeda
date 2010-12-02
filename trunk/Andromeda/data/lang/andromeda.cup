@@ -76,7 +76,7 @@ terminal INLINE;
 terminal AT;
 terminal DOTDOT;
 terminal USES;
-terminal IS;
+terminal ALIASES;
 terminal FUNCTION;
 terminal SETINSTANCELIMIT;
 terminal DOTINLINE;
@@ -518,7 +518,7 @@ funcPointer ::= FUNCTION:l LT type:rt LPAREN funcPointerArgumentList:a RPAREN GT
 
 // Typedef
 typeDefinition	::= annotationsOpt:ao modifiersOpt:m TYPEDEF:l type:t IDENTIFIER:i SEMICOLON:r {:RESULT = new TypeAliasDeclNode(ao,m,i,t); RESULT.setPos(lleft,rright); :}
-		|			annotationsOpt:ao modifiersOpt:m TYPEDEF:l IDENTIFIER:i IS type:t SEMICOLON:r {:RESULT = new TypeAliasDeclNode(ao,m,i,t); RESULT.setPos(lleft,rright); :}
+		|			annotationsOpt:ao modifiersOpt:m TYPEDEF:l IDENTIFIER:i ALIASES type:t SEMICOLON:r {:RESULT = new TypeAliasDeclNode(ao,m,i,t); RESULT.setPos(lleft,rright); :}
 		;
 
 // Type extensions

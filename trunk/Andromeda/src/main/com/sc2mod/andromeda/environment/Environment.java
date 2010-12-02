@@ -15,6 +15,7 @@ import com.sc2mod.andromeda.environment.annotations.AnnotationRegistry;
 import com.sc2mod.andromeda.environment.scopes.GlobalScope;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.Package;
+import com.sc2mod.andromeda.environment.scopes.content.TraversalPolicies;
 import com.sc2mod.andromeda.environment.types.TypeProvider;
 import com.sc2mod.andromeda.parsing.Language;
 
@@ -46,12 +47,12 @@ public final class Environment {
 	}
 
 
-	public Iterable<IScopedElement> iterateOverContent(final boolean stepIntoOperations,final boolean stepIntoPackages, final boolean stepIntoTypes){
+	public Iterable<IScopedElement> iterateOverContent(final TraversalPolicies policies){
 		return new Iterable<IScopedElement>() {
 			
 			@Override
 			public Iterator<IScopedElement> iterator() {
-				return defaultPackage.getContent().getDeepIterator(stepIntoOperations, stepIntoPackages,stepIntoTypes);
+				return defaultPackage.getContent().getDeepIterator(policies);
 			}
 		};
 	}

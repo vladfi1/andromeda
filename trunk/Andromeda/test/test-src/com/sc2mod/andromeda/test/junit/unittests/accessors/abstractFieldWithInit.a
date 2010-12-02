@@ -1,0 +1,13 @@
+
+enrich int{
+
+	abstract int hp = 3;
+	 => get{ return 2; }
+	
+}
+
+static{
+	int i = 2;
+	int j = i.hp;
+
+}

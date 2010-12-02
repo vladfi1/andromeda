@@ -76,7 +76,7 @@ public class InstanceLimitChecker {
 	 * @return
 	 */
 	private int doCommonChecks(IClass c, ExprNode instanceLimit){
-		if(c.isStaticElement())
+		if(c.getModifiers().isStatic())
 			throw Problem.ofType(ProblemId.STATIC_CLASS_HAS_INSTANCELIMIT).at(instanceLimit)
 				.raiseUnrecoverable();
 		if(instanceLimit.getInferedType()!= INT)

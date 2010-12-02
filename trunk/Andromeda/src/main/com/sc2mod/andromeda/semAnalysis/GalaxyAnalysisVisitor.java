@@ -9,6 +9,7 @@ import com.sc2mod.andromeda.environment.operations.Operation;
 import com.sc2mod.andromeda.environment.scopes.IScopedElement;
 import com.sc2mod.andromeda.environment.scopes.ScopedElementType;
 import com.sc2mod.andromeda.environment.scopes.content.OperationSet;
+import com.sc2mod.andromeda.environment.scopes.content.TraversalPolicies;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.variables.LocalVarDecl;
@@ -63,18 +64,16 @@ public class GalaxyAnalysisVisitor extends TraceScopeScanVisitor implements Anal
 		ast.accept(this);
 		
 		//Check for function overloading
-		for(IScopedElement elem : env.iterateOverContent(false, false, false)){
-			if(elem.getElementType() == ScopedElementType.OP_SET){
-				OperationSet opSet = (OperationSet) elem;
-				if(opSet.size() > 1){
-					Problem p = Problem.ofType(ProblemId.GALAXY_FUNCTION_OVERLOADING_NOT_POSSIBLE);
-					for(Operation o : opSet){
-						p.at(o.getDefinition());
-					}
-					p.raise();
+		for(IScopedElement elem : env.iterateOverContent(TraversalPolicies.OP_SETS_ONLY)){
+			OperationSet opSet = (OperationSet) elem;
+			if(opSet.size() > 1){
+				Problem p = Problem.ofType(ProblemId.GALAXY_FUNCTION_OVERLOADING_NOT_POSSIBLE);
+				for(Operation o : opSet){
+					p.at(o.getDefinition());
 				}
-				
+				p.raise();
 			}
+			
 		}
 		
 	}

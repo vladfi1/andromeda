@@ -6,13 +6,14 @@ import junit.framework.TestSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import com.sc2mod.andromeda.test.junit.unittests.accessors.AccessorProblems;
+import com.sc2mod.andromeda.test.junit.unittests.accessors.AccessorTests;
 import com.sc2mod.andromeda.test.junit.unittests.classes.ClassProblems;
 import com.sc2mod.andromeda.test.junit.unittests.extensions.ExtensionTests;
 import com.sc2mod.andromeda.test.junit.unittests.galaxy.GalaxyTests;
 import com.sc2mod.andromeda.test.junit.unittests.generics.GenericTests;
 import com.sc2mod.andromeda.test.junit.unittests.misc.MiscProblems;
 import com.sc2mod.andromeda.test.junit.unittests.names.NameProblems;
+import com.sc2mod.andromeda.test.junit.unittests.nativeTypes.NativeTests;
 import com.sc2mod.andromeda.test.junit.unittests.others.OtherTests;
 import com.sc2mod.andromeda.test.junit.unittests.overriding.OverrideProblems;
 import com.sc2mod.andromeda.test.junit.unittests.structs.StructProblems;
@@ -30,12 +31,13 @@ import com.sc2mod.andromeda.test.junit.unittests.visibility.VisibilityProblems;
         OverrideProblems.class,
         MiscProblems.class,
         ClassProblems.class,
-        AccessorProblems.class,
+        AccessorTests.class,
         NameProblems.class,
         ExtensionTests.class,
         GalaxyTests.class,
         StructProblems.class,
-        OtherTests.class
+        OtherTests.class,
+        NativeTests.class
 })
 
 public class AllTests {

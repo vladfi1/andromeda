@@ -86,4 +86,11 @@ public class GenericTests extends AndromedaSingleRunTest {
 		checkOutput();
 	}
 	
+	@Test
+	public void typeParamInStatic(){
+		callAndromeda("typeParamInStatic.a");
+		assertProblem(ProblemId.NON_STATIC_ACCESS_FROM_STATIC_CONTEXT);
+		assertProblem(ProblemId.NON_STATIC_ACCESS_FROM_STATIC_CONTEXT);
+		assertOnlyProblem(ProblemId.NON_STATIC_ACCESS_FROM_STATIC_CONTEXT);
+	}
 }

@@ -25,7 +25,8 @@ import com.sc2mod.andromeda.syntaxNodes.util.VisitorAdapter;
  */
 public class TypeResolver extends VisitorAdapter<IScope,IType>{
 
-	private TypeProvider tprov;	
+	private TypeProvider tprov;
+	private boolean staticContext;	
 
 
 	public TypeResolver(TypeProvider tprov){
@@ -46,7 +47,7 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 		//Resolve type name
 		String name = type.getName();
 		
-		IType result = ResolveUtil.resolveUnprefixedType(name, scope, type);
+		IType result = ResolveUtil.resolveUnprefixedType(name, scope, type, staticContext);
 		if(result == null){
 			return raiseUnknownType(type, name);
 		}
@@ -85,7 +86,7 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 	@Override
 	public IType visit(BasicTypeNode type, IScope scope) {
 		String name = type.getName();
-		IType result = ResolveUtil.resolveUnprefixedType(name, scope, type);
+		IType result = ResolveUtil.resolveUnprefixedType(name, scope, type, staticContext);
 		if(result == null){
 			return raiseUnknownType(type, name);
 		}
@@ -117,9 +118,13 @@ public class TypeResolver extends VisitorAdapter<IScope,IType>{
 	
 	@Override
 	public IType visit(FuncPointerTypeNode type, IScope scope) {
-		IType result = tprov.getFunctionPointerType(type, scope);
+		IType result = tprov.getFunctionPointerType(type, scope,staticContext);
 		type.setSemantics(result);
 		return result;
+	}
+
+	public void setStaticContect(boolean staticContext) {
+		this.staticContext = staticContext;
 	}
 	
 	

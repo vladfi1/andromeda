@@ -1,5 +1,8 @@
 package com.sc2mod.andromeda.semAnalysis;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sc2mod.andromeda.environment.Environment;
 import com.sc2mod.andromeda.environment.operations.Constructor;
 import com.sc2mod.andromeda.environment.operations.Destructor;
@@ -16,6 +19,7 @@ import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.environment.types.TypeCategory;
 import com.sc2mod.andromeda.environment.variables.FieldDecl;
 import com.sc2mod.andromeda.environment.variables.GlobalVarDecl;
+import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.problems.Problem;
 import com.sc2mod.andromeda.problems.ProblemId;
 import com.sc2mod.andromeda.syntaxNodes.ClassDeclNode;
@@ -23,14 +27,18 @@ import com.sc2mod.andromeda.syntaxNodes.EnrichDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.FieldDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalFuncDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalStaticInitDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureListNode;
+import com.sc2mod.andromeda.syntaxNodes.GlobalStructureNode;
 import com.sc2mod.andromeda.syntaxNodes.GlobalVarDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.InstanceLimitSetterNode;
 import com.sc2mod.andromeda.syntaxNodes.InterfaceDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.MemberDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.MethodDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.SimpleTypeNode;
 import com.sc2mod.andromeda.syntaxNodes.SourceFileNode;
 import com.sc2mod.andromeda.syntaxNodes.StaticInitDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.StructDeclNode;
+import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
 import com.sc2mod.andromeda.syntaxNodes.TypeExtensionDeclNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclListNode;
 import com.sc2mod.andromeda.syntaxNodes.VarDeclNode;
@@ -47,20 +55,33 @@ import com.sc2mod.andromeda.util.visitors.NoResultTreeScanVisitor;
  * @author gex
  * 
  */
-public class StructureRegistryTreeScanner extends
-		NoResultTreeScanVisitor<Pair<IScope, IType>> {
+public class StructureRegistryTreeScanner  {
 
+private Visitor visitor;
+
+	public StructureRegistryTreeScanner(Environment env, TransientAnalysisData analysisData) {
+		this.visitor = new Visitor(env,analysisData);
+	}
+	
+	public void execute(SyntaxNode sn){
+		sn.accept(visitor, null);
+		visitor.accessorTransformer.doPostProcessing();
+	}
+	
+private class Visitor extends
+	NoResultTreeScanVisitor<Pair<IScope, IType>>{
+	
 	private Environment env;
 	private SemanticsCheckerAndResolver resolver;
 	private TransientAnalysisData analysisData;
 	private AccessorTransformer accessorTransformer = new AccessorTransformer();
-
-	public StructureRegistryTreeScanner(Environment env, TransientAnalysisData analysisData) {
+	
+	private Visitor(Environment env, TransientAnalysisData analysisData) {
 		this.env = env;
 		this.analysisData = analysisData;
 		this.resolver = new SemanticsCheckerAndResolver(env);
 	}
-
+	
 	// ***** Scope givers ****
 	@Override
 	public void visit(SourceFileNode andromedaFile, Pair<IScope, IType> scopes) {
@@ -138,7 +159,7 @@ public class StructureRegistryTreeScanner extends
 	public void visit(InstanceLimitSetterNode instanceLimitSetter,
 			Pair<IScope, IType> scopes) {
 		//Resolve type of instance limit setter and check that it may only be applied on classes
-		IType t = env.typeProvider.resolveType(instanceLimitSetter.getEnrichedType(), scopes._1);
+		IType t = env.typeProvider.resolveType(instanceLimitSetter.getEnrichedType(), scopes._1, true);
 		if(t.getCategory() != TypeCategory.CLASS) {
 			throw Problem.ofType(ProblemId.SETINSTANCELIMIT_ON_NONCLASS).at(instanceLimitSetter)
 						.raiseUnrecoverable();
@@ -162,19 +183,25 @@ public class StructureRegistryTreeScanner extends
 	public void visit(GlobalVarDeclNode g, Pair<IScope, IType> scopes) {
 		FieldDeclNode field = g.getFieldDecl();
 		VarDeclListNode list = field.getDeclaredVariables();
-
-		for(VarDeclNode declNode : list){
-			GlobalVarDecl decl = new GlobalVarDecl(field, declNode, scopes._1,env);
-			resolver.checkAndResolve(decl);
-			scopes._1.addContent(decl.getUid(), decl);
-		}
+		boolean skip = false;
 		
 		//transform accessor methods
 		if(field.getAccessors() != null){
 			for(GlobalFuncDeclNode md : accessorTransformer.transformGlobalField(g)){
 				md.accept(this,scopes);
 			}
+			skip = accessorTransformer.wantRemoveAbstractField();
 		}
+		
+		if(!skip){
+			for(VarDeclNode declNode : list){
+				GlobalVarDecl decl = new GlobalVarDecl(field, declNode, scopes._1,env);
+				resolver.checkAndResolve(decl);
+				scopes._1.addContent(decl.getUid(), decl);
+			}
+		}
+		
+
 	}
 
 	// *** Elements in blocks (members) ***
@@ -197,21 +224,26 @@ public class StructureRegistryTreeScanner extends
 	@Override
 	public void visit(FieldDeclNode field, Pair<IScope, IType> scopes) {
 		VarDeclListNode list = field.getDeclaredVariables();
-
-		for(VarDeclNode declNode : list){
-			FieldDecl decl = new FieldDecl(field, declNode, scopes._2,
-					scopes._1,env);
-			resolver.checkAndResolve(decl);
-			// Add field into scope
-			entry(scopes, decl);
-		}
-		
+		boolean skip = false;
 		//transform accessor methods
 		if(field.getAccessors() != null){
 			for(MethodDeclNode md : accessorTransformer.transformClassField(field)){
 				md.accept(this,scopes);
 			}
+			skip = accessorTransformer.wantRemoveAbstractField();
 		}
+		
+		if(!skip){
+			for(VarDeclNode declNode : list){
+				FieldDecl decl = new FieldDecl(field, declNode, scopes._2,
+						scopes._1,env);
+				resolver.checkAndResolve(decl);
+				// Add field into scope
+				entry(scopes, decl);
+			}
+		}
+		
+		
 	}
 
 	@Override
@@ -260,5 +292,7 @@ public class StructureRegistryTreeScanner extends
 		//Since we must be in a typed block, we can safely assume that type != null
 		ScopeUtil.addStaticInit(state._2, s);
 	}
+	
+}
 
 }

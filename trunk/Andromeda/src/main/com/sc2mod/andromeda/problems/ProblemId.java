@@ -63,7 +63,7 @@ public enum ProblemId {
 	NO_CONSTRUCTOR_WITH_THIS_SIGNATURE("The class %s specifies no visible constructor with signature (%s)."),
 	
 	THIS_OUTSIDE_CLASS_OR_ENRICHMENT("'this' can only be used inside of classes, enrichments or interfaces"),
-	THIS_IN_STATIC_MEMBER("'this' cannot be used in static methods and attributes"),
+	THIS_IN_STATIC_MEMBER("'this' cannot be used in a static context"),
 	
 	DUPLICATE_LOCAL_VARIABLE ("Duplicate local variable '%s'"),
 	GLOBAL_VAR_ACCESS_BEFORE_DECL("Accessing a global variable from above its declaration is forbidden"),
@@ -87,8 +87,8 @@ public enum ProblemId {
 	CLASS_EXTENDS_NON_CLASS("Classes may only extend other classes."),
 	CLASS_IMPLEMENTS_NON_INTERFACE("The types in an implements clause must be an interface."),
 	DUPLICATE_IMPLEMENTS("Duplicate interface in implements clause."),
-	STATIC_CLASS_HAS_IMPLEMENTS("Static classes cannot implement interfaces"),
 	FINAL_TYPE_EXTENDED("Cannot extend type %s because it is final"),
+	STATIC_CLASS_HAS_IMPLEMENTS("Static classes cannot implement interfaces"),
 	STATIC_CLASS_HAS_EXTENDS("Static classes cannot extend other classes"),
 	STATIC_CLASS_EXTENDED("Cannot extend class %s because it is static"),
 	STATIC_CLASS_HAS_CONSTRUCTOR("Static classes cannot have constructors."),
@@ -158,8 +158,8 @@ public enum ProblemId {
 	MISSING_RETURN("Missing return. (the control flow of non-void functions may not reach the end of the function body)"),
 	RETURNING_VALUE_IN_VOID_METHOD ("Returning a value in a function that should return void."),
 	RETURN_WITHOUT_VALUE ("Returning no value is only allowed in void functions."),
-	ARRAY_OR_STRUCT_RETURNED ("Structs and arrays cannot be used as return types, use pointers instead."),
-	ARRAY_OR_STRUCT_AS_PARAMETER ("Structs and arrays cannot be used as parameters, use pointers instead."),
+	ARRAY_OR_STRUCT_RETURNED ("Structs and arrays cannot be used as return types."),
+	ARRAY_OR_STRUCT_AS_PARAMETER ("Structs and arrays cannot be used as parameters."),
 	
 	
 	BINOP_ON_VOID("Cannot use binary operators on void values"),
@@ -247,13 +247,15 @@ public enum ProblemId {
 	CONSTRUCTOR_OUTSIDE_OF_CLASS("Only classes can contain constructors. (Or method return type missing, if this is intended to be a normal method)"),
 	DESTRUCTOR_OUTSIDE_OF_CLASS("Only classes can contain destructors."), 
 	CYCLE_IN_STRICT_IMPORTS("Cycle found in strict import hierarchy:\n%s"),
+	ABSTRACT_FIELD_WITH_INIT("Abstract fields may not have an initialization."), 
+	NON_STATIC_ACCESS_FROM_STATIC_CONTEXT("Cannot access a non-static member from a static context"),
 	
 	//Galaxy only
 	GALAXY_DISALLOWED_NAME_TYPE("This kind of name (%s) cannot be accessed in galaxy."), 
 	GALAXY_ACCESSING_ELEMENT_FROM_ABOVE_ITS_DECLARATION("Cannot access the %s from above its declaration."),
 	GALAXY_LOCAL_VAR_NOT_ON_TOP("Local variables must defined on top of a function in galaxy."), 
 	GALAXY_BLOCK_WITHOUT_BRACES("The body of an if and while loop must be wrapped in curly braces {}."), 
-	GALAXY_FUNCTION_OVERLOADING_NOT_POSSIBLE("Function overloading is not possible in galaxy. You may not have two functions with the same name"),
+	GALAXY_FUNCTION_OVERLOADING_NOT_POSSIBLE("Function overloading is not possible in galaxy. You may not have two functions with the same name")
 	;
 	
 	String message;

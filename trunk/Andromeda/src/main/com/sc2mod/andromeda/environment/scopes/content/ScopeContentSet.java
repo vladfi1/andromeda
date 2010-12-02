@@ -3,6 +3,7 @@ package com.sc2mod.andromeda.environment.scopes.content;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,10 +22,13 @@ import com.sc2mod.andromeda.environment.scopes.UsageType;
 import com.sc2mod.andromeda.environment.types.IType;
 import com.sc2mod.andromeda.problems.InternalProgramError;
 import com.sc2mod.andromeda.syntaxNodes.SyntaxNode;
+import com.sc2mod.andromeda.util.ArrayStack;
 
-public abstract class ScopeContentSet {
+public abstract class ScopeContentSet implements Iterable<IScopedElement>{
 	
 	public final IScope scope;
+	
+
 	
 	
 	
@@ -56,15 +60,15 @@ public abstract class ScopeContentSet {
 	}
 	
 	
-	public Iterator<IScopedElement> getDeepIterator(boolean includeOperations, boolean includeSubpackaes, boolean includeTypeContent){
-		return new DeepIterator(includeOperations,includeSubpackaes,includeTypeContent);
+	public Iterator<IScopedElement> getDeepIterator(TraversalPolicies policies){
+		return new DeepIterator(policies);
 	}
 	
-	public Iterable<IScopedElement> iterateDeep(final boolean includeOperations, final boolean includeSubpackaes, final boolean includeTypeContent){
+	public Iterable<IScopedElement> iterateDeep(final TraversalPolicies policies){
 		return new Iterable<IScopedElement>() {
 			@Override
 			public Iterator<IScopedElement> iterator() {
-				return new DeepIterator(includeOperations,includeSubpackaes,includeTypeContent);
+				return new DeepIterator(policies);
 			}
 		};
 	}
@@ -151,6 +155,8 @@ public abstract class ScopeContentSet {
 		case OP_SET:
 			throw new InternalProgramError("Cannot add an operation set.");
 			//TODO: Error handling
+		case PACKAGE:
+			throw new InternalProgramError("Cannot add packages to a content set.");
 		case ERROR: throw new Error("Error handling!");
 		default: 
 			addElement(name, elem);
@@ -192,71 +198,103 @@ public abstract class ScopeContentSet {
 	public boolean isElementInherited(IScopedElement value) {
 		return false;
 	}
+	
+	
+	@Override
+	public Iterator<IScopedElement> iterator() {
+		return contentSet.values().iterator();
+	}
+	
+	public static enum TraversalPolicy{
+		IGNORE, RECURSE, GET, GET_AND_RECURSE;
+	}
 
+	//FIXME test deep iterator
+	private class DeepIterator implements Iterator<IScopedElement> {
 
-	public class DeepIterator implements Iterator<IScopedElement> {
-
-		private Iterator<IScopedElement> it;
-		private Iterator<? extends IScopedElement> nestedIterator;
-		boolean inNestedIteration;
-		private boolean doOps;
-		private boolean doPackages;
-		private boolean doTypes;
+		private ArrayStack<Iterator<? extends IScopedElement>> iterators = new ArrayStack<Iterator<? extends IScopedElement>>();
+		private IScopedElement lookahead;
+		private EnumMap<ScopedElementType, TraversalPolicy> traversalPolicies;
 		
-		public DeepIterator(boolean includeOperations, boolean includeSubpackaes, boolean includeTypeContent){
-			this.it = contentSet.values().iterator();
-			this.doOps = includeOperations;
-			this.doPackages = includeSubpackaes;
-			this.doTypes = includeTypeContent;
+		public DeepIterator(EnumMap<ScopedElementType, TraversalPolicy> traversalPolicies){
+			if(scope instanceof Package && traversalPolicies.get(ScopedElementType.PACKAGE) != TraversalPolicy.IGNORE){
+				iterators.push(((Package)scope).subpackageIterator());
+			}
+			iterators.push(iterator());
+			this.traversalPolicies = traversalPolicies;
+			lookahead = doLookahead();
 		}
 		
 		@Override
 		public boolean hasNext() {
-			if(inNestedIteration){
-				if(nestedIterator.hasNext()){
-					return true;
-				} else {
-					inNestedIteration = false;
-				}
-			}
-			return it.hasNext();
+			return lookahead != null;
 		}
-
+		
 		@Override
 		public IScopedElement next() {
-			if(inNestedIteration){
-				if(nestedIterator.hasNext()){
-					return nestedIterator.next();
-				} else {
-					inNestedIteration = false;
-				}
+			IScopedElement result = lookahead;
+			lookahead = doLookahead();
+			return result;
+		}
+
+		
+	
+		private boolean hasLookahead() {
+			if(iterators.isEmpty()){
+				return false;
+			} else if(iterators.peek().hasNext()){
+				return true;
+			} else {
+				//topmost iterator has no more elements, pop it and try again
+				iterators.pop();
+				return hasLookahead();
 			}
-			if(!it.hasNext()){
+		}
+
+		private IScopedElement doLookahead(){
+			if(!hasLookahead()){
 				return null;
 			}
-			IScopedElement elem = it.next();
-			switch(elem.getElementType()){
+			Iterator<? extends IScopedElement> topIterator = iterators.peek();
+			
+			IScopedElement elem = topIterator.next();
+			ScopedElementType elemType = elem.getElementType();
+			TraversalPolicy policy = traversalPolicies.get(elemType);
+			switch(policy){					
+			case IGNORE:
+				//Ignore? Then do next one
+				return doLookahead();
+			case GET:
+				//Return it right away
+				return elem;
+			}
+			
+			//If we are here, then recurse is requested
+			switch(elemType){
 			case OP_SET:
-				if(doOps){
-					inNestedIteration = true;
-					nestedIterator = ((OperationSet)elem).iterator();
-					return next();
+				//Go into op by pushing its iterator onto the stack and trying again
+				iterators.push(((OperationSet)elem).iterator());
+				if(policy == TraversalPolicy.RECURSE){
+					return doLookahead();
+				} else {
+					return elem;
 				}
-				break;
 			case PACKAGE:
-				if(doPackages){
-					inNestedIteration = true;
-					nestedIterator = ((Package)elem).getContent().getDeepIterator(doOps, doPackages,doTypes);
-					return next();
+				//push packages and subpackages
+				iterators.push(((Package)elem).subpackageIterator());
+				iterators.push(((Package)elem).getContent().iterator());
+				if(policy == TraversalPolicy.RECURSE){
+					return doLookahead();
+				} else {
+					return elem;
 				}
-				break;
 			case TYPE:
-				if(doTypes){
-					inNestedIteration = true;
-					nestedIterator = ((IType)elem).getContent().getDeepIterator(doOps, doPackages,doTypes);
-					return next();
+				iterators.push(((IType)elem).getContent().iterator());
+				if(policy == TraversalPolicy.RECURSE){
+					return doLookahead();
+				} else {
+					return elem;
 				}
-				break;
 			}
 			
 			return elem;
@@ -268,4 +306,5 @@ public abstract class ScopeContentSet {
 		}
 
 	}
+
 }

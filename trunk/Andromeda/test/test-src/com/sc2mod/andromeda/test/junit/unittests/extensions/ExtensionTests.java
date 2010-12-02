@@ -66,6 +66,18 @@ public class ExtensionTests extends AndromedaSingleRunTest {
 		assertOnlyProblem(ProblemId.INVALID_MODIFIER);
 	}
 	
+	@Test
+	public void typedefBase(){
+		callAndromeda("typedefBase.a");
+		assertNoMoreProblems();
+		checkOutput();
+	}
+	
+	@Test
+	public void typedefCircle(){
+		callAndromeda("typedefCircle.a");
+		assertOnlyProblem(ProblemId.UNKNOWN_TYPE);
+	}
 	
 	
 	
