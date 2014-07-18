@@ -1,3 +1,8 @@
+v0.1.6
+-Fixed certain fixed-point arithmetic bugs
+-Floating-point literals are now replaced by their closest fixed value (before they were rounded down)
+-Fixed "field is read but not written" bug in unused classes
+
 v0.1.5
 -Added generic inheritance
 -Fixed that it was not possible to delete generic classes
