@@ -136,7 +136,6 @@ public class SyntaxGenerator {
 	
 	Expression genParenthesisExpression(Expression e){
 		ParenthesisExpression p = new ParenthesisExpression(e);
-		System.out.println(e);
 		p.setInferedType(e.getInferedType());
 		p.setSimple(e.getSimple());
 		return p;
