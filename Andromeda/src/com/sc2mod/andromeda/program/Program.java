@@ -132,7 +132,6 @@ public class Program {
 		//Get application directory
 		if(appDirectory==null){
 			String path = Program.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-			System.out.println(path);
 			appDirectory = new File(path);
 			isPackaged = true;
 		}
