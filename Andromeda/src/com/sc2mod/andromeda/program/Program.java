@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -130,7 +131,9 @@ public class Program {
 				
 		//Get application directory
 		if(appDirectory==null){
-			appDirectory = new File(ClassLoader.getSystemResource(".").toURI());
+			String path = Program.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			System.out.println(path);
+			appDirectory = new File(path);
 			isPackaged = true;
 		}
 		
