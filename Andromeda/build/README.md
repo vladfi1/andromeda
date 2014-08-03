@@ -1,5 +1,6 @@
 Once after cloning the repo you need to generated some files:
 
+  mkdir temp && mkdir temp/bin
   ant -buildfile buildParser.xml
   ant -buildfile buildEnricher.xml
 
